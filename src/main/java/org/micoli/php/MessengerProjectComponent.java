@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
-import org.micoli.php.peerNavigation.navigation.PeerNavigationGotoDeclarationHandler;
+import org.micoli.php.peerNavigation.service.PeerNavigationService;
 import org.micoli.php.symfony.messenger.service.MessengerServiceConfiguration;
 import org.micoli.php.ui.Notification;
 
@@ -35,7 +35,7 @@ public class MessengerProjectComponent implements ProjectComponent {
             }
             this.configurationTimestamp = loadedConfiguration.timestamp;
             MessengerServiceConfiguration.loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
-            PeerNavigationGotoDeclarationHandler.loadConfiguration(loadedConfiguration.configuration.peerNavigation);
+            PeerNavigationService.loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
             Notification.message(getComponentName() + " Configuration loaded");
         } catch (NoConfigurationFileException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {

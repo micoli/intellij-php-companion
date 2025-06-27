@@ -18,6 +18,10 @@
             id="PHP Companion"
             displayType="BALLOON"
         />
+        <codeInsight.lineMarkerProvider
+                language="PHP"
+                implementationClass="org.micoli.php.peerNavigation.markers.MessengerLineMarkerProvider"/>
+
         <findUsagesHandlerFactory
             implementation="org.micoli.php.symfony.messenger.usage.MessengerFindUsagesHandlerFactory"
         />
