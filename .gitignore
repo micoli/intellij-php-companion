@@ -1,0 +1,9 @@
+.gradle
+.idea
+.intellijPlatform
+.qodana
+build
+context/
+context/dir-src_.md
+.run
+repomix-output.md

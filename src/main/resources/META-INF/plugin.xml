@@ -1,0 +1,38 @@
+<idea-plugin>
+    <id>org.micoli.php.companion</id>
+    <name>PHP Companion</name>
+    <version>0.1.0</version>
+    <vendor email="olivier@micoli.org" url="https://github.com/micoli/intellij-php-companion">micoli</vendor>
+
+    <description>Will be automatically replaced by gradle on built.</description>
+    <change-notes>Will be automatically replaced by gradle on built.</change-notes>
+
+    <idea-version since-build="203.0"/>
+
+    <depends>com.jetbrains.php</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.json</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup
+            id="PHP Companion"
+            displayType="BALLOON"
+        />
+        <findUsagesHandlerFactory
+            implementation="org.micoli.php.symfony.messenger.usage.MessengerFindUsagesHandlerFactory"
+        />
+
+        <gotoDeclarationHandler
+            implementation="org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandler"
+        />
+        <gotoDeclarationHandler
+            implementation="org.micoli.php.peerNavigation.navigation.PeerNavigationGotoDeclarationHandler"
+        />
+    </extensions>
+
+    <project-components>
+        <component>
+            <implementation-class>org.micoli.php.MessengerProjectComponent</implementation-class>
+        </component>
+    </project-components>
+</idea-plugin>

@@ -1,0 +1,17 @@
+.github
+.gradle
+.idea
+.intellijPlatform
+.run
+build
+gradle
+src/test/*
+build.gradle.kts
+CHANGELOG.md
+gradle.properties
+gradlew
+gradlew.bat
+LICENSE
+Makefile
+qodana.yml
+settings.gradle.kts
