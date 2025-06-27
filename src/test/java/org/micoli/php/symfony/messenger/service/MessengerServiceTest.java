@@ -6,7 +6,6 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import java.util.Collection;
 import java.util.Objects;
-import org.junit.Test;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
@@ -19,36 +18,43 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         return "src/test/testData";
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        myFixture.copyDirectoryToProject("src", "src");
-        //
-        // myFixture.configureByFile("src/Core/Article/Application/Event/ArticleCreatedEvent.php");
-        // PhpClass phpClass = myFixture.findElementByText("ArticleCreatedEvent",
-        // PhpClass.class);
-    }
-
-    @Test
-    public void testIsMessageClass() {
+    public void testItDetectMessageBasedOnPatternClass() {
+        myFixture.configureByFile("/src/Core/Event/ArticleCreatedEvent.php");
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
-        // symfonyMessengerConfiguration.messageClassNamePatterns = "aaaaa";
-        // symfonyMessengerConfiguration.messageInterfaces = new String[] { "aaaaa" };
-        // symfonyMessengerConfiguration.dispatchMethods = new String[] { "aaaa" };
+        symfonyMessengerConfiguration.messageClassNamePatterns = ".*(edEvent|Command)$";
         MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
-        // loadPluginConfiguration(getTestDataPath());
         PhpClass phpClass = PHPHelper.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
-        assertNotNull(phpClass);
         assertTrue(MessengerService.isMessageClass(phpClass));
     }
 
-    @Test
-    public void testItCanFindHandlersByMessageName() {
-        loadPluginConfiguration(getTestDataPath());
+    public void testItDoesNotDetectMessageBasedOnPatternIfPatternIsWrong() {
+        myFixture.configureByFile("/src/Core/Event/ArticleCreatedEvent.php");
+        SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
+        symfonyMessengerConfiguration.messageClassNamePatterns = ".*(Command)$";
+        MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PHPHelper.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
-        assertNotNull(phpClass);
-        Collection<Method> handledMessages = MessengerService.findHandlersByMessageName(getProject(), phpClass.getFQN());
-        assertContainsElements(handledMessages.stream().map(PhpNamedElement::getFQN).toList(), "\\App\\Core\\EventListener\\OnArticleCreated");
+        assertFalse(MessengerService.isMessageClass(phpClass));
+    }
+
+    public void testItDetectMessageBasedOnInterface() {
+        myFixture.configureByFiles(
+        "/src/Core/Event/ArticleCreatedEvent.php",
+        "/src/Infrastructure/Bus/Message/Event/AsyncEventInterface.php",
+        "/src/Infrastructure/Bus/Message/Event/EventInterface.php",
+        "/src/Infrastructure/Bus/Message/MessageInterface.php"
+        );
+        SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
+        symfonyMessengerConfiguration.messageInterfaces = new String[]{"App\\Infrastructure\\Bus\\Message\\MessageInterface"};
+        MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
+        PhpClass phpClass = PHPHelper.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+        assertTrue(MessengerService.isMessageClass(phpClass));
+    }
+
+    public void testItCanFindHandlersByMessage() {
+        myFixture.copyDirectoryToProject("src", "src");
+        loadPluginConfiguration(getTestDataPath());
+        Collection<Method> handledMessages = MessengerService.findHandlersByMessageName(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+        assertContainsElements(handledMessages.stream().map(PhpNamedElement::getFQN).toList(), "\\App\\Core\\EventListener\\OnArticleCreated.__invoke");
     }
 
     private void loadPluginConfiguration(String path) {
