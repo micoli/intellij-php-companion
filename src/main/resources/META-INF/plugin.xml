@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>org.micoli.php.companion</id>
     <name>PHP Companion</name>
-    <version>0.1.0</version>
+    <version>Will be automatically replaced by gradle on built.</version>
     <vendor email="olivier@micoli.org" url="https://github.com/micoli/intellij-php-companion">micoli</vendor>
 
     <description>Will be automatically replaced by gradle on built.</description>

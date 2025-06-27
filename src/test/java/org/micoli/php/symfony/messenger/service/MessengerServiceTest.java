@@ -37,14 +37,9 @@ public class MessengerServiceTest extends BasePlatformTestCase {
     }
 
     public void testItDetectMessageBasedOnInterface() {
-        myFixture.configureByFiles(
-        "/src/Core/Event/ArticleCreatedEvent.php",
-        "/src/Infrastructure/Bus/Message/Event/AsyncEventInterface.php",
-        "/src/Infrastructure/Bus/Message/Event/EventInterface.php",
-        "/src/Infrastructure/Bus/Message/MessageInterface.php"
-        );
+        myFixture.configureByFiles("/src/Core/Event/ArticleCreatedEvent.php", "/src/Infrastructure/Bus/Message/Event/AsyncEventInterface.php", "/src/Infrastructure/Bus/Message/Event/EventInterface.php", "/src/Infrastructure/Bus/Message/MessageInterface.php");
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
-        symfonyMessengerConfiguration.messageInterfaces = new String[]{"App\\Infrastructure\\Bus\\Message\\MessageInterface"};
+        symfonyMessengerConfiguration.messageInterfaces = new String[] { "App\\Infrastructure\\Bus\\Message\\MessageInterface" };
         MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PHPHelper.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertTrue(MessengerService.isMessageClass(phpClass));
