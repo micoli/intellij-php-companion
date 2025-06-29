@@ -4,7 +4,6 @@ import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
 
@@ -16,13 +15,8 @@ public class PeerNavigationGotoDeclarationHandler implements GotoDeclarationHand
         if (sourceElement == null) {
             return null;
         }
-        if (!(sourceElement instanceof LeafPsiElement sourceClass)) {
-            return null;
-        }
-        if (!sourceClass.getElementType().toString().equals("identifier")) {
-            return null;
-        }
-        PsiElement targetElement = PeerNavigationService.getPeerElement(sourceClass);
+
+        PsiElement targetElement = PeerNavigationService.getPeerElement(sourceElement);
 
         return targetElement == null ? null : new PsiElement[] { targetElement };
     }

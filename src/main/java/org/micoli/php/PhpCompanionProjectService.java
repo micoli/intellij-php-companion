@@ -1,9 +1,10 @@
 package org.micoli.php;
 
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.util.concurrency.AppExecutorUtil;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.configuration.ConfigurationException;
@@ -13,18 +14,20 @@ import org.micoli.php.peerNavigation.service.PeerNavigationService;
 import org.micoli.php.symfony.messenger.service.MessengerServiceConfiguration;
 import org.micoli.php.ui.Notification;
 
-public class MessengerProjectComponent implements ProjectComponent {
+@Service(Service.Level.PROJECT)
+public final class PhpCompanionProjectService implements Disposable {
 
     private final Project project;
     private Long configurationTimestamp = 0L;
+    private final ScheduledFuture<?> scheduledTask;
 
-    public MessengerProjectComponent(Project project) {
+    public PhpCompanionProjectService(@NotNull Project project) {
         this.project = project;
+        scheduledTask = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(this::loadConfiguration, 0, 2000, TimeUnit.MILLISECONDS);
     }
 
-    @Override
-    public void projectOpened() {
-        AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(this::loadConfiguration, 0, 2000, TimeUnit.MILLISECONDS);
+    public static PhpCompanionProjectService getInstance(@NotNull Project project) {
+        return project.getService(PhpCompanionProjectService.class);
     }
 
     private void loadConfiguration() {
@@ -36,7 +39,7 @@ public class MessengerProjectComponent implements ProjectComponent {
             this.configurationTimestamp = loadedConfiguration.timestamp;
             MessengerServiceConfiguration.loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
             PeerNavigationService.loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
-            Notification.message(getComponentName() + " Configuration loaded");
+            Notification.message("PHP Companion Configuration loaded");
         } catch (NoConfigurationFileException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {
                 Notification.error(e.getMessage());
@@ -51,19 +54,9 @@ public class MessengerProjectComponent implements ProjectComponent {
     }
 
     @Override
-    public void projectClosed() {
-    }
-
-    @Override
-    public @NotNull String getComponentName() {
-        return "PHP Companion";
-    }
-
-    public static class MessengerStartupActivity implements StartupActivity {
-        @Override
-        public void runActivity(@NotNull Project project) {
-            // Additional startup logic if needed
-            // This runs after the project is fully loaded
+    public void dispose() {
+        if (scheduledTask != null && !scheduledTask.isCancelled()) {
+            scheduledTask.cancel(true);
         }
     }
 }

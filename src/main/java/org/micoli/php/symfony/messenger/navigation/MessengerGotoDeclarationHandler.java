@@ -40,6 +40,7 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
         if (handlers.isEmpty()) {
             return null;
         }
-        return handlers.stream().map(phpClass -> (PsiElement) phpClass).toArray(PsiElement[]::new);
+
+        return handlers.toArray(PsiElement[]::new);
     }
 }

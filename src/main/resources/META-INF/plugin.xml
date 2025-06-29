@@ -32,11 +32,8 @@
 <!--        <gotoDeclarationHandler-->
 <!--            implementation="org.micoli.php.peerNavigation.navigation.PeerNavigationGotoDeclarationHandler"-->
 <!--        />-->
-    </extensions>
+        <projectService serviceImplementation="org.micoli.php.PhpCompanionProjectService"/>
+        <postStartupActivity implementation="org.micoli.php.PhpCompanionProjectStartup"/>
 
-    <project-components>
-        <component>
-            <implementation-class>org.micoli.php.MessengerProjectComponent</implementation-class>
-        </component>
-    </project-components>
+    </extensions>
 </idea-plugin>
