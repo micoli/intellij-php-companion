@@ -6,6 +6,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
+import org.micoli.php.service.PhpIndexUtil;
 
 public class PHPHelper {
     public static String normalizeFQN(String fqn) {
@@ -24,7 +25,7 @@ public class PHPHelper {
     public static boolean implementsInterfaces(PhpClass phpClass, String[] interfaceFQNs) {
         PhpIndex phpIndex = PhpIndex.getInstance(phpClass.getProject());
         for (String interfaceFQN : interfaceFQNs) {
-            if (phpIndex.getAllSubclasses(normalizeFQN(interfaceFQN)).stream().map(PhpNamedElement::getFQN).toList().contains(phpClass.getFQN())) {
+            if (PhpIndexUtil.getAllSubclasses(phpIndex, normalizeFQN(interfaceFQN)).stream().map(PhpNamedElement::getFQN).toList().contains(phpClass.getFQN())) {
                 return true;
             }
         }

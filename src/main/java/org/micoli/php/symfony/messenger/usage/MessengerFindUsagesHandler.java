@@ -2,6 +2,7 @@ package org.micoli.php.symfony.messenger.usage;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -70,17 +71,23 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
 
     private boolean findDispatchUsages(@NotNull PhpClass messageClass, @NotNull Processor<? super UsageInfo> processor, @NotNull FindUsagesOptions options) {
 
-        Project project = messageClass.getProject();
-        Collection<MethodReference> dispatchCalls = MessengerService.findDispatchCallsForMessage(project, messageClass.getFQN());
+        return ReadAction.compute(() -> {
+            Project project = messageClass.getProject();
+            Collection<MethodReference> dispatchCalls = MessengerService.findDispatchCallsForMessage(project, messageClass.getFQN());
 
-        for (MethodReference dispatchCall : dispatchCalls) {
-            UsageInfo usageInfo = new UsageInfo((PsiElement) dispatchCall);
-            if (!processor.process(usageInfo)) {
-                return false;
+            for (MethodReference dispatchCall : dispatchCalls) {
+                if (!dispatchCall.isValid()) {
+                    continue;
+                }
+
+                UsageInfo usageInfo = new UsageInfo((PsiElement) dispatchCall);
+                if (!processor.process(usageInfo)) {
+                    return false;
+                }
             }
-        }
 
-        return true;
+            return true;
+        });
     }
 
     private Method getHandlerMethod(PsiElement element) {

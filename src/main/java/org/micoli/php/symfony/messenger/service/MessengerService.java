@@ -16,6 +16,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class MessengerService {
 
+    /**
+     * this can be expensive if (findHandlersByMessageName(phpClass.getProject(),phpClass.getFQN()).isEmpty()){ return
+     * true; } return false:
+     */
     public static boolean isMessageClass(PhpClass phpClass) {
         String className = phpClass.getName();
 
@@ -25,10 +29,6 @@ public class MessengerService {
 
         return matchMessagePattern(className);
 
-        /**
-         * this can be expensive if (findHandlersByMessageName(phpClass.getProject(),phpClass.getFQN()).isEmpty()){
-         * return true; } returtn false:
-         */
     }
 
     public static PhpClass getHandledMessage(PhpClass handlerClass) {
