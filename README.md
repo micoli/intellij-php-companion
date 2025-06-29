@@ -5,7 +5,7 @@ A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced 
 
 ## Features
 
-### 🚀 Symfony Messenger Support
+### 🚀 PHP Companion
 - **Smart Navigation**: Navigate from message dispatch calls directly to their corresponding handlers
 - **Find Usages**: Discover all dispatch calls for a specific message class or handler method
 - **Message Detection**: Automatically identify message classes based on naming patterns and interfaces

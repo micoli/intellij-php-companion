@@ -3,7 +3,6 @@ package org.micoli.php.peerNavigation.service;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +29,7 @@ public class PeerNavigationService {
     }
 
     public static @Nullable PsiElement getPeerElement(@NotNull PsiElement sourceElement) {
-        PhpClass sourceClass = sourceElement instanceof PhpClass ? (PhpClass) sourceElement : PsiTreeUtil.getParentOfType(sourceElement, PhpClass.class);
-        if (sourceClass == null) {
+        if (!(sourceElement instanceof PhpClass sourceClass)) {
             return null;
         }
         String sourceClassFQN = sourceClass.getFQN();

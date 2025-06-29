@@ -4,11 +4,12 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id("java")
-    alias(libs.plugins.kotlin)
-    alias(libs.plugins.intelliJPlatform)
-    alias(libs.plugins.changelog)
-    alias(libs.plugins.qodana)
-    alias(libs.plugins.kover)
+    id("idea")
+    id("org.jetbrains.kotlin.jvm") version "2.1.20"
+    id("org.jetbrains.intellij.platform") version "2.5.0"
+    id("org.jetbrains.changelog") version "2.2.1"
+    id("org.jetbrains.qodana") version "2024.3.4"
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("com.diffplug.spotless") version "6.19.0"
 }
 
@@ -29,6 +30,8 @@ repositories {
 
 dependencies {
     intellijPlatform {
+//        val phpStormVersion = providers.gradleProperty("phpStormVersion")
+//        phpstorm(phpStormVersion)
         val version = providers.gradleProperty("platformVersion")
         val type = providers.gradleProperty("platformType")
         create(type, version, useInstaller = false)
@@ -37,7 +40,6 @@ dependencies {
         plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
 
         testFramework(TestFrameworkType.Platform)
-        testFramework(TestFrameworkType.Plugin.Java)
     }
 
     testImplementation("junit:junit:4.13.2")
@@ -78,7 +80,8 @@ intellijPlatform {
 
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
-            untilBuild = providers.gradleProperty("pluginUntilBuild")
+            // untilBuild = providers.gradleProperty("pluginUntilBuild")
+            untilBuild = provider { null }
         }
     }
 

@@ -29,9 +29,9 @@
         <gotoDeclarationHandler
             implementation="org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandler"
         />
-        <gotoDeclarationHandler
-            implementation="org.micoli.php.peerNavigation.navigation.PeerNavigationGotoDeclarationHandler"
-        />
+<!--        <gotoDeclarationHandler-->
+<!--            implementation="org.micoli.php.peerNavigation.navigation.PeerNavigationGotoDeclarationHandler"-->
+<!--        />-->
     </extensions>
 
     <project-components>
