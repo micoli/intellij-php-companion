@@ -20,7 +20,11 @@
         />
         <codeInsight.lineMarkerProvider
                 language="PHP"
-                implementationClass="org.micoli.php.peerNavigation.markers.MessengerLineMarkerProvider"/>
+                implementationClass="org.micoli.php.peerNavigation.markers.PeerNavigationLineMarkerProvider"/>
+
+        <codeInsight.lineMarkerProvider
+                language="PHP"
+                implementationClass="org.micoli.php.symfony.messenger.markers.MessengerLineMarkerProvider"/>
 
         <findUsagesHandlerFactory
             implementation="org.micoli.php.symfony.messenger.usage.MessengerFindUsagesHandlerFactory"

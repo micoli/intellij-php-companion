@@ -1,0 +1,20 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
+<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+    <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <g id="SVGRepo_iconCarrier">
+        <path d="M17 2C18.0609 2 19.0783 2.42136 19.8284 3.17151C20.5786 3.92165 21 4.93913 21 6V18C21 19.0609 20.5786 20.0782 19.8284 20.8284C19.0783 21.5785 18.0609 22 17 22H7C5.93913 22 4.92178 21.5785 4.17163 20.8284C3.42149 20.0782 3 19.0609 3 18V6C3 4.93913 3.42149 3.92165 4.17163 3.17151C4.92178 2.42136 5.93913 2 7 2"
+              stroke="#007bff" stroke-width="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M21 13H19.85C19.2933 13.0008 18.7477 13.1564 18.2744 13.4496C17.8011 13.7428 17.4187 14.1618 17.17 14.6599L16.83 15.34C16.5813 15.8381 16.199 16.2572 15.7256 16.5504C15.2523 16.8436 14.7068 16.9992 14.15 17H9.85004C9.29329 16.9992 8.74772 16.8436 8.27441 16.5504C7.8011 16.2572 7.41873 15.8381 7.17004 15.34L6.83002 14.6599C6.58134 14.1618 6.19896 13.7428 5.72565 13.4496C5.25234 13.1564 4.70677 13.0008 4.15002 13H3"
+              stroke="#007bff" stroke-width="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12.0293 11V2" stroke="#007bff" stroke-width="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8.5 5L11.01 2.41992C11.1389 2.28437 11.294 2.17653 11.4659 2.10278C11.6378 2.02904 11.823 1.99097 12.01 1.99097C12.1971 1.99097 12.3822 2.02904 12.5541 2.10278C12.726 2.17653 12.8811 2.28437 13.01 2.41992L15.52 5"
+              stroke="#007bff" stroke-width="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+</svg>

@@ -14,11 +14,11 @@ import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
 
-public class MessengerLineMarkerProvider implements LineMarkerProvider {
+public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
 
-    Icon navigateIcon = IconLoader.getIcon("expui/nodes/junitTestMark.svg", MessengerLineMarkerProvider.class);
+    Icon navigateIcon = IconLoader.getIcon("icons/link.svg", PeerNavigationLineMarkerProvider.class);
 
-    public MessengerLineMarkerProvider() {
+    public PeerNavigationLineMarkerProvider() {
     }
 
     @Override
