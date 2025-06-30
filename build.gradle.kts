@@ -30,11 +30,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-//        val phpStormVersion = providers.gradleProperty("phpStormVersion")
-//        phpstorm(phpStormVersion)
-        val version = providers.gradleProperty("platformVersion")
-        val type = providers.gradleProperty("platformType")
-        create(type, version, useInstaller = false)
+        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
 
         bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
         plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
@@ -80,7 +76,7 @@ intellijPlatform {
 
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
-            // untilBuild = providers.gradleProperty("pluginUntilBuild")
+//            untilBuild = providers.gradleProperty("pluginUntilBuild")
             untilBuild = provider { null }
         }
     }
@@ -104,7 +100,6 @@ intellijPlatform {
             recommended()
         }
     }
-    instrumentCode = false
 }
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin

@@ -7,7 +7,7 @@
     <description>Will be automatically replaced by gradle on built.</description>
     <change-notes>Will be automatically replaced by gradle on built.</change-notes>
 
-    <idea-version since-build="203.0"/>
+    <idea-version since-build="251.0"/>
 
     <depends>com.jetbrains.php</depends>
     <depends>com.intellij.modules.platform</depends>
