@@ -30,12 +30,12 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
-
-        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
-        plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
+        phpstorm("2025.1")
+        bundledPlugin("com.jetbrains.php")
+        pluginVerifier()
 
         testFramework(TestFrameworkType.Platform)
+        testFramework(TestFrameworkType.Plugin.Java)
     }
 
     testImplementation("junit:junit:4.13.2")
