@@ -28,6 +28,9 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
+        if (PeerNavigationService.configurationIsEmpty()) {
+            return;
+        }
         for (PsiElement element : elements) {
             if (element instanceof PhpClass phpClass) {
                 processPhpClass(phpClass, result);

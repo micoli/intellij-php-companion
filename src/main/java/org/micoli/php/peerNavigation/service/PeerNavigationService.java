@@ -1,6 +1,5 @@
 package org.micoli.php.peerNavigation.service;
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
@@ -23,9 +22,11 @@ public class PeerNavigationService {
     private static List<PeerSourceTarget> peers = new ArrayList<>();
 
     public static void loadConfiguration(Project project, PeerNavigationConfiguration _peerNavigation) {
+        if (_peerNavigation == null) {
+            return;
+        }
         PeerNavigationService.project = project;
         peers = Arrays.stream(_peerNavigation.peers).map(peer -> new PeerSourceTarget(Pattern.compile(peer.source), peer.target)).toList();
-        DaemonCodeAnalyzer.getInstance(project).restart();
     }
 
     public static @Nullable PsiElement getPeerElement(@NotNull PsiElement sourceElement) {
@@ -46,5 +47,9 @@ public class PeerNavigationService {
         }
 
         return null;
+    }
+
+    public static Boolean configurationIsEmpty() {
+        return peers.isEmpty();
     }
 }

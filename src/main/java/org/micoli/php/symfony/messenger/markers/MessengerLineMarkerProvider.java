@@ -54,7 +54,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        for(Method targetElement : handlers) {
+        for (Method targetElement : handlers) {
             result.add(NavigationGutterIconBuilder.create(navigateIcon).setTargets(targetElement).setTooltipText("Navigate to [" + targetElement.getFQN() + "]").createLineMarkerInfo(methodRef));
         }
     }

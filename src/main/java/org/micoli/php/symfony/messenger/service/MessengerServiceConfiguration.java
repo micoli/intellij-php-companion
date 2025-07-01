@@ -15,6 +15,9 @@ public class MessengerServiceConfiguration {
     private static final String AS_MESSAGE_HANDLER_ATTRIBUTE = "Symfony\\Component\\Messenger\\Attribute\\AsMessageHandler";
 
     public static void loadConfiguration(SymfonyMessengerConfiguration symfonyMessengerConfiguration) {
+        if (symfonyMessengerConfiguration == null) {
+            return;
+        }
         if (symfonyMessengerConfiguration.projectRootNamespace != null) {
             setProjectRootNamespace(symfonyMessengerConfiguration.projectRootNamespace);
         }

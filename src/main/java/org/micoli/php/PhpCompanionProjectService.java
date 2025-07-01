@@ -1,5 +1,6 @@
 package org.micoli.php;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.Project;
@@ -37,8 +38,11 @@ public final class PhpCompanionProjectService implements Disposable {
                 return;
             }
             this.configurationTimestamp = loadedConfiguration.timestamp;
+
             MessengerServiceConfiguration.loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
             PeerNavigationService.loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
+
+            DaemonCodeAnalyzer.getInstance(project).restart();
             Notification.message("PHP Companion Configuration loaded");
         } catch (NoConfigurationFileException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {
