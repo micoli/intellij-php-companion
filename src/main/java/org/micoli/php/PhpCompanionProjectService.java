@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
+import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
 import org.micoli.php.symfony.messenger.service.MessengerServiceConfiguration;
 import org.micoli.php.ui.Notification;
@@ -41,6 +42,7 @@ public final class PhpCompanionProjectService implements Disposable {
 
             MessengerServiceConfiguration.loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
             PeerNavigationService.loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
+            AttributeNavigationService.loadConfiguration(project, loadedConfiguration.configuration.attributeNavigation);
 
             DaemonCodeAnalyzer.getInstance(project).restart();
             Notification.message("PHP Companion Configuration loaded");

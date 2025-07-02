@@ -25,6 +25,9 @@
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.symfony.messenger.markers.MessengerLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider
+                language="PHP"
+                implementationClass="org.micoli.php.attributeNavigation.markers.AttributeNavigationLineMarkerProvider"/>
 
         <findUsagesHandlerFactory
             implementation="org.micoli.php.symfony.messenger.usage.MessengerFindUsagesHandlerFactory"

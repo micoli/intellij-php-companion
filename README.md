@@ -17,6 +17,11 @@ A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced 
 - **Flexible Mapping**: Define custom source-to-target class relationships
 - **Go to Declaration**: Jump between peer classes with a single keystroke
 
+### 🧑‍💻 Attribute Navigation 
+- **Attribute-based Navigation**: Open a intellij search with a formatted value of an attribute property
+- **Flexible Mapping**: Define custom attribute property and a formatter to generate a custom intellij search pattern
+- **Click and search**: Jump between peer classes with a single keystroke
+
 ### ⚙️ Configuration Management
 - **Hot Reload**: Configuration changes are automatically detected and applied
 - **Multiple Formats**: Support for JSON and YAML configuration files
@@ -34,48 +39,21 @@ The plugin uses configuration files placed in your project root. The plugin will
 
 ### Configuration Structure
 
-#### Complete Configuration Example
-
-```json
-{
-  "symfonyMessenger": {
-    "projectRootNamespace": "\\App",
-    "messageClassNamePatterns": ".*(Message|Command|Query|Event|Input)$",
-    "messageInterfaces": [
-      "App\\Shared\\Application\\Message\\MessageInterface"
-    ],
-    "messageHandlerInterfaces": [
-      "Symfony\\Component\\Messenger\\Handler\\MessageHandlerInterface"
-    ],
-    "dispatchMethods": [
-      "dispatch",
-      "query", 
-      "command",
-      "handle"
-    ],
-    "handlerMethods": [
-      "__invoke",
-      "handle"
-    ]
-  },
-  "peerNavigation": {
-    "peers": [
-      {
-        "source": "\\\\App\\\\Application\\\\(.+)\\\\Command\\\\(.+)Command",
-        "target": "\\\\App\\\\Application\\\\$1\\\\CommandHandler\\\\$2CommandHandler"
-      },
-      {
-        "source": "\\\\App\\\\Application\\\\(.+)\\\\Query\\\\(.+)Query", 
-        "target": "\\\\App\\\\Application\\\\$1\\\\QueryHandler\\\\$2QueryHandler"
-      }
-    ]
-  }
-}
-```
-
-#### YAML Configuration Example
+#### Complete YAML Configuration Example
 
 ```yaml
+attributeNavigation:
+  rules:
+    - attributeFQCN: "\\Symfony\\Component\\Routing\\Attribute\\Route"
+      propertyName: "path"
+      formatterScript: |
+        return (value
+          .replaceAll("^['\"]","")
+          .replaceAll("['\"]\$","")
+          .replaceAll("(\\{.*?\\})", "[^/]*")
+          + ":"
+        );
+
 symfonyMessenger:
   projectRootNamespace: "\\App"
   messageClassNamePatterns: ".*(Message|Command|Query|Event|Input)$"
