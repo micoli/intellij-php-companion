@@ -1,5 +1,6 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
@@ -97,7 +98,7 @@ intellijPlatform {
 
     pluginVerification {
         ides {
-            recommended()
+            ide(IntelliJPlatformType.PhpStorm, "2025.1") // Use appropriate version
         }
     }
 }
