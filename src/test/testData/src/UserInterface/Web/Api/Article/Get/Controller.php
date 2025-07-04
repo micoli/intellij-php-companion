@@ -36,14 +36,6 @@ final readonly class Controller
         #[CurrentUser] ?User $user,
         ArticleId $articleId,
     ): JsonResponse {
-        $article = $this->queryBus->query(new \App\Core\Query\Article\Query($articleId))->article;
-
-        if ($article === null) {
-            throw new NotFoundHttpException();
-        }
-
-        $articleDTO = $this->articleEnricher->enrich($user, [$article])[0];
-
-        return new JsonResponse(new Response(Article::from($articleDTO)));
+        return new JsonResponse(null);
     }
 }

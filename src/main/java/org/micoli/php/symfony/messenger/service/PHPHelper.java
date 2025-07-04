@@ -9,11 +9,18 @@ import org.jetbrains.annotations.Nullable;
 import org.micoli.php.service.PhpIndexUtil;
 
 public class PHPHelper {
-    public static String normalizeFQN(String fqn) {
+    public static String normalizeRootFQN(String fqn) {
         if (fqn.startsWith("\\")) {
             return fqn;
         }
         return "\\" + fqn;
+    }
+
+    public static String normalizeNonRootFQN(String fqn) {
+        if (fqn.startsWith("\\")) {
+            return fqn.substring(1);
+        }
+        return fqn;
     }
 
     public static PhpClass getPhpClassByFQN(Project project, String fqn) {
@@ -25,7 +32,7 @@ public class PHPHelper {
     public static boolean implementsInterfaces(PhpClass phpClass, String[] interfaceFQNs) {
         PhpIndex phpIndex = PhpIndex.getInstance(phpClass.getProject());
         for (String interfaceFQN : interfaceFQNs) {
-            if (PhpIndexUtil.getAllSubclasses(phpIndex, normalizeFQN(interfaceFQN)).stream().map(PhpNamedElement::getFQN).toList().contains(phpClass.getFQN())) {
+            if (PhpIndexUtil.getAllSubclasses(phpIndex, normalizeRootFQN(interfaceFQN)).stream().map(PhpNamedElement::getFQN).toList().contains(phpClass.getFQN())) {
                 return true;
             }
         }

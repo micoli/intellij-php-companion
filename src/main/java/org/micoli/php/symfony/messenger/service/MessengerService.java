@@ -129,7 +129,7 @@ public class MessengerService {
         // (This is expensive, so we might want to cache results)
         Collection<String> allClasses = phpIndex.getAllClassFqns(new PlainPrefixMatcher(MessengerServiceConfiguration.getProjectRootNamespace()));
         for (String className : allClasses) {
-            for (PhpClass phpClass : phpIndex.getClassesByFQN(PHPHelper.normalizeFQN(className))) {
+            for (PhpClass phpClass : phpIndex.getClassesByFQN(PHPHelper.normalizeRootFQN(className))) {
                 if (handlesMessageType(phpClass, messageClassName)) {
                     handlers.add(getInvokableMethod(phpClass));
                 }
@@ -140,7 +140,7 @@ public class MessengerService {
     }
 
     public static boolean isMethodCalledWithMessageInstance(MethodReference methodRef, String messageClassName) {
-        messageClassName = PHPHelper.normalizeFQN(messageClassName);
+        messageClassName = PHPHelper.normalizeRootFQN(messageClassName);
 
         PsiElement[] parameters = methodRef.getParameters();
         if (parameters.length == 0) {
@@ -213,7 +213,7 @@ public class MessengerService {
         PhpType paramType = firstParam.getType();
 
         if (!paramType.isEmpty()) {
-            return paramType.toString().replace("\\", "\\\\");
+            return paramType.toString();
         }
 
         return null;

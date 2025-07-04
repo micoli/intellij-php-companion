@@ -10,7 +10,7 @@ use App\Infrastructure\Bus\EventDispatcherInterface;
 use App\Infrastructure\Bus\Handler\EventHandlerInterface;
 use Psr\Log\LoggerInterface;
 
-final readonly class OnArticleCreated implements EventHandlerInterface
+final readonly class OnSecondArticleCreated implements EventHandlerInterface
 {
     public function __construct(
         private LoggerInterface $logger,
