@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
+import org.micoli.php.service.PsiElementService;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -45,6 +46,6 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        result.add(NavigationGutterIconBuilder.create(navigateIcon).setTargets(targetElement).setTooltipText("Navigate to [" + phpClass.getFQN() + "]").createLineMarkerInfo(phpClass));
+        result.add(NavigationGutterIconBuilder.create(navigateIcon).setTargets(targetElement).setTooltipText("Navigate to [" + phpClass.getFQN() + "]").createLineMarkerInfo(PsiElementService.findFirstLeafElement(phpClass)));
     }
 }
