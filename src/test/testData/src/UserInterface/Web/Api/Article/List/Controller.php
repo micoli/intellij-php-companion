@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UserInterface\Web\Api\Article\List;
 
-use App\Core\Article\Application\Query\Articles;
+use App\Core\Query\Article as Articles;
 use App\Core\Member\Domain\Entity\User;
 use App\Infrastructure\Bus\QueryBusInterface;
 use App\UserInterface\Web\Api\Article\ArticleEnricher;

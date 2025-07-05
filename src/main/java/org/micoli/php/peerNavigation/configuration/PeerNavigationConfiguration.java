@@ -1,5 +1,6 @@
 package org.micoli.php.peerNavigation.configuration;
 
 public final class PeerNavigationConfiguration {
-    public PeerNavigation[] peers = new PeerNavigation[] {};
+    public Peer[] peers = new Peer[] {};
+    public Associate[] associates = new Associate[] {};
 }

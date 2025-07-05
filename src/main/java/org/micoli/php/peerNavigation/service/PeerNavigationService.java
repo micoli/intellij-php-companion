@@ -25,8 +25,28 @@ public class PeerNavigationService {
         if (_peerNavigation == null) {
             return;
         }
+
         PeerNavigationService.project = project;
-        peers = Arrays.stream(_peerNavigation.peers).map(peer -> new PeerSourceTarget(Pattern.compile(peer.source), peer.target)).toList();
+
+        // format:off
+        peers.addAll(Arrays.stream(_peerNavigation.peers)
+            .map(peer -> new PeerSourceTarget(Pattern.compile(peer.source), peer.target))
+            .toList());
+        String patternNamedGroup = "\\(\\?<(?<namedGroup>.*?)>.*?\\)";
+        String namedGroupReplacement = "\\${${namedGroup}}";
+        peers.addAll(Arrays.stream(_peerNavigation.associates)
+            .map(associate -> new PeerSourceTarget(
+                Pattern.compile(associate.classA),
+                associate.classB.replaceAll(patternNamedGroup, namedGroupReplacement)
+            ))
+            .toList());
+        peers.addAll(Arrays.stream(_peerNavigation.associates)
+            .map(associate -> new PeerSourceTarget(
+                Pattern.compile(associate.classB),
+                associate.classA.replaceAll(patternNamedGroup, namedGroupReplacement)
+            ))
+            .toList());
+        // format:on
     }
 
     public static @Nullable PsiElement getPeerElement(@NotNull PsiElement sourceElement) {
