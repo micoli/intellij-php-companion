@@ -1,65 +1,36 @@
 package org.micoli.php.symfony.messenger.markers;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.micoli.php.service.PsiElementUtil;
 
 import java.awt.event.MouseEvent;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PsiElementsPopup {
-
-    private record PsiElementWrapper(PsiElement element) {
-        public String getPresentableText() {
-            String base = element.getContainingFile().getName();
-            if (element instanceof PsiNamedElement) {
-                return base + ": " + ((PsiNamedElement) element).getName();
-            }
-            return base + ": " + element.getText();
-        }
-
-        public void navigate(Project project) {
-            if (element instanceof Navigatable) {
-                ((Navigatable) element).navigate(true);
-            }
-        }
-    }
-
-    public static void showElementsPopup(Project project, MouseEvent mouseEvent, List<PsiElement> elements) {
-        List<PsiElementWrapper> wrappers = elements.stream()
-                .map(PsiElementWrapper::new)
-                .collect(Collectors.toList());
-
-        BaseListPopupStep<PsiElementWrapper> listPopupStep = new BaseListPopupStep<PsiElementWrapper>(
-                "Navigate to Element", wrappers) {
-
-            @Override
+    public static void showLinksToElementsPopup(MouseEvent mouseEvent, List<PsiElement> elements) {
+        // format:off
+        BaseListPopupStep<PsiElement> listPopupStep = new BaseListPopupStep<PsiElement>("Navigate to Element", elements) {
             @Nullable
-            public PopupStep onChosen(PsiElementWrapper selectedValue, boolean finalChoice) {
+            public PopupStep onChosen(PsiElement selectedValue, boolean finalChoice) {
                 if (finalChoice) {
-                    selectedValue.navigate(project);
+                    ((Navigatable) selectedValue).navigate(true);
                 }
                 return FINAL_CHOICE;
             }
 
-            @Override
-            @NotNull
-            public String getTextFor(PsiElementWrapper value) {
-                return value.getPresentableText();
+            public @NotNull String getTextFor(PsiElement element) {
+                return PsiElementUtil.getHumanReadableElementLink(element);
             }
         };
 
-        JBPopupFactory.getInstance()
-            .createListPopup(listPopupStep)
-            .show(new RelativePoint(mouseEvent));
-        ;
+        JBPopupFactory.getInstance().createListPopup(listPopupStep).show(new RelativePoint(mouseEvent));
+        // format:on
     }
 }
