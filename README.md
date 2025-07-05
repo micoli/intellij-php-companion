@@ -44,8 +44,9 @@ The plugin uses configuration files placed in your project root. The plugin will
 ```yaml
 attributeNavigation:
   rules:
-    - attributeFQCN: "\\Symfony\\Component\\Routing\\Attribute\\Route"
-      propertyName: "path"
+    - attributeFQCN: \Symfony\Component\Routing\Attribute\Route
+      propertyName: path
+      fileMask: "*.yaml,*.yml,*.php"
       formatterScript: |
         return (value
           .replaceAll("^['\"]","")
@@ -55,27 +56,27 @@ attributeNavigation:
         );
 
 symfonyMessenger:
-  projectRootNamespace: "\\App"
-  messageClassNamePatterns: ".*(Message|Command|Query|Event|Input)$"
+  projectRootNamespace: \App
+  messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
   messageInterfaces:
-    - "App\\Shared\\Application\\Message\\MessageInterface"
+    - App\Shared\Application\Message\MessageInterface
   messageHandlerInterfaces:
-    - "Symfony\\Component\\Messenger\\Handler\\MessageHandlerInterface"
+    - Symfony\Component\Messenger\Handler\MessageHandlerInterface
   dispatchMethods:
-    - "dispatch"
-    - "query"
-    - "command" 
-    - "handle"
+    - dispatch
+    - query
+    - command 
+    - handle
   handlerMethods:
-    - "__invoke"
-    - "handle"
+    - __invoke
+    - handle
 
 peerNavigation:
   peers:
-    - source: "\\\\App\\\\Application\\\\(.+)\\\\Command\\\\(.+)Command"
-      target: "\\\\App\\\\Application\\\\$1\\\\CommandHandler\\\\$2CommandHandler"
-    - source: "\\\\App\\\\Application\\\\(.+)\\\\Query\\\\(.+)Query"
-      target: "\\\\App\\\\Application\\\\$1\\\\QueryHandler\\\\$2QueryHandler"
+    - source: \\App\\Application\\(.+)\\Command\\(.+)Command
+      target: \\App\\Application\\$1\\CommandHandler\\$2CommandHandler
+    - source: \\App\\Application\\(.+)\\Query\\(.+)Query
+      target: \\App\\Application\\$1\\QueryHandler\\$2QueryHandler
 ```
 
 ### Symfony Messenger Configuration
