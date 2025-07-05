@@ -65,7 +65,11 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                     leafElement.getTextRange(),
                     navigateIcon,
                     element -> "Search for [" + attributeArgument.getArgument().getValue() + "]",
-                    (e, elt) -> openGlobalSearchWithRouteExpression(phpAttribute.getProject(), AttributeNavigationService.getFormattedValue(attributeArgument.getArgument().getValue(), rule.formatterScript)),
+                    (e, elt) -> openGlobalSearchWithRouteExpression(
+                            phpAttribute.getProject(),
+                            AttributeNavigationService.getFormattedValue(attributeArgument.getArgument().getValue(), rule.formatterScript),
+                            rule.fileMask
+                    ),
                     GutterIconRenderer.Alignment.CENTER,
                     () -> "Search for [" + attributeArgument.getArgument().getValue() + "]"
                 ));
@@ -73,7 +77,7 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
         }
     }
 
-    private void openGlobalSearchWithRouteExpression(Project project, String searchText) {
+    private void openGlobalSearchWithRouteExpression(Project project, String searchText, String fileMask) {
         ApplicationManager.getApplication().invokeLater(() -> {
             FindManager findManager = FindManager.getInstance(project);
             FindModel findModel = findManager.getFindInProjectModel().clone();
@@ -82,10 +86,9 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
             findModel.setRegularExpressions(true);
             findModel.setGlobal(true);
             findModel.setProjectScope(true);
-            findModel.setFileFilter("*.yaml,*.yml,*.php");
+            findModel.setFileFilter(fileMask);
 
-            findManager.showFindDialog(findModel, () -> {
-            });
+            findManager.showFindDialog(findModel, () -> {});
         });
     }
 
