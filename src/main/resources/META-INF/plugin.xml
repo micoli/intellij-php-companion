@@ -36,9 +36,7 @@
         <gotoDeclarationHandler
             implementation="org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandler"
         />
-<!--        <gotoDeclarationHandler-->
-<!--            implementation="org.micoli.php.peerNavigation.navigation.PeerNavigationGotoDeclarationHandler"-->
-<!--        />-->
+
         <projectService serviceImplementation="org.micoli.php.PhpCompanionProjectService"/>
         <postStartupActivity implementation="org.micoli.php.PhpCompanionProjectStartup"/>
 
