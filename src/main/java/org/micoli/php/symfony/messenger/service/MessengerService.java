@@ -13,6 +13,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
+import org.micoli.php.service.PhpUtil;
 
 public class MessengerService {
 
@@ -45,7 +46,7 @@ public class MessengerService {
         PhpType parameterType = parameters[0].getType();
         for (String type : parameterType.getTypes()) {
             if (type.startsWith("\\")) {
-                return PHPHelper.getPhpClassByFQN(handlerClass.getProject(), type);
+                return PhpUtil.getPhpClassByFQN(handlerClass.getProject(), type);
             }
         }
         return null;
@@ -129,7 +130,7 @@ public class MessengerService {
         // (This is expensive, so we might want to cache results)
         Collection<String> allClasses = phpIndex.getAllClassFqns(new PlainPrefixMatcher(MessengerServiceConfiguration.getProjectRootNamespace()));
         for (String className : allClasses) {
-            for (PhpClass phpClass : phpIndex.getClassesByFQN(PHPHelper.normalizeRootFQN(className))) {
+            for (PhpClass phpClass : phpIndex.getClassesByFQN(PhpUtil.normalizeRootFQN(className))) {
                 if (handlesMessageType(phpClass, messageClassName)) {
                     handlers.add(getInvokableMethod(phpClass));
                 }
@@ -140,7 +141,7 @@ public class MessengerService {
     }
 
     public static boolean isMethodCalledWithMessageInstance(MethodReference methodRef, String messageClassName) {
-        messageClassName = PHPHelper.normalizeRootFQN(messageClassName);
+        messageClassName = PhpUtil.normalizeRootFQN(messageClassName);
 
         PsiElement[] parameters = methodRef.getParameters();
         if (parameters.length == 0) {
@@ -220,15 +221,15 @@ public class MessengerService {
     }
 
     public static boolean implementsMessageHandlerInterfaces(PhpClass phpClass) {
-        return PHPHelper.implementsInterfaces(phpClass, MessengerServiceConfiguration.getMessageHandlerInterfaces());
+        return PhpUtil.implementsInterfaces(phpClass, MessengerServiceConfiguration.getMessageHandlerInterfaces());
     }
 
     public static boolean implementsMessageInterfaces(PhpClass phpClass) {
-        return PHPHelper.implementsInterfaces(phpClass, MessengerServiceConfiguration.getMessageInterfaces());
+        return PhpUtil.implementsInterfaces(phpClass, MessengerServiceConfiguration.getMessageInterfaces());
     }
 
     public static boolean hasHandlerAttribute(PhpClass phpClass) {
-        return PHPHelper.hasAttribute(phpClass, MessengerServiceConfiguration.getAsMessageHandlerAttribute());
+        return PhpUtil.hasAttribute(phpClass, MessengerServiceConfiguration.getAsMessageHandlerAttribute());
     }
 
     public static boolean isDispatchMethod(String methodName) {

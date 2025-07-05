@@ -13,9 +13,9 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.micoli.php.service.PsiElementService;
+import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.PsiElementUtil;
 import org.micoli.php.symfony.messenger.service.MessengerService;
-import org.micoli.php.symfony.messenger.service.PHPHelper;
 import org.micoli.php.ui.Notification;
 
 import javax.swing.*;
@@ -54,7 +54,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        String messageClassName = PHPHelper.getFirstParameterType(methodRef.getParameters());
+        String messageClassName = PhpUtil.getFirstParameterType(methodRef.getParameters());
 
         if (messageClassName == null) {
             return;
@@ -66,11 +66,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        result.add(NavigationGutterIconBuilder
-            .create(navigateSendIcon)
-            .setTargets(handlers.stream().map(PsiElementService::findFirstLeafElement).toList())
-            .setTooltipText("Navigate to message handlers")
-            .createLineMarkerInfo(PsiElementService.findFirstLeafElement(methodRef)));
+        result.add(NavigationGutterIconBuilder.create(navigateSendIcon).setTargets(handlers).setTooltipText("Navigate to message handlers").createLineMarkerInfo(PsiElementUtil.findFirstLeafElement(methodRef)));
     }
 
     private void processHandleMethod(Method method, Collection<? super LineMarkerInfo<?>> result) {
@@ -88,22 +84,13 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
         }
 
         Project project = method.getProject();
-        PhpClass msgClass = PHPHelper.findClassByFQN(project, PHPHelper.normalizeNonRootFQN(messageClassName));
+        PhpClass msgClass = PhpUtil.findClassByFQN(project, PhpUtil.normalizeNonRootFQN(messageClassName));
         if (msgClass == null) {
             return;
         }
         if (MessengerService.isMessageClass(msgClass)) {
-            PsiElement leafElement = PsiElementService.findFirstLeafElement(method);
-            result.add(new LineMarkerInfo<>(
-                leafElement,
-                leafElement.getTextRange(),
-                navigateReceiveIcon,
-                psiElement -> "Search for usages of [" + messageClassName + "]",
-                (mouseEvent, elt) ->  navigateToMessageDispatchCalls(mouseEvent, project, messageClassName),
-                GutterIconRenderer.Alignment.CENTER,
-                () -> "Search for usages of [" + messageClassName + "]"
-            ));
-
+            PsiElement leafElement = PsiElementUtil.findFirstLeafElement(method);
+            result.add(new LineMarkerInfo<>(leafElement, leafElement.getTextRange(), navigateReceiveIcon, psiElement -> "Search for usages of [" + messageClassName + "]", (mouseEvent, elt) -> navigateToMessageDispatchCalls(mouseEvent, project, messageClassName), GutterIconRenderer.Alignment.CENTER, () -> "Search for usages of [" + messageClassName + "]"));
         }
     }
 
@@ -126,7 +113,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             }
             return;
         }
-        PsiElementsPopup.showElementsPopup(project, mouseEvent, elements);
+        PsiElementsPopup.showLinksToElementsPopup(mouseEvent, elements);
     }
 
 }

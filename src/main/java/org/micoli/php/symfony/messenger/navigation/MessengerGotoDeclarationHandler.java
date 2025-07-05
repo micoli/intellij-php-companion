@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.symfony.messenger.service.MessengerService;
-import org.micoli.php.symfony.messenger.service.PHPHelper;
+import org.micoli.php.service.PhpUtil;
 
 public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
 
@@ -29,7 +29,7 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
             return null;
         }
 
-        String messageClassName = PHPHelper.getFirstParameterType(methodRef.getParameters());
+        String messageClassName = PhpUtil.getFirstParameterType(methodRef.getParameters());
 
         if (messageClassName == null) {
             return null;

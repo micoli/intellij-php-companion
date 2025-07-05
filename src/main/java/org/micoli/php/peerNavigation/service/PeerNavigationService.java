@@ -6,7 +6,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration;
-import org.micoli.php.symfony.messenger.service.PHPHelper;
+import org.micoli.php.service.PhpUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,23 +29,11 @@ public class PeerNavigationService {
         PeerNavigationService.project = project;
 
         // format:off
-        peers.addAll(Arrays.stream(_peerNavigation.peers)
-            .map(peer -> new PeerSourceTarget(Pattern.compile(peer.source), peer.target))
-            .toList());
+        peers.addAll(Arrays.stream(_peerNavigation.peers).map(peer -> new PeerSourceTarget(Pattern.compile(peer.source), peer.target)).toList());
         String patternNamedGroup = "\\(\\?<(?<namedGroup>.*?)>.*?\\)";
         String namedGroupReplacement = "\\${${namedGroup}}";
-        peers.addAll(Arrays.stream(_peerNavigation.associates)
-            .map(associate -> new PeerSourceTarget(
-                Pattern.compile(associate.classA),
-                associate.classB.replaceAll(patternNamedGroup, namedGroupReplacement)
-            ))
-            .toList());
-        peers.addAll(Arrays.stream(_peerNavigation.associates)
-            .map(associate -> new PeerSourceTarget(
-                Pattern.compile(associate.classB),
-                associate.classA.replaceAll(patternNamedGroup, namedGroupReplacement)
-            ))
-            .toList());
+        peers.addAll(Arrays.stream(_peerNavigation.associates).map(associate -> new PeerSourceTarget(Pattern.compile(associate.classA), associate.classB.replaceAll(patternNamedGroup, namedGroupReplacement))).toList());
+        peers.addAll(Arrays.stream(_peerNavigation.associates).map(associate -> new PeerSourceTarget(Pattern.compile(associate.classB), associate.classA.replaceAll(patternNamedGroup, namedGroupReplacement))).toList());
         // format:on
     }
 
@@ -61,7 +49,7 @@ public class PeerNavigationService {
             if (!matcher.find()) {
                 continue;
             }
-            PhpClass target = PHPHelper.getPhpClassByFQN(project, matcher.replaceFirst(peer.target));
+            PhpClass target = PhpUtil.getPhpClassByFQN(project, matcher.replaceFirst(peer.target));
             if (target != null) {
                 result.add(target);
             }

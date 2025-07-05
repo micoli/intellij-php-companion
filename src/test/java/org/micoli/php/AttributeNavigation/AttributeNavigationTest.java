@@ -30,9 +30,9 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
         List<GutterMark> lineMarkers = myFixture.findAllGutters();
         assertNotEmpty(lineMarkers);
 
-        List<GutterMark> specificMarkers = lineMarkers.stream().filter(it->{
+        List<GutterMark> specificMarkers = lineMarkers.stream().filter(it -> {
             String tooltipText = it.getTooltipText();
-            if(tooltipText == null){
+            if (tooltipText == null) {
                 return false;
             }
             return tooltipText.contains("Search for [");

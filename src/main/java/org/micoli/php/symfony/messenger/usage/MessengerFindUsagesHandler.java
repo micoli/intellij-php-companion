@@ -14,7 +14,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass;
 import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.symfony.messenger.service.MessengerService;
-import org.micoli.php.symfony.messenger.service.PHPHelper;
+import org.micoli.php.service.PhpUtil;
 
 class MessengerFindUsagesHandler extends FindUsagesHandler {
 
@@ -61,7 +61,7 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
             return true;
         }
 
-        PhpClass msgClass = PHPHelper.findClassByFQN(project, messageClassName);
+        PhpClass msgClass = PhpUtil.findClassByFQN(project, messageClassName);
         if (msgClass != null) {
             return findDispatchUsages(msgClass, processor, options);
         }

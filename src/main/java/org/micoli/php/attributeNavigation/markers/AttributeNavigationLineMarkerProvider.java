@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.attributeNavigation.configuration.NavigationByAttributeRule;
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
-import org.micoli.php.service.PsiElementService;
-import org.micoli.php.symfony.messenger.service.PHPHelper;
+import org.micoli.php.service.PsiElementUtil;
+import org.micoli.php.service.PhpUtil;
 
 import javax.swing.*;
 import java.util.*;
@@ -47,10 +47,10 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
     private void processPhpAttribute(PhpAttribute phpAttribute, Collection<? super LineMarkerInfo<?>> result) {
         for (NavigationByAttributeRule rule : AttributeNavigationService.getRules()) {
             String fqn = phpAttribute.getFQN();
-            if(fqn == null){
+            if (fqn == null) {
                 continue;
             }
-            if (!PHPHelper.normalizeNonRootFQN(fqn).equals( PHPHelper.normalizeNonRootFQN(rule.attributeFQCN))) {
+            if (!PhpUtil.normalizeNonRootFQN(fqn).equals(PhpUtil.normalizeNonRootFQN(rule.attributeFQCN))) {
                 continue;
             }
 
@@ -59,20 +59,8 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                 if (!(attributeArgument.getName().equals(rule.propertyName) || (rule.isDefault && attributeArgument.getName().isEmpty()))) {
                     continue;
                 }
-                PsiElement leafElement = PsiElementService.findFirstLeafElement(phpAttribute);
-                result.add(new LineMarkerInfo<>(
-                    leafElement,
-                    leafElement.getTextRange(),
-                    navigateIcon,
-                    element -> "Search for [" + attributeArgument.getArgument().getValue() + "]",
-                    (e, elt) -> openGlobalSearchWithRouteExpression(
-                            phpAttribute.getProject(),
-                            AttributeNavigationService.getFormattedValue(attributeArgument.getArgument().getValue(), rule.formatterScript),
-                            rule.fileMask
-                    ),
-                    GutterIconRenderer.Alignment.CENTER,
-                    () -> "Search for [" + attributeArgument.getArgument().getValue() + "]"
-                ));
+                PsiElement leafElement = PsiElementUtil.findFirstLeafElement(phpAttribute);
+                result.add(new LineMarkerInfo<>(leafElement, leafElement.getTextRange(), navigateIcon, element -> "Search for [" + attributeArgument.getArgument().getValue() + "]", (e, elt) -> openGlobalSearchWithRouteExpression(phpAttribute.getProject(), AttributeNavigationService.getFormattedValue(attributeArgument.getArgument().getValue(), rule.formatterScript), rule.fileMask), GutterIconRenderer.Alignment.CENTER, () -> "Search for [" + attributeArgument.getArgument().getValue() + "]"));
             }
         }
     }
@@ -88,7 +76,8 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
             findModel.setProjectScope(true);
             findModel.setFileFilter(fileMask);
 
-            findManager.showFindDialog(findModel, () -> {});
+            findManager.showFindDialog(findModel, () -> {
+            });
         });
     }
 

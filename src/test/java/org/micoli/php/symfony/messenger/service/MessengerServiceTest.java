@@ -12,6 +12,7 @@ import java.util.Objects;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
+import org.micoli.php.service.PhpUtil;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
 
 public class MessengerServiceTest extends BasePlatformTestCase {
@@ -26,7 +27,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageClassNamePatterns = ".*(edEvent|Command)$";
         MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
-        PhpClass phpClass = PHPHelper.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+        PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertTrue(MessengerService.isMessageClass(phpClass));
     }
@@ -36,7 +37,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageClassNamePatterns = ".*(Command)$";
         MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
-        PhpClass phpClass = PHPHelper.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+        PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertFalse(MessengerService.isMessageClass(phpClass));
     }
@@ -46,7 +47,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageInterfaces = new String[] { "App\\Infrastructure\\Bus\\Message\\MessageInterface" };
         MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
-        PhpClass phpClass = PHPHelper.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+        PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertTrue(MessengerService.isMessageClass(phpClass));
     }
@@ -65,9 +66,9 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         List<GutterMark> lineMarkers = myFixture.findAllGutters();
         assertNotEmpty(lineMarkers);
 
-        List<GutterMark> specificMarkers = lineMarkers.stream().filter(it->{
+        List<GutterMark> specificMarkers = lineMarkers.stream().filter(it -> {
             String tooltipText = it.getTooltipText();
-            if(tooltipText ==null){
+            if (tooltipText == null) {
                 return false;
             }
             return tooltipText.contains("Search for usages") || tooltipText.contains("Navigate to message handlers");
@@ -78,11 +79,11 @@ public class MessengerServiceTest extends BasePlatformTestCase {
     public void testItCanFindDispatchCallsForMessageClass() {
         myFixture.copyDirectoryToProject("src", "src");
         loadPluginConfiguration(getTestDataPath());
-        Collection<MethodReference> callsWithoutRootNamespace =MessengerService.findDispatchCallsForMessage(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
-        Collection<MethodReference> callsWithRootNamespace =MessengerService.findDispatchCallsForMessage(getProject(), "\\App\\Core\\Event\\ArticleCreatedEvent");
+        Collection<MethodReference> callsWithoutRootNamespace = MessengerService.findDispatchCallsForMessage(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+        Collection<MethodReference> callsWithRootNamespace = MessengerService.findDispatchCallsForMessage(getProject(), "\\App\\Core\\Event\\ArticleCreatedEvent");
 
         assertEquals(1, callsWithoutRootNamespace.size());
-        assertEquals(callsWithRootNamespace.size(),callsWithoutRootNamespace.size());
+        assertEquals(callsWithRootNamespace.size(), callsWithoutRootNamespace.size());
     }
 
     private void loadPluginConfiguration(String path) {

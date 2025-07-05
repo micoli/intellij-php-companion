@@ -1,4 +1,4 @@
-package org.micoli.php.symfony.messenger.service;
+package org.micoli.php.service;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -6,9 +6,8 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
-import org.micoli.php.service.PhpIndexUtil;
 
-public class PHPHelper {
+public class PhpUtil {
     public static String normalizeRootFQN(String fqn) {
         if (fqn.startsWith("\\")) {
             return fqn;

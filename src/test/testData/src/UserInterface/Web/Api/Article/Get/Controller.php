@@ -9,7 +9,6 @@ use App\Core\Id\ArticleId;
 use App\Core\Member\Domain\Entity\User;
 use App\Infrastructure\Bus\QueryBusInterface;
 use App\UserInterface\Web\Api\Article\ArticleEnricher;
-use App\UserInterface\Web\Api\Article\Models\Article;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;

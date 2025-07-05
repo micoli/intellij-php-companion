@@ -46,6 +46,10 @@ final readonly class Controller
         #[CurrentUser] ?User $user,
         int $page,
     ): JsonResponse {
+        $results = $this->queryBus->query(new Articles\Query(
+            page: $page,
+        ))->articles;
+
         return new JsonResponse(
             new ArticlesResponse(
                 $page,
