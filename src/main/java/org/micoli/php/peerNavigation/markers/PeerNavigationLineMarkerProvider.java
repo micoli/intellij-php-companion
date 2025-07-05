@@ -40,12 +40,22 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
     }
 
     private void processPhpClass(PhpClass phpClass, Collection<? super LineMarkerInfo<?>> result) {
-        PsiElement targetElement = PeerNavigationService.getPeerElement(phpClass);
+        List<PsiElement> targetElements = PeerNavigationService.getPeersElement(phpClass);
 
-        if (targetElement == null) {
+        if (targetElements == null) {
             return;
         }
 
-        result.add(NavigationGutterIconBuilder.create(navigateIcon).setTargets(targetElement).setTooltipText("Navigate to [" + phpClass.getFQN() + "]").createLineMarkerInfo(PsiElementService.findFirstLeafElement(phpClass)));
+        PsiElement firstLeafElement = PsiElementService.findFirstLeafElement(phpClass);
+        targetElements.forEach(targetElement ->
+            // format:off
+            result.add(NavigationGutterIconBuilder
+                    .create(navigateIcon)
+                    .setTargets(targetElement)
+                    .setTooltipText("Navigate to [" + phpClass.getFQN() + "]")
+                    .createLineMarkerInfo(firstLeafElement)
+            )
+            // format:on
+        );
     }
 }

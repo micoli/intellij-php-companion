@@ -49,11 +49,12 @@ public class PeerNavigationService {
         // format:on
     }
 
-    public static @Nullable PsiElement getPeerElement(@NotNull PsiElement sourceElement) {
+    public static @Nullable List<PsiElement> getPeersElement(@NotNull PsiElement sourceElement) {
         if (!(sourceElement instanceof PhpClass sourceClass)) {
             return null;
         }
         String sourceClassFQN = sourceClass.getFQN();
+        ArrayList<PsiElement> result = new ArrayList<>();
 
         for (PeerSourceTarget peer : peers) {
             Matcher matcher = peer.source.matcher(sourceClassFQN);
@@ -62,11 +63,11 @@ public class PeerNavigationService {
             }
             PhpClass target = PHPHelper.getPhpClassByFQN(project, matcher.replaceFirst(peer.target));
             if (target != null) {
-                return target;
+                result.add(target);
             }
         }
 
-        return null;
+        return result.isEmpty() ? null : result;
     }
 
     public static Boolean configurationIsEmpty() {

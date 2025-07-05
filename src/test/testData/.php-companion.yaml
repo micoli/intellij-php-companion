@@ -14,11 +14,11 @@ peerNavigation:
   associates:
     - classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
       classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
-#  peers:
-#    - source: ^\\App\\Tests\\Func\\(.*)\\ControllerTest$
-#      target: \\App\\$1\\Controller
-#    - source: ^\\App\\(.*)\\Controller$
-#      target: \\App\\Tests\\Func\\$1\\ControllerTest
+  peers:
+    - source: ^\\App\\Tests\\Func\\(.*)\\ControllerTest$
+      target: \\App\\$1\\Controller
+    - source: ^\\App\\(.*)\\Controller$
+      target: \\App\\Tests\\Func\\$1\\ControllerTest
 
 symfonyMessenger:
   messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$

@@ -27,8 +27,8 @@ public class PeerNavigationServiceTest extends BasePlatformTestCase {
         PhpClass fqn2 = PHPHelper.getPhpClassByFQN(getProject(), "\\App\\Tests\\Func\\UserInterface\\Web\\Api\\Article\\Get\\ControllerTest");
         assertNotNull(fqn1);
         assertNotNull(fqn2);
-        assertEquals(fqn2, PeerNavigationService.getPeerElement(fqn1));
-        assertEquals(fqn1, PeerNavigationService.getPeerElement(fqn2));
+        assertEquals(fqn2, PeerNavigationService.getPeersElement(fqn1).getFirst());
+        assertEquals(fqn1, PeerNavigationService.getPeersElement(fqn2).getFirst());
     }
 
     public void testItCanFindLineMarkersFor() {
