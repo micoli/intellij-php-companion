@@ -1,5 +1,7 @@
 package org.micoli.php.symfony.messenger.markers;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -16,21 +18,29 @@ import java.util.List;
 public class PsiElementsPopup {
     public static void showLinksToElementsPopup(MouseEvent mouseEvent, List<PsiElement> elements) {
         // format:off
-        BaseListPopupStep<PsiElement> listPopupStep = new BaseListPopupStep<PsiElement>("Navigate to Element", elements) {
-            @Nullable
-            public PopupStep onChosen(PsiElement selectedValue, boolean finalChoice) {
-                if (finalChoice) {
-                    ((Navigatable) selectedValue).navigate(true);
+        BaseListPopupStep<PsiElement> listPopupStep = new BaseListPopupStep<>("Navigate to Element", elements) {
+            @Override
+            public @Nullable PopupStep<?> onChosen(PsiElement selectedValue, boolean finalChoice) {
+                if (finalChoice && selectedValue instanceof Navigatable navigatable) {
+                    ApplicationManager.getApplication().invokeLater(() -> navigatable.navigate(true));
                 }
                 return FINAL_CHOICE;
             }
 
+            @Override
             public @NotNull String getTextFor(PsiElement element) {
                 return PsiElementUtil.getHumanReadableElementLink(element);
             }
+
+            @Override
+            public boolean isSpeedSearchEnabled() {
+                return true;
+            }
         };
 
-        JBPopupFactory.getInstance().createListPopup(listPopupStep).show(new RelativePoint(mouseEvent));
+        JBPopup popup = JBPopupFactory.getInstance().createListPopup(listPopupStep);
+
+        popup.show(new RelativePoint(mouseEvent));
         // format:on
     }
 }

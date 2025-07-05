@@ -66,7 +66,14 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        result.add(NavigationGutterIconBuilder.create(navigateSendIcon).setTargets(handlers).setTooltipText("Navigate to message handlers").createLineMarkerInfo(PsiElementUtil.findFirstLeafElement(methodRef)));
+        // format:off
+        result.add(NavigationGutterIconBuilder
+            .create(navigateSendIcon)
+            .setTargets(handlers)
+            .setTooltipText("Navigate to message handlers")
+            .createLineMarkerInfo(PsiElementUtil.findFirstLeafElement(methodRef))
+        );
+        // format:on
     }
 
     private void processHandleMethod(Method method, Collection<? super LineMarkerInfo<?>> result) {

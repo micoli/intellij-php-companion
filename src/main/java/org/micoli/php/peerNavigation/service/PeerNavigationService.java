@@ -19,7 +19,7 @@ public class PeerNavigationService {
     }
 
     private static Project project;
-    private static List<PeerSourceTarget> peers = new ArrayList<>();
+    private static final List<PeerSourceTarget> peers = new ArrayList<>();
 
     public static void loadConfiguration(Project project, PeerNavigationConfiguration _peerNavigation) {
         if (_peerNavigation == null) {

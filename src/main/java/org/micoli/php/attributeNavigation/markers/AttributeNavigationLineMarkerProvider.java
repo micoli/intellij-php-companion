@@ -60,7 +60,17 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                     continue;
                 }
                 PsiElement leafElement = PsiElementUtil.findFirstLeafElement(phpAttribute);
-                result.add(new LineMarkerInfo<>(leafElement, leafElement.getTextRange(), navigateIcon, element -> "Search for [" + attributeArgument.getArgument().getValue() + "]", (e, elt) -> openGlobalSearchWithRouteExpression(phpAttribute.getProject(), AttributeNavigationService.getFormattedValue(attributeArgument.getArgument().getValue(), rule.formatterScript), rule.fileMask), GutterIconRenderer.Alignment.CENTER, () -> "Search for [" + attributeArgument.getArgument().getValue() + "]"));
+                // format:off
+                result.add(new LineMarkerInfo<>(
+                    leafElement,
+                    leafElement.getTextRange(),
+                    navigateIcon,
+                    element -> "Search for [" + attributeArgument.getArgument().getValue() + "]",
+                    (e, elt) -> openGlobalSearchWithRouteExpression(phpAttribute.getProject(), AttributeNavigationService.getFormattedValue(attributeArgument.getArgument().getValue(), rule.formatterScript), rule.fileMask),
+                    GutterIconRenderer.Alignment.CENTER,
+                    () -> "Search for [" + attributeArgument.getArgument().getValue() + "]")
+                );
+                // format:on
             }
         }
     }

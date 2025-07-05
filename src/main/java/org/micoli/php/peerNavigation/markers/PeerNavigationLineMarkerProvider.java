@@ -47,10 +47,15 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
         }
 
         PsiElement firstLeafElement = PsiElementUtil.findFirstLeafElement(phpClass);
-        targetElements.forEach(targetElement ->
+
         // format:off
-        result.add(NavigationGutterIconBuilder.create(navigateIcon).setTargets(targetElement).setTooltipText("Navigate to [" + phpClass.getFQN() + "]").createLineMarkerInfo(firstLeafElement))
+        targetElements.forEach(targetElement -> result
+            .add(NavigationGutterIconBuilder
+            .create(navigateIcon)
+            .setTargets(targetElement)
+            .setTooltipText("Navigate to [" + phpClass.getFQN() + "]")
+            .createLineMarkerInfo(firstLeafElement)
+        ));
         // format:on
-        );
     }
 }

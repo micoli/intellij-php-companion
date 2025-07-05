@@ -1,6 +1,8 @@
 package org.micoli.php.service;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -26,13 +28,16 @@ public class PsiElementUtil {
     }
 
     public static @NotNull String getHumanReadableElementLink(PsiElement element) {
-        String base = PathUtil.getPathWithParent(element.getContainingFile(), 2);
+        return ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
+            String base = PathUtil.getPathWithParent(element.getContainingFile(), 2);
 
-        if (element instanceof PsiNamedElement) {
-            return base + "#" + getLineNumber(element) + ": " + ((PsiNamedElement) element).getName();
-        }
+            if (element instanceof PsiNamedElement) {
+                return base + "#" + getLineNumber(element) + ": " + ((PsiNamedElement) element).getName();
+            }
 
-        return base + "#" + getLineNumber(element) + ": " + element.getText().replaceAll("\\s( *)", " ");
+            return base + "#" + getLineNumber(element) + ": " + element.getText().replaceAll("\\s( *)", " ");
+        });
+
     }
 
 }
