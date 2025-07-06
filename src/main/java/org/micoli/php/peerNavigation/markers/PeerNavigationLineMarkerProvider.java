@@ -52,7 +52,7 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
 
         PsiElement leafElement = PsiElementUtil.findFirstLeafElement(phpClass);
 
-        // format:off
+        // spotless:off
         String tooltip = "Search for peer of [" + phpClass.getFQN() + "]";
         result.add(new LineMarkerInfo<>(
                 leafElement,
@@ -63,7 +63,7 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
                 GutterIconRenderer.Alignment.CENTER,
                 () -> tooltip)
         );
-        // format:on
+        // spotless:on
     }
 
     private static void navigateToAssociatedElements(MouseEvent mouseEvent, List<PsiElement> targetElements) {

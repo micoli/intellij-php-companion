@@ -17,7 +17,7 @@ import java.util.List;
 
 public class PsiElementsPopup {
     public static void showLinksToElementsPopup(MouseEvent mouseEvent, List<PsiElement> elements) {
-        // format:off
+        // spotless:off
         BaseListPopupStep<PsiElement> listPopupStep = new BaseListPopupStep<>("Navigate to Element", elements) {
             @Override
             public @Nullable PopupStep<?> onChosen(PsiElement selectedValue, boolean finalChoice) {
@@ -41,6 +41,6 @@ public class PsiElementsPopup {
         JBPopup popup = JBPopupFactory.getInstance().createListPopup(listPopupStep);
 
         popup.show(new RelativePoint(mouseEvent));
-        // format:on
+        // spotless:on
     }
 }

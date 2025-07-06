@@ -66,14 +66,14 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        // format:off
+        // spotless:off
         result.add(NavigationGutterIconBuilder
             .create(navigateSendIcon)
             .setTargets(handlers)
             .setTooltipText("Navigate to message handlers")
             .createLineMarkerInfo(PsiElementUtil.findFirstLeafElement(methodRef))
         );
-        // format:on
+        // spotless:on
     }
 
     private void processHandleMethod(Method method, Collection<? super LineMarkerInfo<?>> result) {
@@ -97,7 +97,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
         }
         if (MessengerService.isMessageClass(msgClass)) {
             PsiElement leafElement = PsiElementUtil.findFirstLeafElement(method);
-            // format:off
+            // spotless:off
             result.add(new LineMarkerInfo<>(
                 leafElement,
                 leafElement.getTextRange(),
@@ -107,7 +107,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
                 GutterIconRenderer.Alignment.CENTER,
                 () -> "Search for usages of [" + messageClassName + "]")
             );
-            // format:on
+            // spotless:on
         }
     }
 

@@ -31,7 +31,7 @@ public class PeerNavigationService {
         String patternNamedGroup = "\\(\\?<(?<namedGroup>.*?)>.*?\\)";
         String namedGroupReplacement = "\\${${namedGroup}}";
 
-        // format:off
+        // spotless:off
         peers.addAll(Arrays.stream(_peerNavigation.peers).map(peer -> new PeerSourceTarget(
             Pattern.compile(peer.source),
             peer.target
@@ -44,7 +44,7 @@ public class PeerNavigationService {
             Pattern.compile(associate.classB),
             associate.classA.replaceAll(patternNamedGroup, namedGroupReplacement)
         )).toList());
-        // format:on
+        // spotless:on
     }
 
     public static @Nullable List<PsiElement> getPeersElement(@NotNull PsiElement sourceElement) {
