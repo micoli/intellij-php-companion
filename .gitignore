@@ -2,6 +2,7 @@
 .idea
 .intellijPlatform
 .qodana
+.env
 build
 context/
 context/dir-src_.md

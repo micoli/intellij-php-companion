@@ -44,7 +44,7 @@ public class PeerNavigationServiceTest extends BasePlatformTestCase {
             if (tooltipText == null) {
                 return false;
             }
-            return tooltipText.contains("Navigate to [");
+            return tooltipText.contains("Search for peer of [");
         }).toList();
 
         assertEquals(1, specificMarkers.size());

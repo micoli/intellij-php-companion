@@ -97,7 +97,17 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
         }
         if (MessengerService.isMessageClass(msgClass)) {
             PsiElement leafElement = PsiElementUtil.findFirstLeafElement(method);
-            result.add(new LineMarkerInfo<>(leafElement, leafElement.getTextRange(), navigateReceiveIcon, psiElement -> "Search for usages of [" + messageClassName + "]", (mouseEvent, elt) -> navigateToMessageDispatchCalls(mouseEvent, project, messageClassName), GutterIconRenderer.Alignment.CENTER, () -> "Search for usages of [" + messageClassName + "]"));
+            // format:off
+            result.add(new LineMarkerInfo<>(
+                leafElement,
+                leafElement.getTextRange(),
+                navigateReceiveIcon,
+                psiElement -> "Search for usages of [" + messageClassName + "]",
+                (mouseEvent, elt) -> navigateToMessageDispatchCalls(mouseEvent, project, messageClassName),
+                GutterIconRenderer.Alignment.CENTER,
+                () -> "Search for usages of [" + messageClassName + "]")
+            );
+            // format:on
         }
     }
 

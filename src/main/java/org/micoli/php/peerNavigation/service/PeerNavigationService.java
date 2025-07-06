@@ -10,6 +10,7 @@ import org.micoli.php.service.PhpUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,13 +28,22 @@ public class PeerNavigationService {
         }
 
         PeerNavigationService.project = project;
-
-        // format:off
-        peers.addAll(Arrays.stream(_peerNavigation.peers).map(peer -> new PeerSourceTarget(Pattern.compile(peer.source), peer.target)).toList());
         String patternNamedGroup = "\\(\\?<(?<namedGroup>.*?)>.*?\\)";
         String namedGroupReplacement = "\\${${namedGroup}}";
-        peers.addAll(Arrays.stream(_peerNavigation.associates).map(associate -> new PeerSourceTarget(Pattern.compile(associate.classA), associate.classB.replaceAll(patternNamedGroup, namedGroupReplacement))).toList());
-        peers.addAll(Arrays.stream(_peerNavigation.associates).map(associate -> new PeerSourceTarget(Pattern.compile(associate.classB), associate.classA.replaceAll(patternNamedGroup, namedGroupReplacement))).toList());
+
+        // format:off
+        peers.addAll(Arrays.stream(_peerNavigation.peers).map(peer -> new PeerSourceTarget(
+            Pattern.compile(peer.source),
+            peer.target
+        )).toList());
+        peers.addAll(Arrays.stream(_peerNavigation.associates).map(associate -> new PeerSourceTarget(
+            Pattern.compile(associate.classA),
+            associate.classB.replaceAll(patternNamedGroup, namedGroupReplacement)
+        )).toList());
+        peers.addAll(Arrays.stream(_peerNavigation.associates).map(associate -> new PeerSourceTarget(
+            Pattern.compile(associate.classB),
+            associate.classA.replaceAll(patternNamedGroup, namedGroupReplacement)
+        )).toList());
         // format:on
     }
 
@@ -42,7 +52,7 @@ public class PeerNavigationService {
             return null;
         }
         String sourceClassFQN = sourceClass.getFQN();
-        ArrayList<PsiElement> result = new ArrayList<>();
+        HashSet<PsiElement> result = new HashSet<>();
 
         for (PeerSourceTarget peer : peers) {
             Matcher matcher = peer.source.matcher(sourceClassFQN);
@@ -55,7 +65,7 @@ public class PeerNavigationService {
             }
         }
 
-        return result.isEmpty() ? null : result;
+        return result.isEmpty() ? null : result.stream().toList();
     }
 
     public static Boolean configurationIsEmpty() {

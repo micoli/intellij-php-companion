@@ -2,16 +2,20 @@ package org.micoli.php.peerNavigation.markers;
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
-import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
 import org.micoli.php.service.PsiElementUtil;
+import org.micoli.php.symfony.messenger.markers.PsiElementsPopup;
+import org.micoli.php.ui.Notification;
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,16 +50,33 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        PsiElement firstLeafElement = PsiElementUtil.findFirstLeafElement(phpClass);
+        PsiElement leafElement = PsiElementUtil.findFirstLeafElement(phpClass);
 
         // format:off
-        targetElements.forEach(targetElement -> result
-            .add(NavigationGutterIconBuilder
-            .create(navigateIcon)
-            .setTargets(targetElement)
-            .setTooltipText("Navigate to [" + phpClass.getFQN() + "]")
-            .createLineMarkerInfo(firstLeafElement)
-        ));
+        String tooltip = "Search for peer of [" + phpClass.getFQN() + "]";
+        result.add(new LineMarkerInfo<>(
+                leafElement,
+                leafElement.getTextRange(),
+                navigateIcon,
+                psiElement -> tooltip,
+                (mouseEvent, elt) -> navigateToAssociatedElements(mouseEvent, targetElements),
+                GutterIconRenderer.Alignment.CENTER,
+                () -> tooltip)
+        );
         // format:on
+    }
+
+    private static void navigateToAssociatedElements(MouseEvent mouseEvent, List<PsiElement> targetElements) {
+        if (targetElements.isEmpty()) {
+            Notification.error("No peer found");
+            return;
+        }
+        if (targetElements.size() == 1) {
+            if (targetElements.getFirst() instanceof Navigatable) {
+                ((Navigatable) targetElements.getFirst()).navigate(true);
+            }
+            return;
+        }
+        PsiElementsPopup.showLinksToElementsPopup(mouseEvent, targetElements);
     }
 }
