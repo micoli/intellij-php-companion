@@ -1,0 +1,59 @@
+package org.micoli.php.service;
+
+import com.intellij.find.FindModel;
+import com.intellij.find.impl.FindInProjectUtil;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
+import com.intellij.usageView.UsageInfo;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+
+public class SearchWithCompletionIndicator {
+    public static void findUsagesWithProgress(FindModel findModel, Project project, Consumer<List<UsageInfo>> callback) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Finding Usages", true) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                List<UsageInfo> results = Collections.synchronizedList(new ArrayList<>());
+                AtomicBoolean processingStarted = new AtomicBoolean(false);
+                AtomicLong lastUpdateTime = new AtomicLong(System.currentTimeMillis());
+
+                FindInProjectUtil.findUsages(findModel, project, usageInfo -> {
+                    if (indicator.isCanceled()) {
+                        return false;
+                    }
+
+                    processingStarted.set(true);
+                    results.add(usageInfo);
+                    lastUpdateTime.set(System.currentTimeMillis());
+                    indicator.setText("Found " + results.size() + " usages");
+                    return true;
+                }, FindInProjectUtil.setupProcessPresentation(FindInProjectUtil.setupViewPresentation(findModel)));
+
+                while (!indicator.isCanceled()) {
+                    try {
+                        Thread.sleep(100);
+
+                        if (processingStarted.get() && System.currentTimeMillis() - lastUpdateTime.get() > 1000) {
+                            break;
+                        }
+
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    callback.accept(new ArrayList<>(results));
+                });
+            }
+        });
+    }
+}

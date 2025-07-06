@@ -3,18 +3,25 @@ package org.micoli.php.symfony.messenger.markers;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.jetbrains.php.lang.psi.elements.Method;
 import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.micoli.php.service.FileExtract;
+import org.micoli.php.service.PathUtil;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.service.PsiElementUtil;
+import org.micoli.php.service.popup.NavigableItem;
+import org.micoli.php.service.popup.NavigatableListPopup;
 import org.micoli.php.symfony.messenger.service.MessengerService;
 import org.micoli.php.ui.Notification;
 
@@ -23,6 +30,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class MessengerLineMarkerProvider implements LineMarkerProvider {
 
@@ -130,7 +138,21 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             }
             return;
         }
-        PsiElementsPopup.showLinksToElementsPopup(mouseEvent, elements);
+        NavigatableListPopup.showNavigablePopup(mouseEvent, elements.stream().map(psiElement -> ApplicationManager.getApplication().runReadAction((Computable<NavigableItem>) () -> {
+            PsiFile containingFile = psiElement.getContainingFile();
+            if (containingFile == null) {
+                return null;
+            }
+            if (!(psiElement instanceof Navigatable)) {
+                return null;
+            }
+            if (!((Navigatable) psiElement).canNavigate()) {
+                return null;
+            }
+
+            FileExtract fileExtract = PsiElementUtil.getFileExtract(psiElement);
+            return new NavigableItem(PathUtil.getPathWithParent(containingFile, 2), fileExtract, (Navigatable) psiElement, psiElement.getIcon(0));
+        })).filter(Objects::nonNull).toList());
     }
 
 }

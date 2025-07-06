@@ -44,7 +44,7 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
     public void testItFormatValueUsingScriptInConfiguration() {
         loadPluginConfiguration(getTestDataPath());
         NavigationByAttributeRule rule = AttributeNavigationService.getRules().getFirst();
-        String formattedValue = AttributeNavigationService.getFormattedValue("'/templates/{templateId}/documents/{documentId}'", rule.formatterScript);
+        String formattedValue = AttributeNavigationService.getFormattedValue("/templates/{templateId}/documents/{documentId}", rule.formatterScript);
         assertEquals("/templates/[^/]*/documents/[^/]*:", formattedValue);
     }
 

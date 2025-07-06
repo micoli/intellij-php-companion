@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
 import org.micoli.php.service.PsiElementUtil;
-import org.micoli.php.symfony.messenger.markers.PsiElementsPopup;
+import org.micoli.php.service.PsiElementsPopup;
 import org.micoli.php.ui.Notification;
 
 import javax.swing.*;

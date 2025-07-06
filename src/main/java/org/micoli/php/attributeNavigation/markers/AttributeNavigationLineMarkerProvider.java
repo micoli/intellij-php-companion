@@ -2,7 +2,6 @@ package org.micoli.php.attributeNavigation.markers;
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
-import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereManager;
@@ -12,15 +11,19 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.jetbrains.php.lang.psi.elements.PhpAttribute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.attributeNavigation.configuration.NavigationByAttributeRule;
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
-import org.micoli.php.service.PsiElementUtil;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.*;
+import org.micoli.php.service.popup.NavigableItem;
+import org.micoli.php.service.popup.NavigatableListPopup;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -71,43 +74,60 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                     .getArgument()
                     .getValue()
                     .replaceAll("^[\"']|[\"']$", "");
-                result.add(new LineMarkerInfo<>(leafElement, leafElement.getTextRange(), navigateIcon, element -> "Search for [" + value + "]", (mouseEvent, psiElement) -> {
-                    switch (rule.actionType) {
-                        case "find_in_file":
-                            openGlobalSearchWithRouteExpression(
-                                phpAttribute.getProject(),
-                                AttributeNavigationService.getFormattedValue(value, rule.formatterScript),
-                                rule.fileMask
-                            );
-                        break;
-                        case "search_everywhere":
-                            openSearchEveryWhereWithRouteExpression(
-                                phpAttribute.getProject(),
-                                mouseEvent,
-                                AttributeNavigationService.getFormattedValue(value, rule.formatterScript)
-                            );
-                        break;
-                    }
-                }, GutterIconRenderer.Alignment.CENTER, () -> "Search for [" + value + "]"));
+                result.add(new LineMarkerInfo<>(
+                    leafElement,
+                    leafElement.getTextRange(),
+                    navigateIcon,
+                    element -> "Search for [" + value + "]",
+                    (mouseEvent, psiElement) -> {
+                        switch (rule.actionType) {
+                            case "find_in_file":
+                                openGlobalSearchWithRouteExpression(
+                                    phpAttribute.getProject(),
+                                    mouseEvent,
+                                    AttributeNavigationService.getFormattedValue(value, rule.formatterScript),
+                                    rule.fileMask
+                                );
+                            break;
+                            case "search_everywhere":
+                                openSearchEveryWhereWithRouteExpression(
+                                    phpAttribute.getProject(),
+                                    mouseEvent,
+                                    AttributeNavigationService.getFormattedValue(value, rule.formatterScript)
+                                );
+                            break;
+                        }
+                    },
+                    GutterIconRenderer.Alignment.CENTER,
+                    () -> "Search for [" + value + "]")
+                );
                 // spotless:on
             }
         }
     }
 
-    private void openGlobalSearchWithRouteExpression(Project project, String searchText, String fileMask) {
+    // FindManager
+    // .getInstance(project)
+    // .showFindDialog(
+    // findModel,
+    // () -> {}
+    // );
+    private void openGlobalSearchWithRouteExpression(Project project, MouseEvent mouseEvent, String searchText, String fileMask) {
+        // spotless:on
         ApplicationManager.getApplication().invokeLater(() -> {
-            FindManager findManager = FindManager.getInstance(project);
-            FindModel findModel = findManager.getFindInProjectModel().clone();
-
-            findModel.setStringToFind(searchText);
-            findModel.setRegularExpressions(true);
-            findModel.setGlobal(true);
-            findModel.setProjectScope(true);
-            findModel.setFileFilter(fileMask);
-
-            findManager.showFindDialog(findModel, () -> {
+            FindModel findModel = getFindModel(project, searchText, fileMask);
+            SearchWithCompletionIndicator.findUsagesWithProgress(findModel, project, results -> {
+                NavigatableListPopup.showNavigablePopup(mouseEvent, results.stream().map(usageInfo -> ApplicationManager.getApplication().runReadAction((Computable<NavigableItem>) () -> {
+                    PsiFile file = usageInfo.getFile();
+                    if (file == null) {
+                        return null;
+                    }
+                    FileExtract fileExtract = PsiElementUtil.getFileExtract(usageInfo);
+                    return new NavigableItem(PathUtil.getPathWithParent(file, 2), fileExtract, new UsageInfo2UsageAdapter(usageInfo), usageInfo.getIcon());
+                })).filter(Objects::nonNull).toList());
             });
         });
+        // spotless:off
     }
 
     private void openSearchEveryWhereWithRouteExpression(Project project, MouseEvent mouseEvent, String searchText) {
@@ -128,5 +148,19 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                 );
         });
         // spotless:on
+    }
+
+    private static @NotNull FindModel getFindModel(Project project, String searchText, String fileMask) {
+        FindModel findModel = new FindModel();
+
+        findModel.setGlobal(true);
+        findModel.setProjectScope(true);
+        findModel.setRegularExpressions(true);
+        findModel.setWithSubdirectories(true);
+        findModel.setFileFilter(null);
+        findModel.setStringToFind(searchText);
+        findModel.setFileFilter(fileMask);
+
+        return findModel;
     }
 }
