@@ -4,6 +4,11 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
+import com.intellij.ide.DataManager;
+import com.intellij.ide.actions.searcheverywhere.SearchEverywhereManager;
+import com.intellij.ide.actions.searcheverywhere.SearchEverywhereManagerImpl;
+import com.intellij.openapi.actionSystem.ActionUiKind;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
@@ -18,6 +23,7 @@ import org.micoli.php.service.PsiElementUtil;
 import org.micoli.php.service.PhpUtil;
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider {
@@ -60,17 +66,30 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                     continue;
                 }
                 PsiElement leafElement = PsiElementUtil.findFirstLeafElement(phpAttribute);
-                // format:off
-                result.add(new LineMarkerInfo<>(
-                    leafElement,
-                    leafElement.getTextRange(),
-                    navigateIcon,
-                    element -> "Search for [" + attributeArgument.getArgument().getValue() + "]",
-                    (e, elt) -> openGlobalSearchWithRouteExpression(phpAttribute.getProject(), AttributeNavigationService.getFormattedValue(attributeArgument.getArgument().getValue(), rule.formatterScript), rule.fileMask),
-                    GutterIconRenderer.Alignment.CENTER,
-                    () -> "Search for [" + attributeArgument.getArgument().getValue() + "]")
-                );
-                // format:on
+                // spotless:off
+                String value = attributeArgument
+                    .getArgument()
+                    .getValue()
+                    .replaceAll("^[\"']|[\"']$", "");
+                result.add(new LineMarkerInfo<>(leafElement, leafElement.getTextRange(), navigateIcon, element -> "Search for [" + value + "]", (mouseEvent, psiElement) -> {
+                    switch (rule.actionType) {
+                        case "find_in_file":
+                            openGlobalSearchWithRouteExpression(
+                                phpAttribute.getProject(),
+                                AttributeNavigationService.getFormattedValue(value, rule.formatterScript),
+                                rule.fileMask
+                            );
+                        break;
+                        case "search_everywhere":
+                            openSearchEveryWhereWithRouteExpression(
+                                phpAttribute.getProject(),
+                                mouseEvent,
+                                AttributeNavigationService.getFormattedValue(value, rule.formatterScript)
+                            );
+                        break;
+                    }
+                }, GutterIconRenderer.Alignment.CENTER, () -> "Search for [" + value + "]"));
+                // spotless:on
             }
         }
     }
@@ -91,4 +110,23 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
         });
     }
 
+    private void openSearchEveryWhereWithRouteExpression(Project project, MouseEvent mouseEvent, String searchText) {
+        // spotless:off
+        ApplicationManager.getApplication().invokeLater(() -> {
+            SearchEverywhereManager
+                .getInstance(project)
+                .show(
+                    SearchEverywhereManagerImpl.ALL_CONTRIBUTORS_GROUP_ID,
+                    searchText,
+                    AnActionEvent.createEvent(
+                        DataManager.getInstance().getDataContext(mouseEvent.getComponent()),
+                        null,
+                        "",
+                        ActionUiKind.NONE,
+                        mouseEvent
+                    )
+                );
+        });
+        // spotless:on
+    }
 }

@@ -54,8 +54,6 @@ attributeNavigation:
       fileMask: "*.yaml,*.yml,*.php"
       formatterScript: |
         return (value
-          .replaceAll("^['\"]","")
-          .replaceAll("['\"]\$","")
           .replaceAll("(\\{.*?\\})", "[^/]*")
           + ":"
         );

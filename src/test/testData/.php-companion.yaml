@@ -4,8 +4,6 @@ attributeNavigation:
       propertyName: path
       formatterScript: |
         return (value
-          .replaceAll("^['\"]","")
-          .replaceAll("['\"]\$","")
           .replaceAll("(\\{.*?\\})", "[^/]*")
           + ":"
         );
