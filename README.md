@@ -1,10 +1,10 @@
-<!-- Plugin description -->
-# PHP Companion Intellij Plugin
-
 [![Build Status](https://github.com/micoli/intellij-php-companion/actions/workflows/build.yml/badge.svg)](https://github.com/micoli/intellij-php-companion/actions)
 [![JetBrains Plugins](https://img.shields.io/jetbrains/plugin/v/27762.svg)](https://plugins.jetbrains.com/plugin/27762-php-companion)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/27762.svg)](https://plugins.jetbrains.com/plugin/27762-php-companion)
 [![Rating](https://img.shields.io/jetbrains/plugin/r/rating/27762.svg)](https://plugins.jetbrains.com/plugin/27762-php-companion)
+
+<!-- Plugin description -->
+# PHP Companion Intellij Plugin
 
 A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced navigation and code analysis features, particularly focused on Symfony Messenger pattern and peer navigation capabilities.
 

@@ -9,9 +9,7 @@
         <ellipse cx="160" cy="110" rx="15" ry="25" fill="#8A96D1" transform="rotate(-20 160 110)"/>
         <ellipse cx="240" cy="110" rx="15" ry="25" fill="#8A96D1" transform="rotate(20 240 110)"/>
 
-        <path d="M 200 140 Q 220 160 210 180 Q 200 200 185 210 Q 170 220 160 240"
-              fill="none" stroke="#2E3A5F" stroke-width="8" stroke-linecap="round"/>
-        <circle cx="160" cy="240" r="6" fill="#4F5B93" stroke="#2E3A5F" stroke-width="2"/>
+        <path d="M 200 140 Q 220 160 210 180 Q 200 200" fill="none" stroke="#2E3A5F" stroke-width="8" stroke-linecap="round"/>
 
         <circle cx="185" cy="110" r="8" fill="white"/>
         <circle cx="215" cy="110" r="8" fill="white"/>
@@ -22,7 +20,6 @@
         <circle cx="217" cy="108" r="2" fill="white"/>
 
         <ellipse cx="170" cy="220" rx="12" ry="18" fill="#4F5B93" stroke="#2E3A5F" stroke-width="2"/>
-        <ellipse cx="200" cy="225" rx="12" ry="18" fill="#4F5B93" stroke="#2E3A5F" stroke-width="2"/>
         <ellipse cx="230" cy="220" rx="12" ry="18" fill="#4F5B93" stroke="#2E3A5F" stroke-width="2"/>
 
         <path d="M 280 180 Q 300 185 295 200"
