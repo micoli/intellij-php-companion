@@ -1,0 +1,8 @@
+array:1 [\n
+  "a_class" => class@anonymous {#382\n
+    +name: "Anonymous1"\n
+    +subClass: class@anonymous {#383\n
+      +name: "Anonymous2"\n
+    }\n
+  }\n
+]\n

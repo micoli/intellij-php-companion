@@ -1,0 +1,18 @@
+{
+  "quiz": {
+    "sports": [
+      {
+        "name": "known1"
+      },
+      {
+        "name": "known2"
+      },
+      {
+        "name": "Anonymous1",
+        "subClass": {
+          "name": "Anonymous2"
+        }
+      }
+    ]
+  }
+}

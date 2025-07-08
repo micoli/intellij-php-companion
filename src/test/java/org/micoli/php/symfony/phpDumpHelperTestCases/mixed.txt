@@ -1,0 +1,18 @@
+array:1 [
+  "quiz" => array:1 [
+    "sports" => array:3 [
+      0 => App\Tests\TestDTO {#73
+        +name: "known1"
+      }
+      1 => App\Tests\TestDTO {#74
+        +name: "known2"
+      }
+      2 => class@anonymous {#382
+        +name: "Anonymous1"
+        +subClass: class@anonymous {#383
+          +name: "Anonymous2"
+        }
+      }
+    ]
+  ]
+]

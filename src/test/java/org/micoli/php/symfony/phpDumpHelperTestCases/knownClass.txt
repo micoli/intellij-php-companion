@@ -1,0 +1,5 @@
+array:1 [\n
+  "a_class" => App\Tests\TestDTO {#383\n
+    +name: "known"\n
+  }\n
+]\n

@@ -48,7 +48,7 @@ public class PsiElementUtil {
     }
 
     public static @NotNull String getHumanReadableElementLink(PsiElement element) {
-        // spotless: off
+        // spotless:off
         return ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
             String base = PathUtil.getPathWithParent(element.getContainingFile(), 2);
             String format = "%s#%s: %s";
@@ -67,6 +67,6 @@ public class PsiElementUtil {
                 element.getText().replaceAll("\\s( *)", " ")
             );
         });
-        // spotless: on
+        // spotless:on
     }
 }

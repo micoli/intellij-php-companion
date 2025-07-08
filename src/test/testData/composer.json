@@ -13,5 +13,9 @@
       "App\\": "src/",
       "App\\Tests\\": "tests/"
     }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12.2",
+    "symfony/var-dumper": "^7.3"
   }
 }

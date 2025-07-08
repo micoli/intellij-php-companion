@@ -1,0 +1,46 @@
+array:1 [\n
+  "quiz" => array:2 [\n
+    "sport" => array:1 [\n
+      "q1" => array:3 [\n
+        "question" => "Which one is correct team name in NBA?"\n
+        "options" => array:4 [\n
+          0 => array:1 [\n
+            "city" => "New York Bulls"\n
+          ]\n
+          1 => array:1 [\n
+            "city" => "Los Angeles Kings"\n
+          ]\n
+          2 => array:1 [\n
+            "city" => "Golden State Warriros"\n
+          ]\n
+          3 => array:1 [\n
+            "city" => "Huston Rocket"\n
+          ]\n
+        ]\n
+        "answer" => "Huston Rocket"\n
+      ]\n
+    ]\n
+    "maths" => array:2 [\n
+      "q1" => array:3 [\n
+        "question" => "5 + 7 = ?"\n
+        "options" => array:4 [\n
+          0 => "10"\n
+          1 => "11"\n
+          2 => "12"\n
+          3 => "13"\n
+        ]\n
+        "answer" => "12"\n
+      ]\n
+      "q2" => array:3 [\n
+        "question" => "12 - 8 = ?"\n
+        "options" => array:4 [\n
+          0 => "1"\n
+          1 => "2"\n
+          2 => "3"\n
+          3 => "4"\n
+        ]\n
+        "answer" => "4"\n
+      ]\n
+    ]\n
+  ]\n
+]\n
