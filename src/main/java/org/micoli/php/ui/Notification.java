@@ -22,8 +22,7 @@ public class Notification {
                     }
                 }).start();
             });
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 

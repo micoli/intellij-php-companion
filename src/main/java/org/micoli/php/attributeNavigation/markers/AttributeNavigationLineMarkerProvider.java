@@ -24,12 +24,15 @@ import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
 import org.micoli.php.service.*;
 import org.micoli.php.service.popup.NavigableItem;
 import org.micoli.php.service.popup.NavigatableListPopup;
+import org.micoli.php.ui.Notification;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
+import java.time.Duration;
 import java.util.*;
 
 public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider {
+    ConcurrentSearchManager concurrentSearchManager = new ConcurrentSearchManager(Duration.ofSeconds(20));
 
     Icon navigateIcon = IconLoader.getIcon("icons/xml.svg", AttributeNavigationLineMarkerProvider.class);
 
@@ -107,10 +110,20 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
     }
 
     private void openGlobalSearchWithRouteExpression(Project project, MouseEvent mouseEvent, String searchText, String fileMask) {
+        if (concurrentSearchManager.isSearchInProgress(searchText)) {
+            Notification.messageWithTimeout("Search already in progress", 1000);
+            return;
+        }
         // spotless:on
         ApplicationManager.getApplication().invokeLater(() -> {
             FindModel findModel = getFindModel(project, searchText, fileMask);
+            concurrentSearchManager.addSearch(searchText);
             SearchWithCompletionIndicator.findUsagesWithProgress(findModel, project, 1500, results -> {
+                concurrentSearchManager.removeSearch(searchText);
+                if (results == null || results.isEmpty()) {
+                    Notification.messageWithTimeout("No Usage found", 1500);
+                    return;
+                }
                 NavigatableListPopup.showNavigablePopup(mouseEvent, results.stream().map(usageInfo -> ApplicationManager.getApplication().runReadAction((Computable<NavigableItem>) () -> {
                     PsiFile file = usageInfo.getFile();
                     if (file == null) {
