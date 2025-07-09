@@ -106,17 +106,11 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
         }
     }
 
-    // FindManager
-    // .getInstance(project)
-    // .showFindDialog(
-    // findModel,
-    // () -> {}
-    // );
     private void openGlobalSearchWithRouteExpression(Project project, MouseEvent mouseEvent, String searchText, String fileMask) {
         // spotless:on
         ApplicationManager.getApplication().invokeLater(() -> {
             FindModel findModel = getFindModel(project, searchText, fileMask);
-            SearchWithCompletionIndicator.findUsagesWithProgress(findModel, project, results -> {
+            SearchWithCompletionIndicator.findUsagesWithProgress(findModel, project, 1500, results -> {
                 NavigatableListPopup.showNavigablePopup(mouseEvent, results.stream().map(usageInfo -> ApplicationManager.getApplication().runReadAction((Computable<NavigableItem>) () -> {
                     PsiFile file = usageInfo.getFile();
                     if (file == null) {
