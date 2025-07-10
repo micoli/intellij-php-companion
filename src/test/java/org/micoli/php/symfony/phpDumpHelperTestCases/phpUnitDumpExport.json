@@ -1,0 +1,35 @@
+{
+  "a_complex_object": {
+    "updatedAt": {
+      "hasFixedNow": true,
+      "time": "2025-07-10 01:00:00.000000",
+      "date": "2025-07-10 01:00:00.0 UTC (+00:00)"
+    },
+    "id": {
+      "uuid": "efff1112-404d-48c3-aa7d-cb8b83db38ad"
+    },
+    "name": "A name",
+    "createdAt": {
+      "hasFixedNow": true,
+      "time": "2025-07-10 01:00:00.000000",
+      "date": "2025-07-10 01:00:00.0 UTC (+00:00)"
+    },
+    "innerObject": {
+      "id": {
+        "uuid": "3a23ea87-2f87-4a0d-806f-4d36c0f650e7"
+      },
+      "name": "Another name",
+      "label": "Another label",
+      "createdAt": {
+        "hasFixedNow": true,
+        "time": "2025-07-10 01:00:00.000000",
+        "date": "2025-07-10 01:00:00.0 UTC (+00:00)"
+      },
+      "updatedAt": {
+        "hasFixedNow": true,
+        "time": "2025-07-10 01:00:00.000000",
+        "date": "2025-07-10 01:00:00.0 UTC (+00:00)"
+      }
+    }
+  }
+}

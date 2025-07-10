@@ -1,0 +1,40 @@
+]8;;file:///tests/HandlerTest.php#L60\^]8;;\ array:1 [
+  "a_complex_object" => Models\AnObject]8;;file:///tests/Models/AnObject.php#L8\^]8;;\ {#8633
+    #updatedAt: Cake\Chronos\Chronos @1752109200]8;;file:///vendor/cakephp/chronos/src/Chronos.php#L62\^]8;;\ {#8619
+      hasFixedNow: true
+      time: "2025-07-10 01:00:00.000000"
+      date: 2025-07-10 01:00:00.0 UTC (+00:00)
+    }
+    -id: Ramsey\Uuid\Lazy\LazyUuidFromString]8;;file:///vendor/ramsey/uuid/src/Lazy/LazyUuidFromString.php#L55\^]8;;\ {#8703
+      -unwrapped: null
+      -uuid: "efff1112-404d-48c3-aa7d-cb8b83db38ad"
+      uuid: "efff1112-404d-48c3-aa7d-cb8b83db38ad"
+    }
+    -name: "A name"
+    -label: null
+    +createdAt: Cake\Chronos\Chronos @1752109200]8;;file:///vendor/cakephp/chronos/src/Chronos.php#L62\^]8;;\ {#6126
+      hasFixedNow: true
+      time: "2025-07-10 01:00:00.000000"
+      date: 2025-07-10 01:00:00.0 UTC (+00:00)
+    }
+    +innerObject: Models\AnInnerObject]8;;file:///tests/Models/AnInnerObject.php#L8\^]8;;\ {#5863
+      -id: Ramsey\Uuid\Lazy\LazyUuidFromString]8;;file:///vendor/ramsey/uuid/src/Lazy/LazyUuidFromString.php#L55\^]8;;\ {#6135
+        -unwrapped: null
+        -uuid: "3a23ea87-2f87-4a0d-806f-4d36c0f650e7"
+        uuid: "3a23ea87-2f87-4a0d-806f-4d36c0f650e7"
+      }
+      -name: "Another name"
+      -label: "Another label"
+      +createdAt: Cake\Chronos\Chronos @1752109200]8;;file:///vendor/cakephp/chronos/src/Chronos.php#L62\^]8;;\ {#6122
+        hasFixedNow: true
+        time: "2025-07-10 01:00:00.000000"
+        date: 2025-07-10 01:00:00.0 UTC (+00:00)
+      }
+      #updatedAt: Cake\Chronos\Chronos @1752109200]8;;file:///vendor/cakephp/chronos/src/Chronos.php#L62\^]8;;\ {#8620
+        hasFixedNow: true
+        time: "2025-07-10 01:00:00.000000"
+        date: 2025-07-10 01:00:00.0 UTC (+00:00)
+      }
+    }
+  }
+]

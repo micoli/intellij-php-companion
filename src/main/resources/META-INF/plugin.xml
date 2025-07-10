@@ -43,10 +43,15 @@
     </extensions>
     <actions>
         <group id="PhpCompanion" text="Php Companion" popup="true">
-            <action id="ParseCliDumper"
-                    class="org.micoli.php.symfony.ParseCliDumper.ParseCliDumperAction"
-                    text="Parse Symfony CliDumper"
-                    description="Parse CliDumper output">
+            <action id="ParseCliDumperToJson"
+                    class="org.micoli.php.symfony.ParseCliDumper.ParseCliDumperToJsonAction"
+                    text="Parse Symfony CliDumper to JSON"
+                    description="Parse CliDumper output and export it in JSON">
+            </action>
+            <action id="ParseCliDumperToPHP"
+                    class="org.micoli.php.symfony.ParseCliDumper.ParseCliDumperToPhpAction"
+                    text="Parse Symfony CliDumper to PHP"
+                    description="Parse CliDumper output and export it in PHP">
             </action>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <add-to-group group-id="ConsoleEditorPopupMenu" anchor="last"/>
