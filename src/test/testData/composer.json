@@ -6,7 +6,9 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
-    "php": ">=8.2"
+    "php": ">=8.2",
+    "cakephp/chronos": "^3.2",
+    "ramsey/uuid": "^4.9"
   },
   "autoload": {
     "psr-4": {

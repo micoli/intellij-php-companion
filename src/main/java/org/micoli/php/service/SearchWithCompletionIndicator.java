@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 public class SearchWithCompletionIndicator {
-    public static void findUsagesWithProgress(FindModel findModel, Project project, Consumer<List<UsageInfo>> callback) {
+    public static void findUsagesWithProgress(FindModel findModel, Project project, int maxTimeSearchWithoutResult, Consumer<List<UsageInfo>> callback) {
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Finding Usages", true) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
@@ -36,11 +36,11 @@ public class SearchWithCompletionIndicator {
                     return true;
                 }, FindInProjectUtil.setupProcessPresentation(FindInProjectUtil.setupViewPresentation(findModel)));
 
-                while (!indicator.isCanceled()) {
+                while (!indicator.isCanceled() && !indicator.isRunning()) {
                     try {
                         Thread.sleep(100);
 
-                        if (processingStarted.get() && System.currentTimeMillis() - lastUpdateTime.get() > 1000) {
+                        if (processingStarted.get() && (System.currentTimeMillis() - lastUpdateTime.get()) > maxTimeSearchWithoutResult) {
                             break;
                         }
 
