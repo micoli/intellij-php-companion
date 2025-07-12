@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.ui.popup;
 
 public record FileExtract(int lineNumber, String text) {
 }

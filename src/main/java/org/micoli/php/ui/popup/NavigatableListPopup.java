@@ -1,4 +1,4 @@
-package org.micoli.php.service.popup;
+package org.micoli.php.ui.popup;
 
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.ui.awt.RelativePoint;

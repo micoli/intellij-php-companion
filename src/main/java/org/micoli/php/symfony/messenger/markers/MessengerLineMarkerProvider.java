@@ -16,12 +16,12 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.micoli.php.service.FileExtract;
+import org.micoli.php.ui.popup.FileExtract;
 import org.micoli.php.service.PathUtil;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.service.PsiElementUtil;
-import org.micoli.php.service.popup.NavigableItem;
-import org.micoli.php.service.popup.NavigatableListPopup;
+import org.micoli.php.ui.popup.NavigableItem;
+import org.micoli.php.ui.popup.NavigatableListPopup;
 import org.micoli.php.symfony.messenger.service.MessengerService;
 import org.micoli.php.ui.Notification;
 

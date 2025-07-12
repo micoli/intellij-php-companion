@@ -1,4 +1,4 @@
-package org.micoli.php.service.popup;
+package org.micoli.php.ui.popup;
 
 import org.jetbrains.annotations.NotNull;
 

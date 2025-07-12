@@ -1,7 +1,6 @@
-package org.micoli.php.service.popup;
+package org.micoli.php.ui.popup;
 
 import com.intellij.pom.Navigatable;
-import org.micoli.php.service.FileExtract;
 
 import javax.swing.*;
 

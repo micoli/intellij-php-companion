@@ -17,6 +17,8 @@
         <notificationGroup
             id="PHP Companion"
             displayType="BALLOON"
+            bundle="messages.MyBundle"
+            key="notification.group.php.companion"
         />
         <codeInsight.lineMarkerProvider
                 language="PHP"

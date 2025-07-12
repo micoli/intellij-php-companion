@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.usageView.UsageInfo;
 import org.jetbrains.annotations.NotNull;
+import org.micoli.php.ui.popup.FileExtract;
 
 public class PsiElementUtil {
     public static PsiElement findFirstLeafElement(PsiElement element) {

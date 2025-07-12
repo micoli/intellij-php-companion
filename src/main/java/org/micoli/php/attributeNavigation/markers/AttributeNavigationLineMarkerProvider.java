@@ -22,8 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.micoli.php.attributeNavigation.configuration.NavigationByAttributeRule;
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
 import org.micoli.php.service.*;
-import org.micoli.php.service.popup.NavigableItem;
-import org.micoli.php.service.popup.NavigatableListPopup;
+import org.micoli.php.ui.popup.FileExtract;
+import org.micoli.php.ui.popup.NavigableItem;
+import org.micoli.php.ui.popup.NavigatableListPopup;
 import org.micoli.php.ui.Notification;
 
 import javax.swing.*;
