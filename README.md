@@ -21,11 +21,25 @@ A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced 
 - **Pattern-based Navigation**: Navigate between related classes using regex patterns
 - **Flexible Mapping**: Define custom source-to-target class relationships
 - **Go to Declaration**: Jump between peer classes with a single keystroke
+- **Associate Navigation**: Navigate between associated classes based on custom relationships
+- **Multi-direction Support**: Navigate bidirectionally between associated classes
 
 ### 🧑‍💻 Attribute Navigation 
 - **Attribute-based Navigation**: Open a intellij search with a formatted value of an attribute property
 - **Flexible Mapping**: Define custom attribute property and a formatter to generate a custom intellij search pattern
 - **Click and search**: Jump between peer classes with a single keystroke
+
+### 📝 Source Export to LLM markdown
+- **Markdown Export**: Export source code to markdown format optimized for LLMs
+- **Code Context Preservation**: Maintain code structure and relationships in exported format
+- **Custom Formatting**: Configure export format settings
+- **Selective Export**: Choose specific files or directories to export
+- Freely inspired from https://github.com/keyboardsamurai/source-clipboard-export-intellij-plugin which was dedicated to Java project
+
+### 🔍 CLI Dumper Parser
+- **Command Output Analysis**: Parse and analyze CLI dumper output
+- **Structured Data Extraction**: Convert raw CLI output into structured format (JSON ou short syntac PHP arrays)
+- **Integration Support**: Seamless integration with development workflow
 
 ### ⚙️ Configuration Management
 - **Hot Reload**: Configuration changes are automatically detected and applied
@@ -37,10 +51,10 @@ A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced 
 
 The plugin uses configuration files placed in your project root. The plugin will automatically detect and load configuration from any of these files (in order of precedence):
 
-- `.php-companion.local.yaml`
-- `.php-companion.local.json`
 - `.php-companion.yaml`
 - `.php-companion.json`
+- `.php-companion.local.yaml`
+- `.php-companion.local.json`
 
 ### Configuration Structure
 
@@ -75,11 +89,19 @@ symfonyMessenger:
     - handle
 
 peerNavigation:
+  associates:
+    - classA: \\App\\Domain\\Entity\\(?<entity>.+)
+      classB: \\App\\Domain\\Repository\\(?<entity>.+)Repository
+    - classA: \\App\\Domain\\Entity\\(?<entity>.+)
+      classB: \\App\\Domain\\Factory\\(?<entity>.+)Factory
+    - classA: \\App\\Application\\(?<domain>.+)\\Command\\(?<command>.+)Command
+      classB: \\App\\Application\\(?<domain>.+)\\CommandHandler\\(?<command>.+)CommandHandler
   peers:
-    - source: \\App\\Application\\(.+)\\Command\\(.+)Command
-      target: \\App\\Application\\$1\\CommandHandler\\$2CommandHandler
-    - source: \\App\\Application\\(.+)\\Query\\(.+)Query
-      target: \\App\\Application\\$1\\QueryHandler\\$2QueryHandler
+    - source: \\App\\Application\\(?<domain>.+)\\Command\\(?<command>.+)Command
+      target: \\App\\Application\\(?<domain>.+)\\CommandHandler\\(?<command>.+)CommandHandler
+    - source: \\App\\Application\\(?<domain>.+)\\Query\\(?<query>.+)Query
+      target: \\App\\Application\\(?<domain>.+)\\QueryHandler\\(?<query>.+)QueryHandler
+
 ```
 
 ### Symfony Messenger Configuration
@@ -95,44 +117,89 @@ peerNavigation:
 
 ### Peer Navigation Configuration
 
+| Property | Type | Description                                                                          |
+|----------|------|--------------------------------------------------------------------------------------|
+| `associates` | object[] | Array of bidirectional navigation rules                                              |
+| `associates[].classA` | string | Regex pattern with named groups matching first class FQN                             |
+| `associates[].classB` | string | Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups |
+| `peers` | object[] | Array of one-way navigation rules                                                    |
+| `peers[].source` | string | Regex pattern with named groups matching source class FQN                            |
+| `peers[].target` | string | Target class FQN pattern using `(?<groupName>.+)` substitution from named groups     |
+
+### Associate Navigation Configuration
+
+| Property | Type | Description                                                                          |
+|----------|------|--------------------------------------------------------------------------------------|
+| `classA` | string | Regex pattern with named groups matching first class FQN                             |
+| `classB` | string | Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups |
+
+**Note**: Associates provide bidirectional navigation - you can navigate from classA to classB and vice versa.
+
+### CLI Dumper Configuration
+
 | Property | Type | Description |
 |----------|------|-------------|
-| `peers` | object[] | Array of navigation rules |
-| `peers[].source` | string | Regex pattern matching source class FQN (use double backslashes for namespace separators) |
-| `peers[].target` | string | Target class FQN pattern with `$1`, `$2`, etc. for regex group substitution |
+| `parsers` | array | Array of parser objects |
+| `parsers[].name` | string | Name of the parser |
+| `parsers[].pattern` | string | Regular expression pattern for parsing output |
+| `parsers[].groups` | array | Groups extracted from the parsed output |
 
 #### Peer Navigation Examples
 
-**Navigate from Commands to CommandHandlers:**
-```json
-{
-  "source": "\\\\App\\\\Application\\\\(.+)\\\\Command\\\\(.+)Command",
-  "target": "\\\\App\\\\Application\\\\$1\\\\CommandHandler\\\\$2CommandHandler"
-}
+**Bidirectional Navigation between Entities and Repositories:**
+```yaml
+peerNavigation:
+  associates:
+    - classA: \\App\\Domain\\Entity\\(?<entity>.+)
+      classB: \\App\\Domain\\Repository\\(?<entity>.+)Repository
 ```
 
-**Navigate from Entities to Repositories:**
-```json
-{
-  "source": "\\\\App\\\\Domain\\\\(.+)\\\\Entity\\\\(.+)",
-  "target": "\\\\App\\\\Infrastructure\\\\Repository\\\\$2Repository"
-}
+**Bidirectional Navigation between Controllers and Services:**
+```yaml
+peerNavigation:
+  associates:
+    - classA: \\App\\Controller\\(?<controller>.+)Controller
+      classB: \\App\\Service\\(?<controller>.+)Service
 ```
 
-**Navigate from Controllers to Services:**
-```json
-{
-  "source": "\\\\App\\\\Controller\\\\(.+)Controller",
-  "target": "\\\\App\\\\Service\\\\$1Service"
-}
+**One-way Navigation from Commands to CommandHandlers using Named Groups:**
+```yaml
+peerNavigation:
+  peers:
+    - source: \\App\\Application\\(?<domain>.+)\\Command\\(?<command>.+)Command
+      target: \\App\\Application\\(?<domain>.+)\\CommandHandler\\(?<command>.+)CommandHandler
+```
+
+**One-way Navigation from Queries to QueryHandlers:**
+```yaml
+peerNavigation:
+  peers:
+    - source: \\App\\Application\\(?<domain>.+)\\Query\\(?<query>.+)Query
+      target: \\App\\Application\\(?<domain>.+)\\QueryHandler\\(?<query>.+)QueryHandler
+```
+
+**Complex Example with Multiple Named Groups:**
+```yaml
+peerNavigation:
+  peers:
+    - source: \\App\\(?<layer>Application|Domain)\\(?<module>.+)\\Entity\\(?<entity>.+)
+      target: \\App\\(?<layer>Application|Domain)\\(?<module>.+)\\Repository\\(?<entity>.+)Repository
+  associates:
+    - classA: \\App\\Domain\\(?<module>.+)\\Entity\\(?<entity>.+)
+      classB: \\App\\Domain\\(?<module>.+)\\Factory\\(?<entity>.+)Factory
 ```
 
 ### Configuration Tips
 
-1. **Regex Escaping**: In JSON configuration, use double backslashes (`\\\\`) for namespace separators in regex patterns
-2. **Local Overrides**: Use `.php-companion.local.*` files for project-specific settings that shouldn't be committed
-3. **Hot Reload**: The plugin checks for configuration changes every 2 seconds
-4. **Error Handling**: Configuration errors will be displayed as notifications in the IDE
+1. **Named Groups**: Use regex named groups `(?<name>...)` in patterns and reference them with `(?<name>...) (same expression)` in targets for better readability and maintainability
+2. **Regex Escaping**: In YAML configuration, use double backslashes (`\\`) for namespace separators in regex patterns
+3. **Local Overrides**: Use `.php-companion.local.*` files for project-specific settings that shouldn't be committed
+4. **Hot Reload**: The plugin checks for configuration changes every 2 seconds
+5. **Error Handling**: Configuration errors will be displayed as notifications in the IDE
+6. **Peers vs Associates**: 
+   - Use `peers` for one-way navigation (source → target)
+   - Use `associates` for bidirectional navigation (classA ↔ classB)
+7. **Pattern Matching**: Both `peers` and `associates` support complex regex patterns with multiple named groups
 
 <!-- Plugin description end -->
 
@@ -144,25 +211,6 @@ peerNavigation:
 - IntelliJ IDEA with Plugin DevKit
 - Gradle
 
-### Project Structure
-
-```
-src/main/java/org/micoli/php/
-├── configuration/           # Configuration management
-│   ├── models/             # Configuration data models
-│   ├── ConfigurationFactory.java
-│   └── GsonTools.java      # JSON merging utilities
-├── peerNavigation/         # Peer navigation feature
-│   ├── configuration/      # Peer navigation config models
-│   └── navigation/         # Navigation handlers
-├── symfony/messenger/      # Symfony Messenger support
-│   ├── configuration/      # Messenger config models
-│   ├── navigation/         # Go-to-declaration handlers
-│   ├── service/           # Core messenger services
-│   └── usage/             # Find usages handlers
-├── ui/                    # UI utilities
-└── MessengerProjectComponent.java  # Main project component
-```
 
 ### Building the Plugin
 
