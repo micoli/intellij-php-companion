@@ -1,0 +1,72 @@
+package org.micoli.php.service;
+
+import com.intellij.openapi.vfs.VirtualFile;
+import org.eclipse.jgit.ignore.IgnoreNode;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.*;
+import java.util.*;
+
+public class FileListProcessor {
+
+    public static VirtualFile[] processSelectedFiles(@Nullable VirtualFile ignoreFile, VirtualFile[] selectedFiles) {
+        Set<VirtualFile> filesSet = new LinkedHashSet<>();
+
+        for (VirtualFile file : selectedFiles) {
+            if (file.isDirectory()) {
+                listFilesRecursively(file, filesSet);
+                continue;
+            }
+            filesSet.add(file);
+        }
+
+        IgnoreNode ignoreNode = getIgnoreNode(ignoreFile);
+
+        // spotless:off
+        return filesSet
+            .stream()
+            .sorted(
+                Comparator
+                    .comparing(VirtualFile::getPath)
+                    .thenComparing(VirtualFile::getName)
+            )
+            .filter(file -> {
+            if (ignoreNode == null) {
+                return true;
+            }
+
+            return ignoreNode.isIgnored(file.getPath(), false) != IgnoreNode.MatchResult.IGNORED;
+        }).toArray(VirtualFile[]::new);
+        // spotless:on
+    }
+
+    private static @Nullable IgnoreNode getIgnoreNode(VirtualFile ignoreFile) {
+        if (ignoreFile == null) {
+            return null;
+        }
+        try {
+            final IgnoreNode ignoreNode = new IgnoreNode();
+            try (InputStream reader = ignoreFile.getInputStream()) {
+                ignoreNode.parse(reader);
+            }
+            return ignoreNode;
+        } catch (IOException ignored) {
+            return null;
+        }
+    }
+
+    private static void listFilesRecursively(VirtualFile directory, Set<VirtualFile> filesList) {
+        VirtualFile[] children = directory.getChildren();
+
+        if (children == null) {
+            return;
+        }
+        for (VirtualFile child : children) {
+            if (child.isDirectory()) {
+                listFilesRecursively(child, filesList);
+                continue;
+            }
+            filesList.add(child);
+        }
+    }
+}

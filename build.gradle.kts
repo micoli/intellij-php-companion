@@ -30,6 +30,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r")
+
     intellijPlatform {
         phpstorm("2025.1")
         bundledPlugin("com.jetbrains.php")
