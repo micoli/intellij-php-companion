@@ -12,7 +12,7 @@ public class ParseCliDumperToJsonAction extends AbstractParseCliDumperAction {
         try {
             String parsed = PhpDumpHelper.parseCliDumperToJson(text);
 
-            ParsedContentDisplayPopup.showJsonPopup(project, "CliDumper", parsed);
+            ParsedContentDisplayPopup.showJsonPopup(project, parsed);
         } catch (Exception ex) {
             Messages.showErrorDialog(project, "Error: \n" + ex.getMessage(), "Parse CliDumper");
         }

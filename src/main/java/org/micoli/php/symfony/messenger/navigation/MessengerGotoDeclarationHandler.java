@@ -41,6 +41,6 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
             return null;
         }
 
-        return handlers.toArray(PsiElement[]::new);
+        return handlers.toArray(Method[]::new);
     }
 }

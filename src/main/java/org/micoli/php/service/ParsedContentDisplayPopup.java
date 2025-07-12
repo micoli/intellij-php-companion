@@ -28,19 +28,16 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
     }
 
     private final PopupType popupType;
-    private final String title;
     private final String jsonContent;
     private final Project project;
     private Editor editor;
 
-    public ParsedContentDisplayPopup(@NotNull PopupType popupType, @Nullable Project project, @NotNull String title, @NotNull String jsonContent) {
+    public ParsedContentDisplayPopup(@NotNull PopupType popupType, @Nullable Project project, @NotNull String jsonContent) {
         super(project);
         this.popupType = popupType;
         this.project = project;
-        this.title = title;
         this.jsonContent = jsonContent;
 
-        setTitle(title);
         setModal(true);
         setResizable(true);
 
@@ -78,8 +75,7 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
         settings.setVirtualSpace(false);
         settings.setWheelFontChangeEnabled(false);
 
-        if (editor instanceof EditorEx) {
-            EditorEx editorEx = (EditorEx) editor;
+        if (editor instanceof EditorEx editorEx) {
             EditorHighlighter highlighter = EditorHighlighterFactory.getInstance().createEditorHighlighter(project, fileType);
             editorEx.setHighlighter(highlighter);
         }
@@ -126,23 +122,23 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
         super.dispose();
     }
 
-    public static void showJsonPopup(@Nullable Project project, @NotNull String title, @NotNull String jsonContent) {
+    public static void showJsonPopup(@Nullable Project project, @NotNull String jsonContent) {
         SwingUtilities.invokeLater(() -> {
-            ParsedContentDisplayPopup dialog = new ParsedContentDisplayPopup(PopupType.JSON, project, title, jsonContent);
+            ParsedContentDisplayPopup dialog = new ParsedContentDisplayPopup(PopupType.JSON, project, jsonContent);
             dialog.show();
         });
     }
 
-    public static void showMarkdownPopup(@Nullable Project project, @NotNull String title, @NotNull String jsonContent) {
+    public static void showMarkdownPopup(@Nullable Project project, @NotNull String jsonContent) {
         SwingUtilities.invokeLater(() -> {
-            ParsedContentDisplayPopup dialog = new ParsedContentDisplayPopup(PopupType.MARKDOWN, project, title, jsonContent);
+            ParsedContentDisplayPopup dialog = new ParsedContentDisplayPopup(PopupType.MARKDOWN, project, jsonContent);
             dialog.show();
         });
     }
 
-    public static void showPhpPopup(@Nullable Project project, @NotNull String title, @NotNull String jsonContent) {
+    public static void showPhpPopup(@Nullable Project project, @NotNull String jsonContent) {
         SwingUtilities.invokeLater(() -> {
-            ParsedContentDisplayPopup dialog = new ParsedContentDisplayPopup(PopupType.PHP, project, title, jsonContent);
+            ParsedContentDisplayPopup dialog = new ParsedContentDisplayPopup(PopupType.PHP, project, jsonContent);
             dialog.show();
         });
     }

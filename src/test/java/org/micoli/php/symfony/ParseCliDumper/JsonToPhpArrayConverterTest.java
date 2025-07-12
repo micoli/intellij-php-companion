@@ -37,7 +37,6 @@ public class JsonToPhpArrayConverterTest {
     @Test
     public void testItConvertJsonToPhp() throws IOException {
         // spotless:off
-        System.out.println(JsonToPhpArrayConverter.convertJsonToPhp(readFile(".json")));
         assert(readFile(".php").equals(JsonToPhpArrayConverter.convertJsonToPhp(readFile(".json"))));
         // spotless:on
     }

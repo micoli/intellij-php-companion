@@ -143,9 +143,6 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             if (containingFile == null) {
                 return null;
             }
-            if (!(psiElement instanceof Navigatable)) {
-                return null;
-            }
             if (!((Navigatable) psiElement).canNavigate()) {
                 return null;
             }

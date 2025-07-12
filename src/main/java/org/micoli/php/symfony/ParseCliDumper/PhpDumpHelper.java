@@ -1,6 +1,12 @@
 package org.micoli.php.symfony.ParseCliDumper;
 
-import com.google.gson.*;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -35,7 +41,7 @@ public class PhpDumpHelper {
         input = input.trim();
 
         // Match an array
-        Pattern arrayPattern = Pattern.compile("^array:\\d+\\s*\\[\\s*(.*)?\\s*\\]$", Pattern.DOTALL);
+        Pattern arrayPattern = Pattern.compile("^array:\\d+\\s*\\[\\s*(.*)?\\s*]$", Pattern.DOTALL);
         Matcher arrayMatcher = arrayPattern.matcher(input);
         if (arrayMatcher.matches()) {
             String content = arrayMatcher.group(1);
@@ -43,7 +49,7 @@ public class PhpDumpHelper {
         }
 
         // Match an object (App\Tests\TestDTO {#383)
-        Pattern namedObjectPattern = Pattern.compile("^([A-Za-z_\\\\][A-Za-z0-9_\\\\]*?)(\\s@[A-Za-z0-9]*){0,1}\\s*\\{#\\d+\\s*(.*?)\\s*\\}$", Pattern.DOTALL);
+        Pattern namedObjectPattern = Pattern.compile("^([A-Za-z_\\\\][A-Za-z0-9_\\\\]*?)(\\s@[A-Za-z0-9]*)?\\s*\\{#\\d+\\s*(.*?)\\s*}$", Pattern.DOTALL);
         Matcher namedObjectMatcher = namedObjectPattern.matcher(input);
         if (namedObjectMatcher.matches()) {
             String className = namedObjectMatcher.group(1);
@@ -52,7 +58,7 @@ public class PhpDumpHelper {
         }
 
         // Match an anonym class (class@anonymous {#382)
-        Pattern anonymousObjectPattern = Pattern.compile("^class@anonymous\\s*\\{#\\d+\\s*(.*?)\\s*\\}$", Pattern.DOTALL);
+        Pattern anonymousObjectPattern = Pattern.compile("^class@anonymous\\s*\\{#\\d+\\s*(.*?)\\s*}$", Pattern.DOTALL);
         Matcher anonymousObjectMatcher = anonymousObjectPattern.matcher(input);
         if (anonymousObjectMatcher.matches()) {
             String content = anonymousObjectMatcher.group(1);
@@ -81,22 +87,20 @@ public class PhpDumpHelper {
         }
 
         // Match a boolean
-        if ("true".equals(input))
-            return new JsonPrimitive(true);
-        if ("false".equals(input))
-            return new JsonPrimitive(false);
-        if ("null".equals(input))
-            return JsonNull.INSTANCE;
+        return switch (input) {
+        case "true" -> new JsonPrimitive(true);
+        case "false" -> new JsonPrimitive(false);
+        case "null" -> JsonNull.INSTANCE;
+        default ->
 
-        // Default, traited as a string
-        return new JsonPrimitive(input);
+            // Default, traited as a string
+            new JsonPrimitive(input);
+        };
+
     }
 
     private static JsonObject parseObject(String className, String content) {
         JsonObject jsonObject = new JsonObject();
-
-        // jsonObject.addProperty("__class", className);
-        // jsonObject.addProperty("__type", "object");
 
         if (content == null || content.trim().isEmpty()) {
             return jsonObject;
@@ -115,11 +119,6 @@ public class PhpDumpHelper {
                 String visibility = propertyMatcher.group(1);
                 String propertyName = propertyMatcher.group(2).trim();
                 String propertyValue = propertyMatcher.group(3).trim();
-
-                // JsonObject propertyObj = new JsonObject();
-                // propertyObj.addProperty("visibility", getVisibilityName(visibility));
-                // propertyObj.add("value", parseValue(propertyValue));
-                // jsonObject.add(propertyName, propertyObj);
 
                 jsonObject.add(propertyName, parseValue(propertyValue));
                 continue;

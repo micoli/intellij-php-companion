@@ -13,6 +13,6 @@ public class ExportSourceToMarkdownPopupAction extends AbstractExportSourceToMar
             Notification.error("No files found for export.");
             return;
         }
-        ParsedContentDisplayPopup.showMarkdownPopup(project, "Source export", content);
+        ParsedContentDisplayPopup.showMarkdownPopup(project, content);
     }
 }
