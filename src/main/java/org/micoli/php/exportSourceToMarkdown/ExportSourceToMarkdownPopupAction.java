@@ -1,12 +1,11 @@
 package org.micoli.php.exportSourceToMarkdown;
 
-import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.micoli.php.service.ScratchFileUtil;
+import org.micoli.php.service.ParsedContentDisplayPopup;
 import org.micoli.php.ui.Notification;
 
-public class ExportSourceToMarkdownScratchFileAction extends AbstractExportSourceToMarkdownAction {
+public class ExportSourceToMarkdownPopupAction extends AbstractExportSourceToMarkdownAction {
     @Override
     protected void doAction(Project project, VirtualFile[] selectedFiles) {
         String content = ExportSourceToMarkdownService.generateMarkdownExport(project, selectedFiles);
@@ -14,6 +13,6 @@ public class ExportSourceToMarkdownScratchFileAction extends AbstractExportSourc
             Notification.error("No files found for export.");
             return;
         }
-        ScratchFileUtil.createAndOpenScratchFile(project, "exportedSource", Language.findLanguageByID("Markdown"), content);
+        ParsedContentDisplayPopup.showMarkdownPopup(project, "Source export", content);
     }
 }

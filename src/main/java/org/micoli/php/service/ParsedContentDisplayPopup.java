@@ -24,7 +24,7 @@ import java.awt.event.ActionEvent;
 public class ParsedContentDisplayPopup extends DialogWrapper {
 
     public enum PopupType {
-        JSON, PHP
+        JSON, PHP, MARKDOWN
     }
 
     private final PopupType popupType;
@@ -129,6 +129,13 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
     public static void showJsonPopup(@Nullable Project project, @NotNull String title, @NotNull String jsonContent) {
         SwingUtilities.invokeLater(() -> {
             ParsedContentDisplayPopup dialog = new ParsedContentDisplayPopup(PopupType.JSON, project, title, jsonContent);
+            dialog.show();
+        });
+    }
+
+    public static void showMarkdownPopup(@Nullable Project project, @NotNull String title, @NotNull String jsonContent) {
+        SwingUtilities.invokeLater(() -> {
+            ParsedContentDisplayPopup dialog = new ParsedContentDisplayPopup(PopupType.MARKDOWN, project, title, jsonContent);
             dialog.show();
         });
     }

@@ -44,9 +44,19 @@
     </extensions>
     <actions>
         <group id="PhpCompanionExportSource" text="Php Companion" popup="true">
-            <action id="ExportSourceToMarkdown"
+            <action id="ExportSourceToMarkdownWithScratchFile"
                     class="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownScratchFileAction"
                     text="Export Source to Markdown with ScratchFile"
+                    description="Description de mon action">
+            </action>
+            <action id="ExportSourceToMarkdownWithPopup"
+                    class="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownPopupAction"
+                    text="Export Source to Markdown with Popup"
+                    description="Description de mon action">
+            </action>
+            <action id="ExportSourceToMarkdownWithClipboard"
+                    class="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownClipboardAction"
+                    text="Export Source to Markdown with Clipboard"
                     description="Description de mon action">
             </action>
 
