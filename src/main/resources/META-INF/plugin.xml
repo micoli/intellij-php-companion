@@ -44,6 +44,17 @@
 
     </extensions>
     <actions>
+        <group id="PhpCompanionExportSource" text="Php Companion" popup="true">
+            <action id="ExportSourceToMarkdown"
+                    class="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownScratchFileAction"
+                    text="Export Source to Markdown with ScratchFile"
+                    description="Description de mon action">
+            </action>
+
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </group>
+
+
         <group id="PhpCompanion" text="Php Companion" popup="true">
             <action id="ParseCliDumperToJson"
                     class="org.micoli.php.symfony.ParseCliDumper.ParseCliDumperToJsonAction"
