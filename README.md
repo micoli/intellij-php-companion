@@ -31,7 +31,7 @@ A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced 
 
 ### 📝 Source Export to LLM markdown
 - **Markdown Export**: Export source code to markdown format optimized for LLMs
-- **Code Context Preservation**: Maintain code structure and relationships in exported format
+- **Code Context Preservation**: Maintain code structure and relationships in exported format, could also add all related classes found in specific namespaces.
 - **Custom Formatting**: Configure export format settings
 - **Selective Export**: Choose specific files or directories to export
 - **.aiignore**: .aiignore file is used to filter files to export
@@ -192,14 +192,17 @@ peerNavigation:
 
 ### Export Source to Markdown Configuration
 
-| Property | Type | Description                                                                                                                                                                                                                                                                     |
-|----------|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `template` | string | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |
+| Property               | Type     | Description                                                                                                                                                                                                                              |
+|------------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `template`             | string   | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |
+| `contextualNamespaces` | string[] | List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context                                                                                                |
 
 #### Configuration Example
 
 ```yaml
 exportSourceToMarkdown:
+  contextualNamespaces:
+     -  App\Core\Models
   template: |
      [(${#strings.isEmpty(files) ? '' : ''})]
      [# th:each="file : ${files}"]

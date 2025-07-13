@@ -1,10 +1,14 @@
 package org.micoli.php.service;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+
 import java.util.Collection;
+
 import org.jetbrains.annotations.Nullable;
 
 public class PhpUtil {
@@ -26,6 +30,21 @@ public class PhpUtil {
         Collection<PhpClass> classes = PhpIndex.getInstance(project).getClassesByFQN(fqn);
 
         return classes.isEmpty() ? null : classes.iterator().next();
+    }
+
+    public static VirtualFile getVirtualFileFromFQN(PhpIndex phpIndex, String fqn) {
+        Collection<PhpClass> classes = phpIndex.getClassesByFQN(fqn);
+
+        if (classes.isEmpty()) {
+            return null;
+        }
+        PhpClass phpClass = classes.iterator().next();
+        PsiFile containingFile = phpClass.getContainingFile();
+        if (containingFile != null) {
+            return containingFile.getVirtualFile();
+        }
+        return null;
+
     }
 
     public static boolean implementsInterfaces(PhpClass phpClass, String[] interfaceFQNs) {

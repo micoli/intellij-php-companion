@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Query\ArticleDetails;
 
-use App\Core\Article\Domain\Entity\Article;
+use App\Core\Models\Article;
 use App\Infrastructure\Bus\Handler\QueryHandlerInterface;
 
 final readonly class Handler implements QueryHandlerInterface

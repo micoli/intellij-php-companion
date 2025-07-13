@@ -13,6 +13,9 @@ public class FileListProcessor {
         Set<VirtualFile> filesSet = new LinkedHashSet<>();
 
         for (VirtualFile file : selectedFiles) {
+            if (file == null) {
+                continue;
+            }
             if (file.isDirectory()) {
                 listFilesRecursively(file, filesSet);
                 continue;
@@ -21,22 +24,15 @@ public class FileListProcessor {
         }
 
         IgnoreNode ignoreNode = getIgnoreNode(ignoreFile);
+        if (ignoreNode == null) {
+            return new ArrayList<>(filesSet);
+        }
 
         // spotless:off
         return filesSet
             .stream()
-            .sorted(
-                Comparator
-                    .comparing(VirtualFile::getPath)
-                    .thenComparing(VirtualFile::getName)
-            )
-            .filter(file -> {
-            if (ignoreNode == null) {
-                return true;
-            }
-
-            return ignoreNode.isIgnored(file.getPath(), false) != IgnoreNode.MatchResult.IGNORED;
-        }).toList();
+            .filter(file -> ignoreNode.isIgnored(file.getPath(), false) != IgnoreNode.MatchResult.IGNORED)
+            .toList();
         // spotless:on
     }
 

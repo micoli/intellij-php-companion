@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 public class SearchWithCompletionIndicator {
     public static void findUsagesWithProgress(FindModel findModel, Project project, int maxTimeSearchWithoutResult, Consumer<List<UsageInfo>> callback) {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Finding Usages", true) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Finding usages", true) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 List<UsageInfo> results = Collections.synchronizedList(new ArrayList<>());

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Query\ArticleDetails;
 
 use App\Core\Id\ArticleId;
+use App\Core\Models\Article;
 use App\Infrastructure\Bus\Message\Query\SyncQueryInterface;
 
 /**

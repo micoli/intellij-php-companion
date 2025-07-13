@@ -18,7 +18,9 @@ import org.thymeleaf.templateresolver.StringTemplateResolver;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class ExportSourceToMarkdownService {
 
@@ -38,12 +40,28 @@ public class ExportSourceToMarkdownService {
         if (processedFiles.isEmpty()) {
             return null;
         }
+        ContextualAmender contextualAmender = new ContextualAmender(project, configuration);
 
         Context context = new Context();
-        context.setVariable("files", getFileData(project, processedFiles));
+
+        // spotless:off
+        List<VirtualFile> filesInContext = contextualAmender.amendListWithContextualFiles(
+            processedFiles
+        );
+        context.setVariable("files", getFileData(
+            project,
+            sortFiles(filesInContext)
+        ));
+        // spotless:on
 
         String exportContent = templateEngine.process(configuration.template, context);
+
         return new ExportedSource(exportContent, getNumberOfTokens(exportContent));
+    }
+
+    private static @NotNull List<VirtualFile> sortFiles(List<VirtualFile> filesInContext) {
+        List<VirtualFile> processedFiles1 = new ArrayList<>(Set.copyOf(filesInContext)).stream().sorted(Comparator.comparing(VirtualFile::getPath).thenComparing(VirtualFile::getName)).toList();
+        return processedFiles1;
     }
 
     private static @NotNull List<FileData> getFileData(Project project, List<VirtualFile> processedFiles) {
