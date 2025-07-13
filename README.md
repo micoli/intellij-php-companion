@@ -34,6 +34,7 @@ A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced 
 - **Code Context Preservation**: Maintain code structure and relationships in exported format
 - **Custom Formatting**: Configure export format settings
 - **Selective Export**: Choose specific files or directories to export
+- **.aiignore**: .aiignore file is used to filter files to export
 - Freely inspired from https://github.com/keyboardsamurai/source-clipboard-export-intellij-plugin which was dedicated to Java project
 
 ### 🔍 CLI Dumper Parser

@@ -9,11 +9,12 @@ import org.micoli.php.ui.Notification;
 public class ExportSourceToMarkdownScratchFileAction extends AbstractExportSourceToMarkdownAction {
     @Override
     protected void doAction(Project project, VirtualFile[] selectedFiles) {
-        String content = ExportSourceToMarkdownService.generateMarkdownExport(project, selectedFiles);
-        if (content == null) {
+        ExportedSource export = ExportSourceToMarkdownService.generateMarkdownExport(project, selectedFiles);
+        if (export == null) {
             Notification.error("No files found for export.");
             return;
         }
-        ScratchFileUtil.createAndOpenScratchFile(project, "exportedSource", Language.findLanguageByID("Markdown"), content);
+        ScratchFileUtil.createAndOpenScratchFile(project, "exportedSource", Language.findLanguageByID("Markdown"), export.content());
+        Notification.messageWithTimeout(String.format("Approximatively number of tokens: %s", export.numberOfTokens()), 500);
     }
 }

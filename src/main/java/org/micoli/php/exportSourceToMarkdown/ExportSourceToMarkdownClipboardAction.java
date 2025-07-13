@@ -12,14 +12,14 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 public class ExportSourceToMarkdownClipboardAction extends AbstractExportSourceToMarkdownAction {
     @Override
     protected void doAction(Project project, VirtualFile[] selectedFiles) {
-        String content = ExportSourceToMarkdownService.generateMarkdownExport(project, selectedFiles);
-        if (content == null) {
+        ExportedSource export = ExportSourceToMarkdownService.generateMarkdownExport(project, selectedFiles);
+        if (export == null) {
             Notification.error("No files found for export.");
             return;
         }
 
-        copyToClipboard(content);
-        Notification.messageWithTimeout("Content copied to clipboard", 500);
+        copyToClipboard(export.content());
+        Notification.messageWithTimeout(String.format("Content copied to clipboard, approximatively number of tokens: %s", export.numberOfTokens()), 500);
     }
 
     private static void copyToClipboard(String content) {
