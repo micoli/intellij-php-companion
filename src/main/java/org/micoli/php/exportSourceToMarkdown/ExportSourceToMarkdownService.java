@@ -34,8 +34,8 @@ public class ExportSourceToMarkdownService {
     public static ExportedSource generateMarkdownExport(Project project, VirtualFile[] selectedFiles) {
         TemplateEngine templateEngine = getTemplateEngine();
 
-        VirtualFile[] processedFiles = FileListProcessor.processSelectedFiles(project.getBaseDir().findChild(".aiignore"), selectedFiles);
-        if (processedFiles.length == 0) {
+        List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(project.getBaseDir().findChild(".aiignore"), selectedFiles);
+        if (processedFiles.isEmpty()) {
             return null;
         }
 
@@ -46,7 +46,7 @@ public class ExportSourceToMarkdownService {
         return new ExportedSource(exportContent, getNumberOfTokens(exportContent));
     }
 
-    private static @NotNull List<FileData> getFileData(Project project, VirtualFile[] processedFiles) {
+    private static @NotNull List<FileData> getFileData(Project project, List<VirtualFile> processedFiles) {
         List<FileData> files = new ArrayList<>();
         String baseDir = project.getBasePath();
         assert baseDir != null;

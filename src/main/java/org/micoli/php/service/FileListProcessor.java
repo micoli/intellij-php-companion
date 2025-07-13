@@ -9,7 +9,7 @@ import java.util.*;
 
 public class FileListProcessor {
 
-    public static VirtualFile[] processSelectedFiles(@Nullable VirtualFile ignoreFile, VirtualFile[] selectedFiles) {
+    public static List<VirtualFile> processSelectedFiles(@Nullable VirtualFile ignoreFile, VirtualFile[] selectedFiles) {
         Set<VirtualFile> filesSet = new LinkedHashSet<>();
 
         for (VirtualFile file : selectedFiles) {
@@ -36,7 +36,7 @@ public class FileListProcessor {
             }
 
             return ignoreNode.isIgnored(file.getPath(), false) != IgnoreNode.MatchResult.IGNORED;
-        }).toArray(VirtualFile[]::new);
+        }).toList();
         // spotless:on
     }
 
