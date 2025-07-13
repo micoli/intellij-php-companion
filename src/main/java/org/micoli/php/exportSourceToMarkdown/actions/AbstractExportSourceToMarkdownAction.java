@@ -1,4 +1,4 @@
-package org.micoli.php.exportSourceToMarkdown;
+package org.micoli.php.exportSourceToMarkdown.actions;
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;

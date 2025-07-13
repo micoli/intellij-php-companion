@@ -45,17 +45,17 @@
     <actions>
         <group id="PhpCompanionExportSource" text="Php Companion" popup="true">
             <action id="ExportSourceToMarkdownWithScratchFile"
-                    class="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownScratchFileAction"
+                    class="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownScratchFileAction"
                     text="Export Source to Markdown with ScratchFile"
                     description="Description de mon action">
             </action>
             <action id="ExportSourceToMarkdownWithPopup"
-                    class="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownPopupAction"
+                    class="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownPopupAction"
                     text="Export Source to Markdown with Popup"
                     description="Description de mon action">
             </action>
             <action id="ExportSourceToMarkdownWithClipboard"
-                    class="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownClipboardAction"
+                    class="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownClipboardAction"
                     text="Export Source to Markdown with Clipboard"
                     description="Description de mon action">
             </action>
@@ -66,12 +66,12 @@
 
         <group id="PhpCompanion" text="Php Companion" popup="true">
             <action id="ParseCliDumperToJson"
-                    class="org.micoli.php.symfony.ParseCliDumper.ParseCliDumperToJsonAction"
+                    class="org.micoli.php.symfony.ParseCliDumper.actions.ParseCliDumperToJsonAction"
                     text="Parse Symfony CliDumper to JSON"
                     description="Parse CliDumper output and export it in JSON">
             </action>
             <action id="ParseCliDumperToPHP"
-                    class="org.micoli.php.symfony.ParseCliDumper.ParseCliDumperToPhpAction"
+                    class="org.micoli.php.symfony.ParseCliDumper.actions.ParseCliDumperToPhpAction"
                     text="Parse Symfony CliDumper to PHP"
                     description="Parse CliDumper output and export it in PHP">
             </action>

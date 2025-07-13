@@ -1,4 +1,4 @@
-package org.micoli.php.symfony.ParseCliDumper;
+package org.micoli.php.symfony.ParseCliDumper.actions;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;

@@ -1,8 +1,10 @@
-package org.micoli.php.exportSourceToMarkdown;
+package org.micoli.php.exportSourceToMarkdown.actions;
 
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
+import org.micoli.php.exportSourceToMarkdown.ExportedSource;
 import org.micoli.php.ui.Notification;
 
 import java.awt.datatransfer.DataFlavor;
