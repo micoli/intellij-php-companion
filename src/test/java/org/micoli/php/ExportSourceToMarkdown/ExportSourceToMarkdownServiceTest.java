@@ -4,6 +4,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.junit.Test;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
+import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
 
 public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
     @Override
@@ -47,4 +48,24 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
                 """.trim(), ExportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect).trim());
     }
 
+    @Test
+    public void testItGeneratesExportStringForSelectedFilesWithCustomTemplate() {
+        myFixture.copyDirectoryToProject(".", ".");
+        VirtualFile[] filesToSelect = { myFixture.findFileInTempDir("root_file1.txt"), myFixture.findFileInTempDir("path1"), myFixture.findFileInTempDir("path1/path1_2") };
+        ExportSourceToMarkdownConfiguration configuration = new ExportSourceToMarkdownConfiguration();
+        configuration.template= """
+            [(${#strings.isEmpty(files) ? '' : ''})]
+            [# th:each="file : ${files}"]
+            - [(${file.path})]
+            [/]
+            """;
+
+        ExportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
+        assertEquals("""
+                - /src/path1/path1_1/path1_1_file1.txt
+                - /src/path1/path1_2/path1_2_file1.txt
+                - /src/path1/path1_file1.txt
+                - /src/root_file1.txt
+                """.trim(), ExportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect).trim());
+    }
 }

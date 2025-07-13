@@ -3,6 +3,8 @@ package org.micoli.php.exportSourceToMarkdown;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.micoli.php.attributeNavigation.service.FileData;
+import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
 import org.micoli.php.service.FileListProcessor;
 import org.micoli.php.ui.Notification;
 import org.thymeleaf.TemplateEngine;
@@ -15,19 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExportSourceToMarkdownService {
-    private static final String TEMPLATE = """
-            [(${#strings.isEmpty(files) ? '' : ''})]
-            [# th:each="file : ${files}"]
-            ## [(${file.path})]
 
-            ```[(${file.extension})]
-            [(${file.content})]
-            ```
+    private static ExportSourceToMarkdownConfiguration configuration = new ExportSourceToMarkdownConfiguration();
 
-            [/]
-            """;
 
-    record FileData(String path, String content, String extension) {
+    public static void loadConfiguration(Project project, ExportSourceToMarkdownConfiguration exportSourceToMarkdownConfiguration) {
+        if (exportSourceToMarkdownConfiguration == null) {
+            return;
+        }
+        configuration = exportSourceToMarkdownConfiguration;
     }
 
     public static String generateMarkdownExport(Project project, VirtualFile[] selectedFiles) {

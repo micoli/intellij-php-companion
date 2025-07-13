@@ -189,6 +189,28 @@ peerNavigation:
       classB: \\App\\Domain\\(?<module>.+)\\Factory\\(?<entity>.+)Factory
 ```
 
+### Export Source to Markdown Configuration
+
+| Property | Type | Description                                                                                                                                                                                                                                                                     |
+|----------|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `template` | string | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |
+
+#### Configuration Example
+
+```yaml
+exportSourceToMarkdown:
+  template: |
+     [(${#strings.isEmpty(files) ? '' : ''})]
+     [# th:each="file : ${files}"]
+     ## [(${file.path})]
+
+     ```[(${file.extension})]
+     [(${file.content})]
+     ```
+
+     [/]
+```
+
 ### Configuration Tips
 
 1. **Named Groups**: Use regex named groups `(?<name>...)` in patterns and reference them with `(?<name>...) (same expression)` in targets for better readability and maintainability
