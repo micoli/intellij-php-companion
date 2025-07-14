@@ -36,3 +36,7 @@ symfonyMessenger:
   handlerMethods:
     - __invoke
     - handle
+
+exportSourceToMarkdown:
+  contextualNamespaces:
+    - App\Core\Models

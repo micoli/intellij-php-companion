@@ -35,20 +35,22 @@ public class ExportSourceToMarkdownService {
 
     public static ExportedSource generateMarkdownExport(Project project, VirtualFile[] selectedFiles) {
 
-        List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(
-                getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null, selectedFiles);
-        if (processedFiles.isEmpty()) {
+        List<VirtualFile> fileList = FileListProcessor.findFilesFromSelectedFiles(List.of(selectedFiles));
+        if (fileList.isEmpty()) {
             return null;
         }
 
         ContextualAmender contextualAmender = new ContextualAmender(project, configuration);
 
-        List<VirtualFile> filesInContext = getUseContextualNamespaces()
-                ? contextualAmender.amendListWithContextualFiles(processedFiles)
-                : processedFiles;
+        List<VirtualFile> filesInContext =
+                getUseContextualNamespaces() ? contextualAmender.amendListWithContextualFiles(fileList) : fileList;
+        List<VirtualFile> filteredFiles = FileListProcessor.filterFiles(
+                getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null,
+                project.getBaseDir(),
+                filesInContext);
 
         Context context = new Context();
-        context.setVariable("files", getFileData(project, sortFiles(filesInContext)));
+        context.setVariable("files", getFileData(project, sortFiles(filteredFiles)));
 
         String exportContent = getTemplateEngine().process(configuration.template, context);
 
@@ -56,11 +58,10 @@ public class ExportSourceToMarkdownService {
     }
 
     private static @NotNull List<VirtualFile> sortFiles(List<VirtualFile> filesInContext) {
-        List<VirtualFile> processedFiles1 = new ArrayList<>(Set.copyOf(filesInContext))
+        return new ArrayList<>(Set.copyOf(filesInContext))
                 .stream()
                         .sorted(Comparator.comparing(VirtualFile::getPath).thenComparing(VirtualFile::getName))
                         .toList();
-        return processedFiles1;
     }
 
     private static @NotNull List<FileData> getFileData(Project project, List<VirtualFile> processedFiles) {

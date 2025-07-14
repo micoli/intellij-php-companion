@@ -21,11 +21,11 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     private void initFixtures(boolean withExclusionRules) {
         if (withExclusionRules) {
             myFixture.addFileToProject(
-                    ".aiignore",
+                    "/.aiignore",
                     """
                     # Ignore test file
-                    src/target/**
-                    src/out/**
+                    target/**
+                    out/**
                     **/*Test.java
                     """);
         }
@@ -39,11 +39,11 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     @Test
     public void testBasicFileListProcessor() {
         myFixture.copyDirectoryToProject(".", ".");
-        VirtualFile[] filesToSelect = {
+        List<VirtualFile> filesToSelect = List.of(new VirtualFile[] {
             myFixture.findFileInTempDir("/"),
-        };
+        });
 
-        List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(null, filesToSelect);
+        List<VirtualFile> processedFiles = FileListProcessor.findFilesFromSelectedFiles(filesToSelect);
 
         assertEquals(4, processedFiles.size());
     }
@@ -51,14 +51,15 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     @Test
     public void testFileListProcessorWithExclusionRules() {
         initFixtures(true);
-        VirtualFile[] filesToSelect = {
+        List<VirtualFile> filesToSelect = List.of(new VirtualFile[] {
             myFixture.findFileInTempDir("/target"),
             myFixture.findFileInTempDir("/out"),
             myFixture.findFileInTempDir("/main"),
-        };
+        });
 
-        List<VirtualFile> processedFiles =
-                FileListProcessor.processSelectedFiles(myFixture.findFileInTempDir(".aiignore"), filesToSelect);
+        List<VirtualFile> fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect);
+        List<VirtualFile> processedFiles = FileListProcessor.filterFiles(
+                myFixture.findFileInTempDir(".aiignore"), myFixture.getProject().getBaseDir(), fileList);
 
         assertNotContains(processedFiles, "App.class");
         assertNotContains(processedFiles, "Main.class");
@@ -69,12 +70,13 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     @Test
     public void testFileListProcessorWithExclusionRulesAndOnlyOneSelection() {
         initFixtures(true);
-        VirtualFile[] filesToSelect = {
+        List<VirtualFile> filesToSelect = List.of(new VirtualFile[] {
             myFixture.findFileInTempDir("/"),
-        };
+        });
 
-        List<VirtualFile> processedFiles =
-                FileListProcessor.processSelectedFiles(myFixture.findFileInTempDir(".aiignore"), filesToSelect);
+        List<VirtualFile> fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect);
+        List<VirtualFile> processedFiles = FileListProcessor.filterFiles(
+                myFixture.findFileInTempDir(".aiignore"), myFixture.getProject().getBaseDir(), fileList);
 
         assertNotContains(processedFiles, "App.class");
         assertNotContains(processedFiles, "Main.class");
@@ -85,11 +87,11 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     @Test
     public void testFileListProcessorWithoutExclusionRules() {
         initFixtures(false);
-        VirtualFile[] filesToSelect = {
+        List<VirtualFile> filesToSelect = List.of(new VirtualFile[] {
             myFixture.findFileInTempDir("/"),
-        };
+        });
 
-        List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(null, filesToSelect);
+        List<VirtualFile> processedFiles = FileListProcessor.findFilesFromSelectedFiles(filesToSelect);
 
         assertContains(processedFiles, "App.class");
         assertContains(processedFiles, "Main.class");
