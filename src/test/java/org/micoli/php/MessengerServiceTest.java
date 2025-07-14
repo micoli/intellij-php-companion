@@ -1,4 +1,4 @@
-package org.micoli.php.symfony.messenger.service;
+package org.micoli.php;
 
 import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
@@ -14,12 +14,14 @@ import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
+import org.micoli.php.symfony.messenger.service.MessengerService;
+import org.micoli.php.symfony.messenger.service.MessengerServiceConfiguration;
 
 public class MessengerServiceTest extends BasePlatformTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return "src/test/testData";
+        return "src/test/resources/testData";
     }
 
     public void testItDetectMessageBasedOnPatternClass() {

@@ -1,17 +1,17 @@
-package org.micoli.php.exportSourceToMarkdown;
+package org.micoli.php;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import org.junit.Test;
+import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
+import org.micoli.php.exportSourceToMarkdown.ExportedSource;
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
 
 public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
     @Override
     protected String getTestDataPath() {
-        return "src/test/";
+        return "src/test/resources/";
     }
 
-    @Test
     public void testItGeneratesMarkdownExportForSelectedFiles() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData/.", ".");
         VirtualFile[] filesToSelect = {
@@ -87,7 +87,6 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
                 exportedSource.content().trim());
     }
 
-    @Test
     public void testItGeneratesExportStringForSelectedFilesWithCustomTemplate() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData/.", ".");
         VirtualFile[] filesToSelect = {
@@ -118,7 +117,6 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
                 exportedSource.content().trim());
     }
 
-    @Test
     public void testItCountTokens() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData/.", ".");
         VirtualFile[] filesToSelect = {myFixture.findFileInTempDir("root_file1.txt")};

@@ -1,4 +1,4 @@
-package org.micoli.php.peerNavigation.service;
+package org.micoli.php;
 
 import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
@@ -9,13 +9,14 @@ import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration;
+import org.micoli.php.peerNavigation.service.PeerNavigationService;
 import org.micoli.php.service.PhpUtil;
 
 public class PeerNavigationServiceTest extends BasePlatformTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return "src/test/testData";
+        return "src/test/resources/testData";
     }
 
     public void testItFindsPeerElement() {

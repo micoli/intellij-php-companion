@@ -45,9 +45,7 @@ public class ExportSourceToMarkdownService {
         List<VirtualFile> filesInContext =
                 getUseContextualNamespaces() ? contextualAmender.amendListWithContextualFiles(fileList) : fileList;
         List<VirtualFile> filteredFiles = FileListProcessor.filterFiles(
-                getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null,
-                project.getBaseDir(),
-                filesInContext);
+                getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null, filesInContext);
 
         Context context = new Context();
         context.setVariable("files", getFileData(project, sortFiles(filteredFiles)));

@@ -1,4 +1,4 @@
-package org.micoli.php.configuration;
+package org.micoli.php;
 
 import static org.junit.Assert.assertThrows;
 
@@ -11,7 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.junit.Test;
-import org.micoli.php.YamlAssertUtils;
+import org.micoli.php.configuration.ConfigurationException;
+import org.micoli.php.configuration.ConfigurationFactory;
+import org.micoli.php.configuration.NoConfigurationFileException;
+import org.micoli.php.utils.YamlAssertUtils;
 import org.yaml.snakeyaml.Yaml;
 
 public class ConfigurationFactoryTest {
@@ -84,7 +87,7 @@ public class ConfigurationFactoryTest {
                                 .getFile()),
                         StandardCharsets.UTF_8)
                 .read();
-        YamlAssertUtils.assertYamlEquals(loadedConfiguration, expectedConfiguration);
+        YamlAssertUtils.assertYamlEquals(expectedConfiguration, loadedConfiguration);
     }
 
     private ConfigurationFactory.@Nullable LoadedConfiguration getLoadedConfiguration(File empty)

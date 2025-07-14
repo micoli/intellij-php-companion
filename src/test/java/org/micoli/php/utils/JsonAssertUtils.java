@@ -1,4 +1,4 @@
-package org.micoli.php;
+package org.micoli.php.utils;
 
 import com.google.gson.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package org.micoli.php;
+package org.micoli.php.utils;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;

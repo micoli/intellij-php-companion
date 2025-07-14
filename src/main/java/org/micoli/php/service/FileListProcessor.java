@@ -5,7 +5,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import java.io.*;
 import java.util.*;
 import org.eclipse.jgit.ignore.IgnoreNode;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FileListProcessor {
@@ -26,8 +25,7 @@ public class FileListProcessor {
         return new ArrayList<>(filesSet);
     }
 
-    public static List<VirtualFile> filterFiles(
-            @Nullable VirtualFile ignoreFile, @NotNull VirtualFile baseDir, List<VirtualFile> filesSet) {
+    public static List<VirtualFile> filterFiles(@Nullable VirtualFile ignoreFile, List<VirtualFile> filesSet) {
         IgnoreNode ignoreNode = getIgnoreNode(ignoreFile);
         if (ignoreNode == null) {
             return new ArrayList<>(filesSet);

@@ -1,4 +1,4 @@
-package org.micoli.php.attributeNavigation;
+package org.micoli.php;
 
 import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
@@ -15,7 +15,7 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return "src/test/testData";
+        return "src/test/resources/testData";
     }
 
     public void testItFormatValueUsingInlineFormatter() {

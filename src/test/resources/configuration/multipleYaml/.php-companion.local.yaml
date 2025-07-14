@@ -1,0 +1,23 @@
+peerNavigation:
+  associates:
+    - classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
+      classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
+    - classA: \\App\\Tests\\Func\\(?<type>.*)\\Cli\\(?<path>.*)\\ControllerTest
+      classB: \\App\\(?<type>.*)\\Cli\\(?<path>.*)\\Controller
+  peers:
+    - source: ^\\App\\Tests\\Func\\(.*)\\ControllerTest$
+      target: \\App\\$1\\Controller
+
+symfonyMessenger:
+  messageHandlerInterfaces:
+    - \App\Infrastructure\Bus\Handler\CommonHandlerInterface
+
+  dispatchMethods:
+    - dispatch
+    - query
+    - command
+    - notify
+
+  handlerMethods:
+    - __invoke
+    - handle

@@ -1,21 +1,16 @@
-package org.micoli.php.service;
+package org.micoli.php;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.junit.Before;
-import org.junit.Test;
+import org.micoli.php.service.FileListProcessor;
 
 public class FileListProcessorTest extends BasePlatformTestCase {
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     protected String getTestDataPath() {
-        return "src/test/testMarkDownExporterData";
+        return "src/test/resources/testMarkDownExporterData";
     }
 
     private void initFixtures(boolean withExclusionRules) {
@@ -36,7 +31,6 @@ public class FileListProcessorTest extends BasePlatformTestCase {
         myFixture.addFileToProject("/main/AppTest.java", "source content");
     }
 
-    @Test
     public void testBasicFileListProcessor() {
         myFixture.copyDirectoryToProject(".", ".");
         List<VirtualFile> filesToSelect = List.of(new VirtualFile[] {
@@ -48,7 +42,6 @@ public class FileListProcessorTest extends BasePlatformTestCase {
         assertEquals(4, processedFiles.size());
     }
 
-    @Test
     public void testFileListProcessorWithExclusionRules() {
         initFixtures(true);
         List<VirtualFile> filesToSelect = List.of(new VirtualFile[] {
@@ -58,8 +51,8 @@ public class FileListProcessorTest extends BasePlatformTestCase {
         });
 
         List<VirtualFile> fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect);
-        List<VirtualFile> processedFiles = FileListProcessor.filterFiles(
-                myFixture.findFileInTempDir(".aiignore"), myFixture.getProject().getBaseDir(), fileList);
+        List<VirtualFile> processedFiles =
+                FileListProcessor.filterFiles(myFixture.findFileInTempDir(".aiignore"), fileList);
 
         assertNotContains(processedFiles, "App.class");
         assertNotContains(processedFiles, "Main.class");
@@ -67,7 +60,6 @@ public class FileListProcessorTest extends BasePlatformTestCase {
         assertContains(processedFiles, "App.java");
     }
 
-    @Test
     public void testFileListProcessorWithExclusionRulesAndOnlyOneSelection() {
         initFixtures(true);
         List<VirtualFile> filesToSelect = List.of(new VirtualFile[] {
@@ -75,8 +67,8 @@ public class FileListProcessorTest extends BasePlatformTestCase {
         });
 
         List<VirtualFile> fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect);
-        List<VirtualFile> processedFiles = FileListProcessor.filterFiles(
-                myFixture.findFileInTempDir(".aiignore"), myFixture.getProject().getBaseDir(), fileList);
+        List<VirtualFile> processedFiles =
+                FileListProcessor.filterFiles(myFixture.findFileInTempDir(".aiignore"), fileList);
 
         assertNotContains(processedFiles, "App.class");
         assertNotContains(processedFiles, "Main.class");
@@ -84,7 +76,6 @@ public class FileListProcessorTest extends BasePlatformTestCase {
         assertContains(processedFiles, "App.java");
     }
 
-    @Test
     public void testFileListProcessorWithoutExclusionRules() {
         initFixtures(false);
         List<VirtualFile> filesToSelect = List.of(new VirtualFile[] {
