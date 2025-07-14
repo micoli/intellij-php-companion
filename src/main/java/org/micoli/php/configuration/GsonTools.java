@@ -37,6 +37,9 @@ public class GsonTools {
                     // concat the arrays -- there cannot be a conflict in an array, it's just a
                     // collection of stuff
                     for (int i = 0; i < rightArr.size(); i++) {
+                        if (leftArr.contains(rightArr.get(i))) {
+                            continue;
+                        }
                         leftArr.add(rightArr.get(i));
                     }
                 }

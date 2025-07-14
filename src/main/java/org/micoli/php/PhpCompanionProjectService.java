@@ -55,7 +55,7 @@ public final class PhpCompanionProjectService implements Disposable {
             }
         } catch (ConfigurationException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {
-                Notification.error("Configuration error while loading: " + e.getMessage());
+                Notification.error("Configuration error while loading:", e.getMessage());
                 this.configurationTimestamp = e.serial;
             }
         }

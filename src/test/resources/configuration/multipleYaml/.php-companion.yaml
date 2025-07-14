@@ -1,0 +1,33 @@
+attributeNavigation:
+  rules:
+    - attributeFQCN: Symfony\Component\Routing\Annotation\Route
+      propertyName: path
+      formatterScript: |
+        return (value
+          .replaceAll("(\\{.*?\\})", "[^/]*")
+          + ":"
+        );
+
+peerNavigation:
+  associates:
+    - classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
+      classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
+
+symfonyMessenger:
+  messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
+  messageInterfaces:
+    - \App\Infrastructure\Bus\Message\MessageInterface
+
+  messageHandlerInterfaces:
+    - \App\Infrastructure\Bus\Handler\CommandHandlerInterface
+    - \App\Infrastructure\Bus\Handler\QueryHandlerInterface
+    - \App\Infrastructure\Bus\Handler\EventHandlerInterface
+
+  dispatchMethods:
+    - dispatch
+    - query
+    - command
+
+  handlerMethods:
+    - __invoke
+    - handle

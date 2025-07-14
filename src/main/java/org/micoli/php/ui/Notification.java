@@ -30,11 +30,28 @@ public class Notification {
         notify(createMessage(message, NotificationType.ERROR));
     }
 
+    public static void error(String title, String message) {
+        notify(createMessage(title, message, NotificationType.ERROR));
+    }
+
     private static void notify(com.intellij.notification.Notification message) {
         message.notify(ProjectManager.getInstance().getOpenProjects()[0]);
     }
 
     private static com.intellij.notification.Notification createMessage(String message, NotificationType information) {
-        return NotificationGroupManager.getInstance().getNotificationGroup("PHP Companion").createNotification(message, information);
+        // spotless:off
+        return NotificationGroupManager
+            .getInstance()
+            .getNotificationGroup("PHP Companion")
+            .createNotification(message, information);
+        // spotless:on
+    }
+    private static com.intellij.notification.Notification createMessage(String title, String message, NotificationType information) {
+        // spotless:off
+        return NotificationGroupManager
+            .getInstance()
+            .getNotificationGroup("PHP Companion")
+            .createNotification(title,message, information);
+        // spotless:on
     }
 }

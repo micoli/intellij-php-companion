@@ -1,13 +1,14 @@
 package org.micoli.php.configuration;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.io.Files;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,8 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.micoli.php.configuration.models.Configuration;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.scanner.ScannerException;
 
 public class ConfigurationFactory {
     public static class LoadedConfiguration {
@@ -34,7 +38,7 @@ public class ConfigurationFactory {
     public static LoadedConfiguration loadConfiguration(String projectPath, Long previousLatestFileTimestampUpdate) throws ConfigurationException, NoConfigurationFileException {
         List<String> files = acceptableConfigurationFiles.stream().filter((configurationFile) -> new File(projectPath, configurationFile).exists()).toList();
         if (files.isEmpty()) {
-            throw new NoConfigurationFileException("No .php-companion(.*).json configuration file(s) found.", 0L);
+            throw new NoConfigurationFileException("No .php-companion(.local).(json|yaml) configuration file(s) found.", 0L);
         }
         long latestFileUpdateTimestamp = getLatestFileTimestampUpdate(projectPath, files);
         if (previousLatestFileTimestampUpdate == latestFileUpdateTimestamp) {
@@ -46,32 +50,59 @@ public class ConfigurationFactory {
         try {
             stringContent = loadConfigurationFiles(projectPath, files);
             return new LoadedConfiguration(objectMapper.readValue(stringContent, Configuration.class), latestFileUpdateTimestamp);
-        } catch (Exception e) {
-            throw new ConfigurationException(e.getClass().descriptorString() + "-" + e.getMessage() + "\\n" + stringContent, latestFileUpdateTimestamp);
+        } catch (ConfigurationException configurationException) {
+            throw new ConfigurationException(configurationException.getMessage(), latestFileUpdateTimestamp, configurationException.descriptorString, configurationException.originalContent);
+        } catch (JsonMappingException mappingException) {
+            throw new ConfigurationException(JsonExceptionMapper.getExceptionName(mappingException) + ": " + getReadablePathReference(mappingException), latestFileUpdateTimestamp, mappingException.getMessage(), stringContent);
+        } catch (Exception exception) {
+            throw new ConfigurationException(exception.getMessage(), latestFileUpdateTimestamp, exception.getClass().descriptorString(), stringContent);
         }
     }
 
-    private static String loadConfigurationFiles(String projectPath, List<String> files) throws IOException, GsonTools.JsonObjectExtensionConflictException {
-        JsonObject mergedJson = new JsonObject();
-        final Yaml yaml = new Yaml();
-        for (String file : files) {
-            String inputBuffer;
-            File fullPathFile = new File(projectPath, file);
-            if (file.endsWith(".json")) {
-                inputBuffer = Files.asCharSource(fullPathFile, StandardCharsets.UTF_8).read();
-            }
-            else {
-                try {
-                    final Object load = yaml.load(new FileReader(fullPathFile));
-                    inputBuffer = new GsonBuilder().setPrettyPrinting().create().toJson(load, LinkedHashMap.class);
-                } catch (Exception e) {
-                    throw new IOException(e.getMessage());
+    private static String getReadablePathReference(JsonMappingException mappingException) {
+        // spotless:off
+        return mappingException
+            .getPath()
+            .stream()
+            .map((pathReference) -> {
+                if (pathReference.getIndex() == -1) {
+                    return pathReference.getFieldName();
                 }
-            }
-            JsonElement jsonFile = JsonParser.parseString(inputBuffer).getAsJsonObject();
-            GsonTools.extendJsonObject(mergedJson, GsonTools.ConflictStrategy.PREFER_SECOND_OBJ, jsonFile.getAsJsonObject());
+                if (pathReference.getFieldName()==null){
+                    return "[" + pathReference.getIndex() + "]";
+                }
+                return pathReference.getFieldName() + "[" + pathReference.getIndex() + "]";
+            })
+            .collect(Collectors.joining("."));
+        // spotless:on
+    }
+
+    private static String loadConfigurationFiles(String projectPath, List<String> files) throws ConfigurationException, IOException, GsonTools.JsonObjectExtensionConflictException {
+        JsonObject mergedJson = new JsonObject();
+        for (String file : files) {
+            // spotless:off
+            GsonTools.extendJsonObject(
+                mergedJson,
+                GsonTools.ConflictStrategy.PREFER_SECOND_OBJ,
+                JsonParser.parseString(getConfigurationSource(file, new File(projectPath, file))).getAsJsonObject().getAsJsonObject()
+            );
+            // spotless:on
         }
         return mergedJson.toString();
+    }
+
+    private static String getConfigurationSource(String file, File fullPathFile) throws ConfigurationException, IOException {
+        if (file.endsWith(".json")) {
+            return Files.asCharSource(fullPathFile, StandardCharsets.UTF_8).read();
+        }
+        try {
+            final Object load = new Yaml().load(new FileReader(fullPathFile));
+            return new GsonBuilder().setPrettyPrinting().create().toJson(load, LinkedHashMap.class);
+        } catch (ScannerException e) {
+            throw new ConfigurationException(e.getProblem() + "\n" + e.getProblemMark().toString(), null, e.getMessage(), file);
+        } catch (FileNotFoundException e) {
+            throw new ConfigurationException(e.getMessage(), null, e.getMessage(), file);
+        }
     }
 
     private static long getLatestFileTimestampUpdate(String projectPath, List<String> files) {

@@ -1,0 +1,42 @@
+attributeNavigation:
+    rules:
+    - actionType: find_in_file
+      attributeFQCN: Symfony\Component\Routing\Annotation\Route
+      fileMask: '*.yaml,*.yml,*.php'
+      formatterScript: |
+          return (value
+            .replaceAll("(\\{.*?\\})", "[^/]*")
+            + ":"
+          );
+      isDefault: true
+      propertyName: path
+peerNavigation:
+    associates:
+        - classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
+          classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
+        - classA: \\App\\Tests\\Func\\(?<type>.*)\\Cli\\(?<path>.*)\\ControllerTest
+          classB: \\App\\(?<type>.*)\\Cli\\(?<path>.*)\\Controller
+    peers:
+        - source: ^\\App\\Tests\\Func\\(.*)\\ControllerTest$
+          target: \\App\\$1\\Controller
+
+symfonyMessenger:
+    messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
+    messageInterfaces:
+        - \App\Infrastructure\Bus\Message\MessageInterface
+
+    messageHandlerInterfaces:
+        - \App\Infrastructure\Bus\Handler\CommandHandlerInterface
+        - \App\Infrastructure\Bus\Handler\QueryHandlerInterface
+        - \App\Infrastructure\Bus\Handler\EventHandlerInterface
+        - \App\Infrastructure\Bus\Handler\CommonHandlerInterface
+
+    dispatchMethods:
+        - dispatch
+        - query
+        - command
+        - notify
+
+    handlerMethods:
+        - __invoke
+        - handle

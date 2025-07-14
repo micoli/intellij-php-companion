@@ -16,6 +16,6 @@ final readonly class Handler implements QueryHandlerInterface
 
     public function __invoke(Query $query): Result
     {
-        return new Result(new ArticleDTO();
+        return new Result(new ArticleDTO());
     }
 }

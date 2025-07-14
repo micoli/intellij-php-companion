@@ -1,0 +1,4 @@
+peerNavigation: 123
+  associates:
+      - classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
+        classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller

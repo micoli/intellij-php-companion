@@ -1,0 +1,12 @@
+attributeNavigation:
+  rules:
+    - attributeFQCN: Symfony\Component\Routing\Annotation\Route
+      propertyNameaa: path
+
+peerNavigation:
+  associates:
+    - classAZ: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
+      classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
+
+symfonyMessengers:
+  messageClassNamePattern: .*(Message|Command|Query|Event|Input)$

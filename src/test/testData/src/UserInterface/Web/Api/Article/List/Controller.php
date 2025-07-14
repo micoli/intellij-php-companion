@@ -47,7 +47,6 @@ final readonly class Controller
         int $page,
     ): JsonResponse {
         $results = $this->queryBus->query(new Articles\Query(
-            page: $page,
         ))->articles;
 
         return new JsonResponse(
