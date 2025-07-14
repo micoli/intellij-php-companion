@@ -45,18 +45,18 @@
 
     </extensions>
     <actions>
-        <group id="PhpCompanionExportSource" text="Php Companion" popup="true">
-            <action id="ExportSourceToMarkdownWithScratchFile"
+        <group id="org.micoli.php.exportSourceToMarkdown" text="Php Companion" popup="true">
+            <action id="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownScratchFileAction"
                     class="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownScratchFileAction"
                     text="Export Source to Markdown with ScratchFile"
                     description="Description de mon action">
             </action>
-            <action id="ExportSourceToMarkdownWithPopup"
+            <action id="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownPopupAction"
                     class="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownPopupAction"
                     text="Export Source to Markdown with Popup"
                     description="Description de mon action">
             </action>
-            <action id="ExportSourceToMarkdownWithClipboard"
+            <action id="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownClipboardAction"
                     class="org.micoli.php.exportSourceToMarkdown.actions.ExportSourceToMarkdownClipboardAction"
                     text="Export Source to Markdown with Clipboard"
                     description="Description de mon action">
@@ -66,24 +66,19 @@
         </group>
 
 
-        <group id="PhpCompanion" text="Php Companion" popup="true">
-            <action id="ParseCliDumperToJson"
-                    class="org.micoli.php.symfony.ParseCliDumper.actions.ParseCliDumperToJsonAction"
+        <group id="org.micoli.php.symfony.cliDumpParser" text="Php Companion" popup="true">
+            <action id="org.micoli.php.symfony.cliDumpParser.actions.ParseCliDumperToJsonAction"
+                    class="org.micoli.php.symfony.cliDumpParser.actions.ParseCliDumperToJsonAction"
                     text="Parse Symfony CliDumper to JSON"
                     description="Parse CliDumper output and export it in JSON">
             </action>
-            <action id="ParseCliDumperToPHP"
-                    class="org.micoli.php.symfony.ParseCliDumper.actions.ParseCliDumperToPhpAction"
+            <action id="org.micoli.php.symfony.cliDumpParser.actions.ParseCliDumperToPhpAction"
+                    class="org.micoli.php.symfony.cliDumpParser.actions.ParseCliDumperToPhpAction"
                     text="Parse Symfony CliDumper to PHP"
                     description="Parse CliDumper output and export it in PHP">
             </action>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <add-to-group group-id="ConsoleEditorPopupMenu" anchor="last"/>
-            <!--<add-to-group group-id="Terminal.PopupMenu" anchor="last"/>-->
-            <!--<add-to-group group-id="RunContextPopupGroup" anchor="last"/>-->
-            <!--<add-to-group group-id="ConsoleView.PopupMenu" anchor="last"/>-->
-            <!--<add-to-group group-id="TerminalToolwindowPopupMenu" anchor="last"/>-->
-            <!--<add-to-group group-id="ConsoleView.PopupMenu" anchor="last"/>-->
         </group>
     </actions>
 </idea-plugin>

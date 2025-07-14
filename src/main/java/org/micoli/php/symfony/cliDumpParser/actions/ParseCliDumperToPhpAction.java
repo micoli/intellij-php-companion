@@ -1,12 +1,12 @@
-package org.micoli.php.symfony.ParseCliDumper.actions;
+package org.micoli.php.symfony.cliDumpParser.actions;
 
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.service.ParsedContentDisplayPopup;
-import org.micoli.php.symfony.ParseCliDumper.JsonToPhpArrayConverter;
-import org.micoli.php.symfony.ParseCliDumper.PhpDumpHelper;
+import org.micoli.php.symfony.cliDumpParser.JsonToPhpArrayConverter;
+import org.micoli.php.symfony.cliDumpParser.PhpDumpHelper;
 
 public class ParseCliDumperToPhpAction extends AbstractParseCliDumperAction {
 

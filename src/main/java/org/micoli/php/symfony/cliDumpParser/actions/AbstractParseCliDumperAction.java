@@ -1,4 +1,4 @@
-package org.micoli.php.symfony.ParseCliDumper.actions;
+package org.micoli.php.symfony.cliDumpParser.actions;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
@@ -24,11 +24,7 @@ public abstract class AbstractParseCliDumperAction extends AnAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        boolean isVisible = false;
-        String selection = getCurrentSelection(e);
-        if (selection != null) {
-            isVisible = true;
-        }
+        boolean isVisible = getCurrentSelection(e) != null;
         e.getPresentation().setVisible(isVisible);
         e.getPresentation().setEnabled(isVisible);
         setPresentationText(e.getPresentation(), isVisible);

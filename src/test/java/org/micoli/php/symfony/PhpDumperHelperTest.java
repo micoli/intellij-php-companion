@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.micoli.php.JsonAssertUtils;
-import org.micoli.php.symfony.ParseCliDumper.PhpDumpHelper;
+import org.micoli.php.symfony.cliDumpParser.PhpDumpHelper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

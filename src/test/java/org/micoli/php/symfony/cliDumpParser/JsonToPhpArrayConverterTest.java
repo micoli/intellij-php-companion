@@ -1,4 +1,4 @@
-package org.micoli.php.symfony.ParseCliDumper;
+package org.micoli.php.symfony.cliDumpParser;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 @RunWith(Parameterized.class)
 public class JsonToPhpArrayConverterTest {
 
-    private static final String directory = "src/test/java/org/micoli/php/symfony/ParseCliDumper/JsonToPhpArrayConverterTestCases/";
+    private static final String directory = "src/test/java/org/micoli/php/symfony/cliDumpParser/jsonToPhpArrayConverterTestCases/";
     private final String filename;
 
     public JsonToPhpArrayConverterTest(String filename) {

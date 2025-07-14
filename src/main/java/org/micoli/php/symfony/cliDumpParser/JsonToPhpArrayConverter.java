@@ -1,4 +1,4 @@
-package org.micoli.php.symfony.ParseCliDumper;
+package org.micoli.php.symfony.cliDumpParser;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
