@@ -161,8 +161,9 @@ spotless {
     isEnforceCheck = false
 
     java {
+        palantirJavaFormat("2.39.0").style("PALANTIR")
+
         target("src/**/*.java")
-        eclipse().configFile("spotless-eclipse-config.properties")
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()

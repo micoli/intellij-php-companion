@@ -13,8 +13,8 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
-import org.micoli.php.symfony.messenger.service.MessengerService;
 import org.micoli.php.service.PhpUtil;
+import org.micoli.php.symfony.messenger.service.MessengerService;
 
 class MessengerFindUsagesHandler extends FindUsagesHandler {
 
@@ -23,7 +23,10 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
     }
 
     @Override
-    public boolean processElementUsages(@NotNull PsiElement element, @NotNull Processor<? super UsageInfo> processor, @NotNull FindUsagesOptions options) {
+    public boolean processElementUsages(
+            @NotNull PsiElement element,
+            @NotNull Processor<? super UsageInfo> processor,
+            @NotNull FindUsagesOptions options) {
 
         if (!super.processElementUsages(element, processor, options)) {
             return false;
@@ -34,7 +37,7 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
 
     @Override
     public PsiElement @NotNull [] getPrimaryElements() {
-        return new PsiElement[] { getPsiElement() };
+        return new PsiElement[] {getPsiElement()};
     }
 
     @Override
@@ -42,7 +45,10 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
         return PsiElement.EMPTY_ARRAY;
     }
 
-    private boolean processMessengerUsages(@NotNull PsiElement element, @NotNull Processor<? super UsageInfo> processor, @NotNull FindUsagesOptions options) {
+    private boolean processMessengerUsages(
+            @NotNull PsiElement element,
+            @NotNull Processor<? super UsageInfo> processor,
+            @NotNull FindUsagesOptions options) {
 
         Project project = element.getProject();
 
@@ -69,11 +75,15 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
         return true;
     }
 
-    private boolean findDispatchUsages(@NotNull PhpClass messageClass, @NotNull Processor<? super UsageInfo> processor, @NotNull FindUsagesOptions options) {
+    private boolean findDispatchUsages(
+            @NotNull PhpClass messageClass,
+            @NotNull Processor<? super UsageInfo> processor,
+            @NotNull FindUsagesOptions options) {
 
         return ReadAction.compute(() -> {
             Project project = messageClass.getProject();
-            Collection<MethodReference> dispatchCalls = MessengerService.findDispatchCallsForMessage(project, messageClass.getFQN());
+            Collection<MethodReference> dispatchCalls =
+                    MessengerService.findDispatchCallsForMessage(project, messageClass.getFQN());
 
             for (MethodReference dispatchCall : dispatchCalls) {
                 if (!dispatchCall.isValid()) {

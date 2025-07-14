@@ -8,10 +8,10 @@ import com.intellij.util.concurrency.AppExecutorUtil;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
+import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
-import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
 import org.micoli.php.symfony.messenger.service.MessengerServiceConfiguration;
@@ -26,7 +26,8 @@ public final class PhpCompanionProjectService implements Disposable {
 
     public PhpCompanionProjectService(@NotNull Project project) {
         this.project = project;
-        scheduledTask = AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay(this::loadConfiguration, 0, 2000, TimeUnit.MILLISECONDS);
+        scheduledTask = AppExecutorUtil.getAppScheduledExecutorService()
+                .scheduleWithFixedDelay(this::loadConfiguration, 0, 2000, TimeUnit.MILLISECONDS);
     }
 
     public static PhpCompanionProjectService getInstance(@NotNull Project project) {
@@ -35,7 +36,8 @@ public final class PhpCompanionProjectService implements Disposable {
 
     private void loadConfiguration() {
         try {
-            ConfigurationFactory.LoadedConfiguration loadedConfiguration = ConfigurationFactory.loadConfiguration(project.getBasePath(), this.configurationTimestamp);
+            ConfigurationFactory.LoadedConfiguration loadedConfiguration =
+                    ConfigurationFactory.loadConfiguration(project.getBasePath(), this.configurationTimestamp);
             if (loadedConfiguration == null) {
                 return;
             }
@@ -43,8 +45,10 @@ public final class PhpCompanionProjectService implements Disposable {
 
             MessengerServiceConfiguration.loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
             PeerNavigationService.loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
-            AttributeNavigationService.loadConfiguration(project, loadedConfiguration.configuration.attributeNavigation);
-            ExportSourceToMarkdownService.loadConfiguration(project, loadedConfiguration.configuration.exportSourceToMarkdown);
+            AttributeNavigationService.loadConfiguration(
+                    project, loadedConfiguration.configuration.attributeNavigation);
+            ExportSourceToMarkdownService.loadConfiguration(
+                    project, loadedConfiguration.configuration.exportSourceToMarkdown);
 
             DaemonCodeAnalyzer.getInstance(project).restart();
             Notification.message("PHP Companion Configuration loaded");

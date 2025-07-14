@@ -9,12 +9,11 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.PhpFile;
 import com.jetbrains.php.lang.psi.elements.PhpUse;
 import com.jetbrains.php.lang.psi.elements.PhpUseList;
+import java.util.ArrayList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
 import org.micoli.php.service.PhpUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ContextualAmender {
     private final ExportSourceToMarkdownConfiguration configuration;
@@ -32,8 +31,7 @@ public class ContextualAmender {
         do {
             count = processedFiles.size();
             processedFiles = innerAmendListWithContextualFiles(processedFiles);
-        }
-        while (count != processedFiles.size());
+        } while (count != processedFiles.size());
         return processedFiles;
     }
 
@@ -53,7 +51,8 @@ public class ContextualAmender {
                 if (!matchContextualNamespace(fqnImport)) {
                     continue;
                 }
-                VirtualFile virtualFileFromFQN = PhpUtil.getVirtualFileFromFQN(phpIndex, PhpUtil.normalizeRootFQN(fqnImport));
+                VirtualFile virtualFileFromFQN =
+                        PhpUtil.getVirtualFileFromFQN(phpIndex, PhpUtil.normalizeRootFQN(fqnImport));
                 if (virtualFileFromFQN == null) {
                     continue;
                 }

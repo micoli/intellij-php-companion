@@ -1,7 +1,6 @@
 package org.micoli.php.ui.popup;
 
 import com.intellij.pom.Navigatable;
-
 import javax.swing.*;
 
 public class NavigableItem implements Navigatable {
@@ -24,12 +23,12 @@ public class NavigableItem implements Navigatable {
 
     @Override
     public boolean canNavigate() {
-        return this.navigable != null;// && element.canNavigate();
+        return this.navigable != null; // && element.canNavigate();
     }
 
     @Override
     public boolean canNavigateToSource() {
-        return this.navigable != null;// && element.canNavigateToSource();
+        return this.navigable != null; // && element.canNavigateToSource();
     }
 
     public String getFileDesscription() {

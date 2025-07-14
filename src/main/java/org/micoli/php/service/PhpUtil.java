@@ -6,9 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
-
 import java.util.Collection;
-
 import org.jetbrains.annotations.Nullable;
 
 public class PhpUtil {
@@ -44,13 +42,15 @@ public class PhpUtil {
             return containingFile.getVirtualFile();
         }
         return null;
-
     }
 
     public static boolean implementsInterfaces(PhpClass phpClass, String[] interfaceFQNs) {
         PhpIndex phpIndex = PhpIndex.getInstance(phpClass.getProject());
         for (String interfaceFQN : interfaceFQNs) {
-            if (PhpIndexUtil.getAllSubclasses(phpIndex, normalizeRootFQN(interfaceFQN)).stream().map(PhpNamedElement::getFQN).toList().contains(phpClass.getFQN())) {
+            if (PhpIndexUtil.getAllSubclasses(phpIndex, normalizeRootFQN(interfaceFQN)).stream()
+                    .map(PhpNamedElement::getFQN)
+                    .toList()
+                    .contains(phpClass.getFQN())) {
                 return true;
             }
         }
@@ -60,13 +60,13 @@ public class PhpUtil {
     public static boolean hasAttribute(PhpClass phpClass, String attributeFQN) {
         // TODO: Implement PHP 8 attribute parsing
         // For now, check for attribute in comments as fallback
-        String docComment = phpClass.getDocComment() != null ? phpClass.getDocComment().getText() : "";
+        String docComment =
+                phpClass.getDocComment() != null ? phpClass.getDocComment().getText() : "";
         return docComment.contains(attributeFQN);
     }
 
     public static String getShortClassName(String fqn) {
-        if (fqn == null)
-            return "";
+        if (fqn == null) return "";
         String[] parts = fqn.split("\\\\");
         return parts[parts.length - 1];
     }

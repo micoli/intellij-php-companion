@@ -7,6 +7,10 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.php.lang.psi.elements.*;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.List;
+import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
@@ -14,17 +18,11 @@ import org.micoli.php.service.PsiElementUtil;
 import org.micoli.php.service.PsiElementsPopup;
 import org.micoli.php.ui.Notification;
 
-import javax.swing.*;
-import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.List;
-
 public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
 
     Icon navigateIcon = IconLoader.getIcon("icons/link.svg", PeerNavigationLineMarkerProvider.class);
 
-    public PeerNavigationLineMarkerProvider() {
-    }
+    public PeerNavigationLineMarkerProvider() {}
 
     @Override
     public @Nullable LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
@@ -32,7 +30,8 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
     }
 
     @Override
-    public void collectSlowLineMarkers(@NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
+    public void collectSlowLineMarkers(
+            @NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
         if (PeerNavigationService.configurationIsEmpty()) {
             return;
         }
@@ -52,7 +51,6 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
 
         PsiElement leafElement = PsiElementUtil.findFirstLeafElement(phpClass);
 
-        // spotless:off
         String tooltip = "Search for peer of [" + phpClass.getFQN() + "]";
         result.add(new LineMarkerInfo<>(
                 leafElement,
@@ -61,9 +59,7 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
                 psiElement -> tooltip,
                 (mouseEvent, elt) -> navigateToAssociatedElements(mouseEvent, targetElements),
                 GutterIconRenderer.Alignment.CENTER,
-                () -> tooltip)
-        );
-        // spotless:on
+                () -> tooltip));
     }
 
     private static void navigateToAssociatedElements(MouseEvent mouseEvent, List<PsiElement> targetElements) {

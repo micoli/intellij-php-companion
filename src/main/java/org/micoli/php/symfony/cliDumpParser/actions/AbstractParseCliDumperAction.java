@@ -45,7 +45,7 @@ public abstract class AbstractParseCliDumperAction extends AnAction {
         return selectedText;
     }
 
-    abstract protected void parseCliDumperOutput(String text, Project project);
+    protected abstract void parseCliDumperOutput(String text, Project project);
 
-    abstract protected void setPresentationText(@NotNull Presentation presentation, boolean isVisible);
+    protected abstract void setPresentationText(@NotNull Presentation presentation, boolean isVisible);
 }

@@ -8,11 +8,10 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.StatusBarWidgetFactory;
 import com.intellij.util.Consumer;
+import java.awt.event.MouseEvent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
-
-import java.awt.event.MouseEvent;
 
 public final class PhpCompanionStatusBarWidget implements StatusBarWidget, StatusBarWidget.TextPresentation {
     private final Project project;
@@ -97,7 +96,14 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
             }
         });
 
-        JBPopupFactory.getInstance().createActionGroupPopup("Options", group, DataManager.getInstance().getDataContext(e.getComponent()), JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, true).showUnderneathOf(e.getComponent());
+        JBPopupFactory.getInstance()
+                .createActionGroupPopup(
+                        "Options",
+                        group,
+                        DataManager.getInstance().getDataContext(e.getComponent()),
+                        JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                        true)
+                .showUnderneathOf(e.getComponent());
     }
 
     public static class Factory implements StatusBarWidgetFactory {

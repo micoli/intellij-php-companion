@@ -4,7 +4,8 @@ public final class ExportSourceToMarkdownConfiguration {
     public boolean useContextualNamespaces = true;
     public boolean useIgnoreFile = true;
     public String[] contextualNamespaces = null;
-    public String template = """
+    public String template =
+            """
             [(${#strings.isEmpty(files) ? '' : ''})]
             [# th:each="file : ${files}"]
             ## [(${file.path})]

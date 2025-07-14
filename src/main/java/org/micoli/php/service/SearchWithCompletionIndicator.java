@@ -8,15 +8,15 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.usageView.UsageInfo;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 public class SearchWithCompletionIndicator {
-    public static void findUsagesWithProgress(FindModel findModel, Project project, int maxTimeSearchWithoutResult, Consumer<List<UsageInfo>> callback) {
+    public static void findUsagesWithProgress(
+            FindModel findModel, Project project, int maxTimeSearchWithoutResult, Consumer<List<UsageInfo>> callback) {
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Finding usages", true) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
@@ -24,23 +24,28 @@ public class SearchWithCompletionIndicator {
                 AtomicBoolean processingStarted = new AtomicBoolean(false);
                 AtomicLong lastUpdateTime = new AtomicLong(System.currentTimeMillis());
 
-                FindInProjectUtil.findUsages(findModel, project, usageInfo -> {
-                    if (indicator.isCanceled()) {
-                        return false;
-                    }
+                FindInProjectUtil.findUsages(
+                        findModel,
+                        project,
+                        usageInfo -> {
+                            if (indicator.isCanceled()) {
+                                return false;
+                            }
 
-                    processingStarted.set(true);
-                    results.add(usageInfo);
-                    lastUpdateTime.set(System.currentTimeMillis());
-                    indicator.setText("Found " + results.size() + " usages");
-                    return true;
-                }, FindInProjectUtil.setupProcessPresentation(FindInProjectUtil.setupViewPresentation(findModel)));
+                            processingStarted.set(true);
+                            results.add(usageInfo);
+                            lastUpdateTime.set(System.currentTimeMillis());
+                            indicator.setText("Found " + results.size() + " usages");
+                            return true;
+                        },
+                        FindInProjectUtil.setupProcessPresentation(FindInProjectUtil.setupViewPresentation(findModel)));
 
                 while (!indicator.isCanceled() && !indicator.isRunning()) {
                     try {
                         Thread.sleep(100);
 
-                        if (processingStarted.get() && (System.currentTimeMillis() - lastUpdateTime.get()) > maxTimeSearchWithoutResult) {
+                        if (processingStarted.get()
+                                && (System.currentTimeMillis() - lastUpdateTime.get()) > maxTimeSearchWithoutResult) {
                             break;
                         }
 

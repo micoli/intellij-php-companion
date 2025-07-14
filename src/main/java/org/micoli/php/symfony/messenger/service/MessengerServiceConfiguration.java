@@ -9,10 +9,17 @@ public class MessengerServiceConfiguration {
     private static Pattern compiledMessageClassNamePatterns = Pattern.compile(messageClassNamePatterns);
 
     private static String[] messageInterfaces = {};
-    private static String[] messageHandlerInterfaces = { "Symfony\\Component\\Messenger\\Handler\\MessageHandlerInterface", };
-    public static String[] dispatchMethods = { "dispatch", "query", "command", "handle", };
-    public static String[] handlerMethods = { "__invoke", "handle", };
-    private static final String AS_MESSAGE_HANDLER_ATTRIBUTE = "Symfony\\Component\\Messenger\\Attribute\\AsMessageHandler";
+    private static String[] messageHandlerInterfaces = {
+        "Symfony\\Component\\Messenger\\Handler\\MessageHandlerInterface",
+    };
+    public static String[] dispatchMethods = {
+        "dispatch", "query", "command", "handle",
+    };
+    public static String[] handlerMethods = {
+        "__invoke", "handle",
+    };
+    private static final String AS_MESSAGE_HANDLER_ATTRIBUTE =
+            "Symfony\\Component\\Messenger\\Attribute\\AsMessageHandler";
 
     public static void loadConfiguration(SymfonyMessengerConfiguration symfonyMessengerConfiguration) {
         if (symfonyMessengerConfiguration == null) {

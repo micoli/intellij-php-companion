@@ -1,17 +1,16 @@
 package org.micoli.php.service;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.awt.RelativePoint;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.awt.event.MouseEvent;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PsiElementsPopup {
     public static void showLinksToElementsPopup(MouseEvent mouseEvent, List<PsiElement> elements) {
@@ -19,32 +18,26 @@ public class PsiElementsPopup {
     }
 
     private static void showPopup(MouseEvent mouseEvent, List<PsiElement> elements) {
-        // spotless:off
-        JBPopupFactory
-            .getInstance()
-            .createListPopup(new BaseListPopupStep<>(
-                "Navigate to Element",
-                elements
-            ) {
-                @Override
-                public @Nullable PopupStep<?> onChosen(PsiElement selectedValue, boolean finalChoice) {
-                    if (finalChoice && selectedValue instanceof Navigatable navigatable) {
-                        ApplicationManager.getApplication().invokeLater(() -> navigatable.navigate(true));
+        JBPopupFactory.getInstance()
+                .createListPopup(new BaseListPopupStep<>("Navigate to Element", elements) {
+                    @Override
+                    public @Nullable PopupStep<?> onChosen(PsiElement selectedValue, boolean finalChoice) {
+                        if (finalChoice && selectedValue instanceof Navigatable navigatable) {
+                            ApplicationManager.getApplication().invokeLater(() -> navigatable.navigate(true));
+                        }
+                        return FINAL_CHOICE;
                     }
-                    return FINAL_CHOICE;
-                }
 
-                @Override
-                public @NotNull String getTextFor(PsiElement element) {
-                    return PsiElementUtil.getHumanReadableElementLink(element);
-                }
+                    @Override
+                    public @NotNull String getTextFor(PsiElement element) {
+                        return PsiElementUtil.getHumanReadableElementLink(element);
+                    }
 
-                @Override
-                public boolean isSpeedSearchEnabled() {
-                    return true;
-                }
-            })
-            .show(new RelativePoint(mouseEvent));
-        // spotless:on
+                    @Override
+                    public boolean isSpeedSearchEnabled() {
+                        return true;
+                    }
+                })
+                .show(new RelativePoint(mouseEvent));
     }
 }

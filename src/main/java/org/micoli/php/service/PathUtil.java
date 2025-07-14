@@ -2,7 +2,6 @@ package org.micoli.php.service;
 
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,5 +24,4 @@ public class PathUtil {
         Collections.reverse(paths);
         return String.join("/", paths) + "/" + fileName;
     }
-
 }

@@ -29,7 +29,6 @@ public class MessengerService {
         }
 
         return matchMessagePattern(className);
-
     }
 
     public static PhpClass getHandledMessage(PhpClass handlerClass) {
@@ -89,19 +88,25 @@ public class MessengerService {
         GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
 
         for (String methodName : MessengerServiceConfiguration.getDispatchMethods()) {
-            searchHelper.processElementsWithWord((element, offsetInElement) -> {
-                // Vérifier si c'est un appel de méthode
-                MethodReference methodRef = PsiTreeUtil.getParentOfType(element, MethodReference.class);
-                if (methodRef == null || !methodName.equals(methodRef.getName())) {
-                    return true;
-                }
+            searchHelper.processElementsWithWord(
+                    (element, offsetInElement) -> {
+                        // Vérifier si c'est un appel de méthode
+                        MethodReference methodRef = PsiTreeUtil.getParentOfType(element, MethodReference.class);
+                        if (methodRef == null || !methodName.equals(methodRef.getName())) {
+                            return true;
+                        }
 
-                if (MessengerService.isMethodCalledWithMessageInstance(methodRef, messageClassName)) {
-                    dispatchCalls.add(methodRef);
-                }
+                        if (MessengerService.isMethodCalledWithMessageInstance(methodRef, messageClassName)) {
+                            dispatchCalls.add(methodRef);
+                        }
 
-                return true;
-            }, scope, methodName, UsageSearchContext.IN_CODE, true, false);
+                        return true;
+                    },
+                    scope,
+                    methodName,
+                    UsageSearchContext.IN_CODE,
+                    true,
+                    false);
         }
 
         return dispatchCalls.stream().distinct().collect(Collectors.toList());
@@ -128,7 +133,8 @@ public class MessengerService {
 
         // Method 2: Scan all classes for __invoke method with right parameter
         // (This is expensive, so we might want to cache results)
-        Collection<String> allClasses = phpIndex.getAllClassFqns(new PlainPrefixMatcher(MessengerServiceConfiguration.getProjectRootNamespace()));
+        Collection<String> allClasses = phpIndex.getAllClassFqns(
+                new PlainPrefixMatcher(MessengerServiceConfiguration.getProjectRootNamespace()));
         for (String className : allClasses) {
             for (PhpClass phpClass : phpIndex.getClassesByFQN(PhpUtil.normalizeRootFQN(className))) {
                 if (handlesMessageType(phpClass, messageClassName)) {
@@ -244,7 +250,9 @@ public class MessengerService {
         if (MessengerServiceConfiguration.getCompiledMessageClassNamePatterns() == null) {
             return false;
         }
-        return MessengerServiceConfiguration.getCompiledMessageClassNamePatterns().matcher(className).matches();
+        return MessengerServiceConfiguration.getCompiledMessageClassNamePatterns()
+                .matcher(className)
+                .matches();
     }
 
     public static Set<String> getHandledMessages(PhpClass handlerClass) {

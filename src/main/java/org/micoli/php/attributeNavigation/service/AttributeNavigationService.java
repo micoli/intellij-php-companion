@@ -1,17 +1,16 @@
 package org.micoli.php.attributeNavigation.service;
 
 import com.intellij.openapi.project.Project;
-import org.codehaus.groovy.jsr223.GroovyScriptEngineFactory;
-import org.micoli.php.attributeNavigation.configuration.NavigationByAttributeRule;
-import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration;
-import org.micoli.php.ui.Notification;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.util.ArrayList;
-import java.util.List;
+import org.codehaus.groovy.jsr223.GroovyScriptEngineFactory;
+import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration;
+import org.micoli.php.attributeNavigation.configuration.NavigationByAttributeRule;
+import org.micoli.php.ui.Notification;
 
 public class AttributeNavigationService {
 
@@ -49,5 +48,4 @@ public class AttributeNavigationService {
         }
         return value;
     }
-
 }

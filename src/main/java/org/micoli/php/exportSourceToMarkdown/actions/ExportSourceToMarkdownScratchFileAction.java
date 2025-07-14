@@ -16,7 +16,9 @@ public class ExportSourceToMarkdownScratchFileAction extends AbstractExportSourc
             Notification.error("No files found for export.");
             return;
         }
-        ScratchFileUtil.createAndOpenScratchFile(project, "exportedSource", Language.findLanguageByID("Markdown"), export.content());
-        Notification.messageWithTimeout(String.format("Approximatively number of tokens: %s", export.numberOfTokens()), 500);
+        ScratchFileUtil.createAndOpenScratchFile(
+                project, "exportedSource", Language.findLanguageByID("Markdown"), export.content());
+        Notification.messageWithTimeout(
+                String.format("Approximatively number of tokens: %s", export.numberOfTokens()), 500);
     }
 }

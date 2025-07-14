@@ -18,12 +18,10 @@ public abstract class AbstractExportSourceToMarkdownAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
-        if (project == null)
-            return;
+        if (project == null) return;
 
         VirtualFile[] selectedFiles = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
-        if (selectedFiles == null)
-            return;
+        if (selectedFiles == null) return;
         doAction(project, selectedFiles);
     }
 
@@ -35,5 +33,5 @@ public abstract class AbstractExportSourceToMarkdownAction extends AnAction {
         e.getPresentation().setEnabledAndVisible(project != null && files != null && files.length > 0);
     }
 
-    abstract protected void doAction(Project project, VirtualFile[] selectedFiles);
+    protected abstract void doAction(Project project, VirtualFile[] selectedFiles);
 }

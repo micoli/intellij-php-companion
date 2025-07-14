@@ -16,6 +16,7 @@ public class ExportSourceToMarkdownPopupAction extends AbstractExportSourceToMar
             return;
         }
         ParsedContentDisplayPopup.showMarkdownPopup(project, export.content());
-        Notification.messageWithTimeout(String.format("Approximatively number of tokens: %s", export.numberOfTokens()), 500);
+        Notification.messageWithTimeout(
+                String.format("Approximatively number of tokens: %s", export.numberOfTokens()), 500);
     }
 }

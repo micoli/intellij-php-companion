@@ -1,9 +1,9 @@
 package org.micoli.php;
 
-import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.yaml.snakeyaml.Yaml;
 
 public class YamlAssertUtils {
 
@@ -13,14 +13,19 @@ public class YamlAssertUtils {
         actualElement = filterYamlString(actualElement);
         List<String> differences = compareFilesWithDiff(expectedElement, actualElement);
         if (!differences.isEmpty()) {
-            String message = String.format("JSON strings are not equal:\n--------------\n%s\n-----\nExpected:\n%s\n\nActual:\n%s", String.join("\n", differences), expectedElement, actualElement);
+            String message = String.format(
+                    "JSON strings are not equal:\n--------------\n%s\n-----\nExpected:\n%s\n\nActual:\n%s",
+                    String.join("\n", differences), expectedElement, actualElement);
             throw new AssertionError(message);
         }
-
     }
 
     private static String filterYamlString(String yamlString) throws IOException {
-        return Arrays.stream(yamlString.split("\\n")).filter(line -> !line.startsWith("!!")).filter(line -> !line.endsWith(": []")).filter(line -> !line.endsWith(": null")).collect(Collectors.joining("\n"));
+        return Arrays.stream(yamlString.split("\\n"))
+                .filter(line -> !line.startsWith("!!"))
+                .filter(line -> !line.endsWith(": []"))
+                .filter(line -> !line.endsWith(": null"))
+                .collect(Collectors.joining("\n"));
     }
 
     public static List<String> compareFilesWithDiff(String yamlA, String yamlB) throws IOException {
@@ -112,21 +117,19 @@ public class YamlAssertUtils {
 
         if (obj1 instanceof Map && obj2 instanceof Map) {
             compareMapsWithDiff((Map<String, Object>) obj1, (Map<String, Object>) obj2, path, differences);
-        }
-        else if (obj1 instanceof List && obj2 instanceof List) {
+        } else if (obj1 instanceof List && obj2 instanceof List) {
             compareListsWithDiff((List<?>) obj1, (List<?>) obj2, path, differences);
-        }
-        else if (obj1 instanceof Number && obj2 instanceof Number) {
+        } else if (obj1 instanceof Number && obj2 instanceof Number) {
             if (!obj1.toString().equals(obj2.toString())) {
                 differences.add(String.format("Path [%s] : values differs (%s != %s)", path, obj1, obj2));
             }
-        }
-        else if (!obj1.equals(obj2)) {
+        } else if (!obj1.equals(obj2)) {
             differences.add(String.format("Path [%s] : values differs (%s != %s)", path, obj1, obj2));
         }
     }
 
-    private static void compareMapsWithDiff(Map<String, Object> map1, Map<String, Object> map2, String path, List<String> differences) {
+    private static void compareMapsWithDiff(
+            Map<String, Object> map1, Map<String, Object> map2, String path, List<String> differences) {
         Set<String> allKeys = new HashSet<>();
         allKeys.addAll(map1.keySet());
         allKeys.addAll(map2.keySet());
@@ -136,11 +139,9 @@ public class YamlAssertUtils {
 
             if (!map1.containsKey(key)) {
                 differences.add(String.format("path [%s] : missing key in first file", currentPath));
-            }
-            else if (!map2.containsKey(key)) {
+            } else if (!map2.containsKey(key)) {
                 differences.add(String.format("path [%s] : missing key in second file", currentPath));
-            }
-            else {
+            } else {
                 compareObjectsWithDiff(map1.get(key), map2.get(key), currentPath, differences);
             }
         }
@@ -148,7 +149,13 @@ public class YamlAssertUtils {
 
     private static void compareListsWithDiff(List<?> list1, List<?> list2, String path, List<String> differences) {
         if (list1.size() != list2.size()) {
-            differences.add(String.format("Path [%s] : list size are different (first file: %d != second file: %d / [%s]/[%s])", path, list1.size(), list2.size(), list1.stream().map(Object::toString).collect(Collectors.joining(",")), list2.stream().map(Object::toString).collect(Collectors.joining(","))));
+            differences.add(String.format(
+                    "Path [%s] : list size are different (first file: %d != second file: %d / [%s]/[%s])",
+                    path,
+                    list1.size(),
+                    list2.size(),
+                    list1.stream().map(Object::toString).collect(Collectors.joining(",")),
+                    list2.stream().map(Object::toString).collect(Collectors.joining(","))));
             return;
         }
 

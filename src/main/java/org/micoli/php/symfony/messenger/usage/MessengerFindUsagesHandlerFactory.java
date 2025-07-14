@@ -34,7 +34,8 @@ public class MessengerFindUsagesHandlerFactory extends FindUsagesHandlerFactory 
     }
 
     @Override
-    public @Nullable FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
+    public @Nullable FindUsagesHandler createFindUsagesHandler(
+            @NotNull PsiElement element, boolean forHighlightUsages) {
         return ReadAction.compute(() -> {
             if (canFindUsages(element)) {
                 return new MessengerFindUsagesHandler(element);

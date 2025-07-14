@@ -35,39 +35,32 @@ public class PsiElementUtil {
 
         if (document != null) {
             int lineNumber = document.getLineNumber(range.getStartOffset());
-            // spotless:off
-            return new FileExtract(lineNumber + 1,
-                document.getText(TextRange.create(
-                    document.getLineStartOffset(lineNumber),
-                    document.getLineEndOffset(lineNumber + 1)
-                ))
-            );
-            // spotless:on
+
+            return new FileExtract(
+                    lineNumber + 1,
+                    document.getText(TextRange.create(
+                            document.getLineStartOffset(lineNumber), document.getLineEndOffset(lineNumber + 1))));
         }
 
         return new FileExtract(-1, "");
     }
 
     public static @NotNull String getHumanReadableElementLink(PsiElement element) {
-        // spotless:off
+
         return ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
             String base = PathUtil.getPathWithParent(element.getContainingFile(), 2);
             String format = "%s#%s: %s";
 
             if (element instanceof PsiNamedElement) {
                 return String.format(
-                    format,
-                    base,getFileExtract(element).lineNumber(),
-                    ((PsiNamedElement) element).getName()
-                );
+                        format, base, getFileExtract(element).lineNumber(), ((PsiNamedElement) element).getName());
             }
 
             return String.format(
-                format,
-                base,getFileExtract(element).lineNumber(),
-                element.getText().replaceAll("\\s( *)", " ")
-            );
+                    format,
+                    base,
+                    getFileExtract(element).lineNumber(),
+                    element.getText().replaceAll("\\s( *)", " "));
         });
-        // spotless:on
     }
 }

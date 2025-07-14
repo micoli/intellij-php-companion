@@ -1,7 +1,6 @@
 package org.micoli.php;
 
 import com.google.gson.*;
-
 import java.util.*;
 
 public class JsonAssertUtils {
@@ -13,13 +12,11 @@ public class JsonAssertUtils {
         JsonElement actualElement = JsonParser.parseString(actual);
 
         if (!jsonEquals(expectedElement, actualElement)) {
-            // spotless:off
+
             String message = String.format(
-                "JSON strings are not equal:\nExpected:\n%s\n\nActual:\n%s",
-                gson.toJson(expectedElement),
-                gson.toJson(actualElement)
-            );
-            // spotless:on
+                    "JSON strings are not equal:\nExpected:\n%s\n\nActual:\n%s",
+                    gson.toJson(expectedElement), gson.toJson(actualElement));
+
             throw new AssertionError(message);
         }
     }
@@ -33,15 +30,11 @@ public class JsonAssertUtils {
     }
 
     private static boolean jsonEquals(JsonElement expected, JsonElement actual) {
-        if (expected == null && actual == null)
-            return true;
-        if (expected == null || actual == null)
-            return false;
+        if (expected == null && actual == null) return true;
+        if (expected == null || actual == null) return false;
 
-        if (expected.isJsonNull() && actual.isJsonNull())
-            return true;
-        if (expected.isJsonNull() || actual.isJsonNull())
-            return false;
+        if (expected.isJsonNull() && actual.isJsonNull()) return true;
+        if (expected.isJsonNull() || actual.isJsonNull()) return false;
 
         if (expected.isJsonPrimitive() && actual.isJsonPrimitive()) {
             return expected.getAsJsonPrimitive().equals(actual.getAsJsonPrimitive());
@@ -59,8 +52,7 @@ public class JsonAssertUtils {
     }
 
     private static boolean jsonObjectEquals(JsonObject expected, JsonObject actual) {
-        if (expected.size() != actual.size())
-            return false;
+        if (expected.size() != actual.size()) return false;
 
         for (Map.Entry<String, JsonElement> entry : expected.entrySet()) {
             String key = entry.getKey();
@@ -76,8 +68,7 @@ public class JsonAssertUtils {
     }
 
     private static boolean jsonArrayEquals(JsonArray expected, JsonArray actual) {
-        if (expected.size() != actual.size())
-            return false;
+        if (expected.size() != actual.size()) return false;
 
         List<JsonElement> expectedList = new ArrayList<>();
         List<JsonElement> actualList = new ArrayList<>();
@@ -99,8 +90,7 @@ public class JsonAssertUtils {
                     break;
                 }
             }
-            if (!found)
-                return false;
+            if (!found) return false;
         }
 
         return actualList.isEmpty();
@@ -111,21 +101,19 @@ public class JsonAssertUtils {
         JsonElement actualElement = JsonParser.parseString(actual);
 
         if (!jsonEqualsOrdered(expectedElement, actualElement)) {
-            String message = String.format("JSON strings are not equal (ordered):\nExpected:\n%s\n\nActual:\n%s", gson.toJson(expectedElement), gson.toJson(actualElement));
+            String message = String.format(
+                    "JSON strings are not equal (ordered):\nExpected:\n%s\n\nActual:\n%s",
+                    gson.toJson(expectedElement), gson.toJson(actualElement));
             throw new AssertionError(message);
         }
     }
 
     private static boolean jsonEqualsOrdered(JsonElement expected, JsonElement actual) {
-        if (expected == null && actual == null)
-            return true;
-        if (expected == null || actual == null)
-            return false;
+        if (expected == null && actual == null) return true;
+        if (expected == null || actual == null) return false;
 
-        if (expected.isJsonNull() && actual.isJsonNull())
-            return true;
-        if (expected.isJsonNull() || actual.isJsonNull())
-            return false;
+        if (expected.isJsonNull() && actual.isJsonNull()) return true;
+        if (expected.isJsonNull() || actual.isJsonNull()) return false;
 
         if (expected.isJsonPrimitive() && actual.isJsonPrimitive()) {
             return expected.getAsJsonPrimitive().equals(actual.getAsJsonPrimitive());
@@ -143,8 +131,7 @@ public class JsonAssertUtils {
     }
 
     private static boolean jsonArrayEqualsOrdered(JsonArray expected, JsonArray actual) {
-        if (expected.size() != actual.size())
-            return false;
+        if (expected.size() != actual.size()) return false;
 
         for (int i = 0; i < expected.size(); i++) {
             if (!jsonEqualsOrdered(expected.get(i), actual.get(i))) {

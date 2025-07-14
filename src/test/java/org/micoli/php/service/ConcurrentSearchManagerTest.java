@@ -1,8 +1,7 @@
 package org.micoli.php.service;
 
-import junit.framework.TestCase;
-
 import java.time.Duration;
+import junit.framework.TestCase;
 
 public class ConcurrentSearchManagerTest extends TestCase {
 

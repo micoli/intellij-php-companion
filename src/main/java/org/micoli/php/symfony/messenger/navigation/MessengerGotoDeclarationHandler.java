@@ -7,13 +7,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
-import org.micoli.php.symfony.messenger.service.MessengerService;
 import org.micoli.php.service.PhpUtil;
+import org.micoli.php.symfony.messenger.service.MessengerService;
 
 public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
 
     @Override
-    public PsiElement @Nullable [] getGotoDeclarationTargets(@Nullable PsiElement sourceElement, int offset, Editor editor) {
+    public PsiElement @Nullable [] getGotoDeclarationTargets(
+            @Nullable PsiElement sourceElement, int offset, Editor editor) {
 
         if (sourceElement == null) {
             return null;
@@ -35,7 +36,8 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
             return null;
         }
 
-        Collection<Method> handlers = MessengerService.findHandlersByMessageName(sourceElement.getProject(), messageClassName);
+        Collection<Method> handlers =
+                MessengerService.findHandlersByMessageName(sourceElement.getProject(), messageClassName);
 
         if (handlers.isEmpty()) {
             return null;

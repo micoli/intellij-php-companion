@@ -1,15 +1,15 @@
 package org.micoli.php.service;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import java.io.*;
+import java.util.*;
 import org.eclipse.jgit.ignore.IgnoreNode;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
-import java.util.*;
-
 public class FileListProcessor {
 
-    public static List<VirtualFile> processSelectedFiles(@Nullable VirtualFile ignoreFile, VirtualFile[] selectedFiles) {
+    public static List<VirtualFile> processSelectedFiles(
+            @Nullable VirtualFile ignoreFile, VirtualFile[] selectedFiles) {
         Set<VirtualFile> filesSet = new LinkedHashSet<>();
 
         for (VirtualFile file : selectedFiles) {
@@ -28,12 +28,9 @@ public class FileListProcessor {
             return new ArrayList<>(filesSet);
         }
 
-        // spotless:off
-        return filesSet
-            .stream()
-            .filter(file -> ignoreNode.isIgnored(file.getPath(), false) != IgnoreNode.MatchResult.IGNORED)
-            .toList();
-        // spotless:on
+        return filesSet.stream()
+                .filter(file -> ignoreNode.isIgnored(file.getPath(), false) != IgnoreNode.MatchResult.IGNORED)
+                .toList();
     }
 
     private static @Nullable IgnoreNode getIgnoreNode(VirtualFile ignoreFile) {

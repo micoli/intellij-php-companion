@@ -1,9 +1,5 @@
 package org.micoli.php.service;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
@@ -13,18 +9,23 @@ import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.util.ui.JBUI;
-import org.micoli.php.ui.Notification;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import javax.swing.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.micoli.php.ui.Notification;
 
 public class ParsedContentDisplayPopup extends DialogWrapper {
 
     public enum PopupType {
-        JSON, PHP, MARKDOWN
+        JSON,
+        PHP,
+        MARKDOWN
     }
 
     private final PopupType popupType;
@@ -32,7 +33,8 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
     private final Project project;
     private Editor editor;
 
-    public ParsedContentDisplayPopup(@NotNull PopupType popupType, @Nullable Project project, @NotNull String jsonContent) {
+    public ParsedContentDisplayPopup(
+            @NotNull PopupType popupType, @Nullable Project project, @NotNull String jsonContent) {
         super(project);
         this.popupType = popupType;
         this.project = project;
@@ -61,7 +63,8 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
     }
 
     private Editor createJsonEditor(PopupType popupType) {
-        FileType fileType = FileTypeManager.getInstance().getFileTypeByExtension(popupType == PopupType.PHP ? "php" : "json");
+        FileType fileType =
+                FileTypeManager.getInstance().getFileTypeByExtension(popupType == PopupType.PHP ? "php" : "json");
 
         EditorFactory editorFactory = EditorFactory.getInstance();
         com.intellij.openapi.editor.Document document = editorFactory.createDocument(jsonContent);
@@ -76,7 +79,8 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
         settings.setWheelFontChangeEnabled(false);
 
         if (editor instanceof EditorEx editorEx) {
-            EditorHighlighter highlighter = EditorHighlighterFactory.getInstance().createEditorHighlighter(project, fileType);
+            EditorHighlighter highlighter =
+                    EditorHighlighterFactory.getInstance().createEditorHighlighter(project, fileType);
             editorEx.setHighlighter(highlighter);
         }
 
@@ -85,7 +89,7 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
 
     @Override
     protected Action @NotNull [] createActions() {
-        return new Action[] { new CopyAction(), getCancelAction() };
+        return new Action[] {new CopyAction(), getCancelAction()};
     }
 
     private class CopyAction extends AbstractAction {

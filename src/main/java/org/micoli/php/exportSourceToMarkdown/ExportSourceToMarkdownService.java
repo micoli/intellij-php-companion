@@ -1,11 +1,17 @@
 package org.micoli.php.exportSourceToMarkdown;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingRegistry;
 import com.knuddels.jtokkit.api.EncodingType;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.attributeNavigation.service.FileData;
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
@@ -15,18 +21,12 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-
 public class ExportSourceToMarkdownService {
 
     private static ExportSourceToMarkdownConfiguration configuration = new ExportSourceToMarkdownConfiguration();
 
-    public static void loadConfiguration(Project project, ExportSourceToMarkdownConfiguration exportSourceToMarkdownConfiguration) {
+    public static void loadConfiguration(
+            Project project, ExportSourceToMarkdownConfiguration exportSourceToMarkdownConfiguration) {
         if (exportSourceToMarkdownConfiguration == null) {
             return;
         }
@@ -35,21 +35,17 @@ public class ExportSourceToMarkdownService {
 
     public static ExportedSource generateMarkdownExport(Project project, VirtualFile[] selectedFiles) {
 
-        // spotless:off
         List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(
-            getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null,
-            selectedFiles
-        );
+                getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null, selectedFiles);
         if (processedFiles.isEmpty()) {
             return null;
         }
 
         ContextualAmender contextualAmender = new ContextualAmender(project, configuration);
 
-        List<VirtualFile> filesInContext = getUseContextualNamespaces() ? contextualAmender.amendListWithContextualFiles(
-            processedFiles
-        ) : processedFiles;
-        // spotless:on
+        List<VirtualFile> filesInContext = getUseContextualNamespaces()
+                ? contextualAmender.amendListWithContextualFiles(processedFiles)
+                : processedFiles;
 
         Context context = new Context();
         context.setVariable("files", getFileData(project, sortFiles(filesInContext)));
@@ -60,7 +56,10 @@ public class ExportSourceToMarkdownService {
     }
 
     private static @NotNull List<VirtualFile> sortFiles(List<VirtualFile> filesInContext) {
-        List<VirtualFile> processedFiles1 = new ArrayList<>(Set.copyOf(filesInContext)).stream().sorted(Comparator.comparing(VirtualFile::getPath).thenComparing(VirtualFile::getName)).toList();
+        List<VirtualFile> processedFiles1 = new ArrayList<>(Set.copyOf(filesInContext))
+                .stream()
+                        .sorted(Comparator.comparing(VirtualFile::getPath).thenComparing(VirtualFile::getName))
+                        .toList();
         return processedFiles1;
     }
 

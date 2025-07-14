@@ -46,8 +46,7 @@ public class JsonToPhpArrayConverter {
             String numberStr = primitive.getAsString();
             if (numberStr.contains(".")) {
                 return String.valueOf(primitive.getAsDouble());
-            }
-            else {
+            } else {
                 return String.valueOf(primitive.getAsLong());
             }
         }
@@ -106,8 +105,7 @@ public class JsonToPhpArrayConverter {
             // Check if key is numeric (for array-like objects)
             if (isNumericKey(key)) {
                 sb.append(key);
-            }
-            else {
+            } else {
                 sb.append(escapePhpString(key));
             }
 
@@ -131,7 +129,13 @@ public class JsonToPhpArrayConverter {
         }
 
         // Use single quotes for PHP strings and escape single quotes
-        return "'" + str.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t") + "'";
+        return "'"
+                + str.replace("\\", "\\\\")
+                        .replace("'", "\\'")
+                        .replace("\n", "\\n")
+                        .replace("\r", "\\r")
+                        .replace("\t", "\\t")
+                + "'";
     }
 
     private static boolean isNumericKey(String key) {
@@ -148,7 +152,8 @@ public class JsonToPhpArrayConverter {
         return convertJsonElementToPhpWithCustomIndent(jsonElement, 0, indentString);
     }
 
-    private static String convertJsonElementToPhpWithCustomIndent(JsonElement element, int indentLevel, String indentString) {
+    private static String convertJsonElementToPhpWithCustomIndent(
+            JsonElement element, int indentLevel, String indentString) {
         if (element == null || element.isJsonNull()) {
             return "null";
         }
@@ -214,8 +219,7 @@ public class JsonToPhpArrayConverter {
 
             if (isNumericKey(key)) {
                 sb.append(key);
-            }
-            else {
+            } else {
                 sb.append(escapePhpString(key));
             }
 
@@ -299,8 +303,7 @@ public class JsonToPhpArrayConverter {
 
             if (isNumericKey(key)) {
                 sb.append(key);
-            }
-            else {
+            } else {
                 sb.append(escapePhpString(key));
             }
 

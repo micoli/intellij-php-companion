@@ -2,12 +2,11 @@ package org.micoli.php.service;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FileListProcessorTest extends BasePlatformTestCase {
     @Before
@@ -21,7 +20,9 @@ public class FileListProcessorTest extends BasePlatformTestCase {
 
     private void initFixtures(boolean withExclusionRules) {
         if (withExclusionRules) {
-            myFixture.addFileToProject(".aiignore", """
+            myFixture.addFileToProject(
+                    ".aiignore",
+                    """
                     # Ignore test file
                     src/target/**
                     src/out/**
@@ -38,7 +39,9 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     @Test
     public void testBasicFileListProcessor() {
         myFixture.copyDirectoryToProject(".", ".");
-        VirtualFile[] filesToSelect = { myFixture.findFileInTempDir("/"), };
+        VirtualFile[] filesToSelect = {
+            myFixture.findFileInTempDir("/"),
+        };
 
         List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(null, filesToSelect);
 
@@ -48,9 +51,14 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     @Test
     public void testFileListProcessorWithExclusionRules() {
         initFixtures(true);
-        VirtualFile[] filesToSelect = { myFixture.findFileInTempDir("/target"), myFixture.findFileInTempDir("/out"), myFixture.findFileInTempDir("/main"), };
+        VirtualFile[] filesToSelect = {
+            myFixture.findFileInTempDir("/target"),
+            myFixture.findFileInTempDir("/out"),
+            myFixture.findFileInTempDir("/main"),
+        };
 
-        List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(myFixture.findFileInTempDir(".aiignore"), filesToSelect);
+        List<VirtualFile> processedFiles =
+                FileListProcessor.processSelectedFiles(myFixture.findFileInTempDir(".aiignore"), filesToSelect);
 
         assertNotContains(processedFiles, "App.class");
         assertNotContains(processedFiles, "Main.class");
@@ -61,9 +69,12 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     @Test
     public void testFileListProcessorWithExclusionRulesAndOnlyOneSelection() {
         initFixtures(true);
-        VirtualFile[] filesToSelect = { myFixture.findFileInTempDir("/"), };
+        VirtualFile[] filesToSelect = {
+            myFixture.findFileInTempDir("/"),
+        };
 
-        List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(myFixture.findFileInTempDir(".aiignore"), filesToSelect);
+        List<VirtualFile> processedFiles =
+                FileListProcessor.processSelectedFiles(myFixture.findFileInTempDir(".aiignore"), filesToSelect);
 
         assertNotContains(processedFiles, "App.class");
         assertNotContains(processedFiles, "Main.class");
@@ -74,7 +85,9 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     @Test
     public void testFileListProcessorWithoutExclusionRules() {
         initFixtures(false);
-        VirtualFile[] filesToSelect = { myFixture.findFileInTempDir("/"), };
+        VirtualFile[] filesToSelect = {
+            myFixture.findFileInTempDir("/"),
+        };
 
         List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(null, filesToSelect);
 
@@ -85,10 +98,14 @@ public class FileListProcessorTest extends BasePlatformTestCase {
     }
 
     private static void assertContains(List<VirtualFile> processedFiles, String anObject) {
-        assertTrue(Arrays.stream(processedFiles.toArray()).anyMatch(file -> Objects.requireNonNull(((VirtualFile) file).getCanonicalPath()).endsWith(anObject)));
+        assertTrue(Arrays.stream(processedFiles.toArray())
+                .anyMatch(file -> Objects.requireNonNull(((VirtualFile) file).getCanonicalPath())
+                        .endsWith(anObject)));
     }
 
     private static void assertNotContains(List<VirtualFile> processedFiles, String anObject) {
-        assertTrue(Arrays.stream(processedFiles.toArray()).noneMatch(file -> Objects.requireNonNull(((VirtualFile) file).getCanonicalPath()).endsWith(anObject)));
+        assertTrue(Arrays.stream(processedFiles.toArray())
+                .noneMatch(file -> Objects.requireNonNull(((VirtualFile) file).getCanonicalPath())
+                        .endsWith(anObject)));
     }
 }

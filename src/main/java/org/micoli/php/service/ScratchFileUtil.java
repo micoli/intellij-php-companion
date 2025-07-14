@@ -32,7 +32,8 @@ public class ScratchFileUtil {
             markdown = Language.findLanguageByID("TEXT");
         }
 
-        String content = """
+        String content =
+                """
                 # Code Scratch Pad
 
                 ## Quick Code Examples

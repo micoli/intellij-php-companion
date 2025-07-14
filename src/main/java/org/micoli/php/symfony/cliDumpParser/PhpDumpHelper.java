@@ -1,12 +1,11 @@
 package org.micoli.php.symfony.cliDumpParser;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonArray;
-
+import com.google.gson.JsonPrimitive;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,26 +13,19 @@ import java.util.regex.Pattern;
 public class PhpDumpHelper {
 
     public static String parseCliDumperToJson(String cliDumperOutput) {
-        // spotless:off
+
         return new GsonBuilder()
-            .setPrettyPrinting()
-            .create()
-            .toJson(
-                parseValue(
-                    cleanAnsiEscapeSequences(cliDumperOutput)
-                )
-            );
-        // spotless:on
+                .setPrettyPrinting()
+                .create()
+                .toJson(parseValue(cleanAnsiEscapeSequences(cliDumperOutput)));
     }
 
     private static String cleanAnsiEscapeSequences(String input) {
-        // spotless:off
-        return input
-            .trim()
-            .replace("\\n", "")
-            .replaceAll("\u001B", " ")
-            .replaceAll("\\s{0,2}]8;;file:.*? ]8;; \\\\", "");
-        // spotless:on
+
+        return input.trim()
+                .replace("\\n", "")
+                .replaceAll("\u001B", " ")
+                .replaceAll("\\s{0,2}]8;;file:.*? ]8;; \\\\", "");
     }
 
     private static JsonElement parseValue(String input) {
@@ -48,7 +40,8 @@ public class PhpDumpHelper {
         }
 
         // Match an object (App\Tests\TestDTO {#383)
-        Pattern namedObjectPattern = Pattern.compile("^([A-Za-z_\\\\][A-Za-z0-9_\\\\]*?)(\\s@[A-Za-z0-9]*)?\\s*\\{#\\d+\\s*(.*?)\\s*}$", Pattern.DOTALL);
+        Pattern namedObjectPattern = Pattern.compile(
+                "^([A-Za-z_\\\\][A-Za-z0-9_\\\\]*?)(\\s@[A-Za-z0-9]*)?\\s*\\{#\\d+\\s*(.*?)\\s*}$", Pattern.DOTALL);
         Matcher namedObjectMatcher = namedObjectPattern.matcher(input);
         if (namedObjectMatcher.matches()) {
             String className = namedObjectMatcher.group(1);
@@ -76,8 +69,7 @@ public class PhpDumpHelper {
             try {
                 if (input.contains(".")) {
                     return new JsonPrimitive(Double.parseDouble(input));
-                }
-                else {
+                } else {
                     return new JsonPrimitive(Integer.parseInt(input));
                 }
             } catch (NumberFormatException e) {
@@ -87,15 +79,14 @@ public class PhpDumpHelper {
 
         // Match a boolean
         return switch (input) {
-        case "true" -> new JsonPrimitive(true);
-        case "false" -> new JsonPrimitive(false);
-        case "null" -> JsonNull.INSTANCE;
-        default ->
+            case "true" -> new JsonPrimitive(true);
+            case "false" -> new JsonPrimitive(false);
+            case "null" -> JsonNull.INSTANCE;
+            default ->
 
             // Default, traited as a string
             new JsonPrimitive(input);
         };
-
     }
 
     private static JsonObject parseObject(String className, String content) {
@@ -189,8 +180,7 @@ public class PhpDumpHelper {
                     int index = Integer.parseInt(key);
                     indexedItems.put(index, parseValue(value));
                     isIndexed = true;
-                }
-                else {
+                } else {
                     jsonObject.add(key, parseValue(value));
                     isAssociative = true;
                 }
@@ -293,8 +283,7 @@ public class PhpDumpHelper {
             if (!inString) {
                 if (ch == '[' || ch == '{') {
                     depth++;
-                }
-                else if (ch == ']' || ch == '}') {
+                } else if (ch == ']' || ch == '}') {
                     depth--;
                 }
 

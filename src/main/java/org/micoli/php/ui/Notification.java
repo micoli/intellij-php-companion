@@ -13,14 +13,16 @@ public class Notification {
 
     public static void messageWithTimeout(String message, int delayInMs) {
         try {
-            com.intellij.notification.Notification notification = createMessage(message, NotificationType.INFORMATION).setImportant(false);
+            com.intellij.notification.Notification notification =
+                    createMessage(message, NotificationType.INFORMATION).setImportant(false);
             notify(notification);
             ApplicationManager.getApplication().invokeLater(() -> {
                 new Timer(delayInMs, e -> {
-                    if (!notification.isExpired()) {
-                        notification.hideBalloon();
-                    }
-                }).start();
+                            if (!notification.isExpired()) {
+                                notification.hideBalloon();
+                            }
+                        })
+                        .start();
             });
         } catch (Exception ignored) {
         }
@@ -39,20 +41,17 @@ public class Notification {
     }
 
     private static com.intellij.notification.Notification createMessage(String message, NotificationType information) {
-        // spotless:off
-        return NotificationGroupManager
-            .getInstance()
-            .getNotificationGroup("PHP Companion")
-            .createNotification(message, information);
-        // spotless:on
+
+        return NotificationGroupManager.getInstance()
+                .getNotificationGroup("PHP Companion")
+                .createNotification(message, information);
     }
 
-    private static com.intellij.notification.Notification createMessage(String title, String message, NotificationType information) {
-        // spotless:off
-        return NotificationGroupManager
-            .getInstance()
-            .getNotificationGroup("PHP Companion")
-            .createNotification(title,message, information);
-        // spotless:on
+    private static com.intellij.notification.Notification createMessage(
+            String title, String message, NotificationType information) {
+
+        return NotificationGroupManager.getInstance()
+                .getNotificationGroup("PHP Companion")
+                .createNotification(title, message, information);
     }
 }

@@ -43,9 +43,14 @@ public class MessengerServiceTest extends BasePlatformTestCase {
     }
 
     public void testItDetectMessageBasedOnInterface() {
-        myFixture.configureByFiles("/src/Core/Event/ArticleCreatedEvent.php", "/src/Infrastructure/Bus/Message/Event/AsyncEventInterface.php", "/src/Infrastructure/Bus/Message/Event/EventInterface.php", "/src/Infrastructure/Bus/Message/MessageInterface.php");
+        myFixture.configureByFiles(
+                "/src/Core/Event/ArticleCreatedEvent.php",
+                "/src/Infrastructure/Bus/Message/Event/AsyncEventInterface.php",
+                "/src/Infrastructure/Bus/Message/Event/EventInterface.php",
+                "/src/Infrastructure/Bus/Message/MessageInterface.php");
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
-        symfonyMessengerConfiguration.messageInterfaces = new String[] { "App\\Infrastructure\\Bus\\Message\\MessageInterface" };
+        symfonyMessengerConfiguration.messageInterfaces =
+                new String[] {"App\\Infrastructure\\Bus\\Message\\MessageInterface"};
         MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
@@ -55,8 +60,11 @@ public class MessengerServiceTest extends BasePlatformTestCase {
     public void testItCanFindHandlersByMessage() {
         myFixture.copyDirectoryToProject("src", "src");
         loadPluginConfiguration(getTestDataPath());
-        Collection<Method> handledMessages = MessengerService.findHandlersByMessageName(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
-        assertContainsElements(handledMessages.stream().map(PhpNamedElement::getFQN).toList(), "\\App\\Core\\EventListener\\OnArticleCreated.__invoke");
+        Collection<Method> handledMessages =
+                MessengerService.findHandlersByMessageName(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+        assertContainsElements(
+                handledMessages.stream().map(PhpNamedElement::getFQN).toList(),
+                "\\App\\Core\\EventListener\\OnArticleCreated.__invoke");
     }
 
     public void testItCanFindLineMarkersForMessageHandler() {
@@ -66,21 +74,26 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         List<GutterMark> lineMarkers = myFixture.findAllGutters();
         assertNotEmpty(lineMarkers);
 
-        List<GutterMark> specificMarkers = lineMarkers.stream().filter(it -> {
-            String tooltipText = it.getTooltipText();
-            if (tooltipText == null) {
-                return false;
-            }
-            return tooltipText.contains("Search for usages") || tooltipText.contains("Navigate to message handlers");
-        }).toList();
+        List<GutterMark> specificMarkers = lineMarkers.stream()
+                .filter(it -> {
+                    String tooltipText = it.getTooltipText();
+                    if (tooltipText == null) {
+                        return false;
+                    }
+                    return tooltipText.contains("Search for usages")
+                            || tooltipText.contains("Navigate to message handlers");
+                })
+                .toList();
         assertEquals(2, specificMarkers.size());
     }
 
     public void testItCanFindDispatchCallsForMessageClass() {
         myFixture.copyDirectoryToProject("src", "src");
         loadPluginConfiguration(getTestDataPath());
-        Collection<MethodReference> callsWithoutRootNamespace = MessengerService.findDispatchCallsForMessage(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
-        Collection<MethodReference> callsWithRootNamespace = MessengerService.findDispatchCallsForMessage(getProject(), "\\App\\Core\\Event\\ArticleCreatedEvent");
+        Collection<MethodReference> callsWithoutRootNamespace =
+                MessengerService.findDispatchCallsForMessage(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+        Collection<MethodReference> callsWithRootNamespace =
+                MessengerService.findDispatchCallsForMessage(getProject(), "\\App\\Core\\Event\\ArticleCreatedEvent");
 
         assertEquals(1, callsWithoutRootNamespace.size());
         assertEquals(callsWithRootNamespace.size(), callsWithoutRootNamespace.size());
@@ -89,7 +102,9 @@ public class MessengerServiceTest extends BasePlatformTestCase {
     private void loadPluginConfiguration(String path) {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = null;
         try {
-            symfonyMessengerConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L)).configuration.symfonyMessenger;
+            symfonyMessengerConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+                    .configuration
+                    .symfonyMessenger;
         } catch (ConfigurationException | NoConfigurationFileException e) {
             throw new RuntimeException(e);
         }
