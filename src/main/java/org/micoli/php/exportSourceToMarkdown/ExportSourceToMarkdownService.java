@@ -34,27 +34,27 @@ public class ExportSourceToMarkdownService {
     }
 
     public static ExportedSource generateMarkdownExport(Project project, VirtualFile[] selectedFiles) {
-        TemplateEngine templateEngine = getTemplateEngine();
 
-        List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(project.getBaseDir().findChild(".aiignore"), selectedFiles);
+        // spotless:off
+        List<VirtualFile> processedFiles = FileListProcessor.processSelectedFiles(
+            getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null,
+            selectedFiles
+        );
         if (processedFiles.isEmpty()) {
             return null;
         }
+
         ContextualAmender contextualAmender = new ContextualAmender(project, configuration);
 
-        Context context = new Context();
-
-        // spotless:off
-        List<VirtualFile> filesInContext = contextualAmender.amendListWithContextualFiles(
+        List<VirtualFile> filesInContext = getUseContextualNamespaces() ? contextualAmender.amendListWithContextualFiles(
             processedFiles
-        );
-        context.setVariable("files", getFileData(
-            project,
-            sortFiles(filesInContext)
-        ));
+        ) : processedFiles;
         // spotless:on
 
-        String exportContent = templateEngine.process(configuration.template, context);
+        Context context = new Context();
+        context.setVariable("files", getFileData(project, sortFiles(filesInContext)));
+
+        String exportContent = getTemplateEngine().process(configuration.template, context);
 
         return new ExportedSource(exportContent, getNumberOfTokens(exportContent));
     }
@@ -94,5 +94,21 @@ public class ExportSourceToMarkdownService {
         Encoding enc = registry.getEncoding(EncodingType.CL100K_BASE);
 
         return enc.countTokens(exportContent);
+    }
+
+    public static void toggleUseContextualNamespaces() {
+        configuration.useContextualNamespaces = !configuration.useContextualNamespaces;
+    }
+
+    public static boolean getUseContextualNamespaces() {
+        return configuration.useContextualNamespaces;
+    }
+
+    public static boolean getUseIgnoreFile() {
+        return configuration.useIgnoreFile;
+    }
+
+    public static void toggleUseIgnoreFile() {
+        configuration.useIgnoreFile = !configuration.useIgnoreFile;
     }
 }

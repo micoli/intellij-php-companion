@@ -38,7 +38,9 @@
         <gotoDeclarationHandler
             implementation="org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandler"
         />
-
+        <statusBarWidgetFactory id="org.micoli.php.exportSourceToMarkdown"
+                                implementation="org.micoli.php.ui.PhpCompanionStatusBarWidget$Factory"
+                                order="before CodeStyleStatusBarWidget"/>
         <postStartupActivity implementation="org.micoli.php.PhpCompanionProjectStartup"/>
 
     </extensions>

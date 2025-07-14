@@ -46,6 +46,7 @@ public class Notification {
             .createNotification(message, information);
         // spotless:on
     }
+
     private static com.intellij.notification.Notification createMessage(String title, String message, NotificationType information) {
         // spotless:off
         return NotificationGroupManager
