@@ -71,12 +71,12 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
 
             @Override
             public boolean isSelected(@NotNull AnActionEvent e) {
-                return ExportSourceToMarkdownService.getUseIgnoreFile();
+                return ExportSourceToMarkdownService.getInstance(project).getUseIgnoreFile();
             }
 
             @Override
             public void setSelected(@NotNull AnActionEvent e, boolean state) {
-                ExportSourceToMarkdownService.toggleUseIgnoreFile();
+                ExportSourceToMarkdownService.getInstance(project).toggleUseIgnoreFile();
             }
         });
         group.add(new ToggleAction("SourceExport: Use Contextual Namespaces", "Description 1", null) {
@@ -87,12 +87,12 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
 
             @Override
             public boolean isSelected(@NotNull AnActionEvent e) {
-                return ExportSourceToMarkdownService.getUseContextualNamespaces();
+                return ExportSourceToMarkdownService.getInstance(project).getUseContextualNamespaces();
             }
 
             @Override
             public void setSelected(@NotNull AnActionEvent e, boolean state) {
-                ExportSourceToMarkdownService.toggleUseContextualNamespaces();
+                ExportSourceToMarkdownService.getInstance(project).toggleUseContextualNamespaces();
             }
         });
 

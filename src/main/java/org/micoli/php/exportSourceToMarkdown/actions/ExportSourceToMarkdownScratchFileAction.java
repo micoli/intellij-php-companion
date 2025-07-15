@@ -11,7 +11,8 @@ import org.micoli.php.ui.Notification;
 public class ExportSourceToMarkdownScratchFileAction extends AbstractExportSourceToMarkdownAction {
     @Override
     protected void doAction(Project project, VirtualFile[] selectedFiles) {
-        ExportedSource export = ExportSourceToMarkdownService.generateMarkdownExport(project, selectedFiles);
+        ExportedSource export =
+                ExportSourceToMarkdownService.getInstance(project).generateMarkdownExport(project, selectedFiles);
         if (export == null) {
             Notification.error("No files found for export.");
             return;

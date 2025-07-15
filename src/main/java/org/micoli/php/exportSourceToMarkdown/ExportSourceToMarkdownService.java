@@ -22,10 +22,13 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 public class ExportSourceToMarkdownService {
+    public static ExportSourceToMarkdownService getInstance(Project project) {
+        return project.getService(ExportSourceToMarkdownService.class);
+    }
 
-    private static ExportSourceToMarkdownConfiguration configuration = new ExportSourceToMarkdownConfiguration();
+    private ExportSourceToMarkdownConfiguration configuration = new ExportSourceToMarkdownConfiguration();
 
-    public static void loadConfiguration(
+    public void loadConfiguration(
             Project project, ExportSourceToMarkdownConfiguration exportSourceToMarkdownConfiguration) {
         if (exportSourceToMarkdownConfiguration == null) {
             return;
@@ -33,7 +36,7 @@ public class ExportSourceToMarkdownService {
         configuration = exportSourceToMarkdownConfiguration;
     }
 
-    public static ExportedSource generateMarkdownExport(Project project, VirtualFile[] selectedFiles) {
+    public ExportedSource generateMarkdownExport(Project project, VirtualFile[] selectedFiles) {
 
         List<VirtualFile> fileList = FileListProcessor.findFilesFromSelectedFiles(List.of(selectedFiles));
         if (fileList.isEmpty()) {
@@ -55,14 +58,14 @@ public class ExportSourceToMarkdownService {
         return new ExportedSource(exportContent, getNumberOfTokens(exportContent));
     }
 
-    private static @NotNull List<VirtualFile> sortFiles(List<VirtualFile> filesInContext) {
+    private @NotNull List<VirtualFile> sortFiles(List<VirtualFile> filesInContext) {
         return new ArrayList<>(Set.copyOf(filesInContext))
                 .stream()
                         .sorted(Comparator.comparing(VirtualFile::getPath).thenComparing(VirtualFile::getName))
                         .toList();
     }
 
-    private static @NotNull List<FileData> getFileData(Project project, List<VirtualFile> processedFiles) {
+    private @NotNull List<FileData> getFileData(Project project, List<VirtualFile> processedFiles) {
         List<FileData> files = new ArrayList<>();
         String baseDir = project.getBasePath();
         assert baseDir != null;
@@ -79,7 +82,7 @@ public class ExportSourceToMarkdownService {
         return files;
     }
 
-    private static @NotNull TemplateEngine getTemplateEngine() {
+    private @NotNull TemplateEngine getTemplateEngine() {
         TemplateEngine templateEngine = new TemplateEngine();
         StringTemplateResolver resolver = new StringTemplateResolver();
         resolver.setTemplateMode("TEXT");
@@ -87,26 +90,26 @@ public class ExportSourceToMarkdownService {
         return templateEngine;
     }
 
-    private static int getNumberOfTokens(String exportContent) {
+    private int getNumberOfTokens(String exportContent) {
         EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
         Encoding enc = registry.getEncoding(EncodingType.CL100K_BASE);
 
         return enc.countTokens(exportContent);
     }
 
-    public static void toggleUseContextualNamespaces() {
+    public void toggleUseContextualNamespaces() {
         configuration.useContextualNamespaces = !configuration.useContextualNamespaces;
     }
 
-    public static boolean getUseContextualNamespaces() {
+    public boolean getUseContextualNamespaces() {
         return configuration.useContextualNamespaces;
     }
 
-    public static boolean getUseIgnoreFile() {
+    public boolean getUseIgnoreFile() {
         return configuration.useIgnoreFile;
     }
 
-    public static void toggleUseIgnoreFile() {
+    public void toggleUseIgnoreFile() {
         configuration.useIgnoreFile = !configuration.useIgnoreFile;
     }
 }

@@ -19,11 +19,12 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
             myFixture.findFileInTempDir("path1"),
             myFixture.findFileInTempDir("path1/path1_2")
         };
-
-        ExportSourceToMarkdownService.loadConfiguration(
+        ExportSourceToMarkdownService exportSourceToMarkdownService =
+                ExportSourceToMarkdownService.getInstance(getProject());
+        exportSourceToMarkdownService.loadConfiguration(
                 myFixture.getProject(), new ExportSourceToMarkdownConfiguration());
         ExportedSource exportedSource =
-                ExportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
+                exportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
         assertEquals(
                 """
                 ## /src/path1/path1_1/path1_1_file1.txt
@@ -69,10 +70,12 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
                 - [(${file.path})]
                 [/]
                 """;
+        ExportSourceToMarkdownService exportSourceToMarkdownService =
+                ExportSourceToMarkdownService.getInstance(getProject());
 
-        ExportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
+        exportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
         ExportedSource exportedSource =
-                ExportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
+                exportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
         assertEquals(
                 """
                 - /src/Core/Id/ArticleId.php
@@ -103,9 +106,11 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
                 [/]
                 """;
 
-        ExportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
+        ExportSourceToMarkdownService exportSourceToMarkdownService =
+                ExportSourceToMarkdownService.getInstance(getProject());
+        exportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
         ExportedSource exportedSource =
-                ExportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
+                exportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
         assertEquals(
                 """
                 - /src/path1/path1_1/path1_1_file1.txt
@@ -120,11 +125,11 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
     public void testItCountTokens() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData/.", ".");
         VirtualFile[] filesToSelect = {myFixture.findFileInTempDir("root_file1.txt")};
-        ExportSourceToMarkdownConfiguration configuration = new ExportSourceToMarkdownConfiguration();
-        ExportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
+        ExportSourceToMarkdownService exportSourceToMarkdownService =
+                ExportSourceToMarkdownService.getInstance(getProject());
 
         ExportedSource exportedSource =
-                ExportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
+                exportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
         assertEquals(18, exportedSource.numberOfTokens());
     }
 }

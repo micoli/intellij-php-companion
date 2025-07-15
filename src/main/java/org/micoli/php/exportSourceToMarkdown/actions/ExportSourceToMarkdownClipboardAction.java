@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import org.jetbrains.annotations.NotNull;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
 import org.micoli.php.exportSourceToMarkdown.ExportedSource;
 import org.micoli.php.ui.Notification;
@@ -13,7 +14,8 @@ import org.micoli.php.ui.Notification;
 public class ExportSourceToMarkdownClipboardAction extends AbstractExportSourceToMarkdownAction {
     @Override
     protected void doAction(Project project, VirtualFile[] selectedFiles) {
-        ExportedSource export = ExportSourceToMarkdownService.generateMarkdownExport(project, selectedFiles);
+        ExportedSource export =
+                ExportSourceToMarkdownService.getInstance(project).generateMarkdownExport(project, selectedFiles);
         if (export == null) {
             Notification.error("No files found for export.");
             return;
@@ -40,7 +42,7 @@ public class ExportSourceToMarkdownClipboardAction extends AbstractExportSourceT
             }
 
             @Override
-            public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+            public @NotNull Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
                 if (DataFlavor.stringFlavor.equals(flavor)) {
                     return content;
                 } else if (DataFlavor.getTextPlainUnicodeFlavor().equals(flavor)) {

@@ -48,8 +48,8 @@ public final class PhpCompanionProjectService implements Disposable {
                     .loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
             AttributeNavigationService.getInstance(project)
                     .loadConfiguration(loadedConfiguration.configuration.attributeNavigation);
-            ExportSourceToMarkdownService.loadConfiguration(
-                    project, loadedConfiguration.configuration.exportSourceToMarkdown);
+            ExportSourceToMarkdownService.getInstance(project)
+                    .loadConfiguration(project, loadedConfiguration.configuration.exportSourceToMarkdown);
 
             DaemonCodeAnalyzer.getInstance(project).restart();
             Notification.message("PHP Companion Configuration loaded");
