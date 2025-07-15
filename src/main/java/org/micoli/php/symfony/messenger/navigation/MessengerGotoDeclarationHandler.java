@@ -20,13 +20,15 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
             return null;
         }
 
-        return handleDispatchNavigationToMessage(sourceElement);
+        return handleDispatchNavigationToMessage(
+                MessengerService.getInstance(sourceElement.getProject()), sourceElement);
     }
 
-    private @Nullable PsiElement[] handleDispatchNavigationToMessage(PsiElement sourceElement) {
+    private @Nullable PsiElement[] handleDispatchNavigationToMessage(
+            MessengerService messengerService, PsiElement sourceElement) {
         MethodReference methodRef = PsiTreeUtil.getParentOfType(sourceElement, MethodReference.class);
 
-        if (methodRef == null || !MessengerService.isDispatchMethod(methodRef.getName())) {
+        if (methodRef == null || !messengerService.isDispatchMethod(methodRef.getName())) {
             return null;
         }
 
@@ -37,7 +39,7 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
         }
 
         Collection<Method> handlers =
-                MessengerService.findHandlersByMessageName(sourceElement.getProject(), messageClassName);
+                messengerService.findHandlersByMessageName(sourceElement.getProject(), messageClassName);
 
         if (handlers.isEmpty()) {
             return null;

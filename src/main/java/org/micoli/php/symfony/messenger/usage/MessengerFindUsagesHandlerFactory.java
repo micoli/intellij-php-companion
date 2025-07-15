@@ -15,9 +15,10 @@ public class MessengerFindUsagesHandlerFactory extends FindUsagesHandlerFactory 
     @Override
     public boolean canFindUsages(@NotNull PsiElement element) {
         return ReadAction.compute(() -> {
+            MessengerService messengerService = MessengerService.getInstance(element.getProject());
             boolean isATrigger = false;
             if (element instanceof Method method) {
-                if (MessengerService.isHandlerMethod(method.getName())) {
+                if (messengerService.isHandlerMethod(method.getName())) {
                     isATrigger = true;
                 }
             }
@@ -28,7 +29,7 @@ public class MessengerFindUsagesHandlerFactory extends FindUsagesHandlerFactory 
                 return false;
             }
 
-            PhpClass phpclass = getMessageClass(element);
+            PhpClass phpclass = getMessageClass(messengerService, element);
             return (phpclass != null);
         });
     }
@@ -44,14 +45,15 @@ public class MessengerFindUsagesHandlerFactory extends FindUsagesHandlerFactory 
         });
     }
 
-    public static PhpClass getMessageClass(PsiElement element) {
+    public static PhpClass getMessageClass(MessengerService messengerService, PsiElement element) {
         return ReadAction.compute(() -> {
             if (element instanceof PhpClass phpClass) {
-                if (MessengerService.isMessageClass(phpClass)) {
+
+                if (messengerService.isMessageClass(phpClass)) {
                     return phpClass;
                 }
-                if (MessengerService.isHandlerClass(phpClass)) {
-                    return MessengerService.getHandledMessage(phpClass);
+                if (messengerService.isHandlerClass(phpClass)) {
+                    return messengerService.getHandledMessage(phpClass);
                 }
             }
 
@@ -59,7 +61,7 @@ public class MessengerFindUsagesHandlerFactory extends FindUsagesHandlerFactory 
             if (handlerClass == null) {
                 return null;
             }
-            return MessengerService.getHandledMessage(handlerClass);
+            return messengerService.getHandledMessage(handlerClass);
         });
     }
 }

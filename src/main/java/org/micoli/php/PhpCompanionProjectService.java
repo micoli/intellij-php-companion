@@ -14,7 +14,7 @@ import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
-import org.micoli.php.symfony.messenger.service.MessengerServiceConfiguration;
+import org.micoli.php.symfony.messenger.service.MessengerService;
 import org.micoli.php.ui.Notification;
 
 @Service(Service.Level.PROJECT)
@@ -43,7 +43,7 @@ public final class PhpCompanionProjectService implements Disposable {
             }
             this.configurationTimestamp = loadedConfiguration.timestamp;
 
-            MessengerServiceConfiguration.loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
+            MessengerService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
             PeerNavigationService.loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
             AttributeNavigationService.getInstance(project)
                     .loadConfiguration(loadedConfiguration.configuration.attributeNavigation);

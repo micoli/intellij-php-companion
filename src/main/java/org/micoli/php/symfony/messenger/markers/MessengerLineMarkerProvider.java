@@ -46,18 +46,26 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
     @Override
     public void collectSlowLineMarkers(
             @NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
+        if (elements.isEmpty()) {
+            return;
+        }
+        MessengerService messengerService =
+                MessengerService.getInstance(elements.getFirst().getProject());
         for (PsiElement element : elements) {
             if (element instanceof MethodReference methodRef) {
-                processDispatchMethod(methodRef, result);
+                processDispatchMethod(messengerService, methodRef, result);
             }
             if (element instanceof Method method) {
-                processHandleMethod(method, result);
+                processHandleMethod(messengerService, method, result);
             }
         }
     }
 
-    private void processDispatchMethod(MethodReference methodRef, Collection<? super LineMarkerInfo<?>> result) {
-        if (methodRef == null || !MessengerService.isDispatchMethod(methodRef.getName())) {
+    private void processDispatchMethod(
+            MessengerService messengerService,
+            MethodReference methodRef,
+            Collection<? super LineMarkerInfo<?>> result) {
+        if (methodRef == null || !messengerService.isDispatchMethod(methodRef.getName())) {
             return;
         }
 
@@ -68,7 +76,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
         }
 
         Collection<Method> handlers =
-                MessengerService.findHandlersByMessageName(methodRef.getProject(), messageClassName);
+                messengerService.findHandlersByMessageName(methodRef.getProject(), messageClassName);
 
         if (handlers.isEmpty()) {
             return;
@@ -80,16 +88,17 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
                 .createLineMarkerInfo(PsiElementUtil.findFirstLeafElement(methodRef)));
     }
 
-    private void processHandleMethod(Method method, Collection<? super LineMarkerInfo<?>> result) {
+    private void processHandleMethod(
+            MessengerService messengerService, Method method, Collection<? super LineMarkerInfo<?>> result) {
         if (method == null) {
             return;
         }
 
-        if (!MessengerService.isHandlerMethod(method.getName())) {
+        if (!messengerService.isHandlerMethod(method.getName())) {
             return;
         }
 
-        String messageClassName = MessengerService.extractMessageClassFromHandler(method);
+        String messageClassName = messengerService.extractMessageClassFromHandler(method);
         if (messageClassName == null) {
             return;
         }
@@ -99,7 +108,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
         if (msgClass == null) {
             return;
         }
-        if (MessengerService.isMessageClass(msgClass)) {
+        if (messengerService.isMessageClass(msgClass)) {
             PsiElement leafElement = PsiElementUtil.findFirstLeafElement(method);
 
             result.add(new LineMarkerInfo<>(
@@ -107,16 +116,17 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
                     leafElement.getTextRange(),
                     navigateReceiveIcon,
                     psiElement -> "Search for usages of [" + messageClassName + "]",
-                    (mouseEvent, elt) -> navigateToMessageDispatchCalls(mouseEvent, project, messageClassName),
+                    (mouseEvent, elt) ->
+                            navigateToMessageDispatchCalls(messengerService, mouseEvent, project, messageClassName),
                     GutterIconRenderer.Alignment.CENTER,
                     () -> "Search for usages of [" + messageClassName + "]"));
         }
     }
 
     private static void navigateToMessageDispatchCalls(
-            MouseEvent mouseEvent, Project project, String messageClassName) {
+            MessengerService messengerService, MouseEvent mouseEvent, Project project, String messageClassName) {
         Collection<MethodReference> dispatchCalls =
-                MessengerService.findDispatchCallsForMessage(project, messageClassName);
+                messengerService.findDispatchCallsForMessage(project, messageClassName);
         ArrayList<PsiElement> elements = new ArrayList<>();
         for (MethodReference dispatchCall : dispatchCalls) {
             if (!dispatchCall.isValid()) {

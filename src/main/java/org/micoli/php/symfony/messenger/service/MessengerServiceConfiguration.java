@@ -4,97 +4,99 @@ import java.util.regex.Pattern;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
 
 public class MessengerServiceConfiguration {
-    private static String projectRootNamespace = "\\App";
-    private static String messageClassNamePatterns = ".*(Message|Command|Query|Event|Input)$";
-    private static Pattern compiledMessageClassNamePatterns = Pattern.compile(messageClassNamePatterns);
+    private String projectRootNamespace = "\\App";
+    private String messageClassNamePatterns = ".*(Message|Command|Query|Event|Input)$";
+    private Pattern compiledMessageClassNamePatterns = Pattern.compile(messageClassNamePatterns);
 
-    private static String[] messageInterfaces = {};
-    private static String[] messageHandlerInterfaces = {
+    private String[] messageInterfaces = {};
+    private String[] messageHandlerInterfaces = {
         "Symfony\\Component\\Messenger\\Handler\\MessageHandlerInterface",
     };
-    public static String[] dispatchMethods = {
+    public String[] dispatchMethods = {
         "dispatch", "query", "command", "handle",
     };
-    public static String[] handlerMethods = {
+    public String[] handlerMethods = {
         "__invoke", "handle",
     };
-    private static final String AS_MESSAGE_HANDLER_ATTRIBUTE =
-            "Symfony\\Component\\Messenger\\Attribute\\AsMessageHandler";
+    private final String AS_MESSAGE_HANDLER_ATTRIBUTE = "Symfony\\Component\\Messenger\\Attribute\\AsMessageHandler";
 
-    public static void loadConfiguration(SymfonyMessengerConfiguration symfonyMessengerConfiguration) {
+    public static MessengerServiceConfiguration create(SymfonyMessengerConfiguration symfonyMessengerConfiguration) {
+        MessengerServiceConfiguration instance = new MessengerServiceConfiguration();
         if (symfonyMessengerConfiguration == null) {
-            return;
+            return null;
         }
         if (symfonyMessengerConfiguration.projectRootNamespace != null) {
-            setProjectRootNamespace(symfonyMessengerConfiguration.projectRootNamespace);
+            instance.setProjectRootNamespace(symfonyMessengerConfiguration.projectRootNamespace);
         }
         if (symfonyMessengerConfiguration.messageClassNamePatterns != null) {
-            setMessageClassNamePatterns(symfonyMessengerConfiguration.messageClassNamePatterns);
+            instance.setMessageClassNamePatterns(symfonyMessengerConfiguration.messageClassNamePatterns);
         }
         if (symfonyMessengerConfiguration.messageHandlerInterfaces != null) {
-            setMessageHandlerInterfaces(symfonyMessengerConfiguration.messageHandlerInterfaces);
+            instance.setMessageHandlerInterfaces(symfonyMessengerConfiguration.messageHandlerInterfaces);
         }
         if (symfonyMessengerConfiguration.messageInterfaces != null) {
-            setMessageInterfaces(symfonyMessengerConfiguration.messageInterfaces);
+            instance.setMessageInterfaces(symfonyMessengerConfiguration.messageInterfaces);
         }
         if (symfonyMessengerConfiguration.dispatchMethods != null) {
-            setDispatchMethods(symfonyMessengerConfiguration.dispatchMethods);
+            instance.setDispatchMethods(symfonyMessengerConfiguration.dispatchMethods);
         }
         if (symfonyMessengerConfiguration.handlerMethods != null) {
-            setHandlerMethods(symfonyMessengerConfiguration.handlerMethods);
+            instance.setHandlerMethods(symfonyMessengerConfiguration.handlerMethods);
         }
+
+        return instance;
     }
 
-    public static String getProjectRootNamespace() {
+    public String getProjectRootNamespace() {
         return projectRootNamespace;
     }
 
-    public static Pattern getCompiledMessageClassNamePatterns() {
+    public Pattern getCompiledMessageClassNamePatterns() {
         return compiledMessageClassNamePatterns;
     }
 
-    public static String[] getMessageInterfaces() {
+    public String[] getMessageInterfaces() {
         return messageInterfaces;
     }
 
-    public static String[] getMessageHandlerInterfaces() {
+    public String[] getMessageHandlerInterfaces() {
         return messageHandlerInterfaces;
     }
 
-    public static String[] getDispatchMethods() {
+    public String[] getDispatchMethods() {
         return dispatchMethods;
     }
 
-    public static String[] getHandlerMethods() {
+    public String[] getHandlerMethods() {
         return handlerMethods;
     }
 
-    public static String getAsMessageHandlerAttribute() {
+    public String getAsMessageHandlerAttribute() {
         return AS_MESSAGE_HANDLER_ATTRIBUTE;
     }
 
-    public static void setProjectRootNamespace(String projectRootNamespace) {
-        MessengerServiceConfiguration.projectRootNamespace = projectRootNamespace;
+    public void setProjectRootNamespace(String projectRootNamespace) {
+        this.projectRootNamespace = projectRootNamespace;
     }
 
-    public static void setMessageClassNamePatterns(String patterns) {
+    public void setMessageClassNamePatterns(String patterns) {
         messageClassNamePatterns = patterns;
         compiledMessageClassNamePatterns = Pattern.compile(patterns);
     }
 
-    public static void setMessageInterfaces(String[] interfaces) {
+    public void setMessageInterfaces(String[] interfaces) {
         messageInterfaces = interfaces;
     }
 
-    public static void setMessageHandlerInterfaces(String[] interfaces) {
+    public void setMessageHandlerInterfaces(String[] interfaces) {
         messageHandlerInterfaces = interfaces;
     }
 
-    public static void setDispatchMethods(String[] methods) {
+    public void setDispatchMethods(String[] methods) {
         dispatchMethods = methods;
     }
 
-    public static void setHandlerMethods(String[] methods) {
+    public void setHandlerMethods(String[] methods) {
         handlerMethods = methods;
     }
 }

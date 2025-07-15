@@ -15,7 +15,6 @@ import org.micoli.php.configuration.NoConfigurationFileException;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
 import org.micoli.php.symfony.messenger.service.MessengerService;
-import org.micoli.php.symfony.messenger.service.MessengerServiceConfiguration;
 
 public class MessengerServiceTest extends BasePlatformTestCase {
 
@@ -28,20 +27,22 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         myFixture.configureByFile("/src/Core/Event/ArticleCreatedEvent.php");
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageClassNamePatterns = ".*(edEvent|Command)$";
-        MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
+        MessengerService messengerService = MessengerService.getInstance(getProject());
+        messengerService.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
-        assertTrue(MessengerService.isMessageClass(phpClass));
+        assertTrue(messengerService.isMessageClass(phpClass));
     }
 
     public void testItDoesNotDetectMessageBasedOnPatternIfPatternIsWrong() {
         myFixture.configureByFile("/src/Core/Event/ArticleCreatedEvent.php");
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageClassNamePatterns = ".*(Command)$";
-        MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
+        MessengerService messengerService = MessengerService.getInstance(getProject());
+        messengerService.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
-        assertFalse(MessengerService.isMessageClass(phpClass));
+        assertFalse(messengerService.isMessageClass(phpClass));
     }
 
     public void testItDetectMessageBasedOnInterface() {
@@ -53,17 +54,18 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageInterfaces =
                 new String[] {"App\\Infrastructure\\Bus\\Message\\MessageInterface"};
-        MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
+        MessengerService messengerService = MessengerService.getInstance(getProject());
+        messengerService.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
-        assertTrue(MessengerService.isMessageClass(phpClass));
+        assertTrue(messengerService.isMessageClass(phpClass));
     }
 
     public void testItCanFindHandlersByMessage() {
         myFixture.copyDirectoryToProject("src", "src");
-        loadPluginConfiguration(getTestDataPath());
+        MessengerService messengerService = loadPluginConfiguration(getTestDataPath());
         Collection<Method> handledMessages =
-                MessengerService.findHandlersByMessageName(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+                messengerService.findHandlersByMessageName(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertContainsElements(
                 handledMessages.stream().map(PhpNamedElement::getFQN).toList(),
                 "\\App\\Core\\EventListener\\OnArticleCreated.__invoke");
@@ -91,17 +93,17 @@ public class MessengerServiceTest extends BasePlatformTestCase {
 
     public void testItCanFindDispatchCallsForMessageClass() {
         myFixture.copyDirectoryToProject("src", "src");
-        loadPluginConfiguration(getTestDataPath());
+        MessengerService messengerService = loadPluginConfiguration(getTestDataPath());
         Collection<MethodReference> callsWithoutRootNamespace =
-                MessengerService.findDispatchCallsForMessage(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+                messengerService.findDispatchCallsForMessage(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         Collection<MethodReference> callsWithRootNamespace =
-                MessengerService.findDispatchCallsForMessage(getProject(), "\\App\\Core\\Event\\ArticleCreatedEvent");
+                messengerService.findDispatchCallsForMessage(getProject(), "\\App\\Core\\Event\\ArticleCreatedEvent");
 
         assertEquals(1, callsWithoutRootNamespace.size());
         assertEquals(callsWithRootNamespace.size(), callsWithoutRootNamespace.size());
     }
 
-    private void loadPluginConfiguration(String path) {
+    private MessengerService loadPluginConfiguration(String path) {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = null;
         try {
             symfonyMessengerConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
@@ -110,6 +112,9 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         } catch (ConfigurationException | NoConfigurationFileException e) {
             throw new RuntimeException(e);
         }
-        MessengerServiceConfiguration.loadConfiguration(symfonyMessengerConfiguration);
+        MessengerService messengerService = MessengerService.getInstance(getProject());
+        messengerService.loadConfiguration(symfonyMessengerConfiguration);
+
+        return messengerService;
     }
 }

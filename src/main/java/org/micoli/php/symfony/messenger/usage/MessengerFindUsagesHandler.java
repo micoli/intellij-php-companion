@@ -32,7 +32,7 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
             return false;
         }
 
-        return processMessengerUsages(element, processor, options);
+        return processMessengerUsages(MessengerService.getInstance(element.getProject()), element, processor, options);
     }
 
     @Override
@@ -46,36 +46,38 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
     }
 
     private boolean processMessengerUsages(
+            @NotNull MessengerService messengerService,
             @NotNull PsiElement element,
             @NotNull Processor<? super UsageInfo> processor,
             @NotNull FindUsagesOptions options) {
 
         Project project = element.getProject();
 
-        PhpClass messageClass = MessengerFindUsagesHandlerFactory.getMessageClass(element);
+        PhpClass messageClass = MessengerFindUsagesHandlerFactory.getMessageClass(messengerService, element);
         if (messageClass != null) {
-            return findDispatchUsages(messageClass, processor, options);
+            return findDispatchUsages(messengerService, messageClass, processor, options);
         }
 
-        Method handlerMethod = getHandlerMethod(element);
+        Method handlerMethod = getHandlerMethod(messengerService, element);
         if (handlerMethod == null) {
             return true;
         }
 
-        String messageClassName = MessengerService.extractMessageClassFromHandler(handlerMethod);
+        String messageClassName = messengerService.extractMessageClassFromHandler(handlerMethod);
         if (messageClassName == null) {
             return true;
         }
 
         PhpClass msgClass = PhpUtil.findClassByFQN(project, messageClassName);
         if (msgClass != null) {
-            return findDispatchUsages(msgClass, processor, options);
+            return findDispatchUsages(messengerService, msgClass, processor, options);
         }
 
         return true;
     }
 
     private boolean findDispatchUsages(
+            @NotNull MessengerService messengerService,
             @NotNull PhpClass messageClass,
             @NotNull Processor<? super UsageInfo> processor,
             @NotNull FindUsagesOptions options) {
@@ -83,7 +85,7 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
         return ReadAction.compute(() -> {
             Project project = messageClass.getProject();
             Collection<MethodReference> dispatchCalls =
-                    MessengerService.findDispatchCallsForMessage(project, messageClass.getFQN());
+                    messengerService.findDispatchCallsForMessage(project, messageClass.getFQN());
 
             for (MethodReference dispatchCall : dispatchCalls) {
                 if (!dispatchCall.isValid()) {
@@ -100,9 +102,9 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
         });
     }
 
-    private Method getHandlerMethod(PsiElement element) {
+    private Method getHandlerMethod(MessengerService messengerService, PsiElement element) {
         if (element instanceof Method method) {
-            if (MessengerService.isHandlerMethod(method.getName())) {
+            if (messengerService.isHandlerMethod(method.getName())) {
                 return method;
             }
         }
