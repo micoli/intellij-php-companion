@@ -17,15 +17,19 @@ import org.micoli.php.service.PhpUtil;
 public class PeerNavigationService {
     private record PeerSourceTarget(Pattern source, String target) {}
 
-    private static Project project;
-    private static final List<PeerSourceTarget> peers = new ArrayList<>();
+    private Project project;
+    private final List<PeerSourceTarget> peers = new ArrayList<>();
 
-    public static void loadConfiguration(Project project, PeerNavigationConfiguration _peerNavigation) {
+    public static PeerNavigationService getInstance(Project project) {
+        return project.getService(PeerNavigationService.class);
+    }
+
+    public void loadConfiguration(Project project, PeerNavigationConfiguration _peerNavigation) {
         if (_peerNavigation == null) {
             return;
         }
 
-        PeerNavigationService.project = project;
+        this.project = project;
         String patternNamedGroup = "\\(\\?<(?<namedGroup>.*?)>.*?\\)";
         String namedGroupReplacement = "\\${${namedGroup}}";
 
@@ -44,7 +48,7 @@ public class PeerNavigationService {
                 .toList());
     }
 
-    public static @Nullable List<PsiElement> getPeersElement(@NotNull PsiElement sourceElement) {
+    public @Nullable List<PsiElement> getPeersElement(@NotNull PsiElement sourceElement) {
         if (!(sourceElement instanceof PhpClass sourceClass)) {
             return null;
         }
@@ -65,7 +69,7 @@ public class PeerNavigationService {
         return result.isEmpty() ? null : result.stream().toList();
     }
 
-    public static Boolean configurationIsEmpty() {
+    public Boolean configurationIsEmpty() {
         return peers.isEmpty();
     }
 }

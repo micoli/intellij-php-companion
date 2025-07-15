@@ -44,7 +44,8 @@ public final class PhpCompanionProjectService implements Disposable {
             this.configurationTimestamp = loadedConfiguration.timestamp;
 
             MessengerService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
-            PeerNavigationService.loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
+            PeerNavigationService.getInstance(project)
+                    .loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
             AttributeNavigationService.getInstance(project)
                     .loadConfiguration(loadedConfiguration.configuration.attributeNavigation);
             ExportSourceToMarkdownService.loadConfiguration(

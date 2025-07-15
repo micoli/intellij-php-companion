@@ -22,22 +22,22 @@ public class PeerNavigationServiceTest extends BasePlatformTestCase {
     public void testItFindsPeerElement() {
         myFixture.copyDirectoryToProject("src", "src");
         myFixture.copyDirectoryToProject("tests", "tests");
-        loadPluginConfiguration(getTestDataPath());
+        PeerNavigationService peerNavigationService = loadPluginConfiguration(getTestDataPath());
         PhpClass fqn1 =
                 PhpUtil.getPhpClassByFQN(getProject(), "\\App\\UserInterface\\Web\\Api\\Article\\Get\\Controller");
         PhpClass fqn2 = PhpUtil.getPhpClassByFQN(
                 getProject(), "\\App\\Tests\\Func\\UserInterface\\Web\\Api\\Article\\Get\\ControllerTest");
         assertNotNull(fqn1);
         assertNotNull(fqn2);
-        assertEquals(fqn2, PeerNavigationService.getPeersElement(fqn1).getFirst());
-        assertEquals(fqn1, PeerNavigationService.getPeersElement(fqn2).getFirst());
+        assertEquals(fqn2, peerNavigationService.getPeersElement(fqn1).getFirst());
+        assertEquals(fqn1, peerNavigationService.getPeersElement(fqn2).getFirst());
     }
 
     public void testItCanFindLineMarkersFor() {
         myFixture.copyDirectoryToProject("src", "src");
         myFixture.copyDirectoryToProject("tests", "tests");
         myFixture.configureByFiles("src/UserInterface/Web/Api/Article/Get/Controller.php");
-        loadPluginConfiguration(getTestDataPath());
+        PeerNavigationService peerNavigationService = loadPluginConfiguration(getTestDataPath());
         List<GutterMark> lineMarkers = myFixture.findAllGutters();
         assertNotEmpty(lineMarkers);
 
@@ -54,7 +54,7 @@ public class PeerNavigationServiceTest extends BasePlatformTestCase {
         assertEquals(1, specificMarkers.size());
     }
 
-    private void loadPluginConfiguration(String path) {
+    private PeerNavigationService loadPluginConfiguration(String path) {
         PeerNavigationConfiguration peerNavigationConfiguration = null;
         try {
             peerNavigationConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
@@ -63,6 +63,9 @@ public class PeerNavigationServiceTest extends BasePlatformTestCase {
         } catch (ConfigurationException | NoConfigurationFileException e) {
             throw new RuntimeException(e);
         }
-        PeerNavigationService.loadConfiguration(getProject(), peerNavigationConfiguration);
+        PeerNavigationService instance = PeerNavigationService.getInstance(getProject());
+        instance.loadConfiguration(getProject(), peerNavigationConfiguration);
+
+        return instance;
     }
 }
