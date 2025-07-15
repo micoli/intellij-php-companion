@@ -14,26 +14,28 @@ import org.micoli.php.ui.Notification;
 
 public class AttributeNavigationService {
 
-    private static Project project;
-    private static List<NavigationByAttributeRule> rules = new ArrayList<>();
+    private List<NavigationByAttributeRule> rules = new ArrayList<>();
 
-    public static void loadConfiguration(Project project, AttributeNavigationConfiguration _openApiConfiguration) {
+    public static AttributeNavigationService getInstance(Project project) {
+        return project.getService(AttributeNavigationService.class);
+    }
+
+    public void loadConfiguration(AttributeNavigationConfiguration _openApiConfiguration) {
         if (_openApiConfiguration == null) {
             return;
         }
-        AttributeNavigationService.project = project;
         rules = List.of(_openApiConfiguration.rules);
     }
 
-    public static Boolean configurationIsEmpty() {
+    public Boolean configurationIsEmpty() {
         return rules.isEmpty();
     }
 
-    public static List<NavigationByAttributeRule> getRules() {
+    public List<NavigationByAttributeRule> getRules() {
         return rules;
     }
 
-    public static String getFormattedValue(String value, String formatterScript) {
+    public String getFormattedValue(String value, String formatterScript) {
         if (formatterScript == null) {
             return value;
         }

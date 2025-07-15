@@ -46,18 +46,26 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
     @Override
     public void collectSlowLineMarkers(
             @NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
-        if (AttributeNavigationService.configurationIsEmpty()) {
+        if (elements.isEmpty()) {
+            return;
+        }
+        AttributeNavigationService attributeNavigationService =
+                AttributeNavigationService.getInstance(elements.getFirst().getProject());
+        if (attributeNavigationService.configurationIsEmpty()) {
             return;
         }
         for (PsiElement element : elements) {
             if (element instanceof PhpAttribute phpAttribute) {
-                processPhpAttribute(phpAttribute, result);
+                processPhpAttribute(attributeNavigationService, phpAttribute, result);
             }
         }
     }
 
-    private void processPhpAttribute(PhpAttribute phpAttribute, Collection<? super LineMarkerInfo<?>> result) {
-        for (NavigationByAttributeRule rule : AttributeNavigationService.getRules()) {
+    private void processPhpAttribute(
+            AttributeNavigationService attributeNavigationService,
+            PhpAttribute phpAttribute,
+            Collection<? super LineMarkerInfo<?>> result) {
+        for (NavigationByAttributeRule rule : attributeNavigationService.getRules()) {
             String fqn = phpAttribute.getFQN();
             if (fqn == null) {
                 continue;
@@ -85,14 +93,14 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                                     openGlobalSearchWithRouteExpression(
                                             phpAttribute.getProject(),
                                             mouseEvent,
-                                            AttributeNavigationService.getFormattedValue(value, rule.formatterScript),
+                                            attributeNavigationService.getFormattedValue(value, rule.formatterScript),
                                             rule.fileMask);
                                     break;
                                 case "search_everywhere":
                                     openSearchEveryWhereWithRouteExpression(
                                             phpAttribute.getProject(),
                                             mouseEvent,
-                                            AttributeNavigationService.getFormattedValue(value, rule.formatterScript));
+                                            attributeNavigationService.getFormattedValue(value, rule.formatterScript));
                                     break;
                             }
                         },
@@ -110,7 +118,7 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
         }
 
         ApplicationManager.getApplication().invokeLater(() -> {
-            FindModel findModel = getFindModel(project, searchText, fileMask);
+            FindModel findModel = getFindModel(searchText, fileMask);
             concurrentSearchManager.addSearch(searchText);
             SearchWithCompletionIndicator.findUsagesWithProgress(findModel, project, 1500, results -> {
                 concurrentSearchManager.removeSearch(searchText);
@@ -156,7 +164,7 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
         });
     }
 
-    private static @NotNull FindModel getFindModel(Project project, String searchText, String fileMask) {
+    private static @NotNull FindModel getFindModel(String searchText, String fileMask) {
         FindModel findModel = new FindModel();
 
         findModel.setGlobal(true);

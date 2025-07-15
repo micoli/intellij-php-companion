@@ -19,8 +19,8 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
     }
 
     public void testItFormatValueUsingInlineFormatter() {
-        String formattedValue =
-                AttributeNavigationService.getFormattedValue("cde", "return ('ab-'+value+'-fg').toLowerCase()");
+        String formattedValue = AttributeNavigationService.getInstance(getProject())
+                .getFormattedValue("cde", "return ('ab-'+value+'-fg').toLowerCase()");
         assertEquals("ab-cde-fg", formattedValue);
     }
 
@@ -44,14 +44,14 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
     }
 
     public void testItFormatValueUsingScriptInConfiguration() {
-        loadPluginConfiguration(getTestDataPath());
-        NavigationByAttributeRule rule = AttributeNavigationService.getRules().getFirst();
-        String formattedValue = AttributeNavigationService.getFormattedValue(
-                "/templates/{templateId}/documents/{documentId}", rule.formatterScript);
+        AttributeNavigationService instance = loadPluginConfiguration(getTestDataPath());
+        NavigationByAttributeRule rule = instance.getRules().getFirst();
+        String formattedValue =
+                instance.getFormattedValue("/templates/{templateId}/documents/{documentId}", rule.formatterScript);
         assertEquals("/templates/[^/]*/documents/[^/]*:", formattedValue);
     }
 
-    private void loadPluginConfiguration(String path) {
+    private AttributeNavigationService loadPluginConfiguration(String path) {
         AttributeNavigationConfiguration attributeNavigationConfiguration = null;
         try {
             attributeNavigationConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
@@ -60,6 +60,9 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
         } catch (ConfigurationException | NoConfigurationFileException e) {
             throw new RuntimeException(e);
         }
-        AttributeNavigationService.loadConfiguration(getProject(), attributeNavigationConfiguration);
+        AttributeNavigationService instance = AttributeNavigationService.getInstance(getProject());
+        instance.loadConfiguration(attributeNavigationConfiguration);
+
+        return instance;
     }
 }

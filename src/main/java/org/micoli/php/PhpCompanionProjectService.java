@@ -45,8 +45,8 @@ public final class PhpCompanionProjectService implements Disposable {
 
             MessengerServiceConfiguration.loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
             PeerNavigationService.loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
-            AttributeNavigationService.loadConfiguration(
-                    project, loadedConfiguration.configuration.attributeNavigation);
+            AttributeNavigationService.getInstance(project)
+                    .loadConfiguration(loadedConfiguration.configuration.attributeNavigation);
             ExportSourceToMarkdownService.loadConfiguration(
                     project, loadedConfiguration.configuration.exportSourceToMarkdown);
 
