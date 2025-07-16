@@ -36,3 +36,14 @@
 - style: Migrate to palantir formatter
 - style: Move actions to dedicated packages
 - style: Fix coding standard according to qodana
+
+## [0.6.1] - 2025-07-17
+- fix(messengerGotoDeclaration): Fix bad navigation when clicking on messenger bus
+- fix(exportSource): Fix thymeleaf not present due to CVE
+
+- chore(exportSource): Convert ExportSourceToMarkdownService to project service
+- chore(peerNavigation): Convert PeerNavigationService to project service
+- chore(messenger): Convert MessengerService to project service
+- chore(attributeNavigation): Convert AttributeNavigationService to project service
+
+- chore(exportSource): Remove useless template line
