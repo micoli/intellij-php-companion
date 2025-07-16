@@ -32,6 +32,7 @@ symfonyMessenger:
     - dispatch
     - query
     - command
+    - notify
 
   handlerMethods:
     - __invoke

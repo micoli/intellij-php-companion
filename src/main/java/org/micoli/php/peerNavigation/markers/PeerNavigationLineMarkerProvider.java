@@ -32,6 +32,9 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
     @Override
     public void collectSlowLineMarkers(
             @NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
+        if (elements.isEmpty()) {
+            return;
+        }
         PeerNavigationService peerNavigationService =
                 PeerNavigationService.getInstance(elements.getFirst().getProject());
         if (peerNavigationService.configurationIsEmpty()) {

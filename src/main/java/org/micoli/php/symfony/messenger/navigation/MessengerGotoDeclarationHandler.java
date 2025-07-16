@@ -3,6 +3,7 @@ package org.micoli.php.symfony.messenger.navigation;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import java.util.Collection;
@@ -24,11 +25,19 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
                 MessengerService.getInstance(sourceElement.getProject()), sourceElement);
     }
 
-    private @Nullable PsiElement[] handleDispatchNavigationToMessage(
+    public @Nullable PsiElement[] handleDispatchNavigationToMessage(
             MessengerService messengerService, PsiElement sourceElement) {
+
+        if (!(sourceElement instanceof LeafPsiElement element)) {
+            return null;
+        }
+
+        if (!messengerService.isDispatchMethod(element.getText())) {
+            return null;
+        }
         MethodReference methodRef = PsiTreeUtil.getParentOfType(sourceElement, MethodReference.class);
 
-        if (methodRef == null || !messengerService.isDispatchMethod(methodRef.getName())) {
+        if (methodRef == null) {
             return null;
         }
 

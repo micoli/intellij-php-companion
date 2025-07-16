@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UserInterface\Web\Api\Article\List;
 
 use App\Core\Query\Article as Articles;
+use App\Core\Query\ArticleDetails as ArticleDetails;
 use App\Core\Member\Domain\Entity\User;
 use App\Infrastructure\Bus\QueryBusInterface;
 use App\UserInterface\Web\Api\Article\ArticleEnricher;
@@ -21,10 +22,13 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[AsController]
 final readonly class Controller
 {
+    private string $dispatch;
+
     public function __construct(
         private QueryBusInterface $queryBus,
-        private ArticleEnricher $articleEnricher,
-    ) {
+        private ArticleEnricher   $articleEnricher,
+    )
+    {
     }
 
     #[Route(
@@ -44,10 +48,15 @@ final readonly class Controller
     )]
     public function home(
         #[CurrentUser] ?User $user,
-        int $page,
-    ): JsonResponse {
-        $results = $this->queryBus->query(new Articles\Query(
-        ))->articles;
+        int                  $page,
+    ): JsonResponse
+    {
+        $query = new Articles\Query();
+        $this->queryBus->query($query)->articles;
+        $this->notify($query)->articles;
+        $var = $this->handle();
+        $this->dispatch = "123";
+        $this->queryBus->query(new ArticleDetails\Query())->articles;
 
         return new JsonResponse(
             new ArticlesResponse(
@@ -63,5 +72,15 @@ final readonly class Controller
                 ),
             ),
         );
+    }
+
+    public function notify(Articles\Query $query): mixed
+    {
+        return $this->queryBus->query($query);
+    }
+
+    public function handle(): mixed
+    {
+        return 123;
     }
 }
