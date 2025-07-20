@@ -13,6 +13,10 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.json</depends>
 
+    <extensions defaultExtensionNs="JavaScript.JsonSchema">
+        <ProviderFactory implementation="org.micoli.php.configuration.PhpCompanionJsonSchemaProviderFactory"/>
+    </extensions>
+
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup
             id="PHP Companion"

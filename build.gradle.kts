@@ -33,10 +33,12 @@ dependencies {
     implementation("org.thymeleaf:thymeleaf:3.1.2.RELEASE")
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r")
     implementation("com.knuddels:jtokkit:1.0.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.17.2")
 
     intellijPlatform {
         phpstorm("2025.1")
         bundledPlugin("com.jetbrains.php")
+        bundledPlugin("org.jetbrains.plugins.yaml")
         pluginVerifier()
 
         testFramework(TestFrameworkType.Platform)
