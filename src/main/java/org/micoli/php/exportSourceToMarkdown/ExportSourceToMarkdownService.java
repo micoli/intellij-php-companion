@@ -22,6 +22,8 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 public class ExportSourceToMarkdownService {
+    private Project project;
+
     public static ExportSourceToMarkdownService getInstance(Project project) {
         return project.getService(ExportSourceToMarkdownService.class);
     }
@@ -30,13 +32,14 @@ public class ExportSourceToMarkdownService {
 
     public void loadConfiguration(
             Project project, ExportSourceToMarkdownConfiguration exportSourceToMarkdownConfiguration) {
+        this.project = project;
         if (exportSourceToMarkdownConfiguration == null) {
             return;
         }
         configuration = exportSourceToMarkdownConfiguration;
     }
 
-    public ExportedSource generateMarkdownExport(Project project, VirtualFile[] selectedFiles) {
+    public ExportedSource generateMarkdownExport(VirtualFile[] selectedFiles) {
 
         List<VirtualFile> fileList = FileListProcessor.findFilesFromSelectedFiles(List.of(selectedFiles));
         if (fileList.isEmpty()) {
@@ -51,7 +54,7 @@ public class ExportSourceToMarkdownService {
                 getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null, filesInContext);
 
         Context context = new Context();
-        context.setVariable("files", getFileData(project, sortFiles(filteredFiles)));
+        context.setVariable("files", getFileData(sortFiles(filteredFiles)));
 
         String exportContent = getTemplateEngine().process(configuration.template, context);
 
@@ -65,7 +68,7 @@ public class ExportSourceToMarkdownService {
                         .toList();
     }
 
-    private @NotNull List<FileData> getFileData(Project project, List<VirtualFile> processedFiles) {
+    private @NotNull List<FileData> getFileData(List<VirtualFile> processedFiles) {
         List<FileData> files = new ArrayList<>();
         String baseDir = project.getBasePath();
         assert baseDir != null;

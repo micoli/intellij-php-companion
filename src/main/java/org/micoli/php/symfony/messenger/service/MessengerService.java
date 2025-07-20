@@ -20,6 +20,7 @@ import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfigurat
 public class MessengerService {
     private SymfonyMessengerConfiguration configuration = new SymfonyMessengerConfiguration();
     private Pattern compiledMessageClassNamePatterns = null;
+    private Project project;
 
     public static MessengerService getInstance(Project project) {
         return project.getService(MessengerService.class);
@@ -89,7 +90,7 @@ public class MessengerService {
         return hasInvokableMethodsWithMessageParameter(phpClass);
     }
 
-    public Collection<MethodReference> findDispatchCallsForMessage(Project project, String messageClassName) {
+    public Collection<MethodReference> findDispatchCallsForMessage(String messageClassName) {
         List<MethodReference> dispatchCalls = new ArrayList<>();
 
         PsiSearchHelper searchHelper = PsiSearchHelper.getInstance(project);
@@ -120,7 +121,7 @@ public class MessengerService {
         return dispatchCalls.stream().distinct().collect(Collectors.toList());
     }
 
-    public Collection<Method> findHandlersByMessageName(Project project, String messageClassName) {
+    public Collection<Method> findHandlersByMessageName(String messageClassName) {
         PhpIndex phpIndex = PhpIndex.getInstance(project);
 
         Set<Method> handlers = new HashSet<>();
@@ -279,9 +280,10 @@ public class MessengerService {
         return messages;
     }
 
-    public void loadConfiguration(SymfonyMessengerConfiguration symfonyMessenger) {
+    public void loadConfiguration(Project project, SymfonyMessengerConfiguration symfonyMessenger) {
         this.configuration = symfonyMessenger;
-        this.compiledMessageClassNamePatterns = configuration.messageClassNamePatterns != null
+        this.project = project;
+        this.compiledMessageClassNamePatterns = symfonyMessenger.messageClassNamePatterns != null
                 ? Pattern.compile(configuration.messageClassNamePatterns)
                 : null;
     }

@@ -11,7 +11,7 @@ public class ExportSourceToMarkdownPopupAction extends AbstractExportSourceToMar
     @Override
     protected void doAction(Project project, VirtualFile[] selectedFiles) {
         ExportedSource export =
-                ExportSourceToMarkdownService.getInstance(project).generateMarkdownExport(project, selectedFiles);
+                ExportSourceToMarkdownService.getInstance(project).generateMarkdownExport(selectedFiles);
         if (export == null) {
             Notification.error("No files found for export.");
             return;

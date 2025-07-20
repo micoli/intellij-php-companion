@@ -75,8 +75,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        Collection<Method> handlers =
-                messengerService.findHandlersByMessageName(methodRef.getProject(), messageClassName);
+        Collection<Method> handlers = messengerService.findHandlersByMessageName(messageClassName);
 
         if (handlers.isEmpty()) {
             return;
@@ -125,8 +124,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
 
     private static void navigateToMessageDispatchCalls(
             MessengerService messengerService, MouseEvent mouseEvent, Project project, String messageClassName) {
-        Collection<MethodReference> dispatchCalls =
-                messengerService.findDispatchCallsForMessage(project, messageClassName);
+        Collection<MethodReference> dispatchCalls = messengerService.findDispatchCallsForMessage(messageClassName);
         ArrayList<PsiElement> elements = new ArrayList<>();
         for (MethodReference dispatchCall : dispatchCalls) {
             if (!dispatchCall.isValid()) {

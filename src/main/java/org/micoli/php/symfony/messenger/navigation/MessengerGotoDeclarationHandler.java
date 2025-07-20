@@ -47,8 +47,7 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
             return null;
         }
 
-        Collection<Method> handlers =
-                messengerService.findHandlersByMessageName(sourceElement.getProject(), messageClassName);
+        Collection<Method> handlers = messengerService.findHandlersByMessageName(messageClassName);
 
         if (handlers.isEmpty()) {
             return null;

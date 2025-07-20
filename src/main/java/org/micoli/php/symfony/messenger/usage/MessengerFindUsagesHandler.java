@@ -83,9 +83,8 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
             @NotNull FindUsagesOptions options) {
 
         return ReadAction.compute(() -> {
-            Project project = messageClass.getProject();
             Collection<MethodReference> dispatchCalls =
-                    messengerService.findDispatchCallsForMessage(project, messageClass.getFQN());
+                    messengerService.findDispatchCallsForMessage(messageClass.getFQN());
 
             for (MethodReference dispatchCall : dispatchCalls) {
                 if (!dispatchCall.isValid()) {

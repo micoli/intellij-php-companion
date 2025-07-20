@@ -28,7 +28,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageClassNamePatterns = ".*(edEvent|Command)$";
         MessengerService messengerService = MessengerService.getInstance(getProject());
-        messengerService.loadConfiguration(symfonyMessengerConfiguration);
+        messengerService.loadConfiguration(myFixture.getProject(), symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertTrue(messengerService.isMessageClass(phpClass));
@@ -39,7 +39,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageClassNamePatterns = ".*(Command)$";
         MessengerService messengerService = MessengerService.getInstance(getProject());
-        messengerService.loadConfiguration(symfonyMessengerConfiguration);
+        messengerService.loadConfiguration(myFixture.getProject(), symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertFalse(messengerService.isMessageClass(phpClass));
@@ -55,7 +55,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         symfonyMessengerConfiguration.messageInterfaces =
                 new String[] {"App\\Infrastructure\\Bus\\Message\\MessageInterface"};
         MessengerService messengerService = MessengerService.getInstance(getProject());
-        messengerService.loadConfiguration(symfonyMessengerConfiguration);
+        messengerService.loadConfiguration(myFixture.getProject(), symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertTrue(messengerService.isMessageClass(phpClass));
@@ -65,7 +65,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         myFixture.copyDirectoryToProject("src", "src");
         MessengerService messengerService = loadPluginConfiguration(getTestDataPath());
         Collection<Method> handledMessages =
-                messengerService.findHandlersByMessageName(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+                messengerService.findHandlersByMessageName("App\\Core\\Event\\ArticleCreatedEvent");
         assertContainsElements(
                 handledMessages.stream().map(PhpNamedElement::getFQN).toList(),
                 "\\App\\Core\\EventListener\\OnArticleCreated.__invoke");
@@ -95,9 +95,9 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         myFixture.copyDirectoryToProject("src", "src");
         MessengerService messengerService = loadPluginConfiguration(getTestDataPath());
         Collection<MethodReference> callsWithoutRootNamespace =
-                messengerService.findDispatchCallsForMessage(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
+                messengerService.findDispatchCallsForMessage("App\\Core\\Event\\ArticleCreatedEvent");
         Collection<MethodReference> callsWithRootNamespace =
-                messengerService.findDispatchCallsForMessage(getProject(), "\\App\\Core\\Event\\ArticleCreatedEvent");
+                messengerService.findDispatchCallsForMessage("\\App\\Core\\Event\\ArticleCreatedEvent");
 
         assertEquals(1, callsWithoutRootNamespace.size());
         assertEquals(callsWithRootNamespace.size(), callsWithoutRootNamespace.size());
@@ -113,7 +113,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
             throw new RuntimeException(e);
         }
         MessengerService messengerService = MessengerService.getInstance(getProject());
-        messengerService.loadConfiguration(symfonyMessengerConfiguration);
+        messengerService.loadConfiguration(myFixture.getProject(), symfonyMessengerConfiguration);
 
         return messengerService;
     }

@@ -61,7 +61,7 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
             throw new RuntimeException(e);
         }
         AttributeNavigationService instance = AttributeNavigationService.getInstance(getProject());
-        instance.loadConfiguration(attributeNavigationConfiguration);
+        instance.loadConfiguration(myFixture.getProject(), attributeNavigationConfiguration);
 
         return instance;
     }

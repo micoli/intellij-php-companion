@@ -23,8 +23,7 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
                 ExportSourceToMarkdownService.getInstance(getProject());
         exportSourceToMarkdownService.loadConfiguration(
                 myFixture.getProject(), new ExportSourceToMarkdownConfiguration());
-        ExportedSource exportedSource =
-                exportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
+        ExportedSource exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect);
         assertEquals(
                 """
                 ## /src/path1/path1_1/path1_1_file1.txt
@@ -74,8 +73,7 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
                 ExportSourceToMarkdownService.getInstance(getProject());
 
         exportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
-        ExportedSource exportedSource =
-                exportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
+        ExportedSource exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect);
         assertEquals(
                 """
                 - /src/Core/Id/ArticleId.php
@@ -109,8 +107,7 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
         ExportSourceToMarkdownService exportSourceToMarkdownService =
                 ExportSourceToMarkdownService.getInstance(getProject());
         exportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
-        ExportedSource exportedSource =
-                exportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
+        ExportedSource exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect);
         assertEquals(
                 """
                 - /src/path1/path1_1/path1_1_file1.txt
@@ -128,8 +125,9 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
         ExportSourceToMarkdownService exportSourceToMarkdownService =
                 ExportSourceToMarkdownService.getInstance(getProject());
 
-        ExportedSource exportedSource =
-                exportSourceToMarkdownService.generateMarkdownExport(myFixture.getProject(), filesToSelect);
+        exportSourceToMarkdownService.loadConfiguration(
+                myFixture.getProject(), new ExportSourceToMarkdownConfiguration());
+        ExportedSource exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect);
         assertEquals(18, exportedSource.numberOfTokens());
     }
 }
