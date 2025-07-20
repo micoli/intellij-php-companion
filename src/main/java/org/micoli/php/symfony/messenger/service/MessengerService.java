@@ -11,13 +11,15 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
 
 public class MessengerService {
-    private MessengerServiceConfiguration configuration = new MessengerServiceConfiguration();
+    private SymfonyMessengerConfiguration configuration = new SymfonyMessengerConfiguration();
+    private Pattern compiledMessageClassNamePatterns = null;
 
     public static MessengerService getInstance(Project project) {
         return project.getService(MessengerService.class);
@@ -58,7 +60,7 @@ public class MessengerService {
     }
 
     public @Nullable Method getInvokableMethod(PhpClass handlerClass) {
-        for (String methodName : this.configuration.getHandlerMethods()) {
+        for (String methodName : this.configuration.handlerMethods) {
             Method invokeMethod = handlerClass.findOwnMethodByName(methodName);
             if (invokeMethod != null) {
                 return invokeMethod;
@@ -93,7 +95,7 @@ public class MessengerService {
         PsiSearchHelper searchHelper = PsiSearchHelper.getInstance(project);
         GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
 
-        for (String methodName : this.configuration.getDispatchMethods()) {
+        for (String methodName : this.configuration.dispatchMethods) {
             searchHelper.processElementsWithWord(
                     (element, offsetInElement) -> {
                         // Vérifier si c'est un appel de méthode
@@ -125,7 +127,7 @@ public class MessengerService {
 
         // Method 1: Find by interface implementation
         Collection<PhpClass> interfaceHandlers = new LinkedList<>();
-        for (String interfaceFQN : this.configuration.getMessageHandlerInterfaces()) {
+        for (String interfaceFQN : this.configuration.messageHandlerInterfaces) {
             PhpIndex.getInstance(project).processAllSubclasses(interfaceFQN, phpClass -> {
                 interfaceHandlers.add(phpClass);
                 return true;
@@ -140,7 +142,7 @@ public class MessengerService {
         // Method 2: Scan all classes for __invoke method with right parameter
         // (This is expensive, so we might want to cache results)
         Collection<String> allClasses =
-                phpIndex.getAllClassFqns(new PlainPrefixMatcher(this.configuration.getProjectRootNamespace()));
+                phpIndex.getAllClassFqns(new PlainPrefixMatcher(this.configuration.projectRootNamespace));
         for (String className : allClasses) {
             for (PhpClass phpClass : phpIndex.getClassesByFQN(PhpUtil.normalizeRootFQN(className))) {
                 if (handlesMessageType(phpClass, messageClassName)) {
@@ -233,33 +235,30 @@ public class MessengerService {
     }
 
     public boolean implementsMessageHandlerInterfaces(PhpClass phpClass) {
-        return PhpUtil.implementsInterfaces(phpClass, this.configuration.getMessageHandlerInterfaces());
+        return PhpUtil.implementsInterfaces(phpClass, this.configuration.messageHandlerInterfaces);
     }
 
     public boolean implementsMessageInterfaces(PhpClass phpClass) {
-        return PhpUtil.implementsInterfaces(phpClass, this.configuration.getMessageInterfaces());
+        return PhpUtil.implementsInterfaces(phpClass, this.configuration.messageInterfaces);
     }
 
     public boolean hasHandlerAttribute(PhpClass phpClass) {
-        return PhpUtil.hasAttribute(phpClass, this.configuration.getAsMessageHandlerAttribute());
+        return PhpUtil.hasAttribute(phpClass, this.configuration.asMessageHandlerAttribute);
     }
 
     public boolean isDispatchMethod(String methodName) {
-        return Arrays.asList(this.configuration.getDispatchMethods()).contains(methodName);
+        return Arrays.asList(this.configuration.dispatchMethods).contains(methodName);
     }
 
     public boolean isHandlerMethod(String methodName) {
-        return Arrays.asList(this.configuration.getHandlerMethods()).contains(methodName);
+        return Arrays.asList(this.configuration.handlerMethods).contains(methodName);
     }
 
     public boolean matchMessagePattern(String className) {
-        if (this.configuration.getCompiledMessageClassNamePatterns() == null) {
+        if (this.compiledMessageClassNamePatterns == null) {
             return false;
         }
-        return this.configuration
-                .getCompiledMessageClassNamePatterns()
-                .matcher(className)
-                .matches();
+        return this.compiledMessageClassNamePatterns.matcher(className).matches();
     }
 
     public Set<String> getHandledMessages(PhpClass handlerClass) {
@@ -281,6 +280,9 @@ public class MessengerService {
     }
 
     public void loadConfiguration(SymfonyMessengerConfiguration symfonyMessenger) {
-        this.configuration = MessengerServiceConfiguration.create(symfonyMessenger);
+        this.configuration = symfonyMessenger;
+        this.compiledMessageClassNamePatterns = configuration.messageClassNamePatterns != null
+                ? Pattern.compile(configuration.messageClassNamePatterns)
+                : null;
     }
 }

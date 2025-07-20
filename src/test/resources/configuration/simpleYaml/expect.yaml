@@ -17,7 +17,9 @@ peerNavigation:
       classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
 
 symfonyMessenger:
+  projectRootNamespace: \App
   messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
+  asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler
   messageInterfaces:
     - \App\Infrastructure\Bus\Message\MessageInterface
 
