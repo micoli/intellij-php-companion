@@ -8,7 +8,9 @@
   "require": {
     "php": ">=8.2",
     "cakephp/chronos": "^3.2",
-    "ramsey/uuid": "^4.9"
+    "ramsey/uuid": "^4.9",
+    "symfony/routing": "^7.3",
+    "symfony/console": "^7.3"
   },
   "autoload": {
     "psr-4": {

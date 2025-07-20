@@ -54,6 +54,10 @@
                                 implementation="org.micoli.php.ui.PhpCompanionStatusBarWidget$Factory"
                                 order="before CodeStyleStatusBarWidget"/>
         <postStartupActivity implementation="org.micoli.php.PhpCompanionProjectStartup"/>
+        <toolWindow id="PHP Companion" secondary="true" icon="AllIcons.Language.Php" anchor="left"
+                    factoryClass="org.micoli.php.ui.ToolWindowFactory"/>
+        <projectService
+                serviceImplementation="org.micoli.php.symfony.list.RouteService"/>
 
     </extensions>
     <actions>

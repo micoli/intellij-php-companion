@@ -41,3 +41,8 @@ symfonyMessenger:
 exportSourceToMarkdown:
   contextualNamespaces:
     - App\Core\Models
+
+routesConfiguration:
+  attributeFQCN: Symfony\Component\Routing\Annotation\Route
+  namespaces:
+    - App\UserInterface\Web
