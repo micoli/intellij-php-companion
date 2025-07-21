@@ -11,6 +11,7 @@ import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.events.ConfigurationEvents;
 import org.micoli.php.events.IndexingEvents;
+import org.micoli.php.ui.panels.CommandsPanel;
 import org.micoli.php.ui.panels.RoutesPanel;
 
 class ToolWindowContent {
@@ -18,6 +19,7 @@ class ToolWindowContent {
     public final JPanel contentPanel = new JPanel();
     private final JComponent mainPanel = new JPanel();
     private final RoutesPanel routesTable;
+    private final CommandsPanel commandsPanel;
     private final JBTabbedPane tabbedPane;
     private final JBTabsImpl tabs;
     private final DefaultActionGroup tabActions = new DefaultActionGroup();
@@ -29,6 +31,7 @@ class ToolWindowContent {
         this.mainPanel.setLayout(new BorderLayout());
 
         routesTable = new RoutesPanel(project);
+        commandsPanel = new CommandsPanel(project);
         tabbedPane = new JBTabbedPane(SwingConstants.TOP, JBTabbedPane.WRAP_TAB_LAYOUT);
         tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
@@ -40,6 +43,7 @@ class ToolWindowContent {
             }
         });
         tabs.addTab(getRoutesTab());
+        tabs.addTab(getCommandsTab());
 
         this.mainPanel.add(tabs.getComponent(), BorderLayout.CENTER);
         project.getMessageBus().connect().subscribe(ConfigurationEvents.CONFIGURATION_UPDATED, (ConfigurationEvents)
@@ -53,11 +57,19 @@ class ToolWindowContent {
 
     private void refreshTabs() {
         routesTable.refreshRoutes();
+        commandsPanel.refreshCommands();
     }
 
     private TabInfo getRoutesTab() {
         TabInfo tabInfo = new TabInfo(routesTable);
         tabInfo.setText("Routes");
+        tabInfo.setActions(tabActions, "TabActions");
+        return tabInfo;
+    }
+
+    private TabInfo getCommandsTab() {
+        TabInfo tabInfo = new TabInfo(commandsPanel);
+        tabInfo.setText("CLI");
         tabInfo.setActions(tabActions, "TabActions");
         return tabInfo;
     }

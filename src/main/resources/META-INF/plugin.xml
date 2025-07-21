@@ -58,6 +58,8 @@
                     factoryClass="org.micoli.php.ui.ToolWindowFactory"/>
         <projectService
                 serviceImplementation="org.micoli.php.symfony.list.RouteService"/>
+        <projectService
+                serviceImplementation="org.micoli.php.symfony.list.CommandService"/>
 
     </extensions>
     <actions>
