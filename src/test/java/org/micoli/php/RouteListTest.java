@@ -22,7 +22,7 @@ public class RouteListTest extends BasePlatformTestCase {
     public void testItGetRoutesFromAttributes() {
         myFixture.copyDirectoryToProject("src", "/src");
         RouteService routeListService = loadPluginConfiguration(getTestDataPath());
-        List<RouteElementDTO> lists = routeListService.getRoutes();
+        List<RouteElementDTO> lists = routeListService.getElements();
         String formattedList = lists.stream().map(it -> it.uri()).sorted().collect(Collectors.joining(","));
         String expectedList = new ArrayList<>(Arrays.asList(
                         "/api/article/{articleId}",

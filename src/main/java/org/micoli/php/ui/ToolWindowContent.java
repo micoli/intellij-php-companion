@@ -56,8 +56,8 @@ class ToolWindowContent {
     }
 
     private void refreshTabs() {
-        routesTable.refreshRoutes();
-        commandsPanel.refreshCommands();
+        routesTable.refresh();
+        commandsPanel.refresh();
     }
 
     private TabInfo getRoutesTab() {
