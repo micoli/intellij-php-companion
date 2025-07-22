@@ -47,3 +47,14 @@
 - chore(attributeNavigation): Convert AttributeNavigationService to project service
 
 - chore(exportSource): Remove useless template line
+
+## [0.7.0] - 2025-07-22
+- feat(commandList): Add a panel and display all symfony commands list
+- feat(routeList): Add a panel and display all symfony routes list
+- feat: Add a JsonSchema provider to help writing of .php-companion.yaml file
+
+- refactor: Mutualize code in lists panel
+- refactor: remove useless project parameters in service method calls
+- refactor: Remove useless MessengerServiceConfiguration
+
+- fix(configuration): Allow empty configuration file
