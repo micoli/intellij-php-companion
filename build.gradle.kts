@@ -36,9 +36,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.17.2")
 
     intellijPlatform {
-        phpstorm("2025.1")
-        bundledPlugin("com.jetbrains.php")
-        bundledPlugin("org.jetbrains.plugins.yaml")
+        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
+        plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
+
         pluginVerifier()
 
         testFramework(TestFrameworkType.Platform)

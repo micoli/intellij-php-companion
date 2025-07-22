@@ -17,6 +17,10 @@
         <ProviderFactory implementation="org.micoli.php.configuration.PhpCompanionJsonSchemaProviderFactory"/>
     </extensions>
 
+    <extensions defaultExtensionNs="com.jetbrains.php">
+
+    </extensions>
+
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup
             id="PHP Companion"
