@@ -1,0 +1,35 @@
+attributeNavigation:
+  rules:
+    -   actionType: find_in_file
+        attributeFQCN: Symfony\Component\Routing\Annotation\Route
+        fileMask: '*.yaml,*.yml,*.php'
+        formatterScript: |
+          return (value
+            .replaceAll("(\\{.*?\\})", "[^/]*")
+            + ":"
+          );
+        isDefault: true
+        propertyName: path
+peerNavigation:
+  associates:
+    -   classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
+        classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
+  peers: [
+  ]
+symfonyMessenger:
+  asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler
+  dispatchMethods:
+    - dispatch
+    - query
+    - command
+  handlerMethods:
+    - __invoke
+    - handle
+  messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
+  messageHandlerInterfaces:
+    - \App\Infrastructure\Bus\Handler\CommandHandlerInterface
+    - \App\Infrastructure\Bus\Handler\QueryHandlerInterface
+    - \App\Infrastructure\Bus\Handler\EventHandlerInterface
+  messageInterfaces:
+    - \App\Infrastructure\Bus\Message\MessageInterface
+  projectRootNamespace: \App

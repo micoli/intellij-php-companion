@@ -15,6 +15,7 @@ import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.NoConfigurationFileException;
 import org.micoli.php.utils.YamlAssertUtils;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 public class ConfigurationFactoryTest {
@@ -59,6 +60,16 @@ public class ConfigurationFactoryTest {
     }
 
     @Test
+    public void testItSucceedsToLoadMultipleYamlWithEmptyConfiguration() throws Exception {
+        testSuccessfulConfiguration("multipleYamlWithEmptyConfiguration");
+    }
+
+    @Test
+    public void testItSucceedsToLoadMultipleYamlAndOneWithEmptyConfiguration() throws Exception {
+        testSuccessfulConfiguration("multipleYamlAndOneWithEmptyConfiguration");
+    }
+
+    @Test
     public void testItSucceedsToLoadAMultipleFileYamlConfiguration() throws Exception {
         testSuccessfulConfiguration("multipleYaml");
     }
@@ -78,8 +89,12 @@ public class ConfigurationFactoryTest {
         ConfigurationFactory.LoadedConfiguration createdConfiguration = getLoadedConfiguration(file);
 
         // Then
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setIndent(4);
+        dumperOptions.setPrettyFlow(true);
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         String loadedConfiguration =
-                new Yaml().dump(createdConfiguration != null ? createdConfiguration.configuration : null);
+                new Yaml(dumperOptions).dump(createdConfiguration != null ? createdConfiguration.configuration : null);
         String expectedConfiguration = Files.asCharSource(
                         new File(Objects.requireNonNull(getClass()
                                         .getClassLoader()
@@ -90,9 +105,9 @@ public class ConfigurationFactoryTest {
         YamlAssertUtils.assertYamlEquals(expectedConfiguration, loadedConfiguration);
     }
 
-    private ConfigurationFactory.@Nullable LoadedConfiguration getLoadedConfiguration(File empty)
+    private ConfigurationFactory.@Nullable LoadedConfiguration getLoadedConfiguration(File file)
             throws ConfigurationException, NoConfigurationFileException {
-        return ConfigurationFactory.loadConfiguration(empty.getAbsolutePath(), 0L);
+        return ConfigurationFactory.loadConfiguration(file.getAbsolutePath(), 0L);
     }
 
     @NotNull

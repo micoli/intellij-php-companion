@@ -107,11 +107,11 @@ public class YamlAssertUtils {
             return;
         }
         if (obj1 == null) {
-            differences.add(String.format("Path [%s] : missing value in first file", path));
+            differences.add(String.format("Path [%s] : missing value in expected file", path));
             return;
         }
         if (obj2 == null) {
-            differences.add(String.format("Path [%s] : missing value in second file", path));
+            differences.add(String.format("Path [%s] : missing value in actual file", path));
             return;
         }
 
@@ -138,9 +138,9 @@ public class YamlAssertUtils {
             String currentPath = path.isEmpty() ? key : path + "." + key;
 
             if (!map1.containsKey(key)) {
-                differences.add(String.format("path [%s] : missing key in first file", currentPath));
+                differences.add(String.format("path [%s] : missing key in expected file", currentPath));
             } else if (!map2.containsKey(key)) {
-                differences.add(String.format("path [%s] : missing key in second file", currentPath));
+                differences.add(String.format("path [%s] : missing key in actual file", currentPath));
             } else {
                 compareObjectsWithDiff(map1.get(key), map2.get(key), currentPath, differences);
             }
@@ -150,7 +150,7 @@ public class YamlAssertUtils {
     private static void compareListsWithDiff(List<?> list1, List<?> list2, String path, List<String> differences) {
         if (list1.size() != list2.size()) {
             differences.add(String.format(
-                    "Path [%s] : list size are different (first file: %d != second file: %d / [%s]/[%s])",
+                    "Path [%s] : list size are different (expected file: %d != actual file: %d / [%s]/[%s])",
                     path,
                     list1.size(),
                     list2.size(),
@@ -175,7 +175,7 @@ public class YamlAssertUtils {
             }
 
             if (!found) {
-                differences.add(String.format("Path [%s][%d] : missing element in second file", path, i));
+                differences.add(String.format("Path [%s][%d] : missing element in actual file", path, i));
             }
         }
     }

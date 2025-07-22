@@ -97,12 +97,16 @@ public class ConfigurationFactory {
         JsonObject mergedJson = new JsonObject();
         for (String file : files) {
 
-            GsonTools.extendJsonObject(
-                    mergedJson,
-                    GsonTools.ConflictStrategy.PREFER_SECOND_OBJ,
-                    JsonParser.parseString(getConfigurationSource(file, new File(projectPath, file)))
-                            .getAsJsonObject()
-                            .getAsJsonObject());
+            try {
+                String configurationSource = getConfigurationSource(file, new File(projectPath, file));
+                JsonObject asJsonObject =
+                        JsonParser.parseString(configurationSource).getAsJsonObject();
+                GsonTools.extendJsonObject(mergedJson, GsonTools.ConflictStrategy.PREFER_SECOND_OBJ, asJsonObject);
+            } catch (IllegalStateException e) {
+                if (!e.getMessage().contains("Not a JSON Object: null")) {
+                    throw e;
+                }
+            }
         }
         return mergedJson.toString();
     }
