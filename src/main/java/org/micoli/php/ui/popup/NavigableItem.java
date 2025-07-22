@@ -31,7 +31,7 @@ public class NavigableItem implements Navigatable {
         return this.navigable != null; // && element.canNavigateToSource();
     }
 
-    public String getFileDesscription() {
+    public String getFileDescription() {
         return fileDescription;
     }
 

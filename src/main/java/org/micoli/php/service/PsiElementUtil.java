@@ -22,15 +22,15 @@ public class PsiElementUtil {
         return findFirstLeafElement(children);
     }
 
-    public static FileExtract getFileExtract(PsiElement element) {
-        return getFileExtract(element.getProject(), element.getContainingFile(), element.getTextRange());
+    public static FileExtract getFileExtract(PsiElement element, int lineCount) {
+        return getFileExtract(element.getProject(), element.getContainingFile(), element.getTextRange(), lineCount);
     }
 
-    public static FileExtract getFileExtract(UsageInfo usageInfo) {
-        return getFileExtract(usageInfo.getProject(), usageInfo.getFile(), usageInfo.getRangeInElement());
+    public static FileExtract getFileExtract(UsageInfo usageInfo, int lineCount) {
+        return getFileExtract(usageInfo.getProject(), usageInfo.getFile(), usageInfo.getRangeInElement(), lineCount);
     }
 
-    public static FileExtract getFileExtract(Project project, PsiFile file, TextRange range) {
+    public static FileExtract getFileExtract(Project project, PsiFile file, TextRange range, int lineCount) {
         Document document = PsiDocumentManager.getInstance(project).getDocument(file);
 
         if (document != null) {
@@ -39,7 +39,8 @@ public class PsiElementUtil {
             return new FileExtract(
                     lineNumber + 1,
                     document.getText(TextRange.create(
-                            document.getLineStartOffset(lineNumber), document.getLineEndOffset(lineNumber + 1))));
+                            document.getLineStartOffset(lineNumber),
+                            document.getLineEndOffset(lineNumber + lineCount))));
         }
 
         return new FileExtract(-1, "");
@@ -53,13 +54,13 @@ public class PsiElementUtil {
 
             if (element instanceof PsiNamedElement) {
                 return String.format(
-                        format, base, getFileExtract(element).lineNumber(), ((PsiNamedElement) element).getName());
+                        format, base, getFileExtract(element, 1).lineNumber(), ((PsiNamedElement) element).getName());
             }
 
             return String.format(
                     format,
                     base,
-                    getFileExtract(element).lineNumber(),
+                    getFileExtract(element, 1).lineNumber(),
                     element.getText().replaceAll("\\s( *)", " "));
         });
     }

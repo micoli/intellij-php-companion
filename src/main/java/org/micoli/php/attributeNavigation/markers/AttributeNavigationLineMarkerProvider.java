@@ -135,7 +135,7 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                                             if (file == null) {
                                                 return null;
                                             }
-                                            FileExtract fileExtract = PsiElementUtil.getFileExtract(usageInfo);
+                                            FileExtract fileExtract = PsiElementUtil.getFileExtract(usageInfo, 1);
                                             return new NavigableItem(
                                                     PathUtil.getPathWithParent(file, 2),
                                                     fileExtract,

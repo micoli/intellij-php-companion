@@ -26,7 +26,7 @@ public class NavigableListCellRenderer extends DefaultListCellRenderer {
 
         label.setText(String.format(
                 "<html><div style=\"padding:5px\"><i style='color: gray;'>%s:%d</i><br/><code style=\"margin-left:5px\">%s</code></div></html>",
-                item.getFileDesscription(),
+                item.getFileDescription(),
                 item.getFileExtract().lineNumber(),
                 item.getFileExtract().text().replaceAll("\n", "<br/>")));
 

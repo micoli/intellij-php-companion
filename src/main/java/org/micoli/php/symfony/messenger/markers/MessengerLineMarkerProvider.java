@@ -155,7 +155,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
                                         return null;
                                     }
 
-                                    FileExtract fileExtract = PsiElementUtil.getFileExtract(psiElement);
+                                    FileExtract fileExtract = PsiElementUtil.getFileExtract(psiElement, 0);
                                     return new NavigableItem(
                                             PathUtil.getPathWithParent(containingFile, 2),
                                             fileExtract,
