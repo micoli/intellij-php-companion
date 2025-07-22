@@ -5,6 +5,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import org.micoli.php.symfony.list.CommandElementDTO;
 import org.micoli.php.symfony.list.CommandService;
 
@@ -13,6 +15,17 @@ public class CommandsPanel extends AbstractListPanel<CommandElementDTO> {
 
     public CommandsPanel(Project project) {
         super(project, COLUMN_NAMES);
+    }
+
+    @Override
+    protected TableRowSorter<DefaultTableModel> getSorter() {
+        sorter = new TableRowSorter<>(model);
+        sorter.setSortKeys(
+                List.of(new RowSorter.SortKey(0, SortOrder.ASCENDING), new RowSorter.SortKey(1, SortOrder.ASCENDING)));
+        sorter.setComparator(0, String.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
+        sorter.setComparator(2, (o1, o2) -> 0);
+        return sorter;
     }
 
     @Override

@@ -12,7 +12,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -50,13 +49,10 @@ public abstract class AbstractListPanel<T> extends JPanel {
         table.setStriped(true);
         searchField = new SearchTextField();
 
-        sorter = new TableRowSorter<>(model);
-        sorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
-        sorter.setComparator(0, String.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(1, String.CASE_INSENSITIVE_ORDER);
-        sorter.setComparator(2, (o1, o2) -> 0);
-        table.setRowSorter(sorter);
+        table.setRowSorter(getSorter());
     }
+
+    protected abstract TableRowSorter<DefaultTableModel> getSorter();
 
     private void setupLayout() {
         JBScrollPane scrollPane = new JBScrollPane(table);
