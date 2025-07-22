@@ -19,9 +19,9 @@ public class CommandService extends AbstractAttributeService<CommandElementDTO, 
     }
 
     @Override
-    protected CommandElementDTO createElementDTO(PhpAttribute attribute) {
+    protected CommandElementDTO createElementDTO(String className, PhpAttribute attribute) {
         Map<String, String> values = mapping.clone().extractValues(attribute);
-        return new CommandElementDTO(values.get("name"), values.get("description"), attribute);
+        return new CommandElementDTO(values.get("name"), values.get("description"), className, attribute);
     }
 
     @Override

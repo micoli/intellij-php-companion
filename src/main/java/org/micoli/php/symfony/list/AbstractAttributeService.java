@@ -22,7 +22,7 @@ public abstract class AbstractAttributeService<T, C> {
         this.configuration = null;
     }
 
-    protected abstract T createElementDTO(PhpAttribute attribute);
+    protected abstract T createElementDTO(String className, PhpAttribute attribute);
 
     public C getConfiguration() {
         return configuration;
@@ -35,28 +35,30 @@ public abstract class AbstractAttributeService<T, C> {
 
         PhpIndex phpIndex = PhpIndex.getInstance(project);
         List<T> elements = new ArrayList<>();
+        String attributeFQCN = PhpUtil.normalizeRootFQN(getAttributeFQCN());
 
         for (String namespace : getNamespaces()) {
             Collection<String> allClasses = phpIndex.getAllClassFqns(new PlainPrefixMatcher(namespace));
             for (String className : allClasses) {
-                PhpClass phpClass = PhpUtil.getPhpClassByFQN(project, PhpUtil.normalizeNonRootFQN(className));
+                String normalizeNonRootFQN = PhpUtil.normalizeNonRootFQN(className);
+                PhpClass phpClass = PhpUtil.getPhpClassByFQN(project, normalizeNonRootFQN);
                 if (phpClass == null) {
                     continue;
                 }
-                String attributeFQCN = PhpUtil.normalizeRootFQN(getAttributeFQCN());
-                elements.addAll(getElementsFromAttributes(phpClass.getAttributes(attributeFQCN)));
+                elements.addAll(getElementsFromAttributes(normalizeNonRootFQN, phpClass.getAttributes(attributeFQCN)));
                 for (Method method : phpClass.getMethods()) {
-                    elements.addAll(getElementsFromAttributes(method.getAttributes(attributeFQCN)));
+                    elements.addAll(
+                            getElementsFromAttributes(normalizeNonRootFQN, method.getAttributes(attributeFQCN)));
                 }
             }
         }
         return elements;
     }
 
-    protected List<T> getElementsFromAttributes(Collection<PhpAttribute> attributes) {
+    protected List<T> getElementsFromAttributes(String className, Collection<PhpAttribute> attributes) {
         List<T> elements = new ArrayList<>();
         for (PhpAttribute attribute : attributes) {
-            elements.add(createElementDTO(attribute));
+            elements.add(createElementDTO(className, attribute));
         }
         return elements;
     }
