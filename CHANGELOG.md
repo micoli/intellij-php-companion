@@ -58,3 +58,11 @@
 - refactor: Remove useless MessengerServiceConfiguration
 
 - fix(configuration): Allow empty configuration file
+
+## [0.7.1] - 2025-07-23
+- chore(list): Add custom cell formater for RouteListPanel
+
+- fix(messengerGoToDispatch): Do not display two lines
+- fix: Remove internal classes usages (JBTabsImpl)
+
+- feat(intellij): Make the plugin usable on intellij

@@ -4,8 +4,9 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTabbedPane;
+import com.intellij.ui.tabs.JBTabs;
+import com.intellij.ui.tabs.JBTabsFactory;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.impl.JBTabsImpl;
 import java.awt.*;
 import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ class ToolWindowContent {
     private final RoutesPanel routesTable;
     private final CommandsPanel commandsPanel;
     private final JBTabbedPane tabbedPane;
-    private final JBTabsImpl tabs;
+    private final JBTabs tabs;
     private final DefaultActionGroup tabActions = new DefaultActionGroup();
 
     public ToolWindowContent(Project project) {
@@ -35,7 +36,7 @@ class ToolWindowContent {
         tabbedPane = new JBTabbedPane(SwingConstants.TOP, JBTabbedPane.WRAP_TAB_LAYOUT);
         tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        tabs = new JBTabsImpl(project);
+        tabs = JBTabsFactory.createTabs(project);
         tabActions.add(new AnAction("Refresh", "Refresh", PhpCompanionIcon.Refresh) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
