@@ -10,7 +10,7 @@ A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced 
 
 ## Features
 
-### 🚀 PHP Companion
+### 🚀 Symfony Messenger navigation
 - **Smart Navigation**: Navigate from message dispatch calls directly to their corresponding handlers
 - **Find Usages**: Discover all dispatch calls for a specific message class or handler method
 - **Message Detection**: Automatically identify message classes based on naming patterns and interfaces
@@ -74,6 +74,7 @@ attributeNavigation:
         );
 
 symfonyMessenger:
+  useNativeGoToDeclaration: false
   projectRootNamespace: \App
   messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
   messageInterfaces:
@@ -107,14 +108,15 @@ peerNavigation:
 
 ### Symfony Messenger Configuration
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `projectRootNamespace` | string | `"\\App"` | Root namespace for scanning classes |
-| `messageClassNamePatterns` | string | `".*(Message\|Command\|Query\|Event\|Input)$"` | Regex pattern to identify message classes |
-| `messageInterfaces` | string[] | `[]` | Interfaces that message classes implement |
-| `messageHandlerInterfaces` | string[] | `["Symfony\\Component\\Messenger\\Handler\\MessageHandlerInterface"]` | Interfaces that handler classes implement |
-| `dispatchMethods` | string[] | `["dispatch", "query", "command", "handle"]` | Method names used to dispatch messages |
-| `handlerMethods` | string[] | `["__invoke", "handle"]` | Method names in handler classes |
+| Property | Type | Default | Description                                 |
+|----------|------|---------|---------------------------------------------|
+| `projectRootNamespace` | string | `"\\App"` | Root namespace for scanning classes         |
+| `messageClassNamePatterns` | string | `".*(Message\|Command\|Query\|Event\|Input)$"` | Regex pattern to identify message classes   |
+| `messageInterfaces` | string[] | `[]` | Interfaces that message classes implement   |
+| `messageHandlerInterfaces` | string[] | `["Symfony\\Component\\Messenger\\Handler\\MessageHandlerInterface"]` | Interfaces that handler classes implement   |
+| `dispatchMethods` | string[] | `["dispatch", "query", "command", "handle"]`                          | Method names used to dispatch messages      |
+| `handlerMethods` | string[] | `["__invoke", "handle"]`                                              | Method names in handler classes             |
+| `useNativeGoToDeclaration` | boolean  | `false`                                                               | Disable ctrl+click to go to handler service |
 
 ### Peer Navigation Configuration
 

@@ -1,6 +1,7 @@
 package org.micoli.php.symfony.messenger.configuration;
 
 public final class SymfonyMessengerConfiguration {
+    public boolean useNativeGoToDeclaration = false;
     public String projectRootNamespace = "\\App";
     public String messageClassNamePatterns = ".*(Message|Command|Query|Event|Input)$";
     public String[] messageInterfaces = {};
@@ -14,4 +15,8 @@ public final class SymfonyMessengerConfiguration {
         "__invoke", "handle",
     };
     public String asMessageHandlerAttribute = "Symfony\\Component\\Messenger\\Attribute\\AsMessageHandler";
+
+    public void toggleUseNativeGoToDeclaration() {
+        useNativeGoToDeclaration = !useNativeGoToDeclaration;
+    }
 }

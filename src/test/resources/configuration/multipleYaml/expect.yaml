@@ -21,6 +21,7 @@ peerNavigation:
           target: \\App\\$1\\Controller
 
 symfonyMessenger:
+    useNativeGoToDeclaration: false
     projectRootNamespace: \App
     messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
     asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler

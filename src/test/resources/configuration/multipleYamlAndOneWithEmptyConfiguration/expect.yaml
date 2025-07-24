@@ -17,6 +17,7 @@ peerNavigation:
   peers: [
   ]
 symfonyMessenger:
+  useNativeGoToDeclaration: false
   asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler
   dispatchMethods:
     - dispatch

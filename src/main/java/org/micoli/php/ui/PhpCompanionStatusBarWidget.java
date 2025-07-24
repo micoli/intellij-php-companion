@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
+import org.micoli.php.symfony.messenger.service.MessengerService;
 
 public final class PhpCompanionStatusBarWidget implements StatusBarWidget, StatusBarWidget.TextPresentation {
     private final Project project;
@@ -93,6 +94,23 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
             @Override
             public void setSelected(@NotNull AnActionEvent e, boolean state) {
                 ExportSourceToMarkdownService.getInstance(project).toggleUseContextualNamespaces();
+            }
+        });
+
+        group.add(new ToggleAction("SymfonyMessenger: Use Native GoTo Declaration", "Description 1", null) {
+            @Override
+            public @NotNull ActionUpdateThread getActionUpdateThread() {
+                return ActionUpdateThread.BGT;
+            }
+
+            @Override
+            public boolean isSelected(@NotNull AnActionEvent e) {
+                return MessengerService.getInstance(project).getConfiguration().useNativeGoToDeclaration;
+            }
+
+            @Override
+            public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                MessengerService.getInstance(project).getConfiguration().toggleUseNativeGoToDeclaration();
             }
         });
 

@@ -21,8 +21,11 @@ public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {
             return null;
         }
 
-        return handleDispatchNavigationToMessage(
-                MessengerService.getInstance(sourceElement.getProject()), sourceElement);
+        MessengerService messengerService = MessengerService.getInstance(sourceElement.getProject());
+        if (messengerService.getConfiguration().useNativeGoToDeclaration) {
+            return null;
+        }
+        return handleDispatchNavigationToMessage(messengerService, sourceElement);
     }
 
     public @Nullable PsiElement[] handleDispatchNavigationToMessage(

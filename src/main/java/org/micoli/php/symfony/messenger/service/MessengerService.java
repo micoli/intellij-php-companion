@@ -280,6 +280,10 @@ public class MessengerService {
         return messages;
     }
 
+    public SymfonyMessengerConfiguration getConfiguration() {
+        return configuration;
+    }
+
     public void loadConfiguration(Project project, SymfonyMessengerConfiguration symfonyMessenger) {
         this.configuration = symfonyMessenger;
         this.project = project;
