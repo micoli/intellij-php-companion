@@ -1,6 +1,7 @@
 package org.micoli.php.configuration.models;
 
 import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration;
+import org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration;
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration;
 import org.micoli.php.symfony.list.configuration.CommandsConfiguration;
@@ -14,4 +15,5 @@ public final class Configuration {
     public ExportSourceToMarkdownConfiguration exportSourceToMarkdown;
     public RoutesConfiguration routesConfiguration;
     public CommandsConfiguration commandsConfiguration;
+    public ConsoleCleanerConfiguration consoleCleaner;
 }

@@ -64,6 +64,8 @@
                 serviceImplementation="org.micoli.php.symfony.list.RouteService"/>
         <projectService
                 serviceImplementation="org.micoli.php.symfony.list.CommandService"/>
+        <consoleInputFilterProvider
+                implementation="org.micoli.php.consoleCleaner.PhpUnitConsoleFilterProvider"/>
 
     </extensions>
     <actions>
