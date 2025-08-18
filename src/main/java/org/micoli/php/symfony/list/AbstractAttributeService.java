@@ -22,7 +22,7 @@ public abstract class AbstractAttributeService<T, C> {
         this.configuration = null;
     }
 
-    protected abstract T createElementDTO(String className, PhpAttribute attribute);
+    protected abstract T createElementDTO(String className, PhpAttribute attribute, String namespace);
 
     public C getConfiguration() {
         return configuration;
@@ -45,23 +45,29 @@ public abstract class AbstractAttributeService<T, C> {
                 if (phpClass == null) {
                     continue;
                 }
-                elements.addAll(getElementsFromAttributes(normalizeNonRootFQN, phpClass.getAttributes(attributeFQCN)));
+                elements.addAll(getElementsFromAttributes(
+                        phpIndex, normalizeNonRootFQN, phpClass.getAttributes(attributeFQCN), namespace));
                 for (Method method : phpClass.getMethods()) {
-                    elements.addAll(
-                            getElementsFromAttributes(normalizeNonRootFQN, method.getAttributes(attributeFQCN)));
+                    elements.addAll(getElementsFromAttributes(
+                            phpIndex, normalizeNonRootFQN, method.getAttributes(attributeFQCN), namespace));
                 }
             }
         }
         return elements;
     }
 
-    protected List<T> getElementsFromAttributes(String className, Collection<PhpAttribute> attributes) {
+    protected List<T> getElementsFromAttributes(
+            PhpIndex phpIndex, String className, Collection<PhpAttribute> attributes, String namespace) {
         List<T> elements = new ArrayList<>();
         for (PhpAttribute attribute : attributes) {
-            elements.add(createElementDTO(className, attribute));
+            elements.add(createElementDTO(className, attribute, namespace));
+            addRelatedElements(phpIndex, elements, className, attribute, namespace);
         }
         return elements;
     }
+
+    protected void addRelatedElements(
+            PhpIndex phpIndex, List<T> elements, String className, PhpAttribute attribute, String namespace) {}
 
     protected static @NotNull String getStringableValue(PhpAttribute.PhpAttributeArgument attributeArgument) {
         return attributeArgument.getArgument().getValue().replaceAll("^[\"']|[\"']$", "");

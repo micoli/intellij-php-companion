@@ -24,7 +24,7 @@ public class RouteService extends AbstractAttributeService<RouteElementDTO, Rout
     }
 
     @Override
-    protected RouteElementDTO createElementDTO(String className, PhpAttribute attribute) {
+    protected RouteElementDTO createElementDTO(String className, PhpAttribute attribute, String namespace) {
         Map<String, String> values = mapping.clone().extractValues(attribute);
         return new RouteElementDTO(values.get("path"), values.get("name"), values.get("methods"), className, attribute);
     }

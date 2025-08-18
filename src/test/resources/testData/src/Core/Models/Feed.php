@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 #[ORM\Entity]
-#[ORM\Table(name: 'article__article')]
+#[ORM\Table(name: 'article__feed')]
 #[ORM\UniqueConstraint(name: 'article__unique_article_url', columns: ['url'])]
 #[ORM\HasLifecycleCallbacks]
 class Feed

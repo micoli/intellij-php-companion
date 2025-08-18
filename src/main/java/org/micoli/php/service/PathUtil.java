@@ -24,4 +24,15 @@ public class PathUtil {
         Collections.reverse(paths);
         return String.join("/", paths) + "/" + fileName;
     }
+
+    public static String getPathWithParent(String containingFile, int depth) {
+        List<String> parts = new ArrayList<>(List.of(containingFile.split("\\\\")));
+        List<String> paths = new ArrayList<>();
+        while (paths.size() < depth) {
+            paths.add(parts.removeLast());
+        }
+
+        Collections.reverse(paths);
+        return String.join("/", paths);
+    }
 }

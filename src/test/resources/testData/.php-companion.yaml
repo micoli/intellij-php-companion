@@ -46,3 +46,7 @@ routesConfiguration:
   attributeFQCN: Symfony\Component\Routing\Annotation\Route
   namespaces:
     - App\UserInterface\Web
+
+doctrineEntitiesConfiguration:
+  namespaces:
+    - App\Core\Models

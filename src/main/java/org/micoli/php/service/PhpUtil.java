@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,5 +101,15 @@ public class PhpUtil {
         }
 
         return null;
+    }
+
+    public static String[] getPhpClassChildByFQN(PhpIndex phpIndex, String className) {
+        Collection<PhpClass> phpClasses = new ArrayList<>();
+
+        phpIndex.processAllSubclasses(className, phpClass -> {
+            phpClasses.add(phpClass);
+            return true;
+        });
+        return phpClasses.stream().map(PhpNamedElement::getFQN).toArray(String[]::new);
     }
 }
