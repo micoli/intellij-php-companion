@@ -15,14 +15,12 @@ import org.micoli.php.ui.Notification;
 public class AttributeNavigationService {
 
     private List<NavigationByAttributeRule> rules = new ArrayList<>();
-    private Project project;
 
     public static AttributeNavigationService getInstance(Project project) {
         return project.getService(AttributeNavigationService.class);
     }
 
     public void loadConfiguration(Project project, AttributeNavigationConfiguration _openApiConfiguration) {
-        this.project = project;
         if (_openApiConfiguration == null) {
             return;
         }

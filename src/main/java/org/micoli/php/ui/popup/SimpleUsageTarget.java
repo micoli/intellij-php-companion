@@ -37,11 +37,7 @@ class SimpleUsageTarget implements UsageTarget {
     }
 
     @Override
-    public void navigate(boolean requestFocus) {
-        if (canNavigate()) {
-            // element.navigate(requestFocus);
-        }
-    }
+    public void navigate(boolean requestFocus) {}
 
     @Override
     public boolean canNavigateToSource() {

@@ -19,27 +19,25 @@ import org.micoli.php.ui.panels.RoutesPanel;
 class ToolWindowContent {
     private static final Logger LOGGER = Logger.getInstance(ToolWindowContent.class);
     public final JPanel contentPanel = new JPanel();
-    private final JComponent mainPanel = new JPanel();
     private final RoutesPanel routesTable;
     private final CommandsPanel commandsPanel;
     private final DoctrineEntitiesPanel doctrineEntitiesPanel;
-    private final JBTabbedPane tabbedPane;
-    private final JBTabs tabs;
     private final DefaultActionGroup tabActions = new DefaultActionGroup();
 
     public ToolWindowContent(Project project) {
+        JComponent mainPanel = new JPanel();
         this.contentPanel.setLayout(new BorderLayout(2, 2));
         this.contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        this.contentPanel.add(this.mainPanel, BorderLayout.CENTER);
-        this.mainPanel.setLayout(new BorderLayout());
+        this.contentPanel.add(mainPanel, BorderLayout.CENTER);
+        mainPanel.setLayout(new BorderLayout());
 
         routesTable = new RoutesPanel(project);
         commandsPanel = new CommandsPanel(project);
         doctrineEntitiesPanel = new DoctrineEntitiesPanel(project);
-        tabbedPane = new JBTabbedPane(SwingConstants.TOP, JBTabbedPane.WRAP_TAB_LAYOUT);
+        JBTabbedPane tabbedPane = new JBTabbedPane(SwingConstants.TOP, JBTabbedPane.WRAP_TAB_LAYOUT);
         tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        tabs = JBTabsFactory.createTabs(project);
+        JBTabs tabs = JBTabsFactory.createTabs(project);
         tabActions.add(new AnAction("Refresh", "Refresh", PhpCompanionIcon.Refresh) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
@@ -50,7 +48,7 @@ class ToolWindowContent {
         tabs.addTab(getCommandsTab());
         tabs.addTab(getDoctrineEntitiesTab());
 
-        this.mainPanel.add(tabs.getComponent(), BorderLayout.CENTER);
+        mainPanel.add(tabs.getComponent(), BorderLayout.CENTER);
         project.getMessageBus().connect().subscribe(ConfigurationEvents.CONFIGURATION_UPDATED, (ConfigurationEvents)
                 (configuration) -> refreshTabs());
         project.getMessageBus().connect().subscribe(IndexingEvents.INDEXING_EVENTS, (IndexingEvents) (isIndexing) -> {

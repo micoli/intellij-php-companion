@@ -1,6 +1,7 @@
 package org.micoli.php.exportSourceToMarkdown;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
@@ -13,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.micoli.php.attributeNavigation.service.FileData;
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
 import org.micoli.php.service.FileListProcessor;
@@ -50,8 +52,8 @@ public class ExportSourceToMarkdownService {
 
         List<VirtualFile> filesInContext =
                 getUseContextualNamespaces() ? contextualAmender.amendListWithContextualFiles(fileList) : fileList;
-        List<VirtualFile> filteredFiles = FileListProcessor.filterFiles(
-                getUseIgnoreFile() ? project.getBaseDir().findChild(".aiignore") : null, filesInContext);
+        VirtualFile ignoreFile = getIgnoreFile();
+        List<VirtualFile> filteredFiles = FileListProcessor.filterFiles(ignoreFile, filesInContext);
 
         Context context = new Context();
         context.setVariable("files", getFileData(sortFiles(filteredFiles)));
@@ -59,6 +61,16 @@ public class ExportSourceToMarkdownService {
         String exportContent = getTemplateEngine().process(configuration.template, context);
 
         return new ExportedSource(exportContent, getNumberOfTokens(exportContent));
+    }
+
+    private @Nullable VirtualFile getIgnoreFile() {
+        if (getUseIgnoreFile()) {
+            VirtualFile virtualFile = ProjectUtil.guessProjectDir(project);
+            if (virtualFile != null) {
+                return virtualFile.findChild(".aiignore");
+            }
+        }
+        return null;
     }
 
     private @NotNull List<VirtualFile> sortFiles(List<VirtualFile> filesInContext) {

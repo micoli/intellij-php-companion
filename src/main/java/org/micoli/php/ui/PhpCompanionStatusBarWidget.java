@@ -16,7 +16,6 @@ import org.micoli.php.symfony.messenger.service.MessengerService;
 
 public final class PhpCompanionStatusBarWidget implements StatusBarWidget, StatusBarWidget.TextPresentation {
     private final Project project;
-    private StatusBar statusBar;
 
     public PhpCompanionStatusBarWidget(Project project) {
         this.project = project;
@@ -33,9 +32,7 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
     }
 
     @Override
-    public void install(@NotNull StatusBar statusBar) {
-        this.statusBar = statusBar;
-    }
+    public void install(@NotNull StatusBar statusBar) {}
 
     @Override
     public @NotNull String getText() {
