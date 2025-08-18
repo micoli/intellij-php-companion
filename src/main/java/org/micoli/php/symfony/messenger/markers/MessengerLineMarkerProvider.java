@@ -122,56 +122,71 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
 
     private void navigateToMessageDispatchCalls(
             MessengerService messengerService, MouseEvent mouseEvent, Project project, String messageClassName) {
-        Collection<MethodReference> dispatchCalls = messengerService.findDispatchCallsForMessage(messageClassName);
-        ArrayList<PsiElement> elements = new ArrayList<>();
-        for (MethodReference dispatchCall : dispatchCalls) {
-            if (!dispatchCall.isValid()) {
-                continue;
-            }
-            elements.add(dispatchCall);
-        }
-        if (elements.isEmpty()) {
-            Notification.error("No usage found");
-            return;
-        }
-        if (elements.size() == 1) {
-            if (elements.getFirst() instanceof Navigatable) {
-                ((Navigatable) elements.getFirst()).navigate(true);
-            }
-            return;
-        }
-        List<NavigableItem> navigableItemList = elements.stream()
-                .map(psiElement -> ApplicationManager.getApplication().runReadAction((Computable<NavigableItem>) () -> {
-                    PsiFile containingFile = psiElement.getContainingFile();
-                    if (containingFile == null) {
-                        return null;
+        messengerService.findDispatchCallsForMessageAsync(messageClassName, dispatchCalls -> {
+            ArrayList<PsiElement> elements = new ArrayList<>();
+            ApplicationManager.getApplication().runReadAction(() -> {
+                for (MethodReference dispatchCall : dispatchCalls) {
+                    if (!dispatchCall.isValid()) {
+                        continue;
                     }
-                    if (!((Navigatable) psiElement).canNavigate()) {
-                        return null;
-                    }
+                    elements.add(dispatchCall);
+                }
+            });
 
-                    FileExtract fileExtract = PsiElementUtil.getFileExtract(psiElement, 0);
-                    return new NavigableItem(fileExtract, (Navigatable) psiElement, psiElement.getIcon(0));
-                }))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(ArrayList::new));
-        if (!hasMultipleFilesReferenced(navigableItemList)) {
-            NavigableListPopup.showNavigablePopup(
-                    mouseEvent,
-                    navigableItemList.stream()
-                            .map(item -> (NavigableListPopupItem) item)
-                            .toList());
-            return;
-        }
-        NavigableListPopup.showNavigablePopup(mouseEvent, addActionsToItems(project, messageClassName, navigableItemList));
+            ApplicationManager.getApplication().invokeLater(() -> {
+                if (elements.isEmpty()) {
+                    Notification.error("No usage found");
+                    return;
+                }
+                if (elements.size() == 1) {
+                    if (elements.getFirst() instanceof Navigatable) {
+                        ((Navigatable) elements.getFirst()).navigate(true);
+                    }
+                    return;
+                }
+                List<NavigableItem> navigableItemList = elements.stream()
+                        .map(psiElement -> ApplicationManager.getApplication()
+                                .runReadAction((Computable<NavigableItem>) () -> {
+                                    PsiFile containingFile = psiElement.getContainingFile();
+                                    if (containingFile == null) {
+                                        return null;
+                                    }
+                                    if (!((Navigatable) psiElement).canNavigate()) {
+                                        return null;
+                                    }
+
+                                    FileExtract fileExtract = PsiElementUtil.getFileExtract(psiElement, 0);
+                                    return new NavigableItem(
+                                            fileExtract, (Navigatable) psiElement, psiElement.getIcon(0));
+                                }))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(ArrayList::new));
+
+                if (!hasMultipleFilesReferenced(navigableItemList)) {
+                    NavigableListPopup.showNavigablePopup(
+                            mouseEvent,
+                            navigableItemList.stream()
+                                    .map(item -> (NavigableListPopupItem) item)
+                                    .toList());
+                    return;
+                }
+                NavigableListPopup.showNavigablePopup(
+                        mouseEvent, addActionsToItems(project, messageClassName, navigableItemList));
+            });
+        });
     }
 
-    private @NotNull List<NavigableListPopupItem> addActionsToItems(Project project, String messageClassName, List<NavigableItem> navigableItemList) {
+    private @NotNull List<NavigableListPopupItem> addActionsToItems(
+            Project project, String messageClassName, List<NavigableItem> navigableItemList) {
         List<Navigatable> navigatableList =
                 navigableItemList.stream().map(NavigableItem::getNavigable).toList();
         List<NavigableListPopupItem> finalList = new ArrayList<>(navigableItemList);
         finalList.add(new NavigableOpenAllAction(navigatableList));
-        finalList.add(new NavigableOpenSearchAction(project, navigatableList, String.format("Find message dispatch calls %s",messageClassName),messageClassName));
+        finalList.add(new NavigableOpenSearchAction(
+                project,
+                navigatableList,
+                String.format("Find message dispatch calls %s", messageClassName),
+                messageClassName));
         return finalList;
     }
 

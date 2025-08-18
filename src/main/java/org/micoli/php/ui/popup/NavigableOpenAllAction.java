@@ -28,7 +28,13 @@ public class NavigableOpenAllAction implements NavigableListPopupItem {
     @NotNull
     public String getText() {
         return String.format(
-                "<html><div style=\"padding:5px\"><i style='color: orange;font-weight:bold'>%s</i></div></html>",
+                """
+                <html>
+                    <div style="padding:5px">
+                        <i style="color: orange;font-weight:bold">%s</i>
+                    </div>
+                </html>,
+                """,
                 "Open results in Editor");
     }
 }

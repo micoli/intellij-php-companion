@@ -1,6 +1,9 @@
 package org.micoli.php.symfony.messenger.service;
 
 import com.intellij.codeInsight.completion.PlainPrefixMatcher;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -11,8 +14,10 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpType;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
@@ -88,6 +93,16 @@ public class MessengerService {
         }
 
         return hasInvokableMethodsWithMessageParameter(phpClass);
+    }
+
+    public void findDispatchCallsForMessageAsync(
+            String messageClassName, Consumer<Collection<MethodReference>> callback) {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Finding usages", true) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                callback.accept(MessengerService.getInstance(project).findDispatchCallsForMessage(messageClassName));
+            }
+        });
     }
 
     public Collection<MethodReference> findDispatchCallsForMessage(String messageClassName) {

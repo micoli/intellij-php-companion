@@ -46,7 +46,19 @@ public class NavigableItem implements NavigableListPopupItem {
     @NotNull
     public String getText() {
         return String.format(
-                "<html><div style=\"padding:5px\"><i style='color: gray;'>%s:%d</i><br/><code style=\"margin-left:5px\">%s</code></div></html>",
+                """
+                <html>
+                    <div style="padding:5px">
+                        <i style="color: gray;">
+                            %s:%d
+                        </i>
+                        <br/>
+                        <code style="margin-left:5px">
+                            %s
+                        </code>
+                    </div>
+                </html>
+                """,
                 fileExtract.file(), fileExtract.lineNumber(), fileExtract.text().replaceAll("\n", "<br/>"));
     }
 }
