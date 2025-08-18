@@ -32,7 +32,7 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
             return false;
         }
 
-        return processMessengerUsages(MessengerService.getInstance(element.getProject()), element, processor, options);
+        return processMessengerUsages(MessengerService.getInstance(element.getProject()), element, processor);
     }
 
     @Override
@@ -48,14 +48,13 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
     private boolean processMessengerUsages(
             @NotNull MessengerService messengerService,
             @NotNull PsiElement element,
-            @NotNull Processor<? super UsageInfo> processor,
-            @NotNull FindUsagesOptions options) {
+            @NotNull Processor<? super UsageInfo> processor) {
 
         Project project = element.getProject();
 
         PhpClass messageClass = MessengerFindUsagesHandlerFactory.getMessageClass(messengerService, element);
         if (messageClass != null) {
-            return findDispatchUsages(messengerService, messageClass, processor, options);
+            return findDispatchUsages(messengerService, messageClass, processor);
         }
 
         Method handlerMethod = getHandlerMethod(messengerService, element);
@@ -70,7 +69,7 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
 
         PhpClass msgClass = PhpUtil.findClassByFQN(project, messageClassName);
         if (msgClass != null) {
-            return findDispatchUsages(messengerService, msgClass, processor, options);
+            return findDispatchUsages(messengerService, msgClass, processor);
         }
 
         return true;
@@ -79,8 +78,7 @@ class MessengerFindUsagesHandler extends FindUsagesHandler {
     private boolean findDispatchUsages(
             @NotNull MessengerService messengerService,
             @NotNull PhpClass messageClass,
-            @NotNull Processor<? super UsageInfo> processor,
-            @NotNull FindUsagesOptions options) {
+            @NotNull Processor<? super UsageInfo> processor) {
 
         return ReadAction.compute(() -> {
             Collection<MethodReference> dispatchCalls =

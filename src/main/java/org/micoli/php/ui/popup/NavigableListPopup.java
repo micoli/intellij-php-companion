@@ -7,17 +7,17 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.*;
 
-public class NavigatableListPopup {
+public class NavigableListPopup {
 
-    public static void showNavigablePopup(MouseEvent mouseEvent, List<NavigableItem> elements) {
+    public static void showNavigablePopup(MouseEvent mouseEvent, List<NavigableListPopupItem> elements) {
 
-        JBList<NavigableItem> list = new JBList<>(elements);
+        JBList<NavigableListPopupItem> list = new JBList<>(elements);
         list.setCellRenderer(new NavigableListCellRenderer());
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         new PopupChooserBuilder<>(list)
                 .setItemChosenCallback(() -> {
-                    NavigableItem selected = list.getSelectedValue();
+                    NavigableListPopupItem selected = list.getSelectedValue();
                     if (selected != null && selected.canNavigate()) {
                         selected.navigate(true);
                     }

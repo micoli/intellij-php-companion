@@ -10,7 +10,7 @@ public class NavigableListCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(
             JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-        if (value instanceof NavigableItem item) {
+        if (value instanceof NavigableListPopupItem item) {
             return getNavigableItemLabel(list, index, isSelected, cellHasFocus, item);
         }
 
@@ -18,18 +18,25 @@ public class NavigableListCellRenderer extends DefaultListCellRenderer {
     }
 
     private @NotNull JLabel getNavigableItemLabel(
-            JList<?> list, int index, boolean isSelected, boolean cellHasFocus, NavigableItem item) {
-        JLabel label = (JLabel) super.getListCellRendererComponent(
-                list, item.getFileExtract().lineNumber(), index, isSelected, cellHasFocus);
+            JList<?> list, int index, boolean isSelected, boolean cellHasFocus, NavigableListPopupItem item) {
+        if (item instanceof NavigableOpenSearchAction || item instanceof NavigableOpenAllAction) {
+            JLabel label = (JLabel) super.getListCellRendererComponent(list, 0, index, isSelected, cellHasFocus);
 
-        label.setIcon(item.getIcon());
+            label.setText(item.getText());
 
-        label.setText(String.format(
-                "<html><div style=\"padding:5px\"><i style='color: gray;'>%s:%d</i><br/><code style=\"margin-left:5px\">%s</code></div></html>",
-                item.getFileDescription(),
-                item.getFileExtract().lineNumber(),
-                item.getFileExtract().text().replaceAll("\n", "<br/>")));
+            return label;
+        }
 
-        return label;
+        if (item instanceof NavigableItem navigableItem) {
+            FileExtract fileExtract = navigableItem.getFileExtract();
+            JLabel label = (JLabel)
+                    super.getListCellRendererComponent(list, fileExtract.lineNumber(), index, isSelected, cellHasFocus);
+
+            label.setIcon(navigableItem.getIcon());
+            label.setText(navigableItem.getText());
+
+            return label;
+        }
+        throw new IllegalArgumentException("Unsupported item type");
     }
 }

@@ -7,17 +7,17 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration;
-import org.micoli.php.events.ConfigurationEvents;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
+import org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration;
+import org.micoli.php.events.ConfigurationEvents;
 
 public class PhpUnitConsoleFilterProvider extends ConsoleDependentInputFilterProvider {
     private record PatternMatcher(boolean isFullLine, Pattern pattern) {}
+
     private List<PatternMatcher> patterns = new ArrayList<>();
 
     @Override
@@ -33,7 +33,9 @@ public class PhpUnitConsoleFilterProvider extends ConsoleDependentInputFilterPro
             patterns = null;
             return;
         }
-        patterns = Arrays.stream(configuration.patterns).map(p-> new PatternMatcher(p.startsWith("^" )&& p.endsWith("$"),Pattern.compile(p))).toList();
+        patterns = Arrays.stream(configuration.patterns)
+                .map(p -> new PatternMatcher(p.startsWith("^") && p.endsWith("$"), Pattern.compile(p)))
+                .toList();
     }
 
     public InputFilter cleanup() {
@@ -46,18 +48,19 @@ public class PhpUnitConsoleFilterProvider extends ConsoleDependentInputFilterPro
                 }
 
                 for (PatternMatcher patternLineMatcher : patterns) {
-                    if(!patternLineMatcher.isFullLine){
+                    if (!patternLineMatcher.isFullLine) {
                         continue;
                     }
-                    if(patternLineMatcher.pattern().matcher(consoleText).find()){
+                    if (patternLineMatcher.pattern().matcher(consoleText).find()) {
                         return List.of(new Pair<>(null, contentType));
                     }
                 }
                 for (PatternMatcher patternMatcher : patterns) {
-                    if(patternMatcher.isFullLine){
+                    if (patternMatcher.isFullLine) {
                         continue;
                     }
-                    consoleText = consoleText.replaceAll(patternMatcher.pattern().pattern(), "");
+                    consoleText =
+                            consoleText.replaceAll(patternMatcher.pattern().pattern(), "");
                 }
                 return List.of(new Pair<>(consoleText, contentType));
             }

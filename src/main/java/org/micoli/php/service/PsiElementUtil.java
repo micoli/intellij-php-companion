@@ -37,13 +37,14 @@ public class PsiElementUtil {
             int lineNumber = document.getLineNumber(range.getStartOffset());
 
             return new FileExtract(
+                    PathUtil.getPathWithParent(file, 2),
                     lineNumber + 1,
                     document.getText(TextRange.create(
                             document.getLineStartOffset(lineNumber),
                             document.getLineEndOffset(lineNumber + lineCount))));
         }
 
-        return new FileExtract(-1, "");
+        return new FileExtract(null, -1, "");
     }
 
     public static @NotNull String getHumanReadableElementLink(PsiElement element) {

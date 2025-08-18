@@ -19,17 +19,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.micoli.php.service.PathUtil;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.service.PsiElementUtil;
 import org.micoli.php.symfony.messenger.service.MessengerService;
 import org.micoli.php.ui.Notification;
-import org.micoli.php.ui.popup.FileExtract;
-import org.micoli.php.ui.popup.NavigableItem;
-import org.micoli.php.ui.popup.NavigatableListPopup;
+import org.micoli.php.ui.popup.*;
 
 public class MessengerLineMarkerProvider implements LineMarkerProvider {
 
@@ -122,7 +120,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
         }
     }
 
-    private static void navigateToMessageDispatchCalls(
+    private void navigateToMessageDispatchCalls(
             MessengerService messengerService, MouseEvent mouseEvent, Project project, String messageClassName) {
         Collection<MethodReference> dispatchCalls = messengerService.findDispatchCallsForMessage(messageClassName);
         ArrayList<PsiElement> elements = new ArrayList<>();
@@ -142,27 +140,46 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
             }
             return;
         }
-        NavigatableListPopup.showNavigablePopup(
-                mouseEvent,
-                elements.stream()
-                        .map(psiElement -> ApplicationManager.getApplication()
-                                .runReadAction((Computable<NavigableItem>) () -> {
-                                    PsiFile containingFile = psiElement.getContainingFile();
-                                    if (containingFile == null) {
-                                        return null;
-                                    }
-                                    if (!((Navigatable) psiElement).canNavigate()) {
-                                        return null;
-                                    }
+        List<NavigableItem> navigableItemList = elements.stream()
+                .map(psiElement -> ApplicationManager.getApplication().runReadAction((Computable<NavigableItem>) () -> {
+                    PsiFile containingFile = psiElement.getContainingFile();
+                    if (containingFile == null) {
+                        return null;
+                    }
+                    if (!((Navigatable) psiElement).canNavigate()) {
+                        return null;
+                    }
 
-                                    FileExtract fileExtract = PsiElementUtil.getFileExtract(psiElement, 0);
-                                    return new NavigableItem(
-                                            PathUtil.getPathWithParent(containingFile, 2),
-                                            fileExtract,
-                                            (Navigatable) psiElement,
-                                            psiElement.getIcon(0));
-                                }))
-                        .filter(Objects::nonNull)
-                        .toList());
+                    FileExtract fileExtract = PsiElementUtil.getFileExtract(psiElement, 0);
+                    return new NavigableItem(fileExtract, (Navigatable) psiElement, psiElement.getIcon(0));
+                }))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
+        if (!hasMultipleFilesReferenced(navigableItemList)) {
+            NavigableListPopup.showNavigablePopup(
+                    mouseEvent,
+                    navigableItemList.stream()
+                            .map(item -> (NavigableListPopupItem) item)
+                            .toList());
+            return;
+        }
+        NavigableListPopup.showNavigablePopup(mouseEvent, addActionsToItems(project, messageClassName, navigableItemList));
+    }
+
+    private @NotNull List<NavigableListPopupItem> addActionsToItems(Project project, String messageClassName, List<NavigableItem> navigableItemList) {
+        List<Navigatable> navigatableList =
+                navigableItemList.stream().map(NavigableItem::getNavigable).toList();
+        List<NavigableListPopupItem> finalList = new ArrayList<>(navigableItemList);
+        finalList.add(new NavigableOpenAllAction(navigatableList));
+        finalList.add(new NavigableOpenSearchAction(project, navigatableList, String.format("Find message dispatch calls %s",messageClassName),messageClassName));
+        return finalList;
+    }
+
+    private static boolean hasMultipleFilesReferenced(List<NavigableItem> navigableItemList) {
+        return navigableItemList.stream()
+                        .map(navigableItem -> navigableItem.getFileExtract().file())
+                        .distinct()
+                        .count()
+                > 1;
     }
 }

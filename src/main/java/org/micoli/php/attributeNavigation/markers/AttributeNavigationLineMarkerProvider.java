@@ -29,7 +29,8 @@ import org.micoli.php.service.*;
 import org.micoli.php.ui.Notification;
 import org.micoli.php.ui.popup.FileExtract;
 import org.micoli.php.ui.popup.NavigableItem;
-import org.micoli.php.ui.popup.NavigatableListPopup;
+import org.micoli.php.ui.popup.NavigableListPopup;
+import org.micoli.php.ui.popup.NavigableListPopupItem;
 
 public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider {
     ConcurrentSearchManager concurrentSearchManager = new ConcurrentSearchManager(Duration.ofSeconds(20));
@@ -126,7 +127,7 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                     Notification.messageWithTimeout("No Usage found", 1500);
                     return;
                 }
-                NavigatableListPopup.showNavigablePopup(
+                NavigableListPopup.showNavigablePopup(
                         mouseEvent,
                         results.stream()
                                 .map(usageInfo -> ApplicationManager.getApplication()
@@ -135,13 +136,14 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                                             if (file == null) {
                                                 return null;
                                             }
+
                                             FileExtract fileExtract = PsiElementUtil.getFileExtract(usageInfo, 1);
                                             return new NavigableItem(
-                                                    PathUtil.getPathWithParent(file, 2),
                                                     fileExtract,
                                                     new UsageInfo2UsageAdapter(usageInfo),
-                                                    usageInfo.getIcon());
+                                                    Objects.requireNonNull(usageInfo.getIcon()));
                                         }))
+                                .map(item -> (NavigableListPopupItem) item)
                                 .filter(Objects::nonNull)
                                 .toList());
             });
