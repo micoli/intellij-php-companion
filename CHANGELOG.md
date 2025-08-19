@@ -66,3 +66,12 @@
 - fix: Remove internal classes usages (JBTabsImpl)
 
 - feat(intellij): Make the plugin usable on intellij
+
+## [0.7.2] - 2025-08-19
+- feat(consoleCleaner): Add a configurable console cleaner based on patterns
+- feat(messenger): Allow to use or not native goto to declaration handler
+- feat(messenger): Allow to open multiple dispatch calls at once
+- feat(messenger): Make dispatch calls search non blocking
+- feat(doctrineEntityList): Add a panel and display all doctrine entities list
+
+- fix: Static analysis

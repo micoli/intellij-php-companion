@@ -42,6 +42,14 @@ A PhpStorm/IntelliJ plugin that enhances PHP development workflow with advanced 
 - **Structured Data Extraction**: Convert raw CLI output into structured format (JSON ou short syntac PHP arrays)
 - **Integration Support**: Seamless integration with development workflow
 
+### Tool Window Panels
+- Supports filtering and searching
+- Double-click to navigate to command implementation
+- Provides direct navigation to route definitions
+- **Commands Panel**: Shows command descriptions and usage information
+- **Routes Panel**: Displays route path, name, and methods
+- **Doctrine Entities Panel**: Displays name, tableName and schema
+
 ### ⚙️ Configuration Management
 - **Hot Reload**: Configuration changes are automatically detected and applied
 - **Multiple Formats**: Support for JSON and YAML configuration files
@@ -104,6 +112,19 @@ peerNavigation:
     - source: \\App\\Application\\(?<domain>.+)\\Query\\(?<query>.+)Query
       target: \\App\\Application\\(?<domain>.+)\\QueryHandler\\(?<query>.+)QueryHandler
 
+routesConfiguration:
+  attributeFQCN: Symfony\Component\Routing\Annotation\Route
+  namespaces:
+    - App\UserInterface\Web
+
+commandsConfiguration:
+  attributeFQCN: Symfony\Component\Console\Attribute\AsCommand
+  namespaces:
+    - App\UserInterface\Cli
+
+doctrineEntitiesConfiguration:
+  namespaces:
+    - App\Core\Models
 ```
 
 ### Symfony Messenger Configuration
@@ -215,6 +236,51 @@ exportSourceToMarkdown:
      ```
 
      [/]
+```
+
+### Tool windows Configuration
+
+#### `routesConfiguration:`
+
+| Property         | Type     | Description                                  |
+|------------------|----------|----------------------------------------------|
+| `attributeFQCN`  | string   | Attribute used to detect routes (default: `Symfony\Component\Routing\Attribute\Route`)             |
+| `namespaces` | string[] | List of namespaces where routes are searched |
+
+
+#### `commandsConfiguration:`
+
+| Property         | Type     | Description                                    |
+|------------------|----------|------------------------------------------------|
+| `attributeFQCN`  | string   | Attribute used to detect commands (default: `Symfony\Component\Console\Attribute\AsCommand`)             |
+| `namespaces` | string[] | List of namespaces where commands are searched |
+
+
+#### `doctrineEntitiesConfiguration:`
+
+| Property         | Type     | Description                                            |
+|------------------|----------|--------------------------------------------------------|
+| `attributeFQCN`  | string   | Attribute used to detect doctrine entities (default: `Doctrine\ORM\Mapping\Table`) |
+| `namespaces` | string[] | List of namespaces where entities are searched         |
+
+#### Configuration Example
+
+```yaml
+routesConfiguration:
+  attributeFQCN: Symfony\Component\Routing\Annotation\Route
+  namespaces:
+    - App\UserInterface\Web
+
+commandsConfiguration:
+  attributeFQCN: Symfony\Component\Console\Attribute\AsCommand
+  namespaces:
+    - App\UserInterface\CLI
+
+doctrineEntitiesConfiguration:
+  attributeFQCN: Doctrine\ORM\Mapping\Table
+  namespaces:
+    - App\Core\Models
+    - Lib\Models
 ```
 
 ### Configuration Tips
