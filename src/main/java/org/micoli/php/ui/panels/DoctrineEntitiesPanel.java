@@ -41,7 +41,7 @@ public class DoctrineEntitiesPanel extends AbstractListPanel<DoctrineEntityEleme
 
     @Override
     protected void handleActionClick(int row) {
-        DoctrineEntityElementDTO elementDTO = (DoctrineEntityElementDTO) table.getValueAt(row, 2);
+        DoctrineEntityElementDTO elementDTO = (DoctrineEntityElementDTO) table.getValueAt(row, 3);
         if (elementDTO.element() instanceof Navigatable navigatable) {
             navigatable.navigate(true);
         }

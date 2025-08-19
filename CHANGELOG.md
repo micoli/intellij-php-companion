@@ -75,3 +75,6 @@
 - feat(doctrineEntityList): Add a panel and display all doctrine entities list
 
 - fix: Static analysis
+
+## [0.7.3] - 2025-08-19
+- fix(doctrineEntityList): Fix navigate to Entities
