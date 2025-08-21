@@ -78,3 +78,6 @@
 
 ## [0.7.3] - 2025-08-19
 - fix(doctrineEntityList): Fix navigate to Entities
+
+## [0.7.4] - 2025-08-21
+- fix(attributeNavigation): Fix non nullable Icon

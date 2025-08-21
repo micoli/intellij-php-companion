@@ -141,7 +141,7 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
                                             return new NavigableItem(
                                                     fileExtract,
                                                     new UsageInfo2UsageAdapter(usageInfo),
-                                                    Objects.requireNonNull(usageInfo.getIcon()));
+                                                    usageInfo.getIcon());
                                         }))
                                 .map(item -> (NavigableListPopupItem) item)
                                 .filter(Objects::nonNull)
