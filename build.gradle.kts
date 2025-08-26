@@ -34,6 +34,7 @@ dependencies {
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r")
     implementation("com.knuddels:jtokkit:1.0.0")
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.17.2")
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.32")
 
     intellijPlatform {
         create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))

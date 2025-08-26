@@ -17,6 +17,7 @@ import org.micoli.php.configuration.NoConfigurationFileException;
 import org.micoli.php.events.ConfigurationEvents;
 import org.micoli.php.events.IndexingEvents;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
+import org.micoli.php.openAPI.OpenAPIService;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
 import org.micoli.php.symfony.list.CommandService;
 import org.micoli.php.symfony.list.DoctrineEntityService;
@@ -77,6 +78,8 @@ public final class PhpCompanionProjectService implements Disposable, DumbService
                     .loadConfiguration(project, loadedConfiguration.configuration.commandsConfiguration);
             DoctrineEntityService.getInstance(project)
                     .loadConfiguration(project, loadedConfiguration.configuration.doctrineEntitiesConfiguration);
+            OpenAPIService.getInstance(project)
+                    .loadConfiguration(project, loadedConfiguration.configuration.openAPIConfiguration);
 
             messageBus
                     .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)

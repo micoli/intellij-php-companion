@@ -6,6 +6,7 @@ import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdow
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration;
 import org.micoli.php.symfony.list.configuration.CommandsConfiguration;
 import org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration;
+import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration;
 import org.micoli.php.symfony.list.configuration.RoutesConfiguration;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
 
@@ -18,4 +19,5 @@ public final class Configuration {
     public CommandsConfiguration commandsConfiguration;
     public DoctrineEntitiesConfiguration doctrineEntitiesConfiguration;
     public ConsoleCleanerConfiguration consoleCleaner;
+    public OpenAPIConfiguration openAPIConfiguration;
 }

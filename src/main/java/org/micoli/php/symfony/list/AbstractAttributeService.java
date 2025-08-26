@@ -22,8 +22,6 @@ public abstract class AbstractAttributeService<T, C> {
         this.configuration = null;
     }
 
-    protected abstract T createElementDTO(String className, PhpAttribute attribute, String namespace);
-
     public C getConfiguration() {
         return configuration;
     }
@@ -77,6 +75,8 @@ public abstract class AbstractAttributeService<T, C> {
         this.project = project;
         this.configuration = configuration;
     }
+
+    protected abstract T createElementDTO(String className, PhpAttribute attribute, String namespace);
 
     protected abstract String[] getNamespaces();
 

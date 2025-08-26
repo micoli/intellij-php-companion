@@ -40,6 +40,7 @@ public class CommandsPanel extends AbstractListPanel<CommandElementDTO> {
     @Override
     protected void handleActionClick(int row) {
         CommandElementDTO elementDTO = (CommandElementDTO) table.getValueAt(row, 2);
+        if (elementDTO == null) return;
         if (elementDTO.element() instanceof Navigatable navigatable) {
             navigatable.navigate(true);
         }

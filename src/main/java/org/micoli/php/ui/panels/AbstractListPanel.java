@@ -12,7 +12,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.regex.PatternSyntaxException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
@@ -128,8 +130,27 @@ public abstract class AbstractListPanel<T> extends JPanel {
             return;
         }
         try {
-            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0));
-        } catch (PatternSyntaxException ignored) {
+            List<Pattern> patterns = Arrays.stream(text.split(" "))
+                    .map(String::trim)
+                    .map(expr -> Pattern.compile("(?i)" + expr))
+                    .toList();
+
+            RowFilter<DefaultTableModel, Object> rf = new RowFilter<>() {
+                @Override
+                public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                    return patterns.stream().allMatch(pattern -> {
+                        for (int i = 0; i < entry.getValueCount(); i++) {
+                            String value = entry.getStringValue(i);
+                            if (value != null && pattern.matcher(value).find()) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+                }
+            };
+            sorter.setRowFilter(rf);
+        } catch (Exception ignored) {
         }
     }
 
