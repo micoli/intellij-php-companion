@@ -25,7 +25,7 @@ public class OpenAPIPathPanel extends AbstractListPanel<OpenAPIPathElementDTO> {
     ConcurrentSearchManager concurrentSearchManager = new ConcurrentSearchManager(Duration.ofSeconds(20));
 
     public OpenAPIPathPanel(Project project) {
-        super(project, COLUMN_NAMES);
+        super(project, "openAPI", COLUMN_NAMES);
     }
 
     @Override

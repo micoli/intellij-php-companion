@@ -1,10 +1,14 @@
 package org.micoli.php.ui.panels;
 
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.SearchTextField;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
 import java.awt.*;
@@ -12,25 +16,29 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import org.jetbrains.annotations.NotNull;
+import org.micoli.php.ui.PhpCompanionIcon;
 
 public abstract class AbstractListPanel<T> extends JPanel {
     protected static final Logger LOGGER = Logger.getInstance(AbstractListPanel.class);
     protected final DefaultTableModel model;
     protected TableRowSorter<DefaultTableModel> sorter;
     protected JBTable table;
+    protected JPanel searchFieldPanel;
     protected SearchTextField searchField;
     protected final Project project;
     protected final Object lock = new Object();
+    protected boolean isRegexMode = false;
+    private final DefaultActionGroup rightActionGroup = new DefaultActionGroup();
+    private final ListRowFilter<DefaultTableModel, Object> rowFilter = new ListRowFilter<>();
+    private final Border border = UIManager.getBorder("TextField.border");
 
-    protected AbstractListPanel(Project project, String[] columnNames) {
+    protected AbstractListPanel(Project project, String panelName, String[] columnNames) {
         this.project = project;
         this.model = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -39,19 +47,47 @@ public abstract class AbstractListPanel<T> extends JPanel {
             }
         };
 
-        initializeComponents();
+        initializeComponents(panelName);
         setupLayout();
         setupListeners();
     }
 
-    private void initializeComponents() {
+    private void initializeComponents(String panelName) {
+        searchFieldPanel = new JPanel();
+        searchFieldPanel.setLayout(new BorderLayout());
         table = new JBTable();
         table.setModel(model);
         table.setShowGrid(false);
         table.setStriped(true);
-        searchField = new SearchTextField();
+        searchField = new SearchTextField(true, true, panelName);
+        rightActionGroup.add(new ToggleAction("Regex", "Toggle regex mode", PhpCompanionIcon.Regexp) {
+            boolean isRegex = isRegexMode;
 
-        table.setRowSorter(getSorter());
+            @Override
+            public @NotNull ActionUpdateThread getActionUpdateThread() {
+                return ActionUpdateThread.BGT;
+            }
+
+            @Override
+            public boolean isSelected(@NotNull AnActionEvent anActionEvent) {
+                return isRegex;
+            }
+
+            @Override
+            public void setSelected(@NotNull AnActionEvent anActionEvent, boolean b) {
+                isRegex = !isRegex;
+                isRegexMode = isRegex;
+                updateFilter(searchField.getText());
+            }
+        });
+        ActionToolbar rightToolbar = ActionManager.getInstance()
+                .createActionToolbar("PhpCompanion" + panelName + "RightToolbar", rightActionGroup, true);
+        rightToolbar.setTargetComponent(this);
+        searchFieldPanel.add(rightToolbar.getComponent(), BorderLayout.EAST);
+
+        sorter = getSorter();
+        sorter.setRowFilter(rowFilter);
+        table.setRowSorter(sorter);
     }
 
     protected abstract TableRowSorter<DefaultTableModel> getSorter();
@@ -60,7 +96,8 @@ public abstract class AbstractListPanel<T> extends JPanel {
         JBScrollPane scrollPane = new JBScrollPane(table);
         scrollPane.setBorder(JBUI.Borders.empty());
         setLayout(new BorderLayout());
-        add(searchField, BorderLayout.NORTH);
+        searchFieldPanel.add(searchField, BorderLayout.CENTER);
+        add(searchFieldPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         configureTableColumns();
@@ -125,32 +162,14 @@ public abstract class AbstractListPanel<T> extends JPanel {
     }
 
     public void updateFilter(String text) {
-        if (text.isEmpty()) {
-            sorter.setRowFilter(null);
-            return;
-        }
+        JBTextField textEditor = searchField.getTextEditor();
         try {
-            List<Pattern> patterns = Arrays.stream(text.split(" "))
-                    .map(String::trim)
-                    .map(expr -> Pattern.compile("(?i)" + expr))
-                    .toList();
-
-            RowFilter<DefaultTableModel, Object> rf = new RowFilter<>() {
-                @Override
-                public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
-                    return patterns.stream().allMatch(pattern -> {
-                        for (int i = 0; i < entry.getValueCount(); i++) {
-                            String value = entry.getStringValue(i);
-                            if (value != null && pattern.matcher(value).find()) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    });
-                }
-            };
-            sorter.setRowFilter(rf);
-        } catch (Exception ignored) {
+            rowFilter.updateFilter(text, isRegexMode);
+            sorter.sort();
+            textEditor.setBorder(border);
+        } catch (Exception exception) {
+            textEditor.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.ORANGE), border));
         }
     }
 

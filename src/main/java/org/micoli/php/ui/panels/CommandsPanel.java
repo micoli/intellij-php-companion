@@ -14,7 +14,7 @@ public class CommandsPanel extends AbstractListPanel<CommandElementDTO> {
     private static final String[] COLUMN_NAMES = {"Command", "Description", "Actions"};
 
     public CommandsPanel(Project project) {
-        super(project, COLUMN_NAMES);
+        super(project, "commands", COLUMN_NAMES);
     }
 
     @Override

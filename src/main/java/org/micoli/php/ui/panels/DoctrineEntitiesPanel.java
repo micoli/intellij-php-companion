@@ -14,7 +14,7 @@ public class DoctrineEntitiesPanel extends AbstractListPanel<DoctrineEntityEleme
     private static final String[] COLUMN_NAMES = {"Entity", "Table", "Schema", "Actions"};
 
     public DoctrineEntitiesPanel(Project project) {
-        super(project, COLUMN_NAMES);
+        super(project, "doctrineEntities", COLUMN_NAMES);
     }
 
     @Override

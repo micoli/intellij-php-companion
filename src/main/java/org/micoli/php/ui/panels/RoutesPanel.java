@@ -16,7 +16,7 @@ public class RoutesPanel extends AbstractListPanel<RouteElementDTO> {
     private static final String[] COLUMN_NAMES = {"URI", "Method", "Actions"};
 
     public RoutesPanel(Project project) {
-        super(project, COLUMN_NAMES);
+        super(project, "routes", COLUMN_NAMES);
     }
 
     @Override
