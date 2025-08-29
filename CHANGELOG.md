@@ -81,3 +81,7 @@
 
 ## [0.7.4] - 2025-08-21
 - fix(attributeNavigation): Fix non nullable Icon
+
+## [0.7.5] - 2025-08-29
+- feat(listPanels): improve search
+- feat(openAPI): Add a list for openapi/swagger routes
