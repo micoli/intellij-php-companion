@@ -1,6 +1,14 @@
 package org.micoli.php.symfony.list.configuration;
 
-public final class RoutesConfiguration {
+import org.micoli.php.configuration.models.DisactivableConfiguration;
+
+public final class RoutesConfiguration implements DisactivableConfiguration {
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean enabled = true;
     public String[] namespaces = {"\\App", "\\Application"};
     public String attributeFQCN = "\\Symfony\\Component\\Routing\\Attribute\\Route";
 }

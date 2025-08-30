@@ -8,23 +8,24 @@ import com.intellij.ui.tabs.JBTabs;
 import com.intellij.ui.tabs.JBTabsFactory;
 import com.intellij.ui.tabs.TabInfo;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
+import org.micoli.php.configuration.models.Configuration;
+import org.micoli.php.configuration.models.DisactivableConfiguration;
 import org.micoli.php.events.ConfigurationEvents;
 import org.micoli.php.events.IndexingEvents;
-import org.micoli.php.ui.panels.CommandsPanel;
-import org.micoli.php.ui.panels.DoctrineEntitiesPanel;
-import org.micoli.php.ui.panels.OpenAPIPathPanel;
-import org.micoli.php.ui.panels.RoutesPanel;
+import org.micoli.php.ui.panels.*;
 
 class ToolWindowContent {
     private static final Logger LOGGER = Logger.getInstance(ToolWindowContent.class);
     public final JPanel contentPanel = new JPanel();
-    private final RoutesPanel routesTable;
-    private final CommandsPanel commandsPanel;
-    private final DoctrineEntitiesPanel doctrineEntitiesPanel;
-    private final OpenAPIPathPanel openAPIPathPanel;
     private final DefaultActionGroup tabActions = new DefaultActionGroup();
+    private final JBTabs tabs;
+    private final Map<Class<?>, TabInfo> tabMap = new HashMap<>();
+    private final Map<Class<?>, AbstractListPanel<?>> panelMap = new HashMap<>();
+    private Configuration configuration = null;
 
     public ToolWindowContent(Project project) {
         JComponent mainPanel = new JPanel();
@@ -33,28 +34,27 @@ class ToolWindowContent {
         this.contentPanel.add(mainPanel, BorderLayout.CENTER);
         mainPanel.setLayout(new BorderLayout());
 
-        routesTable = new RoutesPanel(project);
-        commandsPanel = new CommandsPanel(project);
-        doctrineEntitiesPanel = new DoctrineEntitiesPanel(project);
-        openAPIPathPanel = new OpenAPIPathPanel(project);
         JBTabbedPane tabbedPane = new JBTabbedPane(SwingConstants.TOP, JBTabbedPane.WRAP_TAB_LAYOUT);
         tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        JBTabs tabs = JBTabsFactory.createTabs(project);
+        tabs = JBTabsFactory.createTabs(project);
         tabActions.add(new AnAction("Refresh", "Refresh", PhpCompanionIcon.Refresh) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
                 refreshTabs();
             }
         });
-        tabs.addTab(getRoutesTab());
-        tabs.addTab(getCommandsTab());
-        tabs.addTab(getDoctrineEntitiesTab());
-        tabs.addTab(getOpenApiPathTab());
+        addTab(new RoutesPanel(project), "Routes");
+        addTab(new CommandsPanel(project), "CLI");
+        addTab(new DoctrineEntitiesPanel(project), "Entities");
+        addTab(new OpenAPIPathPanel(project), "OAS");
 
         mainPanel.add(tabs.getComponent(), BorderLayout.CENTER);
         project.getMessageBus().connect().subscribe(ConfigurationEvents.CONFIGURATION_UPDATED, (ConfigurationEvents)
-                (configuration) -> refreshTabs());
+                (configuration) -> {
+                    this.configuration = configuration;
+                    refreshTabs();
+                });
         project.getMessageBus().connect().subscribe(IndexingEvents.INDEXING_EVENTS, (IndexingEvents) (isIndexing) -> {
             if (!isIndexing) {
                 refreshTabs();
@@ -62,38 +62,29 @@ class ToolWindowContent {
         });
     }
 
+    private void manageTabVisibilityAndRefresh(Class<?> _class, DisactivableConfiguration configuration) {
+        boolean isEnabled = (configuration != null && configuration.isEnabled());
+        tabMap.get(_class).setHidden(!isEnabled);
+        if (isEnabled) {
+            panelMap.get(_class).refresh();
+        }
+    }
+
     private void refreshTabs() {
-        routesTable.refresh();
-        commandsPanel.refresh();
-        doctrineEntitiesPanel.refresh();
-        openAPIPathPanel.refresh();
+        SwingUtilities.invokeLater(() -> {
+            manageTabVisibilityAndRefresh(RoutesPanel.class, configuration.routesConfiguration);
+            manageTabVisibilityAndRefresh(CommandsPanel.class, configuration.commandsConfiguration);
+            manageTabVisibilityAndRefresh(DoctrineEntitiesPanel.class, configuration.doctrineEntitiesConfiguration);
+            manageTabVisibilityAndRefresh(OpenAPIPathPanel.class, configuration.openAPIConfiguration);
+        });
     }
 
-    private TabInfo getRoutesTab() {
-        TabInfo tabInfo = new TabInfo(routesTable);
-        tabInfo.setText("Routes");
+    private void addTab(AbstractListPanel<?> panel, String tabName) {
+        TabInfo tabInfo = new TabInfo(panel);
+        tabInfo.setText(tabName);
         tabInfo.setActions(tabActions, "TabActions");
-        return tabInfo;
-    }
-
-    private TabInfo getCommandsTab() {
-        TabInfo tabInfo = new TabInfo(commandsPanel);
-        tabInfo.setText("CLI");
-        tabInfo.setActions(tabActions, "TabActions");
-        return tabInfo;
-    }
-
-    private TabInfo getDoctrineEntitiesTab() {
-        TabInfo tabInfo = new TabInfo(doctrineEntitiesPanel);
-        tabInfo.setText("Entities");
-        tabInfo.setActions(tabActions, "TabActions");
-        return tabInfo;
-    }
-
-    private TabInfo getOpenApiPathTab() {
-        TabInfo tabInfo = new TabInfo(openAPIPathPanel);
-        tabInfo.setText("OAS");
-        tabInfo.setActions(tabActions, "TabActions");
-        return tabInfo;
+        tabs.addTab(tabInfo);
+        tabMap.put(panel.getClass(), tabInfo);
+        panelMap.put(panel.getClass(), panel);
     }
 }

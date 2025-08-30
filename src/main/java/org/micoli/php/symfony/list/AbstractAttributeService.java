@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.micoli.php.configuration.models.DisactivableConfiguration;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.service.attributes.AttributeMapping;
 
-public abstract class AbstractAttributeService<T, C> {
+public abstract class AbstractAttributeService<T, C extends DisactivableConfiguration> {
     protected Project project;
     protected C configuration;
     protected AttributeMapping mapping;
@@ -28,6 +29,9 @@ public abstract class AbstractAttributeService<T, C> {
 
     public List<T> getElements() {
         if (this.configuration == null) {
+            return null;
+        }
+        if (!this.configuration.isEnabled()) {
             return null;
         }
 

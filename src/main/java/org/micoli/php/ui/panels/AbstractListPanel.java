@@ -179,5 +179,5 @@ public abstract class AbstractListPanel<T> extends JPanel {
         }
     }
 
-    protected abstract void refresh();
+    public abstract void refresh();
 }
