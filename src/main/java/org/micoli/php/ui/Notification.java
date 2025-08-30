@@ -11,6 +11,10 @@ public class Notification {
         notify(createMessage(message, NotificationType.INFORMATION));
     }
 
+    public static void message(String title, String message) {
+        notify(createMessage(title, message, NotificationType.INFORMATION));
+    }
+
     public static void messageWithTimeout(String message, int delayInMs) {
         try {
             com.intellij.notification.Notification notification =
@@ -40,18 +44,19 @@ public class Notification {
         message.notify(ProjectManager.getInstance().getOpenProjects()[0]);
     }
 
-    private static com.intellij.notification.Notification createMessage(String message, NotificationType information) {
+    private static com.intellij.notification.Notification createMessage(
+            String message, NotificationType notificationType) {
 
         return NotificationGroupManager.getInstance()
                 .getNotificationGroup("PHP Companion")
-                .createNotification(message, information);
+                .createNotification(message, notificationType);
     }
 
     private static com.intellij.notification.Notification createMessage(
-            String title, String message, NotificationType information) {
+            String title, String message, NotificationType notificationType) {
 
         return NotificationGroupManager.getInstance()
                 .getNotificationGroup("PHP Companion")
-                .createNotification(title, message, information);
+                .createNotification(title, message, notificationType);
     }
 }

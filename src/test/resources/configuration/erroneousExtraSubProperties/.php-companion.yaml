@@ -1,0 +1,9 @@
+attributeNavigation:
+  rules: [ ]
+  unknownSubProperty: 1
+
+peerNavigation: null
+symfonyMessenger: null
+exportSourceToMarkdown: null
+routesConfiguration: null
+commandsConfiguration: null

@@ -2,7 +2,6 @@ package org.micoli.php.configuration;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.io.Files;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -13,7 +12,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,9 +20,11 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.scanner.ScannerException;
 
 public class ConfigurationFactory {
+
     public static class LoadedConfiguration {
         public Configuration configuration;
         public Long timestamp;
+        public List<String> ignoredProperties = new ArrayList<>();
 
         private LoadedConfiguration(Configuration configuration, Long timestamp) {
             this.configuration = configuration;
@@ -32,8 +32,8 @@ public class ConfigurationFactory {
         }
     }
 
-    public static final ArrayList<String> acceptableConfigurationFiles = new ArrayList<>(Arrays.asList(
-            ".php-companion.json", ".php-companion.yaml", ".php-companion.local.json", ".php-companion.local.yaml"));
+    public static final List<String> acceptableConfigurationFiles = List.of(
+            ".php-companion.json", ".php-companion.yaml", ".php-companion.local.json", ".php-companion.local.yaml");
 
     public static LoadedConfiguration loadConfiguration(String projectPath, Long previousLatestFileTimestampUpdate)
             throws ConfigurationException, NoConfigurationFileException {
@@ -49,12 +49,23 @@ public class ConfigurationFactory {
             return null;
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        IgnoredPropertiesHandler propertiesHandler = new IgnoredPropertiesHandler(List.of(Configuration.class));
+        objectMapper.addHandler(propertiesHandler);
         String stringContent = "";
         try {
             stringContent = loadConfigurationFiles(projectPath, files);
-            return new LoadedConfiguration(
-                    objectMapper.readValue(stringContent, Configuration.class), latestFileUpdateTimestamp);
+            Configuration configuration = objectMapper.readValue(stringContent, Configuration.class);
+            LoadedConfiguration loadedConfiguration = new LoadedConfiguration(configuration, latestFileUpdateTimestamp);
+            List<String> unknownProperties = propertiesHandler.getUnknownProperties();
+            if (!unknownProperties.isEmpty()) {
+                throw new ConfigurationException(
+                        "Unrecognized Property: " + String.join(", ", unknownProperties),
+                        latestFileUpdateTimestamp,
+                        "",
+                        stringContent);
+            }
+            loadedConfiguration.ignoredProperties = propertiesHandler.getIgnoredProperties();
+            return loadedConfiguration;
         } catch (ConfigurationException configurationException) {
             throw new ConfigurationException(
                     configurationException.getMessage(),

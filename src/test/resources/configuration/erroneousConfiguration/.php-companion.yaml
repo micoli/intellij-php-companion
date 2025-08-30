@@ -1,1 +1,3 @@
-aa aa : "bad json"
+attributeNavigation:
+  rules: [ ]
+  unknownSubProperty: 1

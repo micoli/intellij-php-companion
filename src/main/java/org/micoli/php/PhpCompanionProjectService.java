@@ -86,7 +86,14 @@ public final class PhpCompanionProjectService implements Disposable, DumbService
                     .configurationLoaded(loadedConfiguration.configuration);
 
             DaemonCodeAnalyzer.getInstance(project).restart();
+            if (!loadedConfiguration.ignoredProperties.isEmpty()) {
+                Notification.message(
+                        "PHP Companion Configuration loaded",
+                        "Unknown properties: " + String.join(",", loadedConfiguration.ignoredProperties));
+                return;
+            }
             Notification.message("PHP Companion Configuration loaded");
+
         } catch (NoConfigurationFileException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {
                 Notification.error(e.getMessage());

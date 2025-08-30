@@ -6,6 +6,8 @@ import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,13 +30,29 @@ public class ConfigurationFactoryTest {
 
     @Test
     public void testItReportErroneousConfiguration() {
-        testErroneousConfiguration("erroneousConfiguration", "Unrecognized Property: aa aa");
+        testErroneousConfiguration(
+                "erroneousConfiguration",
+                "Unrecognized Property: attributeNavigation.unknownSubProperty (line: 1, column: 57)");
+    }
+
+    @Test
+    public void testItReportExtraPropertiesButLoadConfiguration() throws Exception {
+        testSuccessfulConfiguration(
+                "allowExtraMainProperties", List.of("aa (line: 1, column: 7)", "aa.test (line: 1, column: 15)"));
+    }
+
+    @Test
+    public void testItFailsWithExtraSubProperties() throws Exception {
+        testErroneousConfiguration(
+                "erroneousExtraSubProperties",
+                "Unrecognized Property: attributeNavigation.unknownSubProperty (line: 1, column: 57)");
     }
 
     @Test
     public void testItReportMisspelledConfiguration1() {
         testErroneousConfiguration(
-                "misspelledConfiguration1", "Unrecognized Property: attributeNavigation.rules.[0].propertyNameaa");
+                "misspelledConfiguration1",
+                "Unrecognized Property: attributeNavigation.rules.[0].propertyNameaa (line: 1, column: 117), peerNavigation.associates.[0].classAZ (line: 1, column: 170)");
     }
 
     @Test
@@ -56,22 +74,22 @@ public class ConfigurationFactoryTest {
 
     @Test
     public void testItSucceedsToLoadASimpleYamlConfiguration() throws Exception {
-        testSuccessfulConfiguration("simpleYaml");
+        testSuccessfulConfiguration("simpleYaml", new ArrayList<>());
     }
 
     @Test
     public void testItSucceedsToLoadMultipleYamlWithEmptyConfiguration() throws Exception {
-        testSuccessfulConfiguration("multipleYamlWithEmptyConfiguration");
+        testSuccessfulConfiguration("multipleYamlWithEmptyConfiguration", new ArrayList<>());
     }
 
     @Test
     public void testItSucceedsToLoadMultipleYamlAndOneWithEmptyConfiguration() throws Exception {
-        testSuccessfulConfiguration("multipleYamlAndOneWithEmptyConfiguration");
+        testSuccessfulConfiguration("multipleYamlAndOneWithEmptyConfiguration", new ArrayList<>());
     }
 
     @Test
     public void testItSucceedsToLoadAMultipleFileYamlConfiguration() throws Exception {
-        testSuccessfulConfiguration("multipleYaml");
+        testSuccessfulConfiguration("multipleYaml", new ArrayList<>());
     }
 
     private void testErroneousConfiguration(String configurationPath, String expectedMessage) {
@@ -80,21 +98,21 @@ public class ConfigurationFactoryTest {
         Assert.assertEquals(expectedMessage.trim(), exception.getMessage().trim());
     }
 
-    private void testSuccessfulConfiguration(String testPath)
+    private void testSuccessfulConfiguration(String testPath, List<String> expectedIgnoredProperties)
             throws ConfigurationException, IOException, NoConfigurationFileException {
         // Given
         File file = getConfigurationPath(testPath);
 
         // When
         ConfigurationFactory.LoadedConfiguration createdConfiguration = getLoadedConfiguration(file);
+        assert (createdConfiguration != null);
 
         // Then
         DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setIndent(4);
         dumperOptions.setPrettyFlow(true);
         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        String loadedConfiguration =
-                new Yaml(dumperOptions).dump(createdConfiguration != null ? createdConfiguration.configuration : null);
+        String loadedConfiguration = new Yaml(dumperOptions).dump(createdConfiguration.configuration);
         String expectedConfiguration = Files.asCharSource(
                         new File(Objects.requireNonNull(getClass()
                                         .getClassLoader()
@@ -103,6 +121,8 @@ public class ConfigurationFactoryTest {
                         StandardCharsets.UTF_8)
                 .read();
         YamlAssertUtils.assertYamlEquals(expectedConfiguration, loadedConfiguration);
+        Assert.assertEquals(
+                String.join(",", expectedIgnoredProperties), String.join(",", createdConfiguration.ignoredProperties));
     }
 
     private ConfigurationFactory.@Nullable LoadedConfiguration getLoadedConfiguration(File file)
