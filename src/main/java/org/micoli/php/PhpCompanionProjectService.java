@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
-import org.micoli.php.configuration.NoConfigurationFileException;
+import org.micoli.php.configuration.exceptions.NoConfigurationFileException;
 import org.micoli.php.events.ConfigurationEvents;
 import org.micoli.php.events.IndexingEvents;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;

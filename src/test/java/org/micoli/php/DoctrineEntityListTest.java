@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
-import org.micoli.php.configuration.NoConfigurationFileException;
+import org.micoli.php.configuration.exceptions.NoConfigurationFileException;
 import org.micoli.php.symfony.list.DoctrineEntityElementDTO;
 import org.micoli.php.symfony.list.DoctrineEntityService;
 import org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration;

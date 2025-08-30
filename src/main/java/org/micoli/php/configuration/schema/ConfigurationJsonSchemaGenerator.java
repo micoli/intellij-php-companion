@@ -1,4 +1,4 @@
-package org.micoli.php.configuration;
+package org.micoli.php.configuration.schema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

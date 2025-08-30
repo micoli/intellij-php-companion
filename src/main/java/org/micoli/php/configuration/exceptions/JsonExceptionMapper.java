@@ -1,4 +1,4 @@
-package org.micoli.php.configuration;
+package org.micoli.php.configuration.exceptions;
 
 import com.fasterxml.jackson.databind.exc.*;
 

@@ -14,7 +14,7 @@
     <depends>com.intellij.modules.json</depends>
 
     <extensions defaultExtensionNs="JavaScript.JsonSchema">
-        <ProviderFactory implementation="org.micoli.php.configuration.PhpCompanionJsonSchemaProviderFactory"/>
+        <ProviderFactory implementation="org.micoli.php.configuration.schema.PhpCompanionJsonSchemaProviderFactory"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.jetbrains.php">

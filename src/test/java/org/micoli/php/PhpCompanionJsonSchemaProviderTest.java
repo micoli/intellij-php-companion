@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection;
-import org.micoli.php.configuration.PhpCompanionJsonSchemaProviderFactory;
+import org.micoli.php.configuration.schema.PhpCompanionJsonSchemaProviderFactory;
 
 public class PhpCompanionJsonSchemaProviderTest extends BasePlatformTestCase {
 

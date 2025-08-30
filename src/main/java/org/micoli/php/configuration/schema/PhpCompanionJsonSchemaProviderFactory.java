@@ -1,4 +1,4 @@
-package org.micoli.php.configuration;
+package org.micoli.php.configuration.schema;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -10,6 +10,7 @@ import com.jetbrains.jsonSchema.impl.JsonSchemaVersion;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.models.Configuration;
 
 public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProviderFactory {

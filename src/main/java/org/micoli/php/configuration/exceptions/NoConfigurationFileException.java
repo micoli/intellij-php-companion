@@ -1,4 +1,4 @@
-package org.micoli.php.configuration;
+package org.micoli.php.configuration.exceptions;
 
 public class NoConfigurationFileException extends Exception {
     public final Long serial;

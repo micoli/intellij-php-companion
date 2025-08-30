@@ -15,7 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
-import org.micoli.php.configuration.NoConfigurationFileException;
+import org.micoli.php.configuration.exceptions.NoConfigurationFileException;
 import org.micoli.php.utils.YamlAssertUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
