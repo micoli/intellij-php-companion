@@ -23,6 +23,10 @@ kotlin {
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://repo1.maven.org/maven2/")
+        url = uri("https://jitpack.io") // used for Java-Markdown-Generator
+    }
 
     intellijPlatform {
         defaultRepositories()
@@ -35,6 +39,7 @@ dependencies {
     implementation("com.knuddels:jtokkit:1.0.0")
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.17.2")
     implementation("io.swagger.parser.v3:swagger-parser:2.1.32")
+    implementation("com.github.Steppschuh:Java-Markdown-Generator:master-SNAPSHOT")
 
     intellijPlatform {
         create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
