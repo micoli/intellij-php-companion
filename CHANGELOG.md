@@ -94,3 +94,4 @@
 - chore(configuration): Tidy up classes
 - chore(listPanel): Allow panels to be disabled
 - chore(configurations): improve configuration errors handling
+- fix(oasPanel): Fix search on oas panel

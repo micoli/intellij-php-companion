@@ -1,5 +1,6 @@
 package org.micoli.php.openAPI;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.php.lang.psi.elements.PhpAttribute;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -19,6 +20,8 @@ import org.micoli.php.symfony.list.AbstractAttributeService;
 import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration;
 
 public class OpenAPIService extends AbstractAttributeService<OpenAPIPathElementDTO, OpenAPIConfiguration> {
+    private static final Logger LOG = Logger.getInstance(OpenAPIService.class);
+
     public OpenAPIService() {
         mapping = new AttributeMapping(new LinkedHashMap<>() {
             {
@@ -67,6 +70,7 @@ public class OpenAPIService extends AbstractAttributeService<OpenAPIPathElementD
                         continue;
                     }
                     elements.add(new OpenAPIPathElementDTO(
+                            root,
                             path,
                             httpMethod.toString(),
                             getDescription(pathItem, operationEntryValue),
@@ -75,7 +79,6 @@ public class OpenAPIService extends AbstractAttributeService<OpenAPIPathElementD
                 }
             }
         } catch (ReadContentException | EncodingNotSupportedException ignored) {
-
         }
     }
 
