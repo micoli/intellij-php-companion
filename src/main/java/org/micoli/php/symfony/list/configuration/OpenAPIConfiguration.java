@@ -12,6 +12,8 @@ public final class OpenAPIConfiguration implements DisactivableConfiguration {
     @Schema(description = "Enabler for panel of OAS routes")
     public boolean enabled = true;
 
-    @Schema(description = "List of root files of swagger/openapi yaml/json files")
+    @Schema(
+            description = "List of root files of swagger/openapi yaml/json files",
+            examples = {"public/openapi.yaml", "private/openapi.yaml"})
     public String[] specificationRoots = {};
 }

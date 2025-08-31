@@ -73,31 +73,31 @@ The plugin uses configuration files placed in your project root. The plugin will
 ```yaml
 attributeNavigation:
   rules:
-  - actionType: find_in_file
-    attributeFQCN: \Symfony\Component\Routing\Attribute\Route
-    fileMask: '*.yaml,*.yml,*.php'
-    formatterScript: |
-      return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
-    isDefault: true
-    propertyName: path
+    - actionType: find_in_file
+      attributeFQCN: \Symfony\Component\Routing\Attribute\Route
+      fileMask: '*.yaml,*.yml,*.php'
+      formatterScript: |
+        return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
+      isDefault: true
+      propertyName: path
 commandsConfiguration:
   attributeFQCN: \Symfony\Component\Console\Attribute\AsCommand
   enabled: true
   namespaces:
-  - \App
-  - \Application
+    - \App
+    - \Application
 consoleCleaner:
   patterns:
-  - ''
+    - ''
 doctrineEntitiesConfiguration:
   attributeFQCN: \Doctrine\ORM\Mapping\Table
   enabled: true
   namespaces:
-  - \Domain
-  - \Entity
+    - \Domain
+    - \Entity
 exportSourceToMarkdown:
   contextualNamespaces:
-  - App\Core\Models
+    - App\Core\Models
   template: |
     [# th:each="file : ${files}"]
     ## [(${file.path})]
@@ -112,35 +112,35 @@ exportSourceToMarkdown:
 openAPIConfiguration:
   enabled: true
   specificationRoots:
-  - ''
+    - ''
 peerNavigation:
   associates:
-  - classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
-    classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
+    - classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
+      classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
   peers:
-  - source: ''
-    target: ''
+    - source: ''
+      target: ''
 routesConfiguration:
   attributeFQCN: \Symfony\Component\Routing\Attribute\Route
   enabled: true
   namespaces:
-  - \App
-  - \Application
+    - \App
+    - \Application
 symfonyMessenger:
   asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler
   dispatchMethods:
-  - dispatch
-  - query
-  - command
-  - handle
+    - dispatch
+    - query
+    - command
+    - handle
   handlerMethods:
-  - __invoke
-  - handle
+    - __invoke
+    - handle
   messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
   messageHandlerInterfaces:
-  - Symfony\Component\Messenger\Handler\MessageHandlerInterface
+    - Symfony\Component\Messenger\Handler\MessageHandlerInterface
   messageInterfaces:
-  - ''
+    - ''
   projectRootNamespace: \App
   useNativeGoToDeclaration: false
 
@@ -151,17 +151,37 @@ symfonyMessenger:
 ### Symfony Messenger Configuration
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration") -->
-| Property                   | Description                                 | Example | Default value                                           |
-| -------------------------- | ------------------------------------------- | ------- | ------------------------------------------------------- |
-| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service |         | `false                                                  |
-| projectRootNamespace       | Root namespace for scanning classes         |         | `\App                                                   |
-| messageClassNamePatterns   | Regex pattern to identify message classes   |         | `.*(Message|Command|Query|Event|Input)$                 |
-| messageInterfaces[]        | Interfaces that message classes implement   |         |                                                         |
-| messageHandlerInterfaces[] | Interfaces that handler classes implement   |         |                                                         |
-| dispatchMethods[]          | Method names used to dispatch messages      |         |                                                         |
-| handlerMethods[]           | Method names in handler classes             |         |                                                         |
-| asMessageHandlerAttribute  |                                             |         | `Symfony\Component\Messenger\Attribute\AsMessageHandler |
+<!-- generateDocumentationProperties("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration","") -->
+| Property                   | Description                                 |
+| -------------------------- | ------------------------------------------- |
+| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service |
+| projectRootNamespace       | Root namespace for scanning classes         |
+| messageClassNamePatterns   | Regex pattern to identify message classes   |
+| messageInterfaces[]        | Interfaces that message classes implement   |
+| messageHandlerInterfaces[] | Interfaces that handler classes implement   |
+| dispatchMethods[]          | Method names used to dispatch messages      |
+| handlerMethods[]           | Method names in handler classes             |
+| asMessageHandlerAttribute  |                                             |
+
+- **useNativeGoToDeclaration**
+  - Disable ctrl+click to go to handler service
+  - **Default Value**: ```false```
+- **projectRootNamespace**
+  - Root namespace for scanning classes
+  - **Default Value**: ```\App```
+- **messageClassNamePatterns**
+  - Regex pattern to identify message classes
+  - **Default Value**: ```.*(Message|Command|Query|Event|Input)$```
+- **messageInterfaces[]**
+  - Interfaces that message classes implement
+- **messageHandlerInterfaces[]**
+  - Interfaces that handler classes implement
+- **dispatchMethods[]**
+  - Method names used to dispatch messages
+- **handlerMethods[]**
+  - Method names in handler classes
+- **asMessageHandlerAttribute**
+  - **Default Value**: ```Symfony\Component\Messenger\Attribute\AsMessageHandler```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -190,15 +210,30 @@ symfonyMessenger:
 ### Peer Navigation Configuration
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration") -->
-| Property            | Description                                                                          | Example                                                             | Default value |
-| ------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------------- |
-| peers[]             | Array of one-way navigation rules                                                    |                                                                     |               |
-| peers[].source      | Regex pattern with named groups matching source class FQN                            |                                                                     |               |
-| peers[].target      | Target class FQN pattern using `(?<groupName>.+)` substitution from named groups     |                                                                     |               |
-| associates[]        | Array of bidirectional navigation rules                                              |                                                                     |               |
-| associates[].classA | Regex pattern with named groups matching first class FQN                             | `\\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest` |               |
-| associates[].classB | Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups | `\\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller`                  |               |
+<!-- generateDocumentationProperties("org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration","") -->
+| Property            | Description                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| peers[]             | Array of one-way navigation rules                                                    |
+| peers[].source      | Regex pattern with named groups matching source class FQN                            |
+| peers[].target      | Target class FQN pattern using `(?<groupName>.+)` substitution from named groups     |
+| associates[]        | Array of bidirectional navigation rules                                              |
+| associates[].classA | Regex pattern with named groups matching first class FQN                             |
+| associates[].classB | Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups |
+
+- **peers[]**
+  - Array of one-way navigation rules
+- **peers[].source**
+  - Regex pattern with named groups matching source class FQN
+- **peers[].target**
+  - Target class FQN pattern using `(?<groupName>.+)` substitution from named groups
+- **associates[]**
+  - Array of bidirectional navigation rules
+- **associates[].classA**
+  - Regex pattern with named groups matching first class FQN
+  - **Example**: ```\\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest```
+- **associates[].classB**
+  - Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups
+  - **Example**: ```\\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -266,17 +301,33 @@ peerNavigation:
 ### Navigation by Attributes
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration") -->
-| Property                | Description                                     | Example                                                    | Default value                               |
-| ----------------------- | ----------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------- |
-| rules[]                 |                                                 |                                                            |                                             |
-| rules[].attributeFQCN   |                                                 |                                                            | `\Symfony\Component\Routing\Attribute\Route |
-| rules[].propertyName    |                                                 |                                                            | `path                                       |
-| rules[].isDefault       |                                                 |                                                            | `true                                       |
-| rules[].fileMask        |                                                 |                                                            | `*.yaml,*.yml,*.php                         |
-| rules[].actionType      | How search is triggered                         |                                                            | `find_in_file                               |
-| rules[].formatterScript | A groovy script to reformat raw attribute value | `return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
-` |                                             |
+<!-- generateDocumentationProperties("org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration","") -->
+| Property                | Description                                     |
+| ----------------------- | ----------------------------------------------- |
+| rules[]                 |                                                 |
+| rules[].attributeFQCN   |                                                 |
+| rules[].propertyName    |                                                 |
+| rules[].isDefault       |                                                 |
+| rules[].fileMask        |                                                 |
+| rules[].actionType      | How search is triggered                         |
+| rules[].formatterScript | A groovy script to reformat raw attribute value |
+
+- **rules[]**
+- **rules[].attributeFQCN**
+  - **Default Value**: ```\Symfony\Component\Routing\Attribute\Route```
+- **rules[].propertyName**
+  - **Default Value**: ```path```
+- **rules[].isDefault**
+  - **Default Value**: ```true```
+- **rules[].fileMask**
+  - **Default Value**: ```*.yaml,*.yml,*.php```
+- **rules[].actionType**
+  - How search is triggered
+  - **Default Value**: ```find_in_file```
+- **rules[].formatterScript**
+  - A groovy script to reformat raw attribute value
+  - **Example**: ```return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
+```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -300,13 +351,31 @@ attributeNavigation:
 ### Export Source to Markdown Configuration
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration") -->
-| Property                | Description                                                                                                                                                                                                                              | Example | Default value                                                                                                      |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
-| useContextualNamespaces |                                                                                                                                                                                                                                          |         | `true                                                                                                              |
-| useIgnoreFile           |                                                                                                                                                                                                                                          |         | `true                                                                                                              |
-| contextualNamespaces[]  | List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context                                                                                                |         |                                                                                                                    |
-| template                | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |         | `[# th:each="file : ${files}"]\n## [(${file.path})]\n\n```[(${file.extension})]\n[(${file.content})]\n```\n\n[/]\n |
+<!-- generateDocumentationProperties("org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration","") -->
+| Property                | Description                                                                                                                                                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| useContextualNamespaces |                                                                                                                                                                                                                                          |
+| useIgnoreFile           |                                                                                                                                                                                                                                          |
+| contextualNamespaces[]  | List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context                                                                                                |
+| template                | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |
+
+- **useContextualNamespaces**
+  - **Default Value**: ```true```
+- **useIgnoreFile**
+  - **Default Value**: ```true```
+- **contextualNamespaces[]**
+  - List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context
+- **template**
+  - [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`)
+  - **Default Value**: ```[# th:each="file : ${files}"]
+## [(${file.path})]
+
+```[(${file.extension})]
+[(${file.content})]
+```
+
+[/]
+```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -329,18 +398,48 @@ exportSourceToMarkdown:
 ```
 <!-- generateDocumentationEnd -->
 
+### Console cleaner
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration","") -->
+| Property   | Description                                                                                                                     |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| patterns[] | Regular expression pattern for parsing output (if pattern start with ^and finished with $, then the whole line is stripped out) |
+
+- **patterns[]**
+  - Regular expression pattern for parsing output (if pattern start with ^and finished with $, then the whole line is stripped out)
+<!-- generateDocumentationEnd -->
+
+#### Example
+<!-- generateDocumentationExample("org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration","consoleCleaner") -->
+```yaml
+consoleCleaner:
+  patterns:
+  - ''
+```
+<!-- generateDocumentationEnd -->
+
 
 ### Tool windows Configuration
 
 #### `routesConfiguration:`
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.RoutesConfiguration") -->
-| Property      | Description                                  | Example | Default value                               |
-| ------------- | -------------------------------------------- | ------- | ------------------------------------------- |
-| enabled       | Enabler for panel of routes                  |         | `true                                       |
-| namespaces[]  | List of namespaces where routes are searched |         |                                             |
-| attributeFQCN | Attribute used to detect routes              |         | `\Symfony\Component\Routing\Attribute\Route |
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.RoutesConfiguration","") -->
+| Property      | Description                                  |
+| ------------- | -------------------------------------------- |
+| enabled       | Enabler for panel of routes                  |
+| namespaces[]  | List of namespaces where routes are searched |
+| attributeFQCN | Attribute used to detect routes              |
+
+- **enabled**
+  - Enabler for panel of routes
+  - **Default Value**: ```true```
+- **namespaces[]**
+  - List of namespaces where routes are searched
+- **attributeFQCN**
+  - Attribute used to detect routes
+  - **Default Value**: ```\Symfony\Component\Routing\Attribute\Route```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -359,12 +458,21 @@ routesConfiguration:
 #### `commandsConfiguration:`
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.CommandsConfiguration") -->
-| Property      | Description                                            | Example | Default value                                   |
-| ------------- | ------------------------------------------------------ | ------- | ----------------------------------------------- |
-| enabled       | Enabler for panel of console commands                  |         | `true                                           |
-| namespaces[]  | List of namespaces where console commands are searched |         |                                                 |
-| attributeFQCN | Attribute used to detect console commands              |         | `\Symfony\Component\Console\Attribute\AsCommand |
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.CommandsConfiguration","") -->
+| Property      | Description                                            |
+| ------------- | ------------------------------------------------------ |
+| enabled       | Enabler for panel of console commands                  |
+| namespaces[]  | List of namespaces where console commands are searched |
+| attributeFQCN | Attribute used to detect console commands              |
+
+- **enabled**
+  - Enabler for panel of console commands
+  - **Default Value**: ```true```
+- **namespaces[]**
+  - List of namespaces where console commands are searched
+- **attributeFQCN**
+  - Attribute used to detect console commands
+  - **Default Value**: ```\Symfony\Component\Console\Attribute\AsCommand```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -384,12 +492,21 @@ commandsConfiguration:
 #### `doctrineEntitiesConfiguration:`
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration") -->
-| Property      | Description                                             | Example | Default value                |
-| ------------- | ------------------------------------------------------- | ------- | ---------------------------- |
-| enabled       | Enabler for panel of doctrine entities                  |         | `true                        |
-| namespaces[]  | List of namespaces where doctrine entities are searched |         |                              |
-| attributeFQCN | Attribute used to detect Entities                       |         | `\Doctrine\ORM\Mapping\Table |
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","") -->
+| Property      | Description                                             |
+| ------------- | ------------------------------------------------------- |
+| enabled       | Enabler for panel of doctrine entities                  |
+| namespaces[]  | List of namespaces where doctrine entities are searched |
+| attributeFQCN | Attribute used to detect Entities                       |
+
+- **enabled**
+  - Enabler for panel of doctrine entities
+  - **Default Value**: ```true```
+- **namespaces[]**
+  - List of namespaces where doctrine entities are searched
+- **attributeFQCN**
+  - Attribute used to detect Entities
+  - **Default Value**: ```\Doctrine\ORM\Mapping\Table```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -403,6 +520,34 @@ doctrineEntitiesConfiguration:
   - \Entity
 ```
 <!-- generateDocumentationEnd -->
+
+#### `openAPIConfiguration`:`
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPIConfiguration") -->
+| Property             | Description                                           |
+| -------------------- | ----------------------------------------------------- |
+| enabled              | Enabler for panel of OAS routes                       |
+| specificationRoots[] | List of root files of swagger/openapi yaml/json files |
+
+- **enabled**
+  - Enabler for panel of OAS routes
+  - **Default Value**: ```true```
+- **specificationRoots[]**
+  - List of root files of swagger/openapi yaml/json files
+<!-- generateDocumentationEnd -->
+
+#### Example
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPIConfiguration") -->
+```yaml
+openAPIConfiguration:
+  enabled: true
+  specificationRoots:
+  - public/openapi.yaml
+  - private/openapi.yaml
+```
+<!-- generateDocumentationEnd -->
+
 
 ### Configuration Tips
 

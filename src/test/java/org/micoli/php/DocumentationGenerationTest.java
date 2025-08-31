@@ -87,12 +87,23 @@ public class DocumentationGenerationTest extends TestCase {
         String expected =
                 """
             <!-- generateDocumentationProperties("org.micoli.php.DocumentationGenerationTest$TestConfiguration","") -->
-            | Property                       | Description              | Example                      | Default value               |
-            | ------------------------------ | ------------------------ | ---------------------------- | --------------------------- |
-            | aSubConfiguration[]            |                          |                              |                             |
-            | aSubConfiguration[].aProperty1 | description of property1 | `example value of property1` | `default value of property1 |
-            | aSubConfiguration[].aProperty2 |                          |                              |                             |
-            | aBooleanValue                  | description of property1 | `example value of property1` | `false                      |
+            | Property                       | Description              |
+            | ------------------------------ | ------------------------ |
+            | aSubConfiguration[]            |                          |
+            | aSubConfiguration[].aProperty1 | description of property1 |
+            | aSubConfiguration[].aProperty2 |                          |
+            | aBooleanValue                  | description of property1 |
+
+            - **aSubConfiguration[]**
+            - **aSubConfiguration[].aProperty1**
+              - description of property1
+              - **Example**: ```example value of property1```
+              - **Default Value**: ```default value of property1```
+            - **aSubConfiguration[].aProperty2**
+            - **aBooleanValue**
+              - description of property1
+              - **Example**: ```example value of property1```
+              - **Default Value**: ```false```
             <!-- generateDocumentationEnd -->
             """;
 
