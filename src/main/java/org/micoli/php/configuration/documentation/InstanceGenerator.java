@@ -42,7 +42,7 @@ public class InstanceGenerator {
             return instance;
 
         } catch (Exception e) {
-            throw new RuntimeException("Impossible de générer une instance pour " + clazz.getName(), e);
+            throw new RuntimeException("Impossible to generate an instance for " + clazz.getName(), e);
         }
     }
 

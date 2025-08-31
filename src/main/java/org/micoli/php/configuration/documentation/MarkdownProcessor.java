@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 public class MarkdownProcessor {
 
     private static final Pattern INCLUDE_PATTERN = Pattern.compile(
-            "(?<startTag><!--\\s*includeDocumentation\\(\"(?<className>[^\"]+)\",\"(?<exportType>[^\"]+)\",\"(?<extraArgument>[^\"]*)\"\\)\\s*-->)"
+            "(?<startTag><!--\\s*generateDocumentation(?<exportType>(Description|Example|Properties))\\(\"(?<className>[^\"]+)\",\"(?<extraArgument>[^\"]*)\"\\)\\s*-->)"
                     + "(?<oldContent>.*?)"
-                    + "(?<endTag><!--\\s*includeDocumentationEnd\\s*-->)",
+                    + "(?<endTag><!--\\s*generateDocumentationEnd\\s*-->)",
             Pattern.DOTALL);
 
     public String processFile(String filePath) throws IOException {
@@ -27,17 +27,12 @@ public class MarkdownProcessor {
         StringBuilder result = new StringBuilder();
 
         while (matcher.find()) {
-            String startTag = matcher.group("startTag");
-            String endTag = matcher.group("endTag");
-            String className = matcher.group("className");
-            String exportType = matcher.group("exportType");
-            String extraArgument = matcher.group("extraArgument");
-            //            for (Map.Entry<String, Integer> a : matcher.namedGroups().entrySet()) {
-            //                System.out.println(a.getKey() + ": [[[" + matcher.group(a.getValue()) + "]]]");
-            //            }
-
             String replacement = String.format(
-                    "%s\n%s\n%s", startTag, generateDocumentation(className, exportType, extraArgument), endTag);
+                    "%s\n%s\n%s",
+                    matcher.group("startTag"),
+                    generateDocumentation(
+                            matcher.group("className"), matcher.group("exportType"), matcher.group("extraArgument")),
+                    matcher.group("endTag"));
 
             matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
         }
@@ -52,12 +47,12 @@ public class MarkdownProcessor {
             Class<?> clazz = Class.forName(className);
 
             return switch (type) {
-                case "example" -> markdownSchemaGenerator.generateMarkdownDocumentation(
-                        DocumentationType.EXAMPLE, clazz, 3, extraArgument);
-                case "properties" -> markdownSchemaGenerator.generateMarkdownDocumentation(
-                        DocumentationType.PROPERTIES, clazz, 1, extraArgument);
-                case "description" -> markdownSchemaGenerator.generateMarkdownDocumentation(
-                        DocumentationType.DESCRIPTION, clazz, 1, extraArgument);
+                case "Example" -> markdownSchemaGenerator.generateMarkdownExample(
+                        DocumentationType.EXAMPLE, clazz, extraArgument);
+                case "Properties" -> markdownSchemaGenerator.generateMarkdownProperties(
+                        DocumentationType.PROPERTIES, clazz);
+                case "Description" -> markdownSchemaGenerator.generateMarkdownDescription(
+                        DocumentationType.DESCRIPTION, clazz);
                 default -> throw new IllegalStateException("Unexpected value: " + type);
             };
         } catch (ClassNotFoundException e) {

@@ -69,7 +69,7 @@ The plugin uses configuration files placed in your project root. The plugin will
 
 #### Complete YAML Configuration Example
 
-<!-- includeDocumentation("org.micoli.php.configuration.models.Configuration","example") -->
+<!-- generateDocumentationExample("org.micoli.php.configuration.models.Configuration") -->
 ```yaml
 attributeNavigation:
   rules:
@@ -145,13 +145,13 @@ symfonyMessenger:
   useNativeGoToDeclaration: false
 
 ```
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 
 ### Symfony Messenger Configuration
 
 #### Properties
-<!-- includeDocumentation("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration","properties") -->
+<!-- generateDocumentationProperties("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration") -->
 | Property                   | Description                                 | Example | Default value                                           |
 | -------------------------- | ------------------------------------------- | ------- | ------------------------------------------------------- |
 | useNativeGoToDeclaration   | Disable ctrl+click to go to handler service |         | `false                                                  |
@@ -162,10 +162,10 @@ symfonyMessenger:
 | dispatchMethods[]          | Method names used to dispatch messages      |         |                                                         |
 | handlerMethods[]           | Method names in handler classes             |         |                                                         |
 | asMessageHandlerAttribute  |                                             |         | `Symfony\Component\Messenger\Attribute\AsMessageHandler |
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 #### Example
-<!-- includeDocumentation("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration","example","symfonyMessenger") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration","symfonyMessenger") -->
 ```yaml
 symfonyMessenger:
   asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler
@@ -185,12 +185,12 @@ symfonyMessenger:
   projectRootNamespace: \App
   useNativeGoToDeclaration: false
 ```
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 ### Peer Navigation Configuration
 
 #### Properties
-<!-- includeDocumentation("org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration","properties") -->
+<!-- generateDocumentationProperties("org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration") -->
 | Property            | Description                                                                          | Example                                                             | Default value |
 | ------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------------- |
 | peers[]             | Array of one-way navigation rules                                                    |                                                                     |               |
@@ -199,10 +199,10 @@ symfonyMessenger:
 | associates[]        | Array of bidirectional navigation rules                                              |                                                                     |               |
 | associates[].classA | Regex pattern with named groups matching first class FQN                             | `\\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest` |               |
 | associates[].classB | Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups | `\\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller`                  |               |
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 #### Example
-<!-- includeDocumentation("org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration","example","peerNavigation") -->
+<!-- generateDocumentationExample("org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration","peerNavigation") -->
 ```yaml
 peerNavigation:
   associates:
@@ -212,7 +212,7 @@ peerNavigation:
   - source: ''
     target: ''
 ```
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 **Note**: Associates provide bidirectional navigation - you can navigate from classA to classB and vice versa.
 
@@ -266,7 +266,7 @@ peerNavigation:
 ### Navigation by Attributes
 
 #### Properties
-<!-- includeDocumentation("org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration","properties") -->
+<!-- generateDocumentationProperties("org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration") -->
 | Property                | Description                                     | Example                                                    | Default value                               |
 | ----------------------- | ----------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------- |
 | rules[]                 |                                                 |                                                            |                                             |
@@ -277,10 +277,10 @@ peerNavigation:
 | rules[].actionType      | How search is triggered                         |                                                            | `find_in_file                               |
 | rules[].formatterScript | A groovy script to reformat raw attribute value | `return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
 ` |                                             |
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 #### Example
-<!-- includeDocumentation("org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration","example","attributeNavigation") -->
+<!-- generateDocumentationExample("org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration","attributeNavigation") -->
 ```yaml
 attributeNavigation:
   rules:
@@ -292,7 +292,7 @@ attributeNavigation:
     isDefault: true
     propertyName: path
 ```
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 ### CLI Dumper Configuration
 
@@ -300,17 +300,17 @@ attributeNavigation:
 ### Export Source to Markdown Configuration
 
 #### Properties
-<!-- includeDocumentation("org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration","properties") -->
+<!-- generateDocumentationProperties("org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration") -->
 | Property                | Description                                                                                                                                                                                                                              | Example | Default value                                                                                                      |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
 | useContextualNamespaces |                                                                                                                                                                                                                                          |         | `true                                                                                                              |
 | useIgnoreFile           |                                                                                                                                                                                                                                          |         | `true                                                                                                              |
 | contextualNamespaces[]  | List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context                                                                                                |         |                                                                                                                    |
 | template                | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |         | `[# th:each="file : ${files}"]\n## [(${file.path})]\n\n```[(${file.extension})]\n[(${file.content})]\n```\n\n[/]\n |
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 #### Example
-<!-- includeDocumentation("org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration","example","exportSourceToMarkdown") -->
+<!-- generateDocumentationExample("org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration","exportSourceToMarkdown") -->
 ```yaml
 exportSourceToMarkdown:
   contextualNamespaces:
@@ -327,7 +327,7 @@ exportSourceToMarkdown:
   useContextualNamespaces: true
   useIgnoreFile: true
 ```
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 
 ### Tool windows Configuration
@@ -335,16 +335,16 @@ exportSourceToMarkdown:
 #### `routesConfiguration:`
 
 #### Properties
-<!-- includeDocumentation("org.micoli.php.symfony.list.configuration.RoutesConfiguration","properties") -->
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.RoutesConfiguration") -->
 | Property      | Description                                  | Example | Default value                               |
 | ------------- | -------------------------------------------- | ------- | ------------------------------------------- |
 | enabled       | Enabler for panel of routes                  |         | `true                                       |
 | namespaces[]  | List of namespaces where routes are searched |         |                                             |
 | attributeFQCN | Attribute used to detect routes              |         | `\Symfony\Component\Routing\Attribute\Route |
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 #### Example
-<!-- includeDocumentation("org.micoli.php.symfony.list.configuration.RoutesConfiguration","example","routesConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.RoutesConfiguration","routesConfiguration") -->
 ```yaml
 routesConfiguration:
   attributeFQCN: \Symfony\Component\Routing\Attribute\Route
@@ -353,23 +353,23 @@ routesConfiguration:
   - \App
   - \Application
 ```
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 
 #### `commandsConfiguration:`
 
 #### Properties
-<!-- includeDocumentation("org.micoli.php.symfony.list.configuration.CommandsConfiguration","properties") -->
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.CommandsConfiguration") -->
 | Property      | Description                                            | Example | Default value                                   |
 | ------------- | ------------------------------------------------------ | ------- | ----------------------------------------------- |
 | enabled       | Enabler for panel of console commands                  |         | `true                                           |
 | namespaces[]  | List of namespaces where console commands are searched |         |                                                 |
 | attributeFQCN | Attribute used to detect console commands              |         | `\Symfony\Component\Console\Attribute\AsCommand |
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 #### Example
 
-<!-- includeDocumentation("org.micoli.php.symfony.list.configuration.CommandsConfiguration","example","commandsConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.CommandsConfiguration","commandsConfiguration") -->
 ```yaml
 commandsConfiguration:
   attributeFQCN: \Symfony\Component\Console\Attribute\AsCommand
@@ -378,22 +378,22 @@ commandsConfiguration:
   - \App
   - \Application
 ```
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 
 #### `doctrineEntitiesConfiguration:`
 
 #### Properties
-<!-- includeDocumentation("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","properties") -->
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration") -->
 | Property      | Description                                             | Example | Default value                |
 | ------------- | ------------------------------------------------------- | ------- | ---------------------------- |
 | enabled       | Enabler for panel of doctrine entities                  |         | `true                        |
 | namespaces[]  | List of namespaces where doctrine entities are searched |         |                              |
 | attributeFQCN | Attribute used to detect Entities                       |         | `\Doctrine\ORM\Mapping\Table |
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 #### Example
-<!-- includeDocumentation("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","example","doctrineEntitiesConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","doctrineEntitiesConfiguration") -->
 ```yaml
 doctrineEntitiesConfiguration:
   attributeFQCN: \Doctrine\ORM\Mapping\Table
@@ -402,7 +402,7 @@ doctrineEntitiesConfiguration:
   - \Domain
   - \Entity
 ```
-<!-- includeDocumentationEnd -->
+<!-- generateDocumentationEnd -->
 
 ### Configuration Tips
 

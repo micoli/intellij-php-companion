@@ -4,5 +4,4 @@ public enum DocumentationType {
     EXAMPLE,
     PROPERTIES,
     DESCRIPTION,
-    FULL,
 }

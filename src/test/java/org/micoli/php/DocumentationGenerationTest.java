@@ -11,9 +11,9 @@ import org.micoli.php.configuration.documentation.*;
 public class DocumentationGenerationTest extends TestCase {
     private final String initial =
             """
-    <!-- includeDocumentation("org.micoli.php.DocumentationGenerationTest$TestConfiguration","%s","%s") -->
+    <!-- generateDocumentation%s("org.micoli.php.DocumentationGenerationTest$TestConfiguration","%s") -->
     xxxxx
-    <!-- includeDocumentationEnd -->
+    <!-- generateDocumentationEnd -->
     """;
 
     @Schema(description = "description of SubConfiguration")
@@ -36,7 +36,7 @@ public class DocumentationGenerationTest extends TestCase {
         MarkdownProcessor processor = new MarkdownProcessor();
         String expected =
                 """
-            <!-- includeDocumentation("org.micoli.php.DocumentationGenerationTest$TestConfiguration","example","") -->
+            <!-- generateDocumentationExample("org.micoli.php.DocumentationGenerationTest$TestConfiguration","") -->
             ```yaml
             aBooleanValue: false
             aSubConfiguration:
@@ -44,10 +44,10 @@ public class DocumentationGenerationTest extends TestCase {
               aProperty2: ''
 
             ```
-            <!-- includeDocumentationEnd -->
+            <!-- generateDocumentationEnd -->
             """;
 
-        String result = processor.processContent(String.format(initial, "example", ""));
+        String result = processor.processContent(String.format(initial, "Example", ""));
 
         // Then it should change
         Assert.assertEquals(expected, result);
@@ -61,7 +61,7 @@ public class DocumentationGenerationTest extends TestCase {
         MarkdownProcessor processor = new MarkdownProcessor();
         String expected =
                 """
-            <!-- includeDocumentation("org.micoli.php.DocumentationGenerationTest$TestConfiguration","example","exampleRoot") -->
+            <!-- generateDocumentationExample("org.micoli.php.DocumentationGenerationTest$TestConfiguration","exampleRoot") -->
             ```yaml
             exampleRoot:
               aBooleanValue: false
@@ -69,10 +69,10 @@ public class DocumentationGenerationTest extends TestCase {
               - aProperty1: default value of property1
                 aProperty2: ''
             ```
-            <!-- includeDocumentationEnd -->
+            <!-- generateDocumentationEnd -->
             """;
 
-        String result = processor.processContent(String.format(initial, "example", "exampleRoot"));
+        String result = processor.processContent(String.format(initial, "Example", "exampleRoot"));
 
         // Then it should change
         Assert.assertEquals(expected, result);
@@ -86,17 +86,17 @@ public class DocumentationGenerationTest extends TestCase {
         MarkdownProcessor processor = new MarkdownProcessor();
         String expected =
                 """
-            <!-- includeDocumentation("org.micoli.php.DocumentationGenerationTest$TestConfiguration","properties","") -->
+            <!-- generateDocumentationProperties("org.micoli.php.DocumentationGenerationTest$TestConfiguration","") -->
             | Property                       | Description              | Example                      | Default value               |
             | ------------------------------ | ------------------------ | ---------------------------- | --------------------------- |
             | aSubConfiguration[]            |                          |                              |                             |
             | aSubConfiguration[].aProperty1 | description of property1 | `example value of property1` | `default value of property1 |
             | aSubConfiguration[].aProperty2 |                          |                              |                             |
             | aBooleanValue                  | description of property1 | `example value of property1` | `false                      |
-            <!-- includeDocumentationEnd -->
+            <!-- generateDocumentationEnd -->
             """;
 
-        String result = processor.processContent(String.format(initial, "properties", ""));
+        String result = processor.processContent(String.format(initial, "Properties", ""));
 
         // Then it should change
         Assert.assertEquals(expected, result);
@@ -110,12 +110,12 @@ public class DocumentationGenerationTest extends TestCase {
         MarkdownProcessor processor = new MarkdownProcessor();
         String expected =
                 """
-            <!-- includeDocumentation("org.micoli.php.DocumentationGenerationTest$TestConfiguration","description","") -->
+            <!-- generateDocumentationDescription("org.micoli.php.DocumentationGenerationTest$TestConfiguration","") -->
             description of TestConfiguration
-            <!-- includeDocumentationEnd -->
+            <!-- generateDocumentationEnd -->
             """;
 
-        String result = processor.processContent(String.format(initial, "description", ""));
+        String result = processor.processContent(String.format(initial, "Description", ""));
 
         // Then it should change
         Assert.assertEquals(expected, result);
