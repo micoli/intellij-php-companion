@@ -41,11 +41,14 @@ public class DoctrineEntitiesPanel extends AbstractListPanel<DoctrineEntityEleme
 
     @Override
     protected void handleActionClick(int row) {
-        DoctrineEntityElementDTO elementDTO = (DoctrineEntityElementDTO) table.getValueAt(row, 3);
-        if (elementDTO == null) return;
-        if (elementDTO.element() instanceof Navigatable navigatable) {
-            navigatable.navigate(true);
-        }
+        ApplicationManager.getApplication().invokeLater(() -> {
+            DoctrineEntityElementDTO elementDTO =
+                    (DoctrineEntityElementDTO) table.getValueAt(row, getColumnCount() - 1);
+            if (elementDTO == null) return;
+            if (elementDTO.element() instanceof Navigatable navigatable) {
+                navigatable.navigate(true);
+            }
+        });
     }
 
     @Override
@@ -92,5 +95,10 @@ public class DoctrineEntitiesPanel extends AbstractListPanel<DoctrineEntityEleme
                 LOGGER.error("Error refreshing Entities table", e);
             }
         }
+    }
+
+    @Override
+    protected int getColumnCount() {
+        return COLUMN_NAMES.length;
     }
 }

@@ -65,10 +65,12 @@ public class RoutesPanel extends AbstractListPanel<RouteElementDTO> {
 
     @Override
     protected void handleActionClick(int row) {
-        RouteElementDTO elementDTO = (RouteElementDTO) table.getValueAt(row, 2);
-        if (elementDTO.element() instanceof Navigatable navigatable) {
-            navigatable.navigate(true);
-        }
+        ApplicationManager.getApplication().invokeLater(() -> {
+            RouteElementDTO elementDTO = (RouteElementDTO) table.getValueAt(row, getColumnCount() - 1);
+            if (elementDTO.element() instanceof Navigatable navigatable) {
+                navigatable.navigate(true);
+            }
+        });
     }
 
     @Override
@@ -115,5 +117,10 @@ public class RoutesPanel extends AbstractListPanel<RouteElementDTO> {
                 LOGGER.error("Error refreshing routes table", e);
             }
         }
+    }
+
+    @Override
+    protected int getColumnCount() {
+        return COLUMN_NAMES.length;
     }
 }

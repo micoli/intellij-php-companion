@@ -39,11 +39,13 @@ public class CommandsPanel extends AbstractListPanel<CommandElementDTO> {
 
     @Override
     protected void handleActionClick(int row) {
-        CommandElementDTO elementDTO = (CommandElementDTO) table.getValueAt(row, 2);
-        if (elementDTO == null) return;
-        if (elementDTO.element() instanceof Navigatable navigatable) {
-            navigatable.navigate(true);
-        }
+        ApplicationManager.getApplication().invokeLater(() -> {
+            CommandElementDTO elementDTO = (CommandElementDTO) table.getValueAt(row, getColumnCount() - 1);
+            if (elementDTO == null) return;
+            if (elementDTO.element() instanceof Navigatable navigatable) {
+                navigatable.navigate(true);
+            }
+        });
     }
 
     @Override
@@ -90,5 +92,10 @@ public class CommandsPanel extends AbstractListPanel<CommandElementDTO> {
                 LOGGER.error("Error refreshing CLI table", e);
             }
         }
+    }
+
+    @Override
+    protected int getColumnCount() {
+        return COLUMN_NAMES.length;
     }
 }

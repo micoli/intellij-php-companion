@@ -92,6 +92,8 @@ public abstract class AbstractListPanel<T> extends JPanel {
 
     protected abstract TableRowSorter<DefaultTableModel> getSorter();
 
+    protected abstract int getColumnCount();
+
     private void setupLayout() {
         JBScrollPane scrollPane = new JBScrollPane(table);
         scrollPane.setBorder(JBUI.Borders.empty());
@@ -122,7 +124,7 @@ public abstract class AbstractListPanel<T> extends JPanel {
                     handleActionClick(row);
                     return;
                 }
-                if (col == 2) {
+                if (col == getColumnCount() - 1) {
                     handleActionClick(row);
                 }
             }

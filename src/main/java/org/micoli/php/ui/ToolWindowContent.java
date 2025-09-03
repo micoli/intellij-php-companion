@@ -72,6 +72,9 @@ class ToolWindowContent {
 
     private void refreshTabs() {
         SwingUtilities.invokeLater(() -> {
+            if (configuration == null) {
+                return;
+            }
             manageTabVisibilityAndRefresh(RoutesPanel.class, configuration.routesConfiguration);
             manageTabVisibilityAndRefresh(CommandsPanel.class, configuration.commandsConfiguration);
             manageTabVisibilityAndRefresh(DoctrineEntitiesPanel.class, configuration.doctrineEntitiesConfiguration);

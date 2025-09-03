@@ -52,11 +52,13 @@ public class OpenAPIPathPanel extends AbstractListPanel<OpenAPIPathElementDTO> {
 
     @Override
     protected void handleActionClick(int row) {
-        OpenAPIPathElementDTO elementDTO = (OpenAPIPathElementDTO) table.getValueAt(row, 3);
-        if (elementDTO == null) return;
-        if (elementDTO.operationId() != null) {
-            searchOperationIdDeclaration("operationId: " + elementDTO.operationId());
-        }
+        ApplicationManager.getApplication().invokeLater(() -> {
+            OpenAPIPathElementDTO elementDTO = (OpenAPIPathElementDTO) table.getValueAt(row, getColumnCount() - 1);
+            if (elementDTO == null) return;
+            if (elementDTO.operationId() != null) {
+                searchOperationIdDeclaration("operationId: " + elementDTO.operationId());
+            }
+        });
     }
 
     @Override
@@ -149,5 +151,10 @@ public class OpenAPIPathPanel extends AbstractListPanel<OpenAPIPathElementDTO> {
                 list.getFirst().navigate(true);
             });
         });
+    }
+
+    @Override
+    protected int getColumnCount() {
+        return COLUMN_NAMES.length;
     }
 }
