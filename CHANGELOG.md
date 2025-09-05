@@ -101,3 +101,6 @@
 - fix(panelFilter): allow to use \$ in filter regex
 - fix(panels): Handle click on actionRendererButton properly
 - fix(qodana): Fix Qodana high suggestions
+
+## [0.7.9] - 2025-09-05
+- fix(panelLists): do no trigger error on nullable properties
