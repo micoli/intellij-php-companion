@@ -95,3 +95,9 @@
 - chore(listPanel): Allow panels to be disabled
 - chore(configurations): improve configuration errors handling
 - fix(oasPanel): Fix search on oas panel
+
+## [0.7.8] - 2025-09-05
+- chore(panelLists): Display oas panel route with details as in routes panel
+- fix(panelFilter): allow to use \$ in filter regex
+- fix(panels): Handle click on actionRendererButton properly
+- fix(qodana): Fix Qodana high suggestions
