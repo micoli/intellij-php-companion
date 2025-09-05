@@ -1,6 +1,7 @@
 package org.micoli.php.openAPI;
 
 import com.intellij.psi.PsiElement;
+import java.util.List;
 import org.micoli.php.symfony.list.SearchableRecord;
 
 public record OpenAPIPathElementDTO(
@@ -8,7 +9,7 @@ public record OpenAPIPathElementDTO(
         implements SearchableRecord {
 
     @Override
-    public String getSearchString() {
-        return uri + " " + method + " " + description + " " + operationId + " " + rootPath;
+    public List<String> getSearchString() {
+        return List.of(uri, method, description, operationId, rootPath);
     }
 }

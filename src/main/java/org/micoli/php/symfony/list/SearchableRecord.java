@@ -1,5 +1,7 @@
 package org.micoli.php.symfony.list;
 
+import java.util.List;
+
 public interface SearchableRecord {
-    String getSearchString();
+    List<String> getSearchString();
 }

@@ -35,12 +35,12 @@ public class ListRowFilter<M, I> extends RowFilter<M, I> {
         }
         if (entry.getValue(entry.getValueCount() - 1) instanceof SearchableRecord searchableRecord) {
             if (isRegexMode) {
-                return searchPatterns.stream().allMatch(pattern -> pattern.matcher(searchableRecord.getSearchString())
-                        .find());
+                return searchPatterns.stream().allMatch(pattern -> searchableRecord.getSearchString().stream()
+                        .anyMatch(c -> pattern.matcher(c).find()));
             }
-            return searchParts.stream()
-                    .allMatch(part ->
-                            searchableRecord.getSearchString().toLowerCase().contains(part.toLowerCase()));
+            return searchParts.stream().allMatch(part -> String.join(" ", searchableRecord.getSearchString())
+                    .toLowerCase()
+                    .contains(part.toLowerCase()));
         }
         return false;
     }

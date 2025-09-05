@@ -3,6 +3,7 @@ package org.micoli.php;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -22,8 +23,8 @@ public class ListRowFilterTest {
 
     public record TestElementDTO(String uri, String name) implements SearchableRecord {
         @Override
-        public String getSearchString() {
-            return uri + " " + name;
+        public List<String> getSearchString() {
+            return List.of(uri, name);
         }
     }
 
@@ -53,6 +54,7 @@ public class ListRowFilterTest {
             {"Update", false, "t1"},
             {"/{id}/", false, "t1,t2,t3"},
             {"toto", false, "t1,t2,t3"},
+            {".*toto$", true, "t1,t2,t3"},
         });
     }
 
