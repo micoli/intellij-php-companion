@@ -25,11 +25,7 @@ public class MarkdownSchemaGenerator {
     }
 
     public String generateMarkdownExample(DocumentationType type, Class<?> clazz, String exampleRoot) {
-        return (new StringBuilder())
-                .append("```yaml\n")
-                .append(generateYamlExample(exampleRoot, clazz).replaceAll("```", "````"))
-                .append("\n```")
-                .toString();
+        return "```yaml\n" + generateYamlExample(exampleRoot, clazz).replaceAll("```", "````") + "\n```";
     }
 
     private String getYamlProperties(Class<?> clazz) {
@@ -55,7 +51,7 @@ public class MarkdownSchemaGenerator {
                 detailList.add(String.format("**Default Value**: ```%s```", property.defaultValue()));
             }
             List<Object> propertyList = detailList.isEmpty()
-                    ? Arrays.asList("**" + property.dotNotationPath() + "**")
+                    ? List.of("**" + property.dotNotationPath() + "**")
                     : Arrays.asList("**" + property.dotNotationPath() + "**", new UnorderedList<>(detailList));
             items.add(new UnorderedList<>(propertyList));
         }

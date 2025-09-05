@@ -6,8 +6,6 @@ public final class Peer {
     @Schema(description = "Regex pattern with named groups matching source class FQN", example = "")
     public String source;
 
-    @Schema(
-            description = "Target class FQN pattern using `(?<groupName>.+)` substitution from named groups",
-            example = "")
+    @Schema(description = "Target class FQN pattern using `(?<groupName>.+)` substitution from named groups")
     public String target;
 }

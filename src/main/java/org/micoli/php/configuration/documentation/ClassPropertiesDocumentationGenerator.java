@@ -46,7 +46,7 @@ public final class ClassPropertiesDocumentationGenerator {
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
-            Object fieldValue = null;
+            Object fieldValue;
             try {
                 fieldValue = field.get(object);
             } catch (IllegalAccessException e) {

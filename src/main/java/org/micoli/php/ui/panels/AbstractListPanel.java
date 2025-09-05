@@ -1,7 +1,6 @@
 package org.micoli.php.ui.panels;
 
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
