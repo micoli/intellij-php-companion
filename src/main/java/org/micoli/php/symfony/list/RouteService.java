@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.php.lang.psi.elements.PhpAttribute;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.service.attributes.AttributeMapping;
 import org.micoli.php.symfony.list.configuration.RoutesConfiguration;
@@ -26,7 +27,12 @@ public class RouteService extends AbstractAttributeService<RouteElementDTO, Rout
     @Override
     protected RouteElementDTO createElementDTO(String className, PhpAttribute attribute, String namespace) {
         Map<String, String> values = mapping.clone().extractValues(attribute);
-        return new RouteElementDTO(values.get("path"), values.get("name"), values.get("methods"), className, attribute);
+        return new RouteElementDTO(
+                Objects.requireNonNullElse(values.get("path"), ""),
+                Objects.requireNonNullElse(values.get("name"), ""),
+                Objects.requireNonNullElse(values.get("methods"), ""),
+                Objects.requireNonNullElse(className, ""),
+                attribute);
     }
 
     @Override

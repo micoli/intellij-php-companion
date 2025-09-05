@@ -1,7 +1,8 @@
 package org.micoli.php.symfony.list;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public interface SearchableRecord {
-    List<String> getSearchString();
+    List<@NotNull String> getSearchString();
 }

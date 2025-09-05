@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.php.lang.psi.elements.PhpAttribute;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.micoli.php.service.attributes.AttributeMapping;
 import org.micoli.php.symfony.list.configuration.CommandsConfiguration;
 
@@ -21,7 +22,11 @@ public class CommandService extends AbstractAttributeService<CommandElementDTO, 
     @Override
     protected CommandElementDTO createElementDTO(String className, PhpAttribute attribute, String namespace) {
         Map<String, String> values = mapping.clone().extractValues(attribute);
-        return new CommandElementDTO(values.get("name"), values.get("description"), className, attribute);
+        return new CommandElementDTO(
+                Objects.requireNonNullElse(values.get("name"), ""),
+                Objects.requireNonNullElse(values.get("description"), ""),
+                Objects.requireNonNullElse(className, ""),
+                attribute);
     }
 
     @Override

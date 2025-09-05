@@ -2,12 +2,18 @@ package org.micoli.php.symfony.list;
 
 import com.intellij.psi.PsiElement;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-public record DoctrineEntityElementDTO(String className, String name, String schema, String fqcn, PsiElement element)
+public record DoctrineEntityElementDTO(
+        @NotNull String className,
+        @NotNull String name,
+        @NotNull String schema,
+        @NotNull String fqcn,
+        @NotNull PsiElement element)
         implements SearchableRecord {
 
     @Override
-    public List<String> getSearchString() {
+    public List<@NotNull String> getSearchString() {
         return List.of(className, name, schema, fqcn);
     }
 }

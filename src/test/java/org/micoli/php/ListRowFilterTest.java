@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -21,9 +22,9 @@ public class ListRowFilterTest {
     private final boolean isRegexMode;
     private final String expectedResult;
 
-    public record TestElementDTO(String uri, String name) implements SearchableRecord {
+    public record TestElementDTO(@NotNull String uri, @NotNull String name) implements SearchableRecord {
         @Override
-        public List<String> getSearchString() {
+        public List<@NotNull String> getSearchString() {
             return List.of(uri, name);
         }
     }

@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.PhpAttribute;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.service.PhpUtil;
 import org.micoli.php.service.StringCaseConverter;
@@ -27,10 +28,11 @@ public class DoctrineEntityService
     protected DoctrineEntityElementDTO createElementDTO(String className, PhpAttribute attribute, String namespace) {
         Map<String, String> values = mapping.clone().extractValues(attribute);
         return new DoctrineEntityElementDTO(
-                normalizeEntityName(className, namespace),
-                values.get("name") != null ? values.get("name") : normalizeTableNameFromClass(className),
-                values.get("schema"),
-                className,
+                Objects.requireNonNullElse(normalizeEntityName(className, namespace), ""),
+                Objects.requireNonNullElse(
+                        values.get("name") != null ? values.get("name") : normalizeTableNameFromClass(className), ""),
+                Objects.requireNonNullElse(values.get("schema"), ""),
+                Objects.requireNonNullElse(className, ""),
                 attribute);
     }
 
@@ -50,10 +52,10 @@ public class DoctrineEntityService
         Map<String, String> values = mapping.clone().extractValues(attribute);
         for (String childClassName : PhpUtil.getPhpClassChildByFQN(phpIndex, className)) {
             elements.add(new DoctrineEntityElementDTO(
-                    normalizeEntityName(childClassName, namespace),
-                    normalizeTableNameFromClass(childClassName),
-                    values.get("schema"),
-                    childClassName,
+                    Objects.requireNonNullElse(normalizeEntityName(childClassName, namespace), ""),
+                    Objects.requireNonNullElse(normalizeTableNameFromClass(childClassName), ""),
+                    Objects.requireNonNullElse(values.get("schema"), ""),
+                    Objects.requireNonNullElse(childClassName, ""),
                     attribute));
         }
     }

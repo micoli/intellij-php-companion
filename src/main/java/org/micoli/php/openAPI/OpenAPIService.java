@@ -70,10 +70,10 @@ public class OpenAPIService extends AbstractAttributeService<OpenAPIPathElementD
                         continue;
                     }
                     elements.add(new OpenAPIPathElementDTO(
-                            root,
-                            path,
-                            httpMethod.toString(),
-                            getDescription(pathItem, operationEntryValue),
+                            Objects.requireNonNullElse(root, ""),
+                            Objects.requireNonNullElse(path, ""),
+                            Objects.requireNonNullElse(httpMethod.toString(), ""),
+                            Objects.requireNonNullElse(getDescription(pathItem, operationEntryValue), ""),
                             operationId,
                             null));
                 }
