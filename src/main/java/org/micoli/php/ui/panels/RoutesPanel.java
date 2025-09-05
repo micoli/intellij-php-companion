@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
 import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -34,8 +35,8 @@ public class RoutesPanel extends AbstractListPanel<RouteElementDTO> {
 
     @Override
     protected void configureTableColumns() {
-        table.getColumnModel().getColumn(0).setMaxWidth(800);
-        table.getColumnModel().getColumn(1).setMaxWidth(120);
+        table.getColumnModel().getColumn(0).setMaxWidth(1600);
+        table.getColumnModel().getColumn(1).setMaxWidth(90);
         table.getColumnModel().getColumn(2).setCellRenderer(new ActionIconRenderer());
         table.getColumnModel().getColumn(2).setMinWidth(50);
         table.getColumnModel().getColumn(2).setMaxWidth(50);
@@ -50,8 +51,17 @@ public class RoutesPanel extends AbstractListPanel<RouteElementDTO> {
                 RouteElementDTO elementDTO = (RouteElementDTO) value;
                 jLabel.setText(
                         value != null
-                                ? "<html><div>" + elementDTO.uri() + "<br><small color=\"#777\">" + elementDTO.fqcn()
-                                        + "</small></div></html>"
+                                ? String.format(
+                                        """
+                                        <html>
+                                            <div>
+                                                %s<br>
+                                                <small color="#777">%s</small>
+                                            </div>
+                                        </html>
+                                        """,
+                                        Objects.requireNonNullElse(elementDTO.uri(), ""),
+                                        Objects.requireNonNullElse(elementDTO.fqcn(), ""))
                                 : "");
 
                 jLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
