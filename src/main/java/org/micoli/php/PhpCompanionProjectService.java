@@ -64,22 +64,20 @@ public final class PhpCompanionProjectService implements Disposable, DumbService
             }
             this.configurationTimestamp = loadedConfiguration.timestamp;
 
-            MessengerService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.symfonyMessenger);
+            MessengerService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
             PeerNavigationService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
+                    .loadConfiguration(loadedConfiguration.configuration.peerNavigation);
             AttributeNavigationService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.attributeNavigation);
+                    .loadConfiguration(loadedConfiguration.configuration.attributeNavigation);
             ExportSourceToMarkdownService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.exportSourceToMarkdown);
-            RouteService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.routesConfiguration);
+                    .loadConfiguration(loadedConfiguration.configuration.exportSourceToMarkdown);
+            RouteService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.routesConfiguration);
             CommandService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.commandsConfiguration);
+                    .loadConfiguration(loadedConfiguration.configuration.commandsConfiguration);
             DoctrineEntityService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.doctrineEntitiesConfiguration);
+                    .loadConfiguration(loadedConfiguration.configuration.doctrineEntitiesConfiguration);
             OpenAPIService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.openAPIConfiguration);
+                    .loadConfiguration(loadedConfiguration.configuration.openAPIConfiguration);
 
             messageBus
                     .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)
@@ -92,7 +90,7 @@ public final class PhpCompanionProjectService implements Disposable, DumbService
                         "Unknown properties: " + String.join(",", loadedConfiguration.ignoredProperties));
                 return;
             }
-            Notification.message("PHP Companion Configuration loaded");
+            Notification.messageWithTimeout("PHP Companion Configuration loaded", 900);
 
         } catch (NoConfigurationFileException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {

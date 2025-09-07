@@ -16,11 +16,13 @@ public class AttributeNavigationService {
 
     private List<NavigationByAttributeRule> rules = new ArrayList<>();
 
+    public AttributeNavigationService() {}
+
     public static AttributeNavigationService getInstance(Project project) {
         return project.getService(AttributeNavigationService.class);
     }
 
-    public void loadConfiguration(Project project, AttributeNavigationConfiguration _openApiConfiguration) {
+    public void loadConfiguration(AttributeNavigationConfiguration _openApiConfiguration) {
         if (_openApiConfiguration == null) {
             return;
         }

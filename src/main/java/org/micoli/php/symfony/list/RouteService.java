@@ -10,7 +10,9 @@ import org.micoli.php.service.attributes.AttributeMapping;
 import org.micoli.php.symfony.list.configuration.RoutesConfiguration;
 
 public class RouteService extends AbstractAttributeService<RouteElementDTO, RoutesConfiguration> {
-    public RouteService() {
+
+    public RouteService(Project project) {
+        super(project);
         mapping = new AttributeMapping(new LinkedHashMap<>() {
             {
                 put("path", RouteService::getStringableValue);

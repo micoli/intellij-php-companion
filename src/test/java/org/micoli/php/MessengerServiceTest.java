@@ -28,7 +28,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageClassNamePatterns = ".*(edEvent|Command)$";
         MessengerService messengerService = MessengerService.getInstance(getProject());
-        messengerService.loadConfiguration(myFixture.getProject(), symfonyMessengerConfiguration);
+        messengerService.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertTrue(messengerService.isMessageClass(phpClass));
@@ -39,7 +39,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = new SymfonyMessengerConfiguration();
         symfonyMessengerConfiguration.messageClassNamePatterns = ".*(Command)$";
         MessengerService messengerService = MessengerService.getInstance(getProject());
-        messengerService.loadConfiguration(myFixture.getProject(), symfonyMessengerConfiguration);
+        messengerService.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertFalse(messengerService.isMessageClass(phpClass));
@@ -55,7 +55,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
         symfonyMessengerConfiguration.messageInterfaces =
                 new String[] {"App\\Infrastructure\\Bus\\Message\\MessageInterface"};
         MessengerService messengerService = MessengerService.getInstance(getProject());
-        messengerService.loadConfiguration(myFixture.getProject(), symfonyMessengerConfiguration);
+        messengerService.loadConfiguration(symfonyMessengerConfiguration);
         PhpClass phpClass = PhpUtil.getPhpClassByFQN(getProject(), "App\\Core\\Event\\ArticleCreatedEvent");
         assertNotNull(phpClass);
         assertTrue(messengerService.isMessageClass(phpClass));
@@ -113,7 +113,7 @@ public class MessengerServiceTest extends BasePlatformTestCase {
             throw new RuntimeException(e);
         }
         MessengerService messengerService = MessengerService.getInstance(getProject());
-        messengerService.loadConfiguration(myFixture.getProject(), symfonyMessengerConfiguration);
+        messengerService.loadConfiguration(symfonyMessengerConfiguration);
 
         return messengerService;
     }

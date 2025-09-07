@@ -40,7 +40,7 @@ public class DoctrineEntityListTest extends BasePlatformTestCase {
             throw new RuntimeException(e);
         }
         DoctrineEntityService instance = DoctrineEntityService.getInstance(getProject());
-        instance.loadConfiguration(myFixture.getProject(), doctrineEntityListConfiguration);
+        instance.loadConfiguration(doctrineEntityListConfiguration);
 
         return instance;
     }

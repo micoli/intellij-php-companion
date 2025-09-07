@@ -17,14 +17,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.attributeNavigation.service.FileData;
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
-import org.micoli.php.service.FileListProcessor;
+import org.micoli.php.service.filesystem.FileListProcessor;
 import org.micoli.php.ui.Notification;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
 public class ExportSourceToMarkdownService {
-    private Project project;
+    private final Project project;
+
+    public ExportSourceToMarkdownService(Project project) {
+        this.project = project;
+    }
 
     public static ExportSourceToMarkdownService getInstance(Project project) {
         return project.getService(ExportSourceToMarkdownService.class);
@@ -32,9 +36,7 @@ public class ExportSourceToMarkdownService {
 
     private ExportSourceToMarkdownConfiguration configuration = new ExportSourceToMarkdownConfiguration();
 
-    public void loadConfiguration(
-            Project project, ExportSourceToMarkdownConfiguration exportSourceToMarkdownConfiguration) {
-        this.project = project;
+    public void loadConfiguration(ExportSourceToMarkdownConfiguration exportSourceToMarkdownConfiguration) {
         if (exportSourceToMarkdownConfiguration == null) {
             return;
         }

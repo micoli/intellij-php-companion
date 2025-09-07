@@ -19,6 +19,10 @@ public abstract class AbstractAttributeService<T, C extends DisactivableConfigur
     protected C configuration;
     protected AttributeMapping mapping;
 
+    public AbstractAttributeService(Project project) {
+        this.project = project;
+    }
+
     protected AbstractAttributeService() {
         this.configuration = null;
     }
@@ -75,8 +79,7 @@ public abstract class AbstractAttributeService<T, C extends DisactivableConfigur
         return attributeArgument.getArgument().getValue().replaceAll("^[\"']|[\"']$", "");
     }
 
-    public void loadConfiguration(Project project, C configuration) {
-        this.project = project;
+    public void loadConfiguration(C configuration) {
         this.configuration = configuration;
     }
 

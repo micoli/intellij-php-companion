@@ -19,11 +19,9 @@ public class MessengerGotoDeclarationHandlerTest extends BasePlatformTestCase {
     public void testItDetectDispatchMethods() throws NoConfigurationFileException, ConfigurationException {
         myFixture.copyDirectoryToProject("src", "/src");
         MessengerService.getInstance(getProject())
-                .loadConfiguration(
-                        myFixture.getProject(),
-                        Objects.requireNonNull(ConfigurationFactory.loadConfiguration(getTestDataPath(), 0L))
-                                .configuration
-                                .symfonyMessenger);
+                .loadConfiguration(Objects.requireNonNull(ConfigurationFactory.loadConfiguration(getTestDataPath(), 0L))
+                        .configuration
+                        .symfonyMessenger);
         PsiFile[] files = myFixture.configureByFiles("src/UserInterface/Web/Api/Article/List/Controller.php");
         assertGotoEquals(files[0], "->query(", "src/Core/Query/Article/Handler.php", "public function __invoke");
         assertGotoEquals(files[0], "->notify(", "src/Core/Query/Article/Handler.php", "public function __invoke");

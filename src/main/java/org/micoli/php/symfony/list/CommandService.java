@@ -9,7 +9,8 @@ import org.micoli.php.service.attributes.AttributeMapping;
 import org.micoli.php.symfony.list.configuration.CommandsConfiguration;
 
 public class CommandService extends AbstractAttributeService<CommandElementDTO, CommandsConfiguration> {
-    public CommandService() {
+    public CommandService(Project project) {
+        super(project);
         mapping = new AttributeMapping(new LinkedHashMap<>() {
             {
                 put("name", CommandService::getStringableValue);

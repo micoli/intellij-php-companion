@@ -22,7 +22,8 @@ import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration;
 public class OpenAPIService extends AbstractAttributeService<OpenAPIPathElementDTO, OpenAPIConfiguration> {
     private static final Logger LOG = Logger.getInstance(OpenAPIService.class);
 
-    public OpenAPIService() {
+    public OpenAPIService(Project project) {
+        super(project);
         mapping = new AttributeMapping(new LinkedHashMap<>() {
             {
                 put("uri", OpenAPIService::getStringableValue);

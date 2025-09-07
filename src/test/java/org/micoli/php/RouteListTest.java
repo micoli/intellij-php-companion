@@ -44,7 +44,7 @@ public class RouteListTest extends BasePlatformTestCase {
             throw new RuntimeException(e);
         }
         RouteService instance = RouteService.getInstance(getProject());
-        instance.loadConfiguration(myFixture.getProject(), routeListConfiguration);
+        instance.loadConfiguration(routeListConfiguration);
 
         return instance;
     }

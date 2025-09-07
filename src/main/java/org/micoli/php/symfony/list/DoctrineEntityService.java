@@ -15,7 +15,8 @@ import org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration;
 
 public class DoctrineEntityService
         extends AbstractAttributeService<DoctrineEntityElementDTO, DoctrineEntitiesConfiguration> {
-    public DoctrineEntityService() {
+    public DoctrineEntityService(Project project) {
+        super(project);
         mapping = new AttributeMapping(new LinkedHashMap<>() {
             {
                 put("name", DoctrineEntityService::getStringableValue);

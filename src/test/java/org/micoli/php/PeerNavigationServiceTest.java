@@ -64,7 +64,7 @@ public class PeerNavigationServiceTest extends BasePlatformTestCase {
             throw new RuntimeException(e);
         }
         PeerNavigationService instance = PeerNavigationService.getInstance(getProject());
-        instance.loadConfiguration(getProject(), peerNavigationConfiguration);
+        instance.loadConfiguration(peerNavigationConfiguration);
 
         return instance;
     }
