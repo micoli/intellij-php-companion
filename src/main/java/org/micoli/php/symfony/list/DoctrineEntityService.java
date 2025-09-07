@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.micoli.php.service.PhpUtil;
 import org.micoli.php.service.StringCaseConverter;
 import org.micoli.php.service.attributes.AttributeMapping;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 import org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration;
 
 public class DoctrineEntityService

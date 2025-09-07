@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.service.filesystem;
 
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;

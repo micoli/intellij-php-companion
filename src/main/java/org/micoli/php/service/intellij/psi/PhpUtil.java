@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.service.intellij.psi;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
+import org.micoli.php.service.intellij.PhpIndexUtil;
 
 public class PhpUtil {
     public static String normalizeRootFQN(String fqn) {

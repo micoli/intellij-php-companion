@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.service.intellij;
 
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;

@@ -10,7 +10,7 @@ import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException;
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 
 public class PeerNavigationServiceTest extends BasePlatformTestCase {
 

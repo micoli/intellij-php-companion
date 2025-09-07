@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.service.intellij.search;
 
 import java.time.Duration;
 import java.time.Instant;

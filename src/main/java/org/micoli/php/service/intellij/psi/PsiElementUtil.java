@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.service.intellij.psi;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.usageView.UsageInfo;
 import org.jetbrains.annotations.NotNull;
+import org.micoli.php.service.filesystem.PathUtil;
 import org.micoli.php.ui.popup.FileExtract;
 
 public class PsiElementUtil {

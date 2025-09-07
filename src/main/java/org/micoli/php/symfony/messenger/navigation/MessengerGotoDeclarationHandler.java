@@ -8,7 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.lang.psi.elements.*;
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 import org.micoli.php.symfony.messenger.service.MessengerService;
 
 public class MessengerGotoDeclarationHandler implements GotoDeclarationHandler {

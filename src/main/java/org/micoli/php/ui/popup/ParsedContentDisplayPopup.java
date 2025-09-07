@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.ui.popup;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;

@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
 import org.micoli.php.exportSourceToMarkdown.ExportedSource;
-import org.micoli.php.service.ScratchFileUtil;
+import org.micoli.php.service.intellij.ScratchFileUtil;
 import org.micoli.php.ui.Notification;
 
 public class ExportSourceToMarkdownScratchFileAction extends AbstractExportSourceToMarkdownAction {

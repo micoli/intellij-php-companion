@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.service.filesystem;
 
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;

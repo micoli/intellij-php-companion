@@ -13,7 +13,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 import org.micoli.php.symfony.messenger.service.MessengerService;
 
 class MessengerFindUsagesHandler extends FindUsagesHandler {

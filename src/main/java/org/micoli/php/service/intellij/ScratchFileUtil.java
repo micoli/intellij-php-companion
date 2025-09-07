@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.service.intellij;
 
 import com.intellij.ide.scratch.ScratchRootType;
 import com.intellij.lang.Language;

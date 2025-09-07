@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.configuration.models.DisactivableConfiguration;
-import org.micoli.php.service.PhpUtil;
 import org.micoli.php.service.attributes.AttributeMapping;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 
 public abstract class AbstractAttributeService<T, C extends DisactivableConfiguration> {
     protected Project project;

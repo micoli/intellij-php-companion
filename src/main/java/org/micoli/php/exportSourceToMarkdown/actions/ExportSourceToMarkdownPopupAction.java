@@ -4,8 +4,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
 import org.micoli.php.exportSourceToMarkdown.ExportedSource;
-import org.micoli.php.service.ParsedContentDisplayPopup;
 import org.micoli.php.ui.Notification;
+import org.micoli.php.ui.popup.ParsedContentDisplayPopup;
 
 public class ExportSourceToMarkdownPopupAction extends AbstractExportSourceToMarkdownAction {
     @Override

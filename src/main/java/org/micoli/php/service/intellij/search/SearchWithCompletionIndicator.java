@@ -1,4 +1,4 @@
-package org.micoli.php.service;
+package org.micoli.php.service.intellij.search;
 
 import com.intellij.find.FindModel;
 import com.intellij.find.impl.FindInProjectUtil;

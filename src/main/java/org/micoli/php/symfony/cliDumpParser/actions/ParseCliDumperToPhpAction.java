@@ -4,9 +4,9 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
-import org.micoli.php.service.ParsedContentDisplayPopup;
 import org.micoli.php.symfony.cliDumpParser.JsonToPhpArrayConverter;
 import org.micoli.php.symfony.cliDumpParser.PhpDumpHelper;
+import org.micoli.php.ui.popup.ParsedContentDisplayPopup;
 
 public class ParseCliDumperToPhpAction extends AbstractParseCliDumperAction {
 

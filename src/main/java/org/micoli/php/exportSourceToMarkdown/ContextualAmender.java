@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 
 public class ContextualAmender {
     private final ExportSourceToMarkdownConfiguration configuration;

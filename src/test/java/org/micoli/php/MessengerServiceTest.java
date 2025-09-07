@@ -12,7 +12,7 @@ import java.util.Objects;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
 import org.micoli.php.symfony.messenger.service.MessengerService;
 
