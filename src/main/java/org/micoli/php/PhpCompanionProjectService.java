@@ -5,10 +5,12 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.messages.MessageBus;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.nio.file.FileSystems;
+import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
 import org.micoli.php.configuration.ConfigurationException;
@@ -19,6 +21,7 @@ import org.micoli.php.events.IndexingEvents;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
 import org.micoli.php.openAPI.OpenAPIService;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
+import org.micoli.php.service.filesystem.FileListener;
 import org.micoli.php.symfony.list.CommandService;
 import org.micoli.php.symfony.list.DoctrineEntityService;
 import org.micoli.php.symfony.list.RouteService;
@@ -26,19 +29,24 @@ import org.micoli.php.symfony.messenger.service.MessengerService;
 import org.micoli.php.ui.Notification;
 
 @Service(Service.Level.PROJECT)
-public final class PhpCompanionProjectService implements Disposable, DumbService.DumbModeListener {
+public final class PhpCompanionProjectService
+        implements Disposable, DumbService.DumbModeListener, FileListener.VfsHandler<String> {
 
     private final Project project;
     private final @NotNull MessageBus messageBus;
     private Long configurationTimestamp = 0L;
-    private final ScheduledFuture<?> scheduledTask;
 
     public PhpCompanionProjectService(@NotNull Project project) {
         this.project = project;
-        scheduledTask = AppExecutorUtil.getAppScheduledExecutorService()
-                .scheduleWithFixedDelay(this::loadConfiguration, 0, 2000, TimeUnit.MILLISECONDS);
+        FileListener<String> fileListener = new FileListener<>(this);
+        fileListener.setPatterns(Map.of(
+                "configFile",
+                List.of(FileSystems.getDefault()
+                        .getPathMatcher(ConfigurationFactory.acceptableConfigurationFilesGlob))));
         this.messageBus = project.getMessageBus();
-        project.getMessageBus().connect().subscribe(DumbService.DUMB_MODE, this);
+        this.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, fileListener.getVfsListener());
+        this.messageBus.connect().subscribe(DumbService.DUMB_MODE, this);
+        loadConfiguration();
     }
 
     public static PhpCompanionProjectService getInstance(@NotNull Project project) {
@@ -107,8 +115,10 @@ public final class PhpCompanionProjectService implements Disposable, DumbService
 
     @Override
     public void dispose() {
-        if (scheduledTask != null && !scheduledTask.isCancelled()) {
-            scheduledTask.cancel(true);
-        }
+    }
+
+    @Override
+    public void vfsHandle(String id, VirtualFile file) {
+        loadConfiguration();
     }
 }

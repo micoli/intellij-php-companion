@@ -34,6 +34,7 @@ public class ConfigurationFactory {
         }
     }
 
+    public static String acceptableConfigurationFilesGlob = "glob:**/.php-companion{,.local}.{json,yaml}";
     public static final List<String> acceptableConfigurationFiles = List.of(
             ".php-companion.json", ".php-companion.yaml", ".php-companion.local.json", ".php-companion.local.yaml");
 
