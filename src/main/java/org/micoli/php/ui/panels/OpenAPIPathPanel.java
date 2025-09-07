@@ -9,7 +9,6 @@ import com.intellij.usages.UsageInfo2UsageAdapter;
 import java.awt.*;
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -72,9 +71,7 @@ public class OpenAPIPathPanel extends AbstractListPanel<OpenAPIPathElementDTO> {
                                             </div>
                                         </html>
                                         """,
-                                        Objects.requireNonNullElse(elementDTO.uri(), ""),
-                                        Objects.requireNonNullElse(elementDTO.description(), ""),
-                                        Objects.requireNonNullElse(elementDTO.operationId(), ""))
+                                        elementDTO.uri(), elementDTO.description(), elementDTO.operationId())
                                 : "");
 
                 jLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
@@ -91,9 +88,7 @@ public class OpenAPIPathPanel extends AbstractListPanel<OpenAPIPathElementDTO> {
         ApplicationManager.getApplication().invokeLater(() -> {
             OpenAPIPathElementDTO elementDTO = (OpenAPIPathElementDTO) table.getValueAt(row, getColumnCount() - 1);
             if (elementDTO == null) return;
-            if (elementDTO.operationId() != null) {
-                searchOperationIdDeclaration("operationId: " + elementDTO.operationId());
-            }
+            searchOperationIdDeclaration("operationId: " + elementDTO.operationId());
         });
     }
 

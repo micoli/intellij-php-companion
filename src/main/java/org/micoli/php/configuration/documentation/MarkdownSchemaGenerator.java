@@ -40,24 +40,27 @@ public class MarkdownSchemaGenerator {
             tableBuilder.addRow(
                     property.dotNotationPath(),
                     (property.description() == null || property.description().isEmpty()) ? "" : property.description());
-            List<String> detailList = new ArrayList<>();
-            if (property.description() != null && !property.description().isEmpty()) {
-                detailList.add(property.description());
-            }
-            if (property.example() != null && !property.example().isEmpty()) {
-                detailList.add(String.format("**Example**: ```%s```", property.example()));
-            }
-            if (property.defaultValue() != null && !property.defaultValue().isEmpty()) {
-                detailList.add(String.format("**Default Value**: ```%s```", property.defaultValue()));
-            }
-            List<Object> propertyList = detailList.isEmpty()
-                    ? List.of("**" + property.dotNotationPath() + "**")
-                    : Arrays.asList("**" + property.dotNotationPath() + "**", new UnorderedList<>(detailList));
-            items.add(new UnorderedList<>(propertyList));
+            items.add(new UnorderedList<>(getProperties(property)));
         }
 
         return tableBuilder.build().serialize() + "\n\n"
                 + unindentYamlLines(new UnorderedList<>(items).toString(), "^  ");
+    }
+
+    private static @NotNull List<Object> getProperties(ClassPropertiesDocumentationGenerator.PropertyInfo property) {
+        List<String> detailList = new ArrayList<>();
+        if (property.description() != null && !property.description().isEmpty()) {
+            detailList.add(property.description());
+        }
+        if (property.example() != null && !property.example().isEmpty()) {
+            detailList.add(String.format("**Example**: ```%s```", property.example()));
+        }
+        if (property.defaultValue() != null && !property.defaultValue().isEmpty()) {
+            detailList.add(String.format("**Default Value**: ```%s```", property.defaultValue()));
+        }
+        return detailList.isEmpty()
+                ? List.of("**" + property.dotNotationPath() + "**")
+                : Arrays.asList("**" + property.dotNotationPath() + "**", new UnorderedList<>(detailList));
     }
 
     private String generateYamlExample(String exampleRoot, Class<?> clazz) {

@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
 import java.awt.*;
 import java.util.List;
-import java.util.Objects;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -60,8 +59,7 @@ public class RoutesPanel extends AbstractListPanel<RouteElementDTO> {
                                             </div>
                                         </html>
                                         """,
-                                        Objects.requireNonNullElse(elementDTO.uri(), ""),
-                                        Objects.requireNonNullElse(elementDTO.fqcn(), ""))
+                                        elementDTO.uri(), elementDTO.fqcn())
                                 : "");
 
                 jLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
