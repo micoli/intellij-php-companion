@@ -1,6 +1,10 @@
 package org.micoli.php.utils;
 
+import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import java.util.ArrayList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 public class MyFixtureUtils {
@@ -14,6 +18,24 @@ public class MyFixtureUtils {
             System.out.println("-----");
             instance.printFilesRecursively(root, 0, max + 4);
             System.out.println("-----");
+        }
+    }
+
+    public static List<String> getPathContent(VirtualFile root) {
+        MyFixtureUtils instance = new MyFixtureUtils();
+        List<String> result = new ArrayList<>();
+        if (root != null) {
+            instance.getFilesRecursively(result, root);
+        }
+        return result;
+    }
+
+    private void getFilesRecursively(List<String> result, VirtualFile directory) {
+        for (VirtualFile file : directory.getChildren()) {
+            result.add(file.getCanonicalPath());
+            if (file.isDirectory()) {
+                getFilesRecursively(result, file);
+            }
         }
     }
 
@@ -39,5 +61,21 @@ public class MyFixtureUtils {
 
     private static @NotNull String getFormattedFilename(int level, VirtualFile file) {
         return "  ".repeat(level) + "- " + file.getName();
+    }
+
+    public static void initGitRepository(@NotNull CodeInsightTestFixture myFixture) {
+        myFixture.addFileToProject(
+                "/.git/config",
+                """
+            [core]
+                repositoryformatversion = 0
+                filemode = true
+                bare = false
+                logallrefupdates = true
+                ignorecase = true
+                precomposeunicode = true
+            """);
+        myFixture.addFileToProject("/.git/description", "");
+        myFixture.addFileToProject("/.git/HEAD", "ref: refs/heads/main\n");
     }
 }
