@@ -26,6 +26,7 @@ import org.micoli.php.symfony.list.CommandService;
 import org.micoli.php.symfony.list.DoctrineEntityService;
 import org.micoli.php.symfony.list.RouteService;
 import org.micoli.php.symfony.messenger.service.MessengerService;
+import org.micoli.php.tasks.TasksService;
 import org.micoli.php.ui.Notification;
 
 @Service(Service.Level.PROJECT)
@@ -46,7 +47,7 @@ public final class PhpCompanionProjectService
         this.messageBus = project.getMessageBus();
         this.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, fileListener.getVfsListener());
         this.messageBus.connect().subscribe(DumbService.DUMB_MODE, this);
-        loadConfiguration();
+        loadConfiguration(true);
     }
 
     public static PhpCompanionProjectService getInstance(@NotNull Project project) {
@@ -63,10 +64,10 @@ public final class PhpCompanionProjectService
         messageBus.syncPublisher(IndexingEvents.INDEXING_EVENTS).indexingStatusChanged(true);
     }
 
-    private void loadConfiguration() {
+    public void loadConfiguration(boolean force) {
         try {
             ConfigurationFactory.LoadedConfiguration loadedConfiguration =
-                    ConfigurationFactory.loadConfiguration(project.getBasePath(), this.configurationTimestamp);
+                    ConfigurationFactory.loadConfiguration(project.getBasePath(), this.configurationTimestamp, force);
             if (loadedConfiguration == null) {
                 return;
             }
@@ -86,6 +87,7 @@ public final class PhpCompanionProjectService
                     .loadConfiguration(loadedConfiguration.configuration.doctrineEntitiesConfiguration);
             OpenAPIService.getInstance(project)
                     .loadConfiguration(loadedConfiguration.configuration.openAPIConfiguration);
+            TasksService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.tasksConfiguration);
 
             messageBus
                     .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)
@@ -114,11 +116,10 @@ public final class PhpCompanionProjectService
     }
 
     @Override
-    public void dispose() {
-    }
+    public void dispose() {}
 
     @Override
     public void vfsHandle(String id, VirtualFile file) {
-        loadConfiguration();
+        loadConfiguration(false);
     }
 }

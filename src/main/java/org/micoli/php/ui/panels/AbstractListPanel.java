@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.micoli.php.ui.PhpCompanionIcon;
 
 public abstract class AbstractListPanel<T> extends JBPanel {
-    protected static final Logger LOGGER = Logger.getInstance(AbstractListPanel.class);
+    protected static final Logger LOGGER = Logger.getInstance(AbstractListPanel.class.getSimpleName());
     protected final DefaultTableModel model;
     protected TableRowSorter<DefaultTableModel> sorter;
     protected JBTable table;

@@ -127,7 +127,7 @@ public class ConfigurationFactoryTest {
 
     private ConfigurationFactory.@Nullable LoadedConfiguration getLoadedConfiguration(File file)
             throws ConfigurationException, NoConfigurationFileException {
-        return ConfigurationFactory.loadConfiguration(file.getAbsolutePath(), 0L);
+        return ConfigurationFactory.loadConfiguration(file.getAbsolutePath(), 0L, true);
     }
 
     @NotNull

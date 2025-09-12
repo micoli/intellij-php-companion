@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
 import org.micoli.php.symfony.messenger.service.MessengerService;
+import org.micoli.php.tasks.TasksService;
 
 public final class PhpCompanionStatusBarWidget implements StatusBarWidget, StatusBarWidget.TextPresentation {
     private final Project project;
@@ -61,7 +62,7 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
     private void showPopup(MouseEvent e) {
         DefaultActionGroup group = new DefaultActionGroup();
 
-        group.add(new ToggleAction("SourceExport: Use .aiignore File", "Description 1", null) {
+        group.add(new ToggleAction("SourceExport: Use .aiignore File", "", null) {
             @Override
             public @NotNull ActionUpdateThread getActionUpdateThread() {
                 return ActionUpdateThread.BGT;
@@ -77,7 +78,7 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
                 ExportSourceToMarkdownService.getInstance(project).toggleUseIgnoreFile();
             }
         });
-        group.add(new ToggleAction("SourceExport: Use Contextual Namespaces", "Description 1", null) {
+        group.add(new ToggleAction("SourceExport: Use Contextual Namespaces", "", null) {
             @Override
             public @NotNull ActionUpdateThread getActionUpdateThread() {
                 return ActionUpdateThread.BGT;
@@ -94,7 +95,7 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
             }
         });
 
-        group.add(new ToggleAction("SymfonyMessenger: Use Native GoTo Declaration", "Description 1", null) {
+        group.add(new ToggleAction("SymfonyMessenger: Use Native GoTo Declaration", "", null) {
             @Override
             public @NotNull ActionUpdateThread getActionUpdateThread() {
                 return ActionUpdateThread.BGT;
@@ -108,6 +109,23 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
             @Override
             public void setSelected(@NotNull AnActionEvent e, boolean state) {
                 MessengerService.getInstance(project).getConfiguration().toggleUseNativeGoToDeclaration();
+            }
+        });
+
+        group.add(new ToggleAction("Watchers: Enabled", "", null) {
+            @Override
+            public @NotNull ActionUpdateThread getActionUpdateThread() {
+                return ActionUpdateThread.BGT;
+            }
+
+            @Override
+            public boolean isSelected(@NotNull AnActionEvent e) {
+                return TasksService.getInstance(project).isWatcherEnabled();
+            }
+
+            @Override
+            public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                TasksService.getInstance(project).toggleWatcherEnabled();
             }
         });
 

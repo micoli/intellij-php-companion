@@ -1,5 +1,6 @@
 package org.micoli.php.service.filesystem;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
@@ -12,6 +13,7 @@ import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
 public class FileListener<Id> {
+    protected static final Logger LOGGER = Logger.getInstance(FileListener.class.getSimpleName());
     boolean enabled;
 
     public interface VfsHandler<T> {

@@ -83,6 +83,7 @@ public class InstanceGenerator {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private <T> Class<T> getClassToInstantiate(Class<T> clazz) {
         JsonSubTypes subtypes = clazz.getAnnotation(JsonSubTypes.class);
         if (subtypes != null && subtypes.value().length > 0) {

@@ -54,7 +54,8 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
     private AttributeNavigationService loadPluginConfiguration(String path) {
         AttributeNavigationConfiguration attributeNavigationConfiguration = null;
         try {
-            attributeNavigationConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+            attributeNavigationConfiguration = Objects.requireNonNull(
+                            ConfigurationFactory.loadConfiguration(path, 0L, true))
                     .configuration
                     .attributeNavigation;
         } catch (ConfigurationException | NoConfigurationFileException e) {

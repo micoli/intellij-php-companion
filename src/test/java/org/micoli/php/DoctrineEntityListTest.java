@@ -33,7 +33,8 @@ public class DoctrineEntityListTest extends BasePlatformTestCase {
     private DoctrineEntityService loadPluginConfiguration(String path) {
         DoctrineEntitiesConfiguration doctrineEntityListConfiguration = null;
         try {
-            doctrineEntityListConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+            doctrineEntityListConfiguration = Objects.requireNonNull(
+                            ConfigurationFactory.loadConfiguration(path, 0L, true))
                     .configuration
                     .doctrineEntitiesConfiguration;
         } catch (ConfigurationException | NoConfigurationFileException e) {

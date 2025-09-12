@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 public class SearchWithCompletionIndicator {
+    @SuppressWarnings("BusyWait")
     public static void findUsagesWithProgress(
             FindModel findModel, Project project, int maxTimeSearchWithoutResult, Consumer<List<UsageInfo>> callback) {
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Finding usages", true) {

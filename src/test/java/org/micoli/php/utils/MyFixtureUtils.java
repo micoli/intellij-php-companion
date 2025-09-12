@@ -1,10 +1,10 @@
 package org.micoli.php.utils;
 
-import com.intellij.openapi.vcs.changes.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 
 public class MyFixtureUtils {
@@ -19,6 +19,18 @@ public class MyFixtureUtils {
             instance.printFilesRecursively(root, 0, max + 4);
             System.out.println("-----");
         }
+    }
+
+    public static List<String> filesMatching(CodeInsightTestFixture myFixture, Predicate<String> predicate) {
+        return MyFixtureUtils.getPathContent(myFixture.findFileInTempDir("/")).stream()
+                .filter(predicate)
+                .toList();
+    }
+
+    public static List<String> filesMatchingContains(CodeInsightTestFixture myFixture, String needle) {
+        return MyFixtureUtils.getPathContent(myFixture.findFileInTempDir("/")).stream()
+                .filter(s -> s.contains(needle))
+                .toList();
     }
 
     public static List<String> getPathContent(VirtualFile root) {

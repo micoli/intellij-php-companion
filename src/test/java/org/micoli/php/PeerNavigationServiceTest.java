@@ -57,7 +57,7 @@ public class PeerNavigationServiceTest extends BasePlatformTestCase {
     private PeerNavigationService loadPluginConfiguration(String path) {
         PeerNavigationConfiguration peerNavigationConfiguration = null;
         try {
-            peerNavigationConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+            peerNavigationConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L, true))
                     .configuration
                     .peerNavigation;
         } catch (ConfigurationException | NoConfigurationFileException e) {

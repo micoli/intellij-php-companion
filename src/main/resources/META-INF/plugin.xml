@@ -12,6 +12,7 @@
     <depends>com.jetbrains.php</depends>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.json</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
 
     <extensions defaultExtensionNs="JavaScript.JsonSchema">
         <ProviderFactory implementation="org.micoli.php.configuration.schema.PhpCompanionJsonSchemaProviderFactory"/>
@@ -68,6 +69,8 @@
                 serviceImplementation="org.micoli.php.symfony.list.DoctrineEntityService"/>
         <projectService
                 serviceImplementation="org.micoli.php.openAPI.OpenAPIService"/>
+        <projectService
+                serviceImplementation="org.micoli.php.tasks.TasksService"/>
         <consoleInputFilterProvider
                 implementation="org.micoli.php.consoleCleaner.PhpUnitConsoleFilterProvider"/>
 

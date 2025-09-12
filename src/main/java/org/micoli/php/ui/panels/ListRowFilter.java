@@ -8,7 +8,7 @@ import javax.swing.*;
 import org.micoli.php.symfony.list.SearchableRecord;
 
 public class ListRowFilter<M, I> extends RowFilter<M, I> {
-    protected static final Logger LOGGER = Logger.getInstance(ListRowFilter.class);
+    protected static final Logger LOGGER = Logger.getInstance(ListRowFilter.class.getSimpleName());
     private String searchText = "";
     private List<Pattern> searchPatterns = null;
     private List<String> searchParts = null;

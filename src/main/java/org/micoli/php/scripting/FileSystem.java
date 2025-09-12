@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import org.micoli.php.ui.Notification;
 
 public final class FileSystem {
-    private static final Logger LOG = Logger.getInstance(FileSystem.class);
+    private static final Logger LOG = Logger.getInstance(FileSystem.class.getSimpleName());
     private final Project project;
     private final LocalFileSystem localFileSystem;
 
@@ -78,6 +78,7 @@ public final class FileSystem {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private VirtualFile getBaseDir() {
         for (Module module : ModuleManager.getInstance(project).getModules()) {
             for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {

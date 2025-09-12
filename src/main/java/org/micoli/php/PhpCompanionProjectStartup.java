@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PhpCompanionProjectStartup implements ProjectActivity {
-    private static final Logger LOG = Logger.getInstance(PhpCompanionProjectStartup.class);
+    private static final Logger LOG = Logger.getInstance(PhpCompanionProjectStartup.class.getSimpleName());
 
     @Override
     public @Nullable Object execute(@NotNull Project project, @NotNull Continuation<? super Unit> continuation) {

@@ -106,7 +106,8 @@ public class MessengerServiceTest extends BasePlatformTestCase {
     private MessengerService loadPluginConfiguration(String path) {
         SymfonyMessengerConfiguration symfonyMessengerConfiguration = null;
         try {
-            symfonyMessengerConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+            symfonyMessengerConfiguration = Objects.requireNonNull(
+                            ConfigurationFactory.loadConfiguration(path, 0L, true))
                     .configuration
                     .symfonyMessenger;
         } catch (ConfigurationException | NoConfigurationFileException e) {

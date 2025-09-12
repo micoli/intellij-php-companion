@@ -165,13 +165,13 @@ symfonyMessenger:
 
 - **useNativeGoToDeclaration**
   - Disable ctrl+click to go to handler service
-  - **Default Value**: ```false```
+  - **Default Value**: ``` false ```
 - **projectRootNamespace**
   - Root namespace for scanning classes
-  - **Default Value**: ```\App```
+  - **Default Value**: ``` \App ```
 - **messageClassNamePatterns**
   - Regex pattern to identify message classes
-  - **Default Value**: ```.*(Message|Command|Query|Event|Input)$```
+  - **Default Value**: ``` .*(Message|Command|Query|Event|Input)$ ```
 - **messageInterfaces[]**
   - Interfaces that message classes implement
 - **messageHandlerInterfaces[]**
@@ -181,7 +181,7 @@ symfonyMessenger:
 - **handlerMethods[]**
   - Method names in handler classes
 - **asMessageHandlerAttribute**
-  - **Default Value**: ```Symfony\Component\Messenger\Attribute\AsMessageHandler```
+  - **Default Value**: ``` Symfony\Component\Messenger\Attribute\AsMessageHandler ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -230,10 +230,10 @@ symfonyMessenger:
   - Array of bidirectional navigation rules
 - **associates[].classA**
   - Regex pattern with named groups matching first class FQN
-  - **Example**: ```\\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest```
+  - **Example**: ``` \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest ```
 - **associates[].classB**
   - Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups
-  - **Example**: ```\\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller```
+  - **Example**: ``` \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -314,20 +314,20 @@ peerNavigation:
 
 - **rules[]**
 - **rules[].attributeFQCN**
-  - **Default Value**: ```\Symfony\Component\Routing\Attribute\Route```
+  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
 - **rules[].propertyName**
-  - **Default Value**: ```path```
+  - **Default Value**: ``` path ```
 - **rules[].isDefault**
-  - **Default Value**: ```true```
+  - **Default Value**: ``` true ```
 - **rules[].fileMask**
-  - **Default Value**: ```*.yaml,*.yml,*.php```
+  - **Default Value**: ``` *.yaml,*.yml,*.php ```
 - **rules[].actionType**
   - How search is triggered
-  - **Default Value**: ```find_in_file```
+  - **Default Value**: ``` find_in_file ```
 - **rules[].formatterScript**
   - A groovy script to reformat raw attribute value
-  - **Example**: ```return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
-```
+  - **Example**: ``` return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
+ ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -335,13 +335,13 @@ peerNavigation:
 ```yaml
 attributeNavigation:
   rules:
-  - actionType: find_in_file
-    attributeFQCN: \Symfony\Component\Routing\Attribute\Route
+  - attributeFQCN: \Symfony\Component\Routing\Attribute\Route
+    propertyName: path
+    isDefault: true
     fileMask: '*.yaml,*.yml,*.php'
+    actionType: find_in_file
     formatterScript: |
       return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
-    isDefault: true
-    propertyName: path
 ```
 <!-- generateDocumentationEnd -->
 
@@ -360,22 +360,22 @@ attributeNavigation:
 | template                | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |
 
 - **useContextualNamespaces**
-  - **Default Value**: ```true```
+  - **Default Value**: ``` true ```
 - **useIgnoreFile**
-  - **Default Value**: ```true```
+  - **Default Value**: ``` true ```
 - **contextualNamespaces[]**
   - List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context
 - **template**
   - [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`)
-  - **Default Value**: ```[# th:each="file : ${files}"]
+  - **Default Value**: ``` [# th:each="file : ${files}"]
 ## [(${file.path})]
 
-```[(${file.extension})]
+````[(${file.extension})]
 [(${file.content})]
-```
+````
 
 [/]
-```
+ ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -434,12 +434,12 @@ consoleCleaner:
 
 - **enabled**
   - Enabler for panel of routes
-  - **Default Value**: ```true```
+  - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where routes are searched
 - **attributeFQCN**
   - Attribute used to detect routes
-  - **Default Value**: ```\Symfony\Component\Routing\Attribute\Route```
+  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -467,12 +467,12 @@ routesConfiguration:
 
 - **enabled**
   - Enabler for panel of console commands
-  - **Default Value**: ```true```
+  - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where console commands are searched
 - **attributeFQCN**
   - Attribute used to detect console commands
-  - **Default Value**: ```\Symfony\Component\Console\Attribute\AsCommand```
+  - **Default Value**: ``` \Symfony\Component\Console\Attribute\AsCommand ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -501,12 +501,12 @@ commandsConfiguration:
 
 - **enabled**
   - Enabler for panel of doctrine entities
-  - **Default Value**: ```true```
+  - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where doctrine entities are searched
 - **attributeFQCN**
   - Attribute used to detect Entities
-  - **Default Value**: ```\Doctrine\ORM\Mapping\Table```
+  - **Default Value**: ``` \Doctrine\ORM\Mapping\Table ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -521,7 +521,7 @@ doctrineEntitiesConfiguration:
 ```
 <!-- generateDocumentationEnd -->
 
-#### `openAPIConfiguration`:`
+#### `openAPIConfiguration`:
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPIConfiguration") -->
@@ -532,7 +532,7 @@ doctrineEntitiesConfiguration:
 
 - **enabled**
   - Enabler for panel of OAS routes
-  - **Default Value**: ```true```
+  - **Default Value**: ``` true ```
 - **specificationRoots[]**
   - List of root files of swagger/openapi yaml/json files
 <!-- generateDocumentationEnd -->
@@ -545,6 +545,126 @@ openAPIConfiguration:
   specificationRoots:
   - public/openapi.yaml
   - private/openapi.yaml
+```
+<!-- generateDocumentationEnd -->
+
+
+#### `TasksConfiguration`:
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.tasks.configuration.TasksConfiguration","tasksConfiguration") -->
+| Property             | Description                                                                                                                                                                                   |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| enabled              | Enabler for panel of Task and actions                                                                                                                                                         |
+| tasks[]              | Array of runnable task configurations available in the system. Each task must have a unique identifier to be referenced by tree or toolbar                                                    |
+| tasks[].command      | System command to execute in shell. Can include arguments and use environment variables                                                                                                       |
+| tasks[].cwd          | Current working directory for command execution. If null, uses project root directory                                                                                                         |
+| tasks[].icon         | Path to the icon to display for this shell task. Uses standard IntelliJ Platform icons                                                                                                        |
+| tasks[].id           | Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration                                                                           |
+| tasks[].label        | Label displayed to user in the interface. User-friendly name describing the task function                                                                                                     |
+| tree[]               | Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes) |
+| tree[].label         | Label displayed for this folder in the hierarchical tree. User-friendly name for organizing tasks into logical groups                                                                         |
+| tree[].tasks[]       | Array of child nodes contained in this folder. Can contain other folders (Path) or task references (Task)                                                                                     |
+| toolbar[]            | Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId                                                                        |
+| watchers[]           | File watchers configuration that automatically trigger tasks when specified files are modified                                                                                                |
+| watchers[].taskId    | Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration                                                                 |
+| watchers[].debounce  | Delay in milliseconds before task triggering after change detection. Prevents multiple executions during rapid successive modifications                                                       |
+| watchers[].notify    | Indicates if a notification should be displayed to the user upon triggering. False by default to avoid too frequent notifications                                                             |
+| watchers[].watches[] | Array of file patterns to watch. Supports wildcards and regular expressions to match file paths                                                                                               |
+
+- **enabled**
+  - Enabler for panel of Task and actions
+  - **Default Value**: ``` true ```
+- **tasks[]**
+  - Array of runnable task configurations available in the system. Each task must have a unique identifier to be referenced by tree or toolbar
+- **tasks[].command**
+  - System command to execute in shell. Can include arguments and use environment variables
+  - **Example**: ``` make clear-cache ```
+- **tasks[].cwd**
+  - Current working directory for command execution. If null, uses project root directory
+- **tasks[].icon**
+  - Path to the icon to display for this shell task. Uses standard IntelliJ Platform icons
+  - **Default Value**: ``` debugger/threadRunning.svg ```
+- **tasks[].id**
+  - Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration
+  - **Example**: ``` aTaskId ```
+- **tasks[].label**
+  - Label displayed to user in the interface. User-friendly name describing the task function
+  - **Example**: ``` First task ```
+- **tree[]**
+  - Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes)
+- **tree[].label**
+  - Label displayed for this folder in the hierarchical tree. User-friendly name for organizing tasks into logical groups
+- **tree[].tasks[]**
+  - Array of child nodes contained in this folder. Can contain other folders (Path) or task references (Task)
+- **toolbar[]**
+  - Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId
+- **watchers[]**
+  - File watchers configuration that automatically trigger tasks when specified files are modified
+- **watchers[].taskId**
+  - Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration
+- **watchers[].debounce**
+  - Delay in milliseconds before task triggering after change detection. Prevents multiple executions during rapid successive modifications
+  - **Default Value**: ``` 1000 ```
+- **watchers[].notify**
+  - Indicates if a notification should be displayed to the user upon triggering. False by default to avoid too frequent notifications
+  - **Default Value**: ``` false ```
+- **watchers[].watches[]**
+  - Array of file patterns to watch. Supports wildcards and regular expressions to match file paths
+<!-- generateDocumentationEnd -->
+
+#### Example
+<!-- generateDocumentationExample("org.micoli.php.tasks.configuration.TasksConfiguration","tasksConfiguration") -->
+```yaml
+tasksConfiguration:
+  enabled: true
+  tasks:
+  - type: shell
+    id: null
+    label: null
+    command: make clear-cache
+    cwd: ''
+    icon: debugger/threadRunning.svg
+  - type: script
+    id: null
+    label: null
+    source: ''
+    extension: groovy
+    icon: debugger/threadRunning.svg
+  - type: observedFile
+    id: null
+    label: null
+    commentPrefix: '#'
+    filePath: ''
+    variableName: ''
+    activeIcon: actions/inlayRenameInComments.svg
+    inactiveIcon: actions/inlayRenameInCommentsActive.svg
+    unknownIcon: expui/fileTypes/unknown.svg
+    postToggle:
+      type: action
+      id: null
+      label: null
+      command: null
+      cwd: null
+      icon: ''
+    icon: actions/inlayRenameInComments.svg
+  toolbar:
+  - null
+  tree:
+  - type: path
+    label: ''
+    tasks:
+    - null
+    - type: task
+      taskId: aTaskId
+      label: aLabel
+  - null
+  watchers:
+  - taskId: ''
+    debounce: 1000
+    notify: false
+    watches:
+    - ''
 ```
 <!-- generateDocumentationEnd -->
 

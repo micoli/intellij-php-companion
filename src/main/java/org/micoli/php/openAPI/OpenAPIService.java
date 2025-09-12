@@ -20,7 +20,7 @@ import org.micoli.php.symfony.list.AbstractAttributeService;
 import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration;
 
 public class OpenAPIService extends AbstractAttributeService<OpenAPIPathElementDTO, OpenAPIConfiguration> {
-    private static final Logger LOG = Logger.getInstance(OpenAPIService.class);
+    private static final Logger LOG = Logger.getInstance(OpenAPIService.class.getSimpleName());
 
     public OpenAPIService(Project project) {
         super(project);

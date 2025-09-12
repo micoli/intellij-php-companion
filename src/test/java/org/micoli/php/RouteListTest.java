@@ -37,7 +37,7 @@ public class RouteListTest extends BasePlatformTestCase {
     private RouteService loadPluginConfiguration(String path) {
         RoutesConfiguration routeListConfiguration = null;
         try {
-            routeListConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+            routeListConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L, true))
                     .configuration
                     .routesConfiguration;
         } catch (ConfigurationException | NoConfigurationFileException e) {
