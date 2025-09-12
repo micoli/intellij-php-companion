@@ -47,12 +47,9 @@ public class MarkdownProcessor {
             Class<?> clazz = Class.forName(className);
 
             return switch (type) {
-                case "Example" -> markdownSchemaGenerator.generateMarkdownExample(
-                        DocumentationType.EXAMPLE, clazz, extraArgument);
-                case "Properties" -> markdownSchemaGenerator.generateMarkdownProperties(
-                        DocumentationType.PROPERTIES, clazz);
-                case "Description" -> markdownSchemaGenerator.generateMarkdownDescription(
-                        DocumentationType.DESCRIPTION, clazz);
+                case "Example" -> markdownSchemaGenerator.generateMarkdownExample(clazz, extraArgument);
+                case "Properties" -> markdownSchemaGenerator.generateMarkdownProperties(clazz);
+                case "Description" -> markdownSchemaGenerator.generateMarkdownDescription(clazz);
                 default -> throw new IllegalStateException("Unexpected value: " + type);
             };
         } catch (ClassNotFoundException e) {

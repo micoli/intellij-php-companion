@@ -1,5 +1,8 @@
 package org.micoli.php;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,6 +10,7 @@ import java.nio.file.Path;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.micoli.php.configuration.documentation.*;
+import org.micoli.php.configuration.models.Configuration;
 
 public class DocumentationGenerationTest extends TestCase {
     private final String initial =
@@ -97,13 +101,13 @@ public class DocumentationGenerationTest extends TestCase {
             - **aSubConfiguration[]**
             - **aSubConfiguration[].aProperty1**
               - description of property1
-              - **Example**: ```example value of property1```
-              - **Default Value**: ```default value of property1```
+              - **Example**: ``` example value of property1 ```
+              - **Default Value**: ``` default value of property1 ```
             - **aSubConfiguration[].aProperty2**
             - **aBooleanValue**
               - description of property1
-              - **Example**: ```example value of property1```
-              - **Default Value**: ```false```
+              - **Example**: ``` example value of property1 ```
+              - **Default Value**: ``` false ```
             <!-- generateDocumentationEnd -->
             """;
 
@@ -134,6 +138,23 @@ public class DocumentationGenerationTest extends TestCase {
         // Then it should not change twice
         String result2 = processor.processContent(result);
         Assert.assertEquals(result, result2);
+    }
+
+    public void testItGeneratesExampleAsJson() throws JsonProcessingException {
+        Object example = (new InstanceGenerator()).get(Configuration.class, true);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.writeValueAsString(example);
+    }
+
+    public void testItGeneratesDescriptionProperties() {
+        MarkdownSchemaGenerator markdownSchemaGenerator = new MarkdownSchemaGenerator();
+        markdownSchemaGenerator.generateMarkdownExample(Configuration.class, "root");
+    }
+
+    public void testItGeneratesDescriptionExample() {
+        MarkdownSchemaGenerator markdownSchemaGenerator = new MarkdownSchemaGenerator();
+        markdownSchemaGenerator.generateMarkdownProperties(Configuration.class);
     }
 
     public void testItVerifyReadmeMdIsUpToDate() throws IOException {

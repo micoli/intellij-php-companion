@@ -1,9 +1,12 @@
 package org.micoli.php.configuration.documentation;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 
 public final class ClassPropertiesDocumentationGenerator {
@@ -52,43 +55,71 @@ public final class ClassPropertiesDocumentationGenerator {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            Class<?> fieldType = field.getType();
-            boolean isMultiple = (fieldValue.getClass().isArray()
-                    || Collection.class.isAssignableFrom(fieldType)
-                    || Map.class.isAssignableFrom(fieldType));
-            String fieldName = field.getName() + (isMultiple ? "[]" : "");
-            String fieldPath = currentPath.isEmpty() ? fieldName : currentPath + "." + fieldName;
+            Class<?> fieldTypeCandidate = field.getType();
+            Map<String, Class<?>> fieldTypes;
             Schema fieldSchema = field.getAnnotation(Schema.class);
+            JsonSubTypes subtypes = fieldTypeCandidate.getAnnotation(JsonSubTypes.class);
+            JsonTypeInfo jsonTypeInfo = fieldTypeCandidate.getAnnotation(JsonTypeInfo.class);
+            if (subtypes != null) {
+                fieldTypes = Arrays.stream(subtypes.value())
+                        .collect(Collectors.toMap(JsonSubTypes.Type::name, JsonSubTypes.Type::value));
+            } else {
+                fieldTypes = Map.of(fieldTypeCandidate.getSimpleName(), fieldTypeCandidate);
+            }
+            for (Map.Entry<String, Class<?>> subType : fieldTypes.entrySet()) {
 
-            properties.add(new PropertyInfo(
-                    fieldPath,
-                    fieldName,
-                    fieldType,
-                    getDescription(fieldSchema),
-                    getExample(fieldSchema),
-                    getDefaultValue(isMultiple, fieldValue)));
+                Class<?> fieldType = subType.getValue();
+                boolean isMultiple = (fieldValue != null
+                        && (fieldValue.getClass().isArray()
+                                || Collection.class.isAssignableFrom(fieldType)
+                                || Map.class.isAssignableFrom(fieldType)));
 
-            if (fieldValue.getClass().isArray()) {
-                Object[] values = (Object[]) fieldValue;
-                if (values.length > 0) {
-                    traverseClass(values[0], fieldPath, maxDepth - 1);
+                String fieldName = field.getName() + (isMultiple ? "[]" : "");
+                String fieldPath = currentPath.isEmpty() ? fieldName : currentPath + "." + fieldName;
+                if (jsonTypeInfo != null) {
+                    fieldPath = fieldPath + "(" + jsonTypeInfo.property() + "=" + subType.getKey() + ")";
                 }
-            }
 
-            if (Collection.class.isAssignableFrom(fieldType)) {
-                assert fieldValue instanceof Collection<?>;
-                Collection<?> valueCollection = (Collection<?>) fieldValue;
-                if (!valueCollection.isEmpty()) {
-                    traverseClass(valueCollection.iterator().next(), fieldPath, maxDepth);
+                properties.add(new PropertyInfo(
+                        fieldPath,
+                        fieldName,
+                        fieldType,
+                        getDescription(fieldSchema),
+                        getExample(fieldSchema),
+                        getDefaultValue(isMultiple, fieldValue)));
+
+                if (jsonTypeInfo != null) {
+                    properties.add(new PropertyInfo(
+                            fieldPath + "." + jsonTypeInfo.property(),
+                            fieldName,
+                            fieldType,
+                            subType.getKey(),
+                            subType.getKey(),
+                            subType.getKey()));
                 }
-            }
 
-            if (Map.class.isAssignableFrom(fieldType)) {
-                throw new UnsupportedOperationException("Maps are not yet supported");
-            }
+                if (fieldValue != null && fieldValue.getClass().isArray()) {
+                    Object[] values = (Object[]) fieldValue;
+                    if (values.length > 0) {
+                        traverseClass(values[0], fieldPath, maxDepth - 1);
+                    }
+                }
 
-            if (!isPrimitiveOrWrapper(fieldType) && fieldType != String.class) {
-                traverseClass(fieldValue, fieldPath, maxDepth - 1);
+                if (Collection.class.isAssignableFrom(fieldType)) {
+                    assert fieldValue instanceof Collection<?>;
+                    Collection<?> valueCollection = (Collection<?>) fieldValue;
+                    if (!valueCollection.isEmpty()) {
+                        traverseClass(valueCollection.iterator().next(), fieldPath, maxDepth);
+                    }
+                }
+
+                if (Map.class.isAssignableFrom(fieldType)) {
+                    throw new UnsupportedOperationException("Maps are not yet supported");
+                }
+
+                if (!isPrimitiveOrWrapper(fieldType) && fieldType != String.class) {
+                    traverseClass(fieldValue, fieldPath, maxDepth - 1);
+                }
             }
         }
     }
@@ -101,7 +132,7 @@ public final class ClassPropertiesDocumentationGenerator {
         if (fieldValue instanceof String stringValue) {
             return stringValue;
         }
-        if (isPrimitiveOrWrapper(fieldValue.getClass())) {
+        if (fieldValue != null && isPrimitiveOrWrapper(fieldValue.getClass())) {
             return fieldValue.toString();
         }
         return null;
