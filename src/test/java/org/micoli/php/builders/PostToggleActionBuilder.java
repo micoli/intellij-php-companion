@@ -1,12 +1,12 @@
 package org.micoli.php.builders;
 
-import org.micoli.php.tasks.configuration.runnableTask.PostToggleAction;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleShell;
 
 public class PostToggleActionBuilder {
-    private final PostToggleAction action;
+    private final PostToggleShell action;
 
     private PostToggleActionBuilder() {
-        this.action = new PostToggleAction();
+        this.action = new PostToggleShell();
     }
 
     public static PostToggleActionBuilder create() {
@@ -33,7 +33,7 @@ public class PostToggleActionBuilder {
         return this;
     }
 
-    public PostToggleAction build() {
+    public PostToggleShell build() {
         return action;
     }
 }

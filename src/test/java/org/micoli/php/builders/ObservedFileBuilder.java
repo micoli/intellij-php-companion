@@ -1,7 +1,7 @@
 package org.micoli.php.builders;
 
 import org.micoli.php.tasks.configuration.runnableTask.ObservedFile;
-import org.micoli.php.tasks.configuration.runnableTask.PostToggle;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggle;
 
 public class ObservedFileBuilder {
     private final ObservedFile observedFile;

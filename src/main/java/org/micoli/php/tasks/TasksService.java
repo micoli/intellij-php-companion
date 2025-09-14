@@ -14,10 +14,10 @@ import org.micoli.php.service.DebouncedRunnables;
 import org.micoli.php.service.filesystem.FileListener;
 import org.micoli.php.tasks.configuration.TasksConfiguration;
 import org.micoli.php.tasks.configuration.Watcher;
-import org.micoli.php.tasks.configuration.runnableTask.ObservedFile;
-import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration;
-import org.micoli.php.tasks.configuration.runnableTask.Script;
-import org.micoli.php.tasks.configuration.runnableTask.Shell;
+import org.micoli.php.tasks.configuration.runnableTask.*;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleBuiltin;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleScript;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleShell;
 import org.micoli.php.tasks.models.TaskIdentifier;
 import org.micoli.php.tasks.runnables.FileObserverTask;
 import org.micoli.php.tasks.runnables.RunnableTask;
@@ -116,8 +116,12 @@ public class TasksService implements FileListener.VfsHandler<TaskIdentifier> {
                         task -> task.id,
                         task -> switch (task) {
                             case ObservedFile observedFile -> new FileObserverTask(project, observedFile);
-                            case Script script -> new RunnableTask(project, script);
+                            case Builtin builtin -> new RunnableTask(project, builtin);
                             case Shell shell -> new RunnableTask(project, shell);
+                            case Script script -> new RunnableTask(project, script);
+                            case PostToggleBuiltin builtin -> new RunnableTask(project, builtin);
+                            case PostToggleShell shell -> new RunnableTask(project, shell);
+                            case PostToggleScript script -> new RunnableTask(project, script);
                             default -> throw new IllegalStateException("Unexpected value: " + task);
                         },
                         (existing, replacement) -> replacement));

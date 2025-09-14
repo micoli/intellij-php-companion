@@ -1,6 +1,6 @@
 package org.micoli.php.builders;
 
-import org.micoli.php.tasks.configuration.runnableTask.PostToggleScript;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleScript;
 
 public class PostToggleScriptBuilder {
     private final PostToggleScript script;

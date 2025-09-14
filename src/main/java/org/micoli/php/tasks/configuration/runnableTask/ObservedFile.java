@@ -1,6 +1,7 @@
 package org.micoli.php.tasks.configuration.runnableTask;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggle;
 
 public final class ObservedFile extends RunnableTaskConfiguration {
     @Schema(

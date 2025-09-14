@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
+    @JsonSubTypes.Type(name = "builtin", value = Builtin.class),
     @JsonSubTypes.Type(name = "shell", value = Shell.class),
     @JsonSubTypes.Type(name = "script", value = Script.class),
     @JsonSubTypes.Type(name = "observedFile", value = ObservedFile.class),

@@ -16,10 +16,7 @@ import org.micoli.php.service.TaskScheduler;
 import org.micoli.php.tasks.TasksService;
 import org.micoli.php.tasks.configuration.Task;
 import org.micoli.php.tasks.configuration.TasksConfiguration;
-import org.micoli.php.tasks.configuration.runnableTask.ObservedFile;
-import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration;
-import org.micoli.php.tasks.configuration.runnableTask.Script;
-import org.micoli.php.tasks.configuration.runnableTask.Shell;
+import org.micoli.php.tasks.configuration.runnableTask.*;
 import org.micoli.php.ui.components.tasks.toolbar.FileObserverToolbarButton;
 import org.micoli.php.ui.components.tasks.toolbar.TaskToolbarButton;
 import org.micoli.php.ui.components.tasks.tree.ActionTreeNodeConfigurator;
@@ -85,6 +82,7 @@ public class ActionTreePanel extends JBPanel implements Disposable {
             RunnableTaskConfiguration runnable = configuration.getTasksMap().get(task.taskId);
             AnAction action =
                     switch (runnable) {
+                        case Builtin builtin -> new TaskToolbarButton(project, builtin);
                         case Shell shell -> new TaskToolbarButton(project, shell);
                         case Script script -> new TaskToolbarButton(project, script);
                         case ObservedFile observedFile -> new FileObserverToolbarButton(project, observedFile);

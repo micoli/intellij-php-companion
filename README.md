@@ -557,9 +557,8 @@ openAPIConfiguration:
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | enabled              | Enabler for panel of Task and actions                                                                                                                                                         |
 | tasks[]              | Array of runnable task configurations available in the system. Each task must have a unique identifier to be referenced by tree or toolbar                                                    |
-| tasks[].command      | System command to execute in shell. Can include arguments and use environment variables                                                                                                       |
-| tasks[].cwd          | Current working directory for command execution. If null, uses project root directory                                                                                                         |
-| tasks[].icon         | Path to the icon to display for this shell task. Uses standard IntelliJ Platform icons                                                                                                        |
+| tasks[].actionId     | Builtin actionId to execute                                                                                                                                                                   |
+| tasks[].icon         | Path to the icon to display for this builtin task. Uses standard IntelliJ Platform icons                                                                                                      |
 | tasks[].id           | Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration                                                                           |
 | tasks[].label        | Label displayed to user in the interface. User-friendly name describing the task function                                                                                                     |
 | tree[]               | Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes) |
@@ -577,13 +576,11 @@ openAPIConfiguration:
   - **Default Value**: ``` true ```
 - **tasks[]**
   - Array of runnable task configurations available in the system. Each task must have a unique identifier to be referenced by tree or toolbar
-- **tasks[].command**
-  - System command to execute in shell. Can include arguments and use environment variables
-  - **Example**: ``` make clear-cache ```
-- **tasks[].cwd**
-  - Current working directory for command execution. If null, uses project root directory
+- **tasks[].actionId**
+  - Builtin actionId to execute
+  - **Example**: ``` $Copy ```
 - **tasks[].icon**
-  - Path to the icon to display for this shell task. Uses standard IntelliJ Platform icons
+  - Path to the icon to display for this builtin task. Uses standard IntelliJ Platform icons
   - **Default Value**: ``` debugger/threadRunning.svg ```
 - **tasks[].id**
   - Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration
@@ -619,6 +616,11 @@ openAPIConfiguration:
 tasksConfiguration:
   enabled: true
   tasks:
+  - type: builtin
+    id: null
+    label: null
+    actionId: $Copy
+    icon: debugger/threadRunning.svg
   - type: shell
     id: null
     label: null
@@ -641,12 +643,11 @@ tasksConfiguration:
     inactiveIcon: actions/inlayRenameInCommentsActive.svg
     unknownIcon: expui/fileTypes/unknown.svg
     postToggle:
-      type: action
+      type: builtin
       id: null
       label: null
-      command: null
-      cwd: null
-      icon: ''
+      actionId: null
+      icon: debugger/threadRunning.svg
     icon: actions/inlayRenameInComments.svg
   toolbar:
   - null

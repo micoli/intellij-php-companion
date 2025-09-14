@@ -19,12 +19,14 @@ import org.jetbrains.plugins.terminal.TerminalToolWindowManager;
 import org.micoli.php.scripting.FileSystem;
 import org.micoli.php.scripting.UI;
 import org.micoli.php.tasks.configuration.runnableTask.*;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleBuiltin;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleScript;
+import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleShell;
 import org.micoli.php.ui.Notification;
 
 public class RunnableTask implements Runnable {
 
     private static final Logger LOGGER = Logger.getInstance(RunnableTask.class.getSimpleName());
-    public static final String ACTION_PREFIX = "action:";
     private final RunnableTaskConfiguration configuration;
     private final Project project;
 
@@ -36,21 +38,11 @@ public class RunnableTask implements Runnable {
     @Override
     public void run() {
         switch (configuration) {
-            case Shell action -> {
-                if (action.command.startsWith(ACTION_PREFIX)) {
-                    runBuiltinAction(action.command.replaceFirst(ACTION_PREFIX, ""));
-                    return;
-                }
-                runShellAction(action.label, action.command, action.cwd);
-            }
-            case PostToggleAction action -> {
-                if (action.command.startsWith(ACTION_PREFIX)) {
-                    runBuiltinAction(action.command.replaceFirst(ACTION_PREFIX, ""));
-                    return;
-                }
-                runShellAction(action.label, action.command, action.cwd);
-            }
+            case Builtin builtin -> runBuiltinAction(builtin.actionId);
+            case Shell action -> runShellAction(action.label, action.command, action.cwd);
             case Script script -> runScript(script.extension, script.source);
+            case PostToggleBuiltin builtin -> runBuiltinAction(builtin.actionId);
+            case PostToggleShell action -> runShellAction(action.label, action.command, action.cwd);
             case PostToggleScript script -> runScript(script.extension, script.source);
             default -> throw new IllegalStateException("Unexpected value: " + configuration);
         }
@@ -72,8 +64,9 @@ public class RunnableTask implements Runnable {
     }
 
     private void runShellAction(String label, String command, String cwd) {
-        TerminalWidget terminalWidget = TerminalToolWindowManager.getInstance(project)
-                .createShellWidget(cwd != null ? cwd : project.getBasePath(), label, true, true);
+        String workingDirectory = cwd != null ? cwd : project.getBasePath();
+        TerminalWidget terminalWidget =
+                TerminalToolWindowManager.getInstance(project).createShellWidget(workingDirectory, label, true, true);
 
         ToolWindow window =
                 ToolWindowManager.getInstance(project).getToolWindow(TerminalToolWindowFactory.TOOL_WINDOW_ID);
