@@ -7,11 +7,13 @@ import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider;
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory;
 import com.jetbrains.jsonSchema.extension.SchemaType;
 import com.jetbrains.jsonSchema.impl.JsonSchemaVersion;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.configuration.ConfigurationFactory;
-import org.micoli.php.configuration.models.Configuration;
 
 public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProviderFactory {
     @NotNull @Override
@@ -42,9 +44,16 @@ public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProvider
 
         @Nullable @Override
         public VirtualFile getSchemaFile() {
-            return new LightVirtualFile(
-                    "php-companion-schema.json",
-                    new ConfigurationJsonSchemaGenerator().generateSchema(Configuration.class));
+            String filename = "php-companion-schema.json";
+            try (InputStream inputStream = getClass().getResourceAsStream("/schemas/php-companion-schema.json")) {
+                if (inputStream == null) {
+                    return null;
+                }
+
+                return new LightVirtualFile(filename, new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                return new LightVirtualFile(filename, "{}");
+            }
         }
     }
 }
