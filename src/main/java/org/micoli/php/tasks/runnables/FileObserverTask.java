@@ -17,7 +17,7 @@ public class FileObserverTask extends RunnableTask {
 
     public FileObserverTask(Project project, ObservedFile observedFile) {
         super(project, observedFile);
-        fileObserver = new FileObserver(observedFile);
+        fileObserver = new FileObserver(project, observedFile);
         this.taskId = observedFile.id;
         status = fileObserver.getStatus();
         postToggle = observedFile.postToggle == null ? null : new RunnableTask(project, observedFile.postToggle);
@@ -25,7 +25,9 @@ public class FileObserverTask extends RunnableTask {
 
     @Override
     public void run() {
-        this.fileObserver.toggle();
+        if (!this.fileObserver.toggle()) {
+            return;
+        }
         if (postToggle != null) {
             postToggle.run();
         }

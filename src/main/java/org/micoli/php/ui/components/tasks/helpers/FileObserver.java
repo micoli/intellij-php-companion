@@ -1,10 +1,15 @@
 package org.micoli.php.ui.components.tasks.helpers;
 
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import java.io.*;
 import javax.swing.*;
+import org.micoli.php.service.filesystem.PathUtil;
 import org.micoli.php.tasks.configuration.runnableTask.ObservedFile;
 import org.micoli.php.ui.Notification;
 import org.micoli.php.ui.PhpCompanionIcon;
@@ -21,7 +26,7 @@ public class FileObserver {
     }
 
     private static final Logger LOGGER = Logger.getInstance(FileObserver.class.getSimpleName());
-    private final String root;
+    private final VirtualFile projectRoot;
     public final ObservedFile observedFile;
     final String activeRegularExpression;
     final String disabledRegularExpression;
@@ -34,23 +39,26 @@ public class FileObserver {
 
     Status status;
 
-    public FileObserver(ObservedFile observedFile) {
-        this.root = ProjectManager.getInstance().getOpenProjects()[0].getBasePath();
+    public FileObserver(Project project, ObservedFile observedFile) {
+        this.projectRoot = PathUtil.getBaseDir(project);
         this.observedFile = observedFile;
         activeRegularExpression = "^" + observedFile.variableName + "=";
         disabledRegularExpression = "^" + observedFile.commentPrefix + "\\s*" + observedFile.variableName + "=";
         status = getStatus();
     }
 
-    public void toggle() {
-        switch (getStatus()) {
-            case Active:
+    public boolean toggle() {
+        return switch (getStatus()) {
+            case Active -> {
                 replaceInFile(false);
-                break;
-            case Inactive:
+                yield true;
+            }
+            case Inactive -> {
                 replaceInFile(true);
-                break;
-        }
+                yield true;
+            }
+            default -> false;
+        };
     }
 
     public IconAndPrefix getIconAndPrefix() {
@@ -64,29 +72,24 @@ public class FileObserver {
     }
 
     public Status getStatus() {
-        File file = new File(root, observedFile.filePath);
-        if (!file.exists()) {
+        VirtualFile file = projectRoot.findFileByRelativePath(observedFile.filePath);
+        if (file == null || !file.exists()) {
             return Status.Unknown;
         }
-        LOGGER.info(file.getAbsolutePath());
         Status result = Status.Unknown;
-        BufferedReader reader;
 
         try {
-            reader = new BufferedReader(new FileReader(file));
-            String line = reader.readLine();
+            String content = VfsUtilCore.loadText(file);
+            String[] lines = content.split("\n");
 
-            while (line != null) {
+            for (String line : lines) {
                 if (line.matches(activeRegularExpression + ".*")) {
                     result = Status.Active;
                 }
                 if (line.matches(disabledRegularExpression + ".*")) {
                     result = Status.Inactive;
                 }
-                line = reader.readLine();
             }
-
-            reader.close();
         } catch (IOException e) {
             LOGGER.error(e);
         }
@@ -94,16 +97,17 @@ public class FileObserver {
     }
 
     public void replaceInFile(boolean toActive) {
-        File file = new File(root, observedFile.filePath);
-        if (!file.exists()) {
+        VirtualFile file = projectRoot.findFileByRelativePath(observedFile.filePath);
+        if (file == null || !file.exists()) {
             return;
         }
-        StringBuilder result = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line = reader.readLine();
 
-            while (line != null) {
+        try {
+            String content = VfsUtilCore.loadText(file);
+            StringBuilder result = new StringBuilder();
+            String[] lines = content.split("\n");
+
+            for (String line : lines) {
                 if (toActive) {
                     result.append(line.replaceFirst(disabledRegularExpression, observedFile.variableName + "="));
                 } else {
@@ -111,15 +115,9 @@ public class FileObserver {
                             activeRegularExpression, observedFile.commentPrefix + observedFile.variableName + "="));
                 }
                 result.append(System.lineSeparator());
-                line = reader.readLine();
             }
 
-            reader.close();
-
-            FileWriter fstream = new FileWriter(file, false);
-            BufferedWriter out = new BufferedWriter(fstream);
-            out.write(result.toString());
-            out.close();
+            WriteAction.run(() -> VfsUtil.saveText(file, result.toString()));
         } catch (IOException e) {
             LOGGER.error(e);
         }

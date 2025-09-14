@@ -2,10 +2,7 @@ package org.micoli.php.scripting;
 
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import java.io.File;
@@ -14,6 +11,7 @@ import java.io.InputStream;
 import org.eclipse.jgit.ignore.IgnoreNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.micoli.php.service.filesystem.PathUtil;
 import org.micoli.php.ui.Notification;
 
 public final class FileSystem {
@@ -37,7 +35,7 @@ public final class FileSystem {
     private void internalClearPath(String path, boolean mustBeGitIgnored) {
         try {
 
-            VirtualFile virtualBaseDir = getBaseDir();
+            VirtualFile virtualBaseDir = PathUtil.getBaseDir(project);
             if (virtualBaseDir == null) {
                 throw new ScriptingError("No base directory found.");
             }
@@ -76,16 +74,6 @@ public final class FileSystem {
         } catch (Exception e) {
             LOG.warn("Error while cleaning path: " + path + " " + e.getMessage());
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    private VirtualFile getBaseDir() {
-        for (Module module : ModuleManager.getInstance(project).getModules()) {
-            for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
-                return root;
-            }
-        }
-        return null;
     }
 
     private @Nullable VirtualFile getVirtualPath(@NotNull VirtualFile virtualBaseDir, String path) {

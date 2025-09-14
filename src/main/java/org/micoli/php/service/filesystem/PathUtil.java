@@ -1,5 +1,10 @@
 package org.micoli.php.service.filesystem;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import java.util.ArrayList;
@@ -34,5 +39,14 @@ public class PathUtil {
 
         Collections.reverse(paths);
         return String.join("/", paths);
+    }
+
+    public static VirtualFile getBaseDir(Project project) {
+        for (Module module : ModuleManager.getInstance(project).getModules()) {
+            for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
+                return root;
+            }
+        }
+        return null;
     }
 }
