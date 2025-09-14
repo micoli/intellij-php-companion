@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public final class PostToggleScript extends PostToggle {
     @Schema(
-            description =
-                    "Source code of the script to execute after state toggle. Content depends on the language specified by the extension")
+            description = "Source code of the script to execute after state toggle. Content depends on the language"
+                    + " specified by the extension")
     public String source = null;
 
     @Schema(

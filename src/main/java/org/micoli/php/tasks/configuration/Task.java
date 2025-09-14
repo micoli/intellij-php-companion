@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public final class Task extends AbstractNode {
     @Schema(
-            description =
-                    "Identifier of the referenced task. Must match the ID of an existing task in the TasksConfiguration tasks array",
+            description = "Identifier of the referenced task. Must match the ID of an existing task in the"
+                    + " TasksConfiguration tasks array",
             example = "aTaskId")
     public String taskId;
 

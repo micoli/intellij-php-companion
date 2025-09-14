@@ -34,8 +34,7 @@ public class NavigableItem implements NavigableListPopupItem {
         return true;
     }
 
-    @NotNull
-    public FileExtract getFileExtract() {
+    @NotNull public FileExtract getFileExtract() {
         return fileExtract;
     }
 
@@ -43,8 +42,7 @@ public class NavigableItem implements NavigableListPopupItem {
         return icon;
     }
 
-    @NotNull
-    public String getText() {
+    @NotNull public String getText() {
         return String.format(
                 """
                 <html>

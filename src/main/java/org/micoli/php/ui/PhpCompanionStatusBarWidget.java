@@ -50,8 +50,7 @@ public final class PhpCompanionStatusBarWidget implements StatusBarWidget, Statu
         return "PHP Companion Options";
     }
 
-    @NotNull
-    public Consumer<MouseEvent> getClickConsumer() {
+    @NotNull public Consumer<MouseEvent> getClickConsumer() {
         return e -> {
             if (!e.isPopupTrigger() && MouseEvent.BUTTON1 == e.getButton()) {
                 showPopup(e);

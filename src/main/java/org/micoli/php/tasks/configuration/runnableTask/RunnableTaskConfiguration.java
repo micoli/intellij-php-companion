@@ -13,7 +13,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public abstract class RunnableTaskConfiguration {
     @Schema(
             description =
-                    "Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration",
+                    "Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in"
+                            + " the configuration",
             example = "aTaskId")
     public String id;
 

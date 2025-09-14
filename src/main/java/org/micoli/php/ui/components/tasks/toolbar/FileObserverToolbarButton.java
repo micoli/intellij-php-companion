@@ -21,8 +21,7 @@ import org.micoli.php.ui.PhpCompanionIcon;
 public class FileObserverToolbarButton extends AnAction implements Disposable {
     private static final Logger LOGGER = Logger.getInstance(FileObserverToolbarButton.class.getSimpleName());
 
-    @NotNull
-    private final Project project;
+    @NotNull private final Project project;
 
     private final @NotNull String taskId;
     private final String label;

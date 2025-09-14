@@ -18,18 +18,19 @@ public final class TasksConfiguration implements DisactivableConfiguration {
     public boolean enabled = true;
 
     @Schema(
-            description =
-                    "Array of runnable task configurations available in the system. Each task must have a unique identifier to be referenced by tree or toolbar")
+            description = "Array of runnable task configurations available in the system. Each task must have a unique"
+                    + " identifier to be referenced by tree or toolbar")
     public RunnableTaskConfiguration[] tasks = new RunnableTaskConfiguration[] {};
 
     @Schema(
-            description =
-                    "Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes)")
+            description = "Hierarchical tree structure of tasks and folders for organization in the user interface. Can"
+                    + " contain Task objects (referencing tasks by ID) and Path objects (folders containing other"
+                    + " nodes)")
     public AbstractNode[] tree = new AbstractNode[] {};
 
     @Schema(
-            description =
-                    "Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId")
+            description = "Array of tasks to display in the toolbar for quick access. Each element must reference an"
+                    + " existing task via its taskId")
     public Task[] toolbar = new Task[] {};
 
     @Schema(

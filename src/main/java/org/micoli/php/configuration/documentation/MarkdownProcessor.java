@@ -10,8 +10,7 @@ public class MarkdownProcessor {
 
     private static final Pattern INCLUDE_PATTERN = Pattern.compile(
             "(?<startTag><!--\\s*generateDocumentation(?<exportType>(Description|Example|Properties))\\(\"(?<className>[^\"]+)\",\"(?<extraArgument>[^\"]*)\"\\)\\s*-->)"
-                    + "(?<oldContent>.*?)"
-                    + "(?<endTag><!--\\s*generateDocumentationEnd\\s*-->)",
+                + "(?<oldContent>.*?)(?<endTag><!--\\s*generateDocumentationEnd\\s*-->)",
             Pattern.DOTALL);
 
     public String processFile(String filePath) throws IOException {

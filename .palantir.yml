@@ -1,0 +1,4 @@
+style: PALANTIR
+formatJavadoc: true
+lineLength: 200
+indentationMultiplier: 4

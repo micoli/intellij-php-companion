@@ -14,15 +14,13 @@ import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.models.Configuration;
 
 public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProviderFactory {
-    @NotNull
-    @Override
+    @NotNull @Override
     public List<JsonSchemaFileProvider> getProviders(@NotNull Project project) {
         return List.of(new PhpCompanionJsonSchemaProvider());
     }
 
     public static class PhpCompanionJsonSchemaProvider implements JsonSchemaFileProvider {
-        @NotNull
-        @Override
+        @NotNull @Override
         public String getName() {
             return "PHP Companion Configuration";
         }
@@ -32,8 +30,7 @@ public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProvider
             return ConfigurationFactory.acceptableConfigurationFiles.contains(file.getName());
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public SchemaType getSchemaType() {
             return SchemaType.embeddedSchema;
         }
@@ -43,8 +40,7 @@ public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProvider
             return JsonSchemaVersion.SCHEMA_4;
         }
 
-        @Nullable
-        @Override
+        @Nullable @Override
         public VirtualFile getSchemaFile() {
             return new LightVirtualFile(
                     "php-companion-schema.json", ConfigurationJsonSchemaGenerator.generateSchema(Configuration.class));

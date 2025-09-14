@@ -12,6 +12,7 @@ plugins {
     id("org.jetbrains.qodana") version "2024.3.4"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("com.diffplug.spotless") version "6.19.0"
+    id("com.palantir.java-format-spotless") version "2.47.0"
     id("org.owasp.dependencycheck") version "12.1.3"
 }
 
@@ -170,14 +171,18 @@ intellijPlatformTesting {
         }
     }
 }
+//allprojects {
+//    gradle.projectsEvaluated {
+//        System.setProperty("palantir.java.format.line-length", "850")
+//    }
+//}
 
 spotless {
     isEnforceCheck = false
 
     java {
-        palantirJavaFormat("2.39.0").style("PALANTIR")
-
         target("src/**/*.java")
+        formatAnnotations()
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()

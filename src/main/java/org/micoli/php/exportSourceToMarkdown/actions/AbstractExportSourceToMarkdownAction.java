@@ -10,8 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractExportSourceToMarkdownAction extends AnAction {
     @Override
-    @NotNull
-    public ActionUpdateThread getActionUpdateThread() {
+    @NotNull public ActionUpdateThread getActionUpdateThread() {
         return ActionUpdateThread.BGT;
     }
 
