@@ -12,6 +12,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import org.micoli.php.events.ConfigurationEvents;
+import org.micoli.php.service.TaskScheduler;
+import org.micoli.php.tasks.TasksService;
 import org.micoli.php.tasks.configuration.Task;
 import org.micoli.php.tasks.configuration.TasksConfiguration;
 import org.micoli.php.tasks.configuration.runnableTask.ObservedFile;
@@ -27,6 +29,7 @@ import org.micoli.php.ui.components.tasks.tree.TreeCellRenderer;
 public class ActionTreePanel extends JBPanel implements Disposable {
     private static final Logger LOGGER = Logger.getInstance(ActionTreePanel.class.getSimpleName());
     private final JComponent mainPanel = new JPanel();
+    private final Project project;
     private final ActionTreeNodeConfigurator actionTreeNodeConfigurator;
     private final DefaultActionGroup leftActionGroup = new DefaultActionGroup();
 
@@ -35,6 +38,7 @@ public class ActionTreePanel extends JBPanel implements Disposable {
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         this.add(mainPanel, BorderLayout.CENTER);
         this.add(createToolbar(), BorderLayout.NORTH);
+        this.project = project;
         mainPanel.setLayout(new BorderLayout());
         Tree tree = new Tree(new DefaultTreeModel(new PathNode(new Object(), "Actions")));
         tree.setCellRenderer(new TreeCellRenderer());
@@ -54,6 +58,12 @@ public class ActionTreePanel extends JBPanel implements Disposable {
 
     public void refresh() {
         this.mainPanel.revalidate();
+        TaskScheduler.scheduleLater(
+                () -> {
+                    LOGGER.warn("Refreshing all file observers");
+                    TasksService.getInstance(project).refreshObservedFiles(true);
+                },
+                1000);
     }
 
     private void loadActionTree(TasksConfiguration configuration) {

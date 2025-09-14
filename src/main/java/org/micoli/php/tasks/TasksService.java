@@ -55,7 +55,7 @@ public class TasksService implements FileListener.VfsHandler<TaskIdentifier> {
         pathMatcherMap.putAll(getWatchedFilesFromWatcher(tasksConfiguration));
         pathMatcherMap.putAll(getWatchedFilesFromObservedFiles(tasksConfiguration));
         fileListener.setPatterns(pathMatcherMap);
-        refresh();
+        refreshObservedFiles(false);
     }
 
     public void runTask(String taskId) {
@@ -66,13 +66,13 @@ public class TasksService implements FileListener.VfsHandler<TaskIdentifier> {
         }
     }
 
-    private void refresh() {
+    public void refreshObservedFiles(boolean forceUpdateAll) {
         if (this.runnableActions == null || this.runnableActions.isEmpty()) {
             return;
         }
         for (Map.Entry<String, RunnableTask> taskConfiguration : runnableActions.entrySet()) {
             if (taskConfiguration.getValue() instanceof FileObserverTask fileObserverTask) {
-                updateFileObserver(fileObserverTask, false);
+                updateFileObserver(fileObserverTask, forceUpdateAll);
             }
         }
     }
