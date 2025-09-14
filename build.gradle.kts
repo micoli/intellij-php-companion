@@ -44,6 +44,8 @@ dependencies {
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r")
     implementation("com.knuddels:jtokkit:1.0.0")
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.17.2")
+    implementation("com.github.victools:jsonschema-generator:[4.21.0,5.0.0)")
+    implementation("com.github.victools:jsonschema-module-jackson:[4.21.0,5.0.0)")
     implementation("io.swagger.parser.v3:swagger-parser-v3:2.1.33")
     implementation("com.github.Steppschuh:Java-Markdown-Generator:master-SNAPSHOT")
 

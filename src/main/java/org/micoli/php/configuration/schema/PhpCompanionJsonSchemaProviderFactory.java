@@ -43,7 +43,8 @@ public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProvider
         @Nullable @Override
         public VirtualFile getSchemaFile() {
             return new LightVirtualFile(
-                    "php-companion-schema.json", ConfigurationJsonSchemaGenerator.generateSchema(Configuration.class));
+                    "php-companion-schema.json",
+                    new ConfigurationJsonSchemaGenerator().generateSchema(Configuration.class));
         }
     }
 }
