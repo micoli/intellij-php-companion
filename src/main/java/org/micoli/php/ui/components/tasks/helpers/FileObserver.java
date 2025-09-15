@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import java.io.*;
 import javax.swing.*;
+import org.jetbrains.annotations.NotNull;
 import org.micoli.php.service.filesystem.PathUtil;
 import org.micoli.php.tasks.configuration.runnableTask.ObservedFile;
 import org.micoli.php.ui.Notification;
@@ -103,24 +104,28 @@ public class FileObserver {
         }
 
         try {
-            String content = VfsUtilCore.loadText(file);
-            StringBuilder result = new StringBuilder();
-            String[] lines = content.split("\n");
-
-            for (String line : lines) {
-                if (toActive) {
-                    result.append(line.replaceFirst(disabledRegularExpression, observedFile.variableName + "="));
-                } else {
-                    result.append(line.replaceFirst(
-                            activeRegularExpression, observedFile.commentPrefix + observedFile.variableName + "="));
-                }
-                result.append(System.lineSeparator());
-            }
-
-            WriteAction.run(() -> VfsUtil.saveText(file, result.toString()));
+            WriteAction.run(() -> VfsUtil.saveText(
+                    file,
+                    replaceInFileContent(toActive, VfsUtilCore.loadText(file)).toString()));
         } catch (IOException e) {
             LOGGER.error(e);
         }
         Notification.message(observedFile.variableName + " " + (toActive ? "activated" : "deactivated"));
+    }
+
+    private @NotNull StringBuilder replaceInFileContent(boolean toActive, String content) {
+        StringBuilder result = new StringBuilder();
+        String[] lines = content.split("\n");
+
+        for (String line : lines) {
+            if (toActive) {
+                result.append(line.replaceFirst(disabledRegularExpression, observedFile.variableName + "="));
+            } else {
+                result.append(line.replaceFirst(
+                        activeRegularExpression, observedFile.commentPrefix + observedFile.variableName + "="));
+            }
+            result.append(System.lineSeparator());
+        }
+        return result;
     }
 }
