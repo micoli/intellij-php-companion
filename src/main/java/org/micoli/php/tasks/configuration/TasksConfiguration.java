@@ -14,8 +14,8 @@ public final class TasksConfiguration implements DisactivableConfiguration {
         return enabled;
     }
 
-    @Schema(description = "Enabler for panel of Task and actions")
-    public boolean enabled = true;
+    @Schema(description = "Enabler for panel of Task and actions", example = "true")
+    public boolean enabled = false;
 
     @Schema(
             description = "Array of runnable task configurations available in the system. Each task must have a unique"

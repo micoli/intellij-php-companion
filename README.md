@@ -573,7 +573,8 @@ openAPIConfiguration:
 
 - **enabled**
   - Enabler for panel of Task and actions
-  - **Default Value**: ``` true ```
+  - **Example**: ``` true ```
+  - **Default Value**: ``` false ```
 - **tasks[]**
   - Array of runnable task configurations available in the system. Each task must have a unique identifier to be referenced by tree or toolbar
 - **tasks[].actionId**
@@ -614,7 +615,7 @@ openAPIConfiguration:
 <!-- generateDocumentationExample("org.micoli.php.tasks.configuration.TasksConfiguration","tasksConfiguration") -->
 ```yaml
 tasksConfiguration:
-  enabled: true
+  enabled: false
   tasks:
   - type: builtin
     id: null
