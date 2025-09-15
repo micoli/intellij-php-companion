@@ -80,7 +80,7 @@ public class ConfigurationJsonSchemaGenerator {
                 }
             }
 
-            propertiesNode.fields().forEachRemaining(entry -> {
+            propertiesNode.properties().forEach(entry -> {
                 if (entry.getValue().isObject()) {
                     modifyPropertiesWithEnumValues((ObjectNode) entry.getValue());
                 }
