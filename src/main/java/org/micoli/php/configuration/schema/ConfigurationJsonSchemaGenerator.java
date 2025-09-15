@@ -73,12 +73,9 @@ public class ConfigurationJsonSchemaGenerator {
                             refNode.put("$ref", String.format("#/%s/%s", DEFINITIONS_PATH, generator.getRefId()));
                             propertiesNode.set(fieldName, refNode);
                         }
-                        case AS_VALUES -> {
-                            propertiesNode.set(
-                                    fieldName,
-                                    getEnumNodeValues(
-                                            propertiesNode.objectNode(), refValues.get(generator.getRefId())));
-                        }
+                        case AS_VALUES -> propertiesNode.set(
+                                fieldName,
+                                getEnumNodeValues(propertiesNode.objectNode(), refValues.get(generator.getRefId())));
                     }
                 }
             }

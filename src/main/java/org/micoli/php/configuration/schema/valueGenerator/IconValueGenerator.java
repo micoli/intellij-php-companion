@@ -1,13 +1,16 @@
 package org.micoli.php.configuration.schema.valueGenerator;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.util.DummyIcon;
-import com.intellij.ui.icons.CachedImageIcon;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import javax.swing.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import org.jetbrains.annotations.NotNull;
 
 public class IconValueGenerator implements PropertyValueGenerator {
     List<String> fieldNames = List.of("icon", "activeIcon", "inactiveIcon", "unknownIcon");
@@ -29,64 +32,57 @@ public class IconValueGenerator implements PropertyValueGenerator {
 
     @Override
     public List<String> getValues() {
-        List<String> iconNames = new ArrayList<>();
-
-        iconNames.addAll(getIconsFromClass(AllIcons.Actions.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Breakpoints.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Chooser.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.CodeWithMe.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.CodeWithMe.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Debugger.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.FileTypes.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.FileTypes.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.General.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Graph.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Gutter.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Ide.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Json.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Language.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Linux.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Mac.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Nodes.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Plugins.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Profiler.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Run.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Scope.class));
-        iconNames.addAll(getIconsFromClass(AllIcons.Status.class));
-
-        return iconNames.stream().filter(Objects::nonNull).distinct().sorted().toList();
+        return findAllExpUISVGResources();
     }
 
-    private List<String> getIconsFromClass(Class<?> clazz) {
-        List<String> result = new ArrayList<>();
+    public List<String> findAllExpUISVGResources() {
+        List<String> resources = new ArrayList<>();
+        final String EXP_UI_PATH = "expui";
         try {
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field field : fields) {
-                if (!Icon.class.isAssignableFrom(field.getType())) {
-                    continue;
+            URL url = getClass().getClassLoader().getResource(EXP_UI_PATH);
+            if (url == null) {
+                return resources;
+            }
+
+            String protocol = url.getProtocol();
+            switch (protocol) {
+                case "file" -> {
+                    Path basePath = Paths.get(url.toURI());
+                    Files.walkFileTree(basePath, new SimpleFileVisitor<>() {
+                        @Override
+                        public @NotNull FileVisitResult visitFile(
+                                @NotNull Path file, @NotNull BasicFileAttributes attrs) {
+                            String filePath = file.toString();
+                            if (!attrs.isDirectory()
+                                    && filePath.startsWith(EXP_UI_PATH + "/")
+                                    && filePath.endsWith(".svg")) {
+                                resources.add(filePath);
+                            }
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
                 }
-                field.setAccessible(true);
-                result.add(getIconPath(field));
+                case "jar" -> {
+                    String jarPath = url.getPath()
+                            .substring(EXP_UI_PATH.length(), url.getPath().indexOf("!"));
+                    try (JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8))) {
+                        Enumeration<JarEntry> entries = jar.entries();
+                        while (entries.hasMoreElements()) {
+                            JarEntry entry = entries.nextElement();
+                            String filePath = entry.getName();
+                            if (!entry.isDirectory()
+                                    && filePath.startsWith(EXP_UI_PATH + "/")
+                                    && filePath.endsWith(".svg")) {
+                                resources.add(filePath);
+                            }
+                        }
+                    } catch (IOException ignored) {
+                    }
+                }
             }
-        } catch (Exception ignored) {
+        } catch (URISyntaxException | IOException ignored) {
         }
-        return result;
-    }
 
-    @SuppressWarnings("unchecked")
-    private String getIconPath(Field field) {
-        try {
-            Icon icon = (Icon) field.get(null);
-            if (icon instanceof CachedImageIcon cachedImageIcon) {
-                return cachedImageIcon.getExpUIPath();
-            }
-            if (icon instanceof DummyIcon dummyIcon) {
-                return dummyIcon.getExpUIPath();
-            }
-            System.out.println("Unknown icon type: " + icon.getClass().getName());
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
+        return resources.stream().filter(Objects::nonNull).distinct().sorted().toList();
     }
 }
