@@ -1,6 +1,11 @@
 # Changelog
 
 
+## [0.8.1] - 2025-09-15
+- chore(taskPanel): Disable taskPanel by default during beta stage
+- refactor(FileObserver): Extract replaceInFileContent method
+- chore(schema): Improve json icons retrieval
+
 ## [0.8.0] - 2025-09-15
 - feat(jsonSchema): Use a denormalized version of php-companion-schema.json
 - feat(jsonSchema): Improve schema generator by addition of icon and actionId values
