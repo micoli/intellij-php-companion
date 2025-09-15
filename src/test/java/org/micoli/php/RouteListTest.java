@@ -37,14 +37,14 @@ public class RouteListTest extends BasePlatformTestCase {
     private RouteService loadPluginConfiguration(String path) {
         RoutesConfiguration routeListConfiguration = null;
         try {
-            routeListConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+            routeListConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L, true))
                     .configuration
                     .routesConfiguration;
         } catch (ConfigurationException | NoConfigurationFileException e) {
             throw new RuntimeException(e);
         }
         RouteService instance = RouteService.getInstance(getProject());
-        instance.loadConfiguration(myFixture.getProject(), routeListConfiguration);
+        instance.loadConfiguration(routeListConfiguration);
 
         return instance;
     }

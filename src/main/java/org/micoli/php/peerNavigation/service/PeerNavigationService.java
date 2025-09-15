@@ -12,24 +12,26 @@ import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 
 public class PeerNavigationService {
     private record PeerSourceTarget(Pattern source, String target) {}
 
-    private Project project;
     private final List<PeerSourceTarget> peers = new ArrayList<>();
+    private final Project project;
+
+    public PeerNavigationService(Project project) {
+        this.project = project;
+    }
 
     public static PeerNavigationService getInstance(Project project) {
         return project.getService(PeerNavigationService.class);
     }
 
-    public void loadConfiguration(Project project, PeerNavigationConfiguration _peerNavigation) {
+    public void loadConfiguration(PeerNavigationConfiguration _peerNavigation) {
         if (_peerNavigation == null) {
             return;
         }
-
-        this.project = project;
         String patternNamedGroup = "\\(\\?<(?<namedGroup>.*?)>.*?\\)";
         String namedGroupReplacement = "\\${${namedGroup}}";
 

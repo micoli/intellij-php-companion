@@ -54,14 +54,15 @@ public class AttributeNavigationTest extends BasePlatformTestCase {
     private AttributeNavigationService loadPluginConfiguration(String path) {
         AttributeNavigationConfiguration attributeNavigationConfiguration = null;
         try {
-            attributeNavigationConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+            attributeNavigationConfiguration = Objects.requireNonNull(
+                            ConfigurationFactory.loadConfiguration(path, 0L, true))
                     .configuration
                     .attributeNavigation;
         } catch (ConfigurationException | NoConfigurationFileException e) {
             throw new RuntimeException(e);
         }
         AttributeNavigationService instance = AttributeNavigationService.getInstance(getProject());
-        instance.loadConfiguration(myFixture.getProject(), attributeNavigationConfiguration);
+        instance.loadConfiguration(attributeNavigationConfiguration);
 
         return instance;
     }

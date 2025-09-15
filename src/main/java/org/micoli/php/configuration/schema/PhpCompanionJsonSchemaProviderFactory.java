@@ -7,22 +7,22 @@ import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider;
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory;
 import com.jetbrains.jsonSchema.extension.SchemaType;
 import com.jetbrains.jsonSchema.impl.JsonSchemaVersion;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.micoli.php.configuration.ConfigurationFactory;
-import org.micoli.php.configuration.models.Configuration;
 
 public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProviderFactory {
-    @NotNull
-    @Override
+    @NotNull @Override
     public List<JsonSchemaFileProvider> getProviders(@NotNull Project project) {
         return List.of(new PhpCompanionJsonSchemaProvider());
     }
 
     public static class PhpCompanionJsonSchemaProvider implements JsonSchemaFileProvider {
-        @NotNull
-        @Override
+        @NotNull @Override
         public String getName() {
             return "PHP Companion Configuration";
         }
@@ -32,8 +32,7 @@ public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProvider
             return ConfigurationFactory.acceptableConfigurationFiles.contains(file.getName());
         }
 
-        @NotNull
-        @Override
+        @NotNull @Override
         public SchemaType getSchemaType() {
             return SchemaType.embeddedSchema;
         }
@@ -43,11 +42,18 @@ public class PhpCompanionJsonSchemaProviderFactory implements JsonSchemaProvider
             return JsonSchemaVersion.SCHEMA_4;
         }
 
-        @Nullable
-        @Override
+        @Nullable @Override
         public VirtualFile getSchemaFile() {
-            return new LightVirtualFile(
-                    "php-companion-schema.json", ConfigurationJsonSchemaGenerator.generateSchema(Configuration.class));
+            String filename = "php-companion-schema.json";
+            try (InputStream inputStream = getClass().getResourceAsStream("/schemas/php-companion-schema.json")) {
+                if (inputStream == null) {
+                    return null;
+                }
+
+                return new LightVirtualFile(filename, new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                return new LightVirtualFile(filename, "{}");
+            }
         }
     }
 }

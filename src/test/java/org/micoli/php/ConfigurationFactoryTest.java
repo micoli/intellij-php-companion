@@ -52,7 +52,8 @@ public class ConfigurationFactoryTest {
     public void testItReportMisspelledConfiguration1() {
         testErroneousConfiguration(
                 "misspelledConfiguration1",
-                "Unrecognized Property: attributeNavigation.rules.[0].propertyNameaa (line: 1, column: 117), peerNavigation.associates.[0].classAZ (line: 1, column: 170)");
+                "Unrecognized Property: attributeNavigation.rules.[0].propertyNameaa (line: 1, column: 117),"
+                        + " peerNavigation.associates.[0].classAZ (line: 1, column: 170)");
     }
 
     @Test
@@ -127,11 +128,10 @@ public class ConfigurationFactoryTest {
 
     private ConfigurationFactory.@Nullable LoadedConfiguration getLoadedConfiguration(File file)
             throws ConfigurationException, NoConfigurationFileException {
-        return ConfigurationFactory.loadConfiguration(file.getAbsolutePath(), 0L);
+        return ConfigurationFactory.loadConfiguration(file.getAbsolutePath(), 0L, true);
     }
 
-    @NotNull
-    private File getConfigurationPath(String path) {
+    @NotNull private File getConfigurationPath(String path) {
         return new File(Objects.requireNonNull(getClass().getClassLoader().getResource("configuration/" + path))
                 .getFile());
     }

@@ -19,13 +19,17 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration;
 
 public class MessengerService {
     private SymfonyMessengerConfiguration configuration = new SymfonyMessengerConfiguration();
     private Pattern compiledMessageClassNamePatterns = null;
-    private Project project;
+    private final Project project;
+
+    public MessengerService(Project project) {
+        this.project = project;
+    }
 
     public static MessengerService getInstance(Project project) {
         return project.getService(MessengerService.class);
@@ -299,9 +303,8 @@ public class MessengerService {
         return configuration;
     }
 
-    public void loadConfiguration(Project project, SymfonyMessengerConfiguration symfonyMessenger) {
+    public void loadConfiguration(SymfonyMessengerConfiguration symfonyMessenger) {
         this.configuration = symfonyMessenger;
-        this.project = project;
         this.compiledMessageClassNamePatterns = symfonyMessenger.messageClassNamePatterns != null
                 ? Pattern.compile(configuration.messageClassNamePatterns)
                 : null;

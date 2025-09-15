@@ -20,8 +20,7 @@ public class MessengerGotoDeclarationHandlerTest extends BasePlatformTestCase {
         myFixture.copyDirectoryToProject("src", "/src");
         MessengerService.getInstance(getProject())
                 .loadConfiguration(
-                        myFixture.getProject(),
-                        Objects.requireNonNull(ConfigurationFactory.loadConfiguration(getTestDataPath(), 0L))
+                        Objects.requireNonNull(ConfigurationFactory.loadConfiguration(getTestDataPath(), 0L, true))
                                 .configuration
                                 .symfonyMessenger);
         PsiFile[] files = myFixture.configureByFiles("src/UserInterface/Web/Api/Article/List/Controller.php");

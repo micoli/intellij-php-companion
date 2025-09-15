@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.micoli.php.service.FileListProcessor;
+import org.micoli.php.service.filesystem.FileListProcessor;
 
 public class FileListProcessorTest extends BasePlatformTestCase {
 

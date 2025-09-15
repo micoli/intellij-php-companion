@@ -10,7 +10,7 @@ import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException;
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
-import org.micoli.php.service.PhpUtil;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 
 public class PeerNavigationServiceTest extends BasePlatformTestCase {
 
@@ -57,14 +57,14 @@ public class PeerNavigationServiceTest extends BasePlatformTestCase {
     private PeerNavigationService loadPluginConfiguration(String path) {
         PeerNavigationConfiguration peerNavigationConfiguration = null;
         try {
-            peerNavigationConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L))
+            peerNavigationConfiguration = Objects.requireNonNull(ConfigurationFactory.loadConfiguration(path, 0L, true))
                     .configuration
                     .peerNavigation;
         } catch (ConfigurationException | NoConfigurationFileException e) {
             throw new RuntimeException(e);
         }
         PeerNavigationService instance = PeerNavigationService.getInstance(getProject());
-        instance.loadConfiguration(getProject(), peerNavigationConfiguration);
+        instance.loadConfiguration(peerNavigationConfiguration);
 
         return instance;
     }

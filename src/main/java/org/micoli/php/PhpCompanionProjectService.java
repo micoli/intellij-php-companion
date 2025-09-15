@@ -5,10 +5,12 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.messages.MessageBus;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.nio.file.FileSystems;
+import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
 import org.micoli.php.configuration.ConfigurationException;
@@ -19,26 +21,33 @@ import org.micoli.php.events.IndexingEvents;
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService;
 import org.micoli.php.openAPI.OpenAPIService;
 import org.micoli.php.peerNavigation.service.PeerNavigationService;
+import org.micoli.php.service.filesystem.FileListener;
 import org.micoli.php.symfony.list.CommandService;
 import org.micoli.php.symfony.list.DoctrineEntityService;
 import org.micoli.php.symfony.list.RouteService;
 import org.micoli.php.symfony.messenger.service.MessengerService;
+import org.micoli.php.tasks.TasksService;
 import org.micoli.php.ui.Notification;
 
 @Service(Service.Level.PROJECT)
-public final class PhpCompanionProjectService implements Disposable, DumbService.DumbModeListener {
+public final class PhpCompanionProjectService
+        implements Disposable, DumbService.DumbModeListener, FileListener.VfsHandler<String> {
 
     private final Project project;
     private final @NotNull MessageBus messageBus;
     private Long configurationTimestamp = 0L;
-    private final ScheduledFuture<?> scheduledTask;
 
     public PhpCompanionProjectService(@NotNull Project project) {
         this.project = project;
-        scheduledTask = AppExecutorUtil.getAppScheduledExecutorService()
-                .scheduleWithFixedDelay(this::loadConfiguration, 0, 2000, TimeUnit.MILLISECONDS);
+        FileListener<String> fileListener = new FileListener<>(this);
+        fileListener.setPatterns(Map.of(
+                "configFile",
+                List.of(FileSystems.getDefault()
+                        .getPathMatcher(ConfigurationFactory.acceptableConfigurationFilesGlob))));
         this.messageBus = project.getMessageBus();
-        project.getMessageBus().connect().subscribe(DumbService.DUMB_MODE, this);
+        this.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, fileListener.getVfsListener());
+        this.messageBus.connect().subscribe(DumbService.DUMB_MODE, this);
+        loadConfiguration(true);
     }
 
     public static PhpCompanionProjectService getInstance(@NotNull Project project) {
@@ -55,31 +64,30 @@ public final class PhpCompanionProjectService implements Disposable, DumbService
         messageBus.syncPublisher(IndexingEvents.INDEXING_EVENTS).indexingStatusChanged(true);
     }
 
-    private void loadConfiguration() {
+    public void loadConfiguration(boolean force) {
         try {
             ConfigurationFactory.LoadedConfiguration loadedConfiguration =
-                    ConfigurationFactory.loadConfiguration(project.getBasePath(), this.configurationTimestamp);
+                    ConfigurationFactory.loadConfiguration(project.getBasePath(), this.configurationTimestamp, force);
             if (loadedConfiguration == null) {
                 return;
             }
             this.configurationTimestamp = loadedConfiguration.timestamp;
 
-            MessengerService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.symfonyMessenger);
+            MessengerService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.symfonyMessenger);
             PeerNavigationService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.peerNavigation);
+                    .loadConfiguration(loadedConfiguration.configuration.peerNavigation);
             AttributeNavigationService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.attributeNavigation);
+                    .loadConfiguration(loadedConfiguration.configuration.attributeNavigation);
             ExportSourceToMarkdownService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.exportSourceToMarkdown);
-            RouteService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.routesConfiguration);
+                    .loadConfiguration(loadedConfiguration.configuration.exportSourceToMarkdown);
+            RouteService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.routesConfiguration);
             CommandService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.commandsConfiguration);
+                    .loadConfiguration(loadedConfiguration.configuration.commandsConfiguration);
             DoctrineEntityService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.doctrineEntitiesConfiguration);
+                    .loadConfiguration(loadedConfiguration.configuration.doctrineEntitiesConfiguration);
             OpenAPIService.getInstance(project)
-                    .loadConfiguration(project, loadedConfiguration.configuration.openAPIConfiguration);
+                    .loadConfiguration(loadedConfiguration.configuration.openAPIConfiguration);
+            TasksService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.tasksConfiguration);
 
             messageBus
                     .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)
@@ -92,7 +100,7 @@ public final class PhpCompanionProjectService implements Disposable, DumbService
                         "Unknown properties: " + String.join(",", loadedConfiguration.ignoredProperties));
                 return;
             }
-            Notification.message("PHP Companion Configuration loaded");
+            Notification.messageWithTimeout("PHP Companion Configuration loaded", 900);
 
         } catch (NoConfigurationFileException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {
@@ -108,9 +116,10 @@ public final class PhpCompanionProjectService implements Disposable, DumbService
     }
 
     @Override
-    public void dispose() {
-        if (scheduledTask != null && !scheduledTask.isCancelled()) {
-            scheduledTask.cancel(true);
-        }
+    public void dispose() {}
+
+    @Override
+    public void vfsHandle(String id, VirtualFile file) {
+        loadConfiguration(false);
     }
 }

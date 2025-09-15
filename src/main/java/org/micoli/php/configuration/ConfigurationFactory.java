@@ -34,10 +34,12 @@ public class ConfigurationFactory {
         }
     }
 
+    public static String acceptableConfigurationFilesGlob = "glob:**/.php-companion{,.local}.{json,yaml}";
     public static final List<String> acceptableConfigurationFiles = List.of(
             ".php-companion.json", ".php-companion.yaml", ".php-companion.local.json", ".php-companion.local.yaml");
 
-    public static LoadedConfiguration loadConfiguration(String projectPath, Long previousLatestFileTimestampUpdate)
+    public static LoadedConfiguration loadConfiguration(
+            String projectPath, Long previousLatestFileTimestampUpdate, boolean force)
             throws ConfigurationException, NoConfigurationFileException {
         List<String> files = acceptableConfigurationFiles.stream()
                 .filter((configurationFile) -> new File(projectPath, configurationFile).exists())
@@ -47,7 +49,7 @@ public class ConfigurationFactory {
                     "No .php-companion(.local).(json|yaml) configuration file(s) found.", 0L);
         }
         long latestFileUpdateTimestamp = getLatestFileTimestampUpdate(projectPath, files);
-        if (previousLatestFileTimestampUpdate == latestFileUpdateTimestamp) {
+        if (previousLatestFileTimestampUpdate == latestFileUpdateTimestamp && !force) {
             return null;
         }
         ObjectMapper objectMapper = new ObjectMapper();

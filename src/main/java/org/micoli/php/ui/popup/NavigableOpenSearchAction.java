@@ -61,8 +61,7 @@ public class NavigableOpenSearchAction implements NavigableListPopupItem {
         return false;
     }
 
-    @NotNull
-    public String getText() {
+    @NotNull public String getText() {
         return String.format(
                 """
                 <html>

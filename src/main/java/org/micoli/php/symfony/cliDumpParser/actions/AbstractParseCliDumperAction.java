@@ -8,8 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractParseCliDumperAction extends AnAction {
 
     @Override
-    @NotNull
-    public ActionUpdateThread getActionUpdateThread() {
+    @NotNull public ActionUpdateThread getActionUpdateThread() {
         return ActionUpdateThread.BGT;
     }
 

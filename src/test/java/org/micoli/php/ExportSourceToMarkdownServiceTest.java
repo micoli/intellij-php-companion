@@ -21,8 +21,7 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
         };
         ExportSourceToMarkdownService exportSourceToMarkdownService =
                 ExportSourceToMarkdownService.getInstance(getProject());
-        exportSourceToMarkdownService.loadConfiguration(
-                myFixture.getProject(), new ExportSourceToMarkdownConfiguration());
+        exportSourceToMarkdownService.loadConfiguration(new ExportSourceToMarkdownConfiguration());
         ExportedSource exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect);
         assertEquals(
                 """
@@ -72,7 +71,7 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
         ExportSourceToMarkdownService exportSourceToMarkdownService =
                 ExportSourceToMarkdownService.getInstance(getProject());
 
-        exportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
+        exportSourceToMarkdownService.loadConfiguration(configuration);
         ExportedSource exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect);
         assertEquals(
                 """
@@ -106,7 +105,7 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
 
         ExportSourceToMarkdownService exportSourceToMarkdownService =
                 ExportSourceToMarkdownService.getInstance(getProject());
-        exportSourceToMarkdownService.loadConfiguration(myFixture.getProject(), configuration);
+        exportSourceToMarkdownService.loadConfiguration(configuration);
         ExportedSource exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect);
         assertEquals(
                 """
@@ -125,8 +124,7 @@ public class ExportSourceToMarkdownServiceTest extends BasePlatformTestCase {
         ExportSourceToMarkdownService exportSourceToMarkdownService =
                 ExportSourceToMarkdownService.getInstance(getProject());
 
-        exportSourceToMarkdownService.loadConfiguration(
-                myFixture.getProject(), new ExportSourceToMarkdownConfiguration());
+        exportSourceToMarkdownService.loadConfiguration(new ExportSourceToMarkdownConfiguration());
         ExportedSource exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect);
         assertEquals(18, exportedSource.numberOfTokens());
     }

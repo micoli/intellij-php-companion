@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SearchTextField;
+import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.table.JBTable;
@@ -23,8 +24,8 @@ import javax.swing.table.TableRowSorter;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.ui.PhpCompanionIcon;
 
-public abstract class AbstractListPanel<T> extends JPanel {
-    protected static final Logger LOGGER = Logger.getInstance(AbstractListPanel.class);
+public abstract class AbstractListPanel<T> extends JBPanel {
+    protected static final Logger LOGGER = Logger.getInstance(AbstractListPanel.class.getSimpleName());
     protected final DefaultTableModel model;
     protected TableRowSorter<DefaultTableModel> sorter;
     protected JBTable table;

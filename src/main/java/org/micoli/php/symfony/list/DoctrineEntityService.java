@@ -8,14 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.micoli.php.service.PhpUtil;
 import org.micoli.php.service.StringCaseConverter;
 import org.micoli.php.service.attributes.AttributeMapping;
+import org.micoli.php.service.intellij.psi.PhpUtil;
 import org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration;
 
 public class DoctrineEntityService
         extends AbstractAttributeService<DoctrineEntityElementDTO, DoctrineEntitiesConfiguration> {
-    public DoctrineEntityService() {
+    public DoctrineEntityService(Project project) {
+        super(project);
         mapping = new AttributeMapping(new LinkedHashMap<>() {
             {
                 put("name", DoctrineEntityService::getStringableValue);

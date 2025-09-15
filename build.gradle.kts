@@ -12,6 +12,8 @@ plugins {
     id("org.jetbrains.qodana") version "2024.3.4"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("com.diffplug.spotless") version "6.19.0"
+    id("com.palantir.java-format-spotless") version "2.47.0"
+    id("org.owasp.dependencycheck") version "12.1.3"
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -33,12 +35,18 @@ repositories {
     }
 }
 
+dependencyCheck {
+    suppressionFile = "suppression.xml"
+}
+
 dependencies {
     implementation("org.thymeleaf:thymeleaf:3.1.2.RELEASE")
     implementation("org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r")
     implementation("com.knuddels:jtokkit:1.0.0")
     implementation("com.fasterxml.jackson.module:jackson-module-jsonSchema:2.17.2")
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.32")
+    implementation("com.github.victools:jsonschema-generator:[4.21.0,5.0.0)")
+    implementation("com.github.victools:jsonschema-module-jackson:[4.21.0,5.0.0)")
+    implementation("io.swagger.parser.v3:swagger-parser-v3:2.1.33")
     implementation("com.github.Steppschuh:Java-Markdown-Generator:master-SNAPSHOT")
 
     intellijPlatform {
@@ -165,14 +173,18 @@ intellijPlatformTesting {
         }
     }
 }
+//allprojects {
+//    gradle.projectsEvaluated {
+//        System.setProperty("palantir.java.format.line-length", "850")
+//    }
+//}
 
 spotless {
     isEnforceCheck = false
 
     java {
-        palantirJavaFormat("2.39.0").style("PALANTIR")
-
         target("src/**/*.java")
+        formatAnnotations()
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
