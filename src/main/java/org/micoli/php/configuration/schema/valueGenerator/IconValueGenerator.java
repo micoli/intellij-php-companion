@@ -16,26 +16,12 @@ public class IconValueGenerator implements PropertyValueGenerator {
     List<String> fieldNames = List.of("icon", "activeIcon", "inactiveIcon", "unknownIcon");
 
     @Override
-    public ReferenceType getType() {
-        return ReferenceType.AS_REF;
-    }
-
-    @Override
-    public String getRefId() {
-        return "icons";
-    }
-
-    @Override
     public List<String> getFieldNames() {
         return fieldNames;
     }
 
     @Override
     public List<String> getValues() {
-        return findAllExpUISVGResources();
-    }
-
-    public List<String> findAllExpUISVGResources() {
         List<String> resources = new ArrayList<>();
         final String EXP_UI_PATH = "expui";
         try {

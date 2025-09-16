@@ -23,6 +23,8 @@
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
+        <completion.contributor language="JSON" implementationClass="org.micoli.php.configuration.SchemaCompletionContributor"/>
+        <completion.contributor language="yaml" implementationClass="org.micoli.php.configuration.SchemaCompletionContributor"/>
         <notificationGroup
             id="PHP Companion"
             displayType="BALLOON"
