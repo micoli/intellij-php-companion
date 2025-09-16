@@ -50,3 +50,11 @@ routesConfiguration:
 doctrineEntitiesConfiguration:
   namespaces:
     - App\Core\Models
+
+tasksConfiguration:
+  enabled: true
+  tasks:
+    - id: testBuiltInCut
+      type: builtin
+      actionId: $Cut
+      label: cut

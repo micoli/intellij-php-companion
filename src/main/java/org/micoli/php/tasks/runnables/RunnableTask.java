@@ -2,14 +2,13 @@ package org.micoli.php.tasks.runnables;
 
 import com.intellij.ide.script.IdeScriptEngine;
 import com.intellij.ide.script.IdeScriptEngineManager;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.terminal.ui.TerminalWidget;
@@ -25,6 +24,7 @@ import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleBuil
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleScript;
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleShell;
 import org.micoli.php.ui.Notification;
+import org.micoli.php.ui.PhpCompanionIcon;
 
 public class RunnableTask implements Runnable {
 
@@ -48,6 +48,24 @@ public class RunnableTask implements Runnable {
             case PostToggleScript script -> runScript(script.extension, script.source);
             default -> throw new IllegalStateException("Unexpected value: " + configuration);
         }
+    }
+
+    public AnAction getAnAction() {
+        AnAction action = new AnAction() {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+                run();
+            }
+        };
+        Presentation presentation = action.getTemplatePresentation();
+        presentation.setText(this.configuration.id, false);
+        if (this.configuration.getIcon() != null
+                && !this.configuration.getIcon().isBlank()) {
+            presentation.setIcon(IconLoader.getIcon(this.configuration.getIcon(), PhpCompanionIcon.class));
+        }
+        presentation.setDescription(
+                "Run task: " + (this.configuration.label != null ? this.configuration.label : this.configuration.id));
+        return action;
     }
 
     private void runScript(String extension, String source) {

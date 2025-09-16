@@ -1,5 +1,6 @@
 package org.micoli.php.tasks;
 
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -56,6 +57,7 @@ public class TasksService implements FileListener.VfsHandler<TaskIdentifier> {
         pathMatcherMap.putAll(getWatchedFilesFromObservedFiles(tasksConfiguration));
         fileListener.setPatterns(pathMatcherMap);
         refreshObservedFiles(false);
+        registerTaskActions();
     }
 
     public void runTask(String taskId) {
@@ -170,6 +172,22 @@ public class TasksService implements FileListener.VfsHandler<TaskIdentifier> {
 
     public void toggleWatcherEnabled() {
         watchersAreEnabled = !watchersAreEnabled;
+    }
+
+    public void registerTaskActions() {
+        ActionManager actionManager = ActionManager.getInstance();
+
+        actionManager.getActionIdList("phpcompanion.tasks.").forEach(a -> {
+            actionManager.unregisterAction(a);
+        });
+
+        for (Map.Entry<String, RunnableTask> entry : runnableActions.entrySet()) {
+            String actionId = "phpcompanion.tasks." + entry.getKey();
+            if (actionManager.getAction(actionId) != null) {
+                continue;
+            }
+            actionManager.registerAction(actionId, entry.getValue().getAnAction());
+        }
     }
 }
 

@@ -1,8 +1,11 @@
 package org.micoli.php;
 
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.builders.*;
 import org.micoli.php.service.DebouncedRunnable;
@@ -192,5 +195,24 @@ public class TasksServiceTest extends BasePlatformTestCase {
                 MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log")
                         .size());
         assertTrue(runnableLogs.stream().anyMatch(s -> s.equals("task1:RunnableTask")));
+    }
+
+    public void testIfActionAreWellRegistered() {
+        TasksConfiguration tasksConfiguration = TasksConfigurationBuilder.create()
+                .withAddedRunnableTaskConfiguration(ShellBuilder.create()
+                        .withId("shell1")
+                        .withCommand("echo 'Hello World'")
+                        .withCwd(".")
+                        .withIcon("test.svg")
+                        .build())
+                .build();
+        tasksService.loadConfiguration(tasksConfiguration);
+        tasksService.loadConfiguration(tasksConfiguration);
+        ActionManager actionManager = ActionManager.getInstance();
+        List<String> registeredActions = actionManager.getActionIdList("phpcompanion.tasks.");
+        assertEquals(1, registeredActions.size());
+        assertEquals("phpcompanion.tasks.shell1", registeredActions.get(0));
+        AnAction action = actionManager.getAction("phpcompanion.tasks.shell1");
+        assertEquals("shell1", action.getTemplateText());
     }
 }
