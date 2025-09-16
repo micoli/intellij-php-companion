@@ -16,6 +16,7 @@ import com.intellij.terminal.ui.TerminalWidget;
 import javax.swing.*;
 import org.jetbrains.plugins.terminal.TerminalToolWindowFactory;
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager;
+import org.micoli.php.scripting.Core;
 import org.micoli.php.scripting.FileSystem;
 import org.micoli.php.scripting.UI;
 import org.micoli.php.tasks.configuration.runnableTask.*;
@@ -38,10 +39,10 @@ public class RunnableTask implements Runnable {
     @Override
     public void run() {
         switch (configuration) {
-            case Builtin builtin -> runBuiltinAction(builtin.actionId);
+            case Builtin builtin -> runBuiltinAction(project, builtin.actionId, true);
             case Shell action -> runShellAction(action.label, action.command, action.cwd);
             case Script script -> runScript(script.extension, script.source);
-            case PostToggleBuiltin builtin -> runBuiltinAction(builtin.actionId);
+            case PostToggleBuiltin builtin -> runBuiltinAction(project, builtin.actionId, true);
             case PostToggleShell action -> runShellAction(action.label, action.command, action.cwd);
             case PostToggleScript script -> runScript(script.extension, script.source);
             default -> throw new IllegalStateException("Unexpected value: " + configuration);
@@ -57,6 +58,7 @@ public class RunnableTask implements Runnable {
         try {
             engine.setBinding("ui", new UI());
             engine.setBinding("fs", new FileSystem(project));
+            engine.setBinding("core", new Core(project));
             engine.eval(source);
         } catch (Exception e) {
             Notification.error(e.getMessage());
@@ -82,7 +84,7 @@ public class RunnableTask implements Runnable {
         });
     }
 
-    private void runBuiltinAction(String actionId) {
+    public static void runBuiltinAction(Project project, String actionId, boolean activateEditor) {
         ActionManager actionManager = ActionManager.getInstance();
         AnAction action = actionManager.getAction(actionId);
 
@@ -92,12 +94,16 @@ public class RunnableTask implements Runnable {
         }
 
         try {
-            Editor activeEditor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-            if (activeEditor == null) {
-                return;
+            if (activateEditor) {
+                Editor activeEditor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+                if (activeEditor == null) {
+                    return;
+                }
+                JComponent component = activeEditor.getComponent();
+                ActionManager.getInstance().tryToExecute(action, null, component, ActionPlaces.UNKNOWN, true);
+            } else {
+                ActionManager.getInstance().tryToExecute(action, null, null, ActionPlaces.UNKNOWN, true);
             }
-            JComponent component = activeEditor.getComponent();
-            ActionManager.getInstance().tryToExecute(action, null, component, ActionPlaces.UNKNOWN, true);
         } catch (Exception e) {
             Notification.error(String.format("Error while executing '%s' : %s", actionId, e.getMessage()));
         }
