@@ -41,7 +41,7 @@ public final class TasksConfiguration implements DisactivableConfiguration {
     @JsonIgnore()
     public Map<String, RunnableTaskConfiguration> getTasksMap() {
         return Stream.of(tasks)
-                .filter((RunnableTaskConfiguration task) -> !task.id.isEmpty())
+                .filter((RunnableTaskConfiguration task) -> task.id != null && !task.id.isEmpty())
                 .collect(Collectors.toMap(task -> task.id, task -> task, (existing, replacement) -> replacement));
     }
 

@@ -94,17 +94,21 @@ public class ActionTreeNodeConfigurator {
                     tree,
                     shell.id,
                     IconLoader.getIcon(shell.icon, PhpCompanionIcon.class),
-                    Objects.requireNonNullElse(task.label, shell.label),
+                    Objects.requireNonNullElse(task.label, Objects.requireNonNullElse(shell.label, shell.id)),
                     shell);
             case Script script -> new DynamicTreeNode(
                     project,
                     tree,
                     script.id,
                     IconLoader.getIcon(script.icon, PhpCompanionIcon.class),
-                    Objects.requireNonNullElse(task.label, script.label),
+                    Objects.requireNonNullElse(task.label, Objects.requireNonNullElse(script.label, script.id)),
                     script);
             case ObservedFile observedFile -> new FileObserverNode(
-                    project, tree, Objects.requireNonNullElse(task.label, observedFile.label), observedFile);
+                    project,
+                    tree,
+                    Objects.requireNonNullElse(
+                            task.label, Objects.requireNonNullElse(observedFile.label, observedFile.id)),
+                    observedFile);
             default -> throw new IllegalStateException("Unexpected value: " + runnable);
         };
     }

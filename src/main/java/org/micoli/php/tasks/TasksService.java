@@ -111,7 +111,7 @@ public class TasksService implements FileListener.VfsHandler<TaskIdentifier> {
             return;
         }
         runnableActions = Stream.of(tasksConfiguration.tasks)
-                .filter((RunnableTaskConfiguration task) -> !task.id.isEmpty())
+                .filter((RunnableTaskConfiguration task) -> task.id != null && !task.id.isEmpty())
                 .collect(Collectors.toMap(
                         task -> task.id,
                         task -> switch (task) {
