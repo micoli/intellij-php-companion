@@ -19,7 +19,7 @@ public class JavaDocumentationGenerator {
     public static class ClassInfo {
         private String name;
         private String description;
-        private List<MethodInfo> methods = new ArrayList<>();
+        private final List<MethodInfo> methods = new ArrayList<>();
 
         public String getName() {
             return name;
@@ -46,7 +46,7 @@ public class JavaDocumentationGenerator {
         private String name;
         private String signature;
         private String description;
-        private List<ParameterInfo> parameters = new ArrayList<>();
+        private final List<ParameterInfo> parameters = new ArrayList<>();
         private String returnDescription;
 
         public String getName() {
