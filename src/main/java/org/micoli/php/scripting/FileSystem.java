@@ -14,6 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import org.micoli.php.service.filesystem.PathUtil;
 import org.micoli.php.ui.Notification;
 
+/**
+ * known as `fs` in scripting engine
+ */
 public final class FileSystem {
     private static final Logger LOG = Logger.getInstance(FileSystem.class.getSimpleName());
     private final Project project;
@@ -24,10 +27,22 @@ public final class FileSystem {
         this.localFileSystem = LocalFileSystem.getInstance();
     }
 
+    /**
+     * Removes a path and it's sub content.
+     * Path must be ignored by GIT.
+     *
+     * @param path the relative filepath
+     */
     public void clearPath(String path) {
         internalClearPath(path, true);
     }
 
+    /**
+     * Removes a path and it's sub content.
+     *
+     * @param path the relative filepath
+     * @param mustBeGitIgnored if false, the path will be removed even if it's not ignored by GIT.
+     */
     public void clearPath(String path, boolean mustBeGitIgnored) {
         internalClearPath(path, mustBeGitIgnored);
     }

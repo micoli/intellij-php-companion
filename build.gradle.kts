@@ -48,6 +48,7 @@ dependencies {
     implementation("com.github.victools:jsonschema-module-jackson:[4.21.0,5.0.0)")
     implementation("io.swagger.parser.v3:swagger-parser-v3:2.1.33")
     implementation("com.github.Steppschuh:Java-Markdown-Generator:master-SNAPSHOT")
+    implementation("com.github.javaparser:javaparser-core:3.25.5")
     testImplementation("org.mockito:mockito-core:3.4.0")
     testImplementation("org.mockito:mockito-inline:3.4.0")
     testImplementation("net.bytebuddy:byte-buddy-agent:1.10.13")

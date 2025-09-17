@@ -345,8 +345,6 @@ attributeNavigation:
 ```
 <!-- generateDocumentationEnd -->
 
-### CLI Dumper Configuration
-
 
 ### Export Source to Markdown Configuration
 
@@ -670,6 +668,50 @@ tasksConfiguration:
 ```
 <!-- generateDocumentationEnd -->
 
+
+### Scripting Classes
+
+<!-- generateDocumentationSource("src/main/java/org/micoli/php/scripting","%s") -->
+#### `UI`
+
+known as `ui` in scripting engine
+
+- `void alert(String message)`
+  Displays a closable popup
+   - `message`: the message to display.
+
+- `void alert(String message, int delayInMs)`
+  Displays a closable popup and automatically close it after a given delay
+   - `message`: the message to display.
+   - `delayInMs`: the delay in milliseconds before the popup is closed.
+
+#### `FileSystem`
+
+known as `fs` in scripting engine
+
+- `void clearPath(String path)`
+  Removes a path and it's sub content. Path must be ignored by GIT.
+   - `path`: the relative filepath
+
+- `void clearPath(String path, boolean mustBeGitIgnored)`
+  Removes a path and it's sub content.
+   - `path`: the relative filepath
+   - `mustBeGitIgnored`: if false, the path will be removed even if it's not ignored by GIT.
+
+#### `Core`
+
+known as `core` in scripting engine
+
+- `void runAction(String actionId)`
+  Runs a registered action.
+   - `actionId`: the ID of the action to run
+
+- `void runActionInEditor(String actionId)`
+  Activates the currently opened editor and runs a registered action.
+   - `actionId`: the ID of the action to run
+
+
+<!-- generateDocumentationEnd -->
 
 ### Configuration Tips
 

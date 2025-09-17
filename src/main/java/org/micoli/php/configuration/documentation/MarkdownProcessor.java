@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class MarkdownProcessor {
 
     private static final Pattern INCLUDE_PATTERN = Pattern.compile(
-            "(?<startTag><!--\\s*generateDocumentation(?<exportType>(Description|Example|Properties))\\(\"(?<className>[^\"]+)\",\"(?<extraArgument>[^\"]*)\"\\)\\s*-->)"
+            "(?<startTag><!--\\s*generateDocumentation(?<exportType>(Description|Example|Properties|Source))\\(\"(?<className>[^\"]+)\",\"(?<extraArgument>[^\"]*)\"\\)\\s*-->)"
                 + "(?<oldContent>.*?)(?<endTag><!--\\s*generateDocumentationEnd\\s*-->)",
             Pattern.DOTALL);
 
@@ -43,12 +43,12 @@ public class MarkdownProcessor {
     private String generateDocumentation(String className, String type, String extraArgument) {
         MarkdownSchemaGenerator markdownSchemaGenerator = new MarkdownSchemaGenerator();
         try {
-            Class<?> clazz = Class.forName(className);
-
             return switch (type) {
-                case "Example" -> markdownSchemaGenerator.generateMarkdownExample(clazz, extraArgument);
-                case "Properties" -> markdownSchemaGenerator.generateMarkdownProperties(clazz);
-                case "Description" -> markdownSchemaGenerator.generateMarkdownDescription(clazz);
+                case "Example" -> markdownSchemaGenerator.generateMarkdownExample(
+                        Class.forName(className), extraArgument);
+                case "Properties" -> markdownSchemaGenerator.generateMarkdownProperties(Class.forName(className));
+                case "Description" -> markdownSchemaGenerator.generateMarkdownDescription(Class.forName(className));
+                case "Source" -> JavaDocumentationGenerator.generateMarkdownDocumentation(className);
                 default -> throw new IllegalStateException("Unexpected value: " + type);
             };
         } catch (ClassNotFoundException e) {

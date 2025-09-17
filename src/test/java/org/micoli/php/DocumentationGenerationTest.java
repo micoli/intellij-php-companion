@@ -164,4 +164,37 @@ public class DocumentationGenerationTest extends TestCase {
         String newContent = processor.processFile(readmeMdPath);
         Assert.assertEquals(existingReadMeContent, newContent);
     }
+
+    public void testItGeneratesSourceDocumentation() {
+        MarkdownProcessor processor = new MarkdownProcessor();
+        String expected =
+                """
+        <!-- generateDocumentationSource("src/test/resources/javaDocumentation","") -->
+        #### `Example`
+
+        known as `example` in scripting engine
+
+        - `void aMethod(String aParameter)`
+          Method description
+           - `aParameter`: the description of the parameter
+
+        - `void anotherMethod(String anotherParameter, int yetAnotherParameter)`
+
+        <!-- generateDocumentationEnd -->
+        """;
+
+        String result = processor.processContent(
+                """
+        <!-- generateDocumentationSource("src/test/resources/javaDocumentation","") -->
+        xxxxx
+        <!-- generateDocumentationEnd -->
+        """);
+
+        // Then it should change
+        Assert.assertEquals(expected, result);
+
+        // Then it should not change twice
+        String result2 = processor.processContent(result);
+        Assert.assertEquals(result, result2);
+    }
 }
