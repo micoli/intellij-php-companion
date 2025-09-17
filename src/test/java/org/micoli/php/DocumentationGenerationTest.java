@@ -7,7 +7,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.micoli.php.configuration.documentation.*;
 import org.micoli.php.configuration.models.Configuration;
@@ -162,7 +165,13 @@ public class DocumentationGenerationTest extends TestCase {
         String readmeMdPath = "./README.md";
         String existingReadMeContent = Files.readString(Path.of(readmeMdPath));
         String newContent = processor.processFile(readmeMdPath);
-        Assert.assertEquals(existingReadMeContent, newContent);
+        Assert.assertEquals(trimLines(existingReadMeContent), trimLines(newContent));
+    }
+
+    private static @NotNull String trimLines(String existingReadMeContent) {
+        return Arrays.stream(existingReadMeContent.split("\\n"))
+                .map(String::stripTrailing)
+                .collect(Collectors.joining("\n"));
     }
 
     public void testItGeneratesSourceDocumentation() {

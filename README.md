@@ -385,11 +385,11 @@ exportSourceToMarkdown:
   template: |
     [# th:each="file : ${files}"]
     ## [(${file.path})]
-  
+
     ````[(${file.extension})]
     [(${file.content})]
     ````
-  
+
     [/]
   useContextualNamespaces: true
   useIgnoreFile: true
