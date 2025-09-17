@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 
 public class ScriptingCoreTest extends BasePlatformTestCase {
     public static int exposedVariable = 0;
+    AtomicReference<String> lastError = new AtomicReference<>();
+    AtomicReference<String> lastMessage = new AtomicReference<>();
 
     @Override
     protected void setUp() throws Exception {
@@ -50,25 +52,31 @@ public class ScriptingCoreTest extends BasePlatformTestCase {
     }
 
     public void testItReportsError() {
-        AtomicReference<String> lastError = new AtomicReference<>();
-        MockedStatic<Notification> mockedStatic = Mockito.mockStatic(Notification.class);
-        mockedStatic.when(() -> Notification.error(Mockito.anyString())).thenAnswer(invocation -> {
-            lastError.set(invocation.getArgument(0));
-            return null;
-        });
+        try (MockedStatic<Notification> mockedStatic = Mockito.mockStatic(Notification.class)) {
+            mockedStatic.when(() -> Notification.error(Mockito.anyString())).thenAnswer(invocation -> {
+                lastError.set(invocation.getArgument(0));
+                return null;
+            });
+            mockedStatic.when(() -> Notification.message(Mockito.anyString())).thenAnswer(invocation -> {
+                lastMessage.set(invocation.getArgument(0));
+                return null;
+            });
+            lastError.set(null);
+            lastMessage.set(null);
 
-        // Given
-        new RunnableTask(
-                        getProject(),
-                        ScriptBuilder.create()
-                                .withSource("org.micoli.php.ScriptingCoreTest.unUnknownExposedVariable++")
-                                .build())
-                .run();
+            // Given
+            new RunnableTask(
+                            getProject(),
+                            ScriptBuilder.create()
+                                    .withSource("org.micoli.php.ScriptingCoreTest.unUnknownExposedVariable++")
+                                    .build())
+                    .run();
 
-        // Then
-        assertEquals(
-                "groovy.lang.MissingPropertyException: No such property: unUnknownExposedVariable for class:"
-                        + " org.micoli.php.ScriptingCoreTest",
-                lastError.get());
+            // Then
+            assertEquals(
+                    "groovy.lang.MissingPropertyException: No such property: unUnknownExposedVariable for class:"
+                            + " org.micoli.php.ScriptingCoreTest",
+                    lastError.get());
+        }
     }
 }

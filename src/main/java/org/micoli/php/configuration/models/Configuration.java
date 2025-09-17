@@ -1,6 +1,7 @@
 package org.micoli.php.configuration.models;
 
 import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration;
+import org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration;
 import org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration;
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration;
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration;
@@ -22,4 +23,5 @@ public final class Configuration {
     public ConsoleCleanerConfiguration consoleCleaner;
     public OpenAPIConfiguration openAPIConfiguration;
     public TasksConfiguration tasksConfiguration;
+    public CodeStylesSynchronizationConfiguration codeStylesSynchronization;
 }

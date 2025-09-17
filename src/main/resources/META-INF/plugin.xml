@@ -38,6 +38,8 @@
                 implementationClass="org.micoli.php.peerNavigation.markers.PeerNavigationLineMarkerProvider"/>
 
         <projectService
+                serviceImplementation="org.micoli.php.codeStyle.CodeStylesService"/>
+        <projectService
                 serviceImplementation="org.micoli.php.symfony.messenger.service.MessengerService"/>
         <codeInsight.lineMarkerProvider
                 language="PHP"

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService;
+import org.micoli.php.codeStyle.CodeStylesService;
 import org.micoli.php.configuration.ConfigurationException;
 import org.micoli.php.configuration.ConfigurationFactory;
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException;
@@ -88,6 +89,8 @@ public final class PhpCompanionProjectService
             OpenAPIService.getInstance(project)
                     .loadConfiguration(loadedConfiguration.configuration.openAPIConfiguration);
             TasksService.getInstance(project).loadConfiguration(loadedConfiguration.configuration.tasksConfiguration);
+            CodeStylesService.getInstance(project)
+                    .loadConfiguration(loadedConfiguration.configuration.codeStylesSynchronization);
 
             messageBus
                     .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)

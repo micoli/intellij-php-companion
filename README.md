@@ -669,6 +669,42 @@ tasksConfiguration:
 <!-- generateDocumentationEnd -->
 
 
+#### `CodeStylesSynchronization`:
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration","codeStyleSynchronization") -->
+| Property                | Description                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| enabled                 | Enabler for panel of Code style synchronization                                    |
+| styles[]                |                                                                                    |
+| styles[].styleAttribute | Code style field property as in com.intellij.psi.codeStyle.CommonCodeStyleSettings |
+| styles[].value          | a boolean value true/false or an int value                                         |
+
+- **enabled**
+  - Enabler for panel of Code style synchronization
+  - **Example**: ``` true ```
+  - **Default Value**: ``` false ```
+- **styles[]**
+- **styles[].styleAttribute**
+  - Code style field property as in com.intellij.psi.codeStyle.CommonCodeStyleSettings
+  - **Example**: ``` ALIGN_MULTILINE_PARAMETERS_IN_CALLS ```
+- **styles[].value**
+  - a boolean value true/false or an int value
+  - **Example**: ``` false ```
+<!-- generateDocumentationEnd -->
+
+#### Example
+
+<!-- generateDocumentationExample("org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration","codeStyleSynchronization") -->
+```yaml
+codeStyleSynchronization:
+  enabled: false
+  styles:
+  - styleAttribute: ALIGN_MULTILINE_PARAMETERS_IN_CALLS
+    value: 'false'
+```
+<!-- generateDocumentationEnd -->
+
 ### Scripting Classes
 
 <!-- generateDocumentationSource("src/main/java/org/micoli/php/scripting","%s") -->

@@ -17,6 +17,7 @@ import org.jetbrains.yaml.YAMLLanguage;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLValue;
 import org.micoli.php.configuration.schema.valueGenerator.ActionIdValueGenerator;
+import org.micoli.php.configuration.schema.valueGenerator.CodeStyleGenerator;
 import org.micoli.php.configuration.schema.valueGenerator.IconValueGenerator;
 import org.micoli.php.configuration.schema.valueGenerator.PropertyValueGenerator;
 
@@ -91,7 +92,8 @@ public class SchemaCompletionContributor extends CompletionContributor {
 
     private static void initializeAutocompletes() {
         if (autocompleteValues.isEmpty() && acceptablePropertyName.isEmpty()) {
-            for (PropertyValueGenerator generator : List.of(new ActionIdValueGenerator(), new IconValueGenerator())) {
+            for (PropertyValueGenerator generator :
+                    List.of(new ActionIdValueGenerator(), new IconValueGenerator(), new CodeStyleGenerator())) {
                 autocompleteValues.put(generator.getClass(), generator.getValues());
                 for (String fieldName : generator.getFieldNames()) {
                     acceptablePropertyName.put(fieldName, generator.getClass());
