@@ -1,6 +1,18 @@
 # Changelog
 
 
+## [0.8.2] - 2025-09-19
+- chore(configuration): Add a scheduled refresh on configuration
+- feat(CodeStyleSynchronization): Add a service to synchronize PHP CodeStyles
+- fix(DocumentationGenetaor): Fix trailing space diffs
+- fix(style): Fix missing finals
+- docs(Scripting): Autogenerates scripting classes documentation in README.md
+- feat(taskPanel): Register tasks as AnAction to use them directly
+- chore(schemaGenerator): Replace static values in json by a proper dynamic autocomplete generator
+- fix(configuration): Fix nullable task.id and task.label
+- chore(scripting): Add a core object to run ActionId in scripting
+- chore(schema): Fix deprecated node.fields usage
+
 ## [0.8.1] - 2025-09-15
 - chore(taskPanel): Disable taskPanel by default during beta stage
 - refactor(FileObserver): Extract replaceInFileContent method
