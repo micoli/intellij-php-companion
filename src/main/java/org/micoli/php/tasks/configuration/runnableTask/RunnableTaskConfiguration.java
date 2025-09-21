@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = Builtin.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(name = "builtin", value = Builtin.class),
     @JsonSubTypes.Type(name = "shell", value = Shell.class),

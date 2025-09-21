@@ -42,10 +42,12 @@ public final class ClassPropertiesDocumentationGenerator {
 
         visitedClasses.add(object.getClass());
 
-        for (Field field : object.getClass().getFields()) {
-            if (!Modifier.isPublic(field.getModifiers())) {
-                continue;
-            }
+        Set<Field> fields = new HashSet<>();
+        fields.addAll(Arrays.asList(object.getClass().getDeclaredFields()));
+        fields.addAll(Arrays.asList(object.getClass().getFields()));
+        for (Field field : fields) {
+            field.setAccessible(true);
+
             if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }

@@ -154,34 +154,34 @@ symfonyMessenger:
 <!-- generateDocumentationProperties("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration","") -->
 | Property                   | Description                                 |
 | -------------------------- | ------------------------------------------- |
-| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service |
-| projectRootNamespace       | Root namespace for scanning classes         |
-| messageClassNamePatterns   | Regex pattern to identify message classes   |
-| messageInterfaces[]        | Interfaces that message classes implement   |
-| messageHandlerInterfaces[] | Interfaces that handler classes implement   |
+| asMessageHandlerAttribute  |                                             |
 | dispatchMethods[]          | Method names used to dispatch messages      |
 | handlerMethods[]           | Method names in handler classes             |
-| asMessageHandlerAttribute  |                                             |
+| messageClassNamePatterns   | Regex pattern to identify message classes   |
+| messageHandlerInterfaces[] | Interfaces that handler classes implement   |
+| messageInterfaces[]        | Interfaces that message classes implement   |
+| projectRootNamespace       | Root namespace for scanning classes         |
+| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service |
 
-- **useNativeGoToDeclaration**
-  - Disable ctrl+click to go to handler service
-  - **Default Value**: ``` false ```
-- **projectRootNamespace**
-  - Root namespace for scanning classes
-  - **Default Value**: ``` \App ```
-- **messageClassNamePatterns**
-  - Regex pattern to identify message classes
-  - **Default Value**: ``` .*(Message|Command|Query|Event|Input)$ ```
-- **messageInterfaces[]**
-  - Interfaces that message classes implement
-- **messageHandlerInterfaces[]**
-  - Interfaces that handler classes implement
+- **asMessageHandlerAttribute**
+  - **Default Value**: ``` Symfony\Component\Messenger\Attribute\AsMessageHandler ```
 - **dispatchMethods[]**
   - Method names used to dispatch messages
 - **handlerMethods[]**
   - Method names in handler classes
-- **asMessageHandlerAttribute**
-  - **Default Value**: ``` Symfony\Component\Messenger\Attribute\AsMessageHandler ```
+- **messageClassNamePatterns**
+  - Regex pattern to identify message classes
+  - **Default Value**: ``` .*(Message|Command|Query|Event|Input)$ ```
+- **messageHandlerInterfaces[]**
+  - Interfaces that handler classes implement
+- **messageInterfaces[]**
+  - Interfaces that message classes implement
+- **projectRootNamespace**
+  - Root namespace for scanning classes
+  - **Default Value**: ``` \App ```
+- **useNativeGoToDeclaration**
+  - Disable ctrl+click to go to handler service
+  - **Default Value**: ``` false ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -213,19 +213,13 @@ symfonyMessenger:
 <!-- generateDocumentationProperties("org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration","") -->
 | Property            | Description                                                                          |
 | ------------------- | ------------------------------------------------------------------------------------ |
-| peers[]             | Array of one-way navigation rules                                                    |
-| peers[].source      | Regex pattern with named groups matching source class FQN                            |
-| peers[].target      | Target class FQN pattern using `(?<groupName>.+)` substitution from named groups     |
 | associates[]        | Array of bidirectional navigation rules                                              |
 | associates[].classA | Regex pattern with named groups matching first class FQN                             |
 | associates[].classB | Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups |
+| peers[]             | Array of one-way navigation rules                                                    |
+| peers[].source      | Regex pattern with named groups matching source class FQN                            |
+| peers[].target      | Target class FQN pattern using `(?<groupName>.+)` substitution from named groups     |
 
-- **peers[]**
-  - Array of one-way navigation rules
-- **peers[].source**
-  - Regex pattern with named groups matching source class FQN
-- **peers[].target**
-  - Target class FQN pattern using `(?<groupName>.+)` substitution from named groups
 - **associates[]**
   - Array of bidirectional navigation rules
 - **associates[].classA**
@@ -234,6 +228,12 @@ symfonyMessenger:
 - **associates[].classB**
   - Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups
   - **Example**: ``` \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller ```
+- **peers[]**
+  - Array of one-way navigation rules
+- **peers[].source**
+  - Regex pattern with named groups matching source class FQN
+- **peers[].target**
+  - Target class FQN pattern using `(?<groupName>.+)` substitution from named groups
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -305,29 +305,29 @@ peerNavigation:
 | Property                | Description                                     |
 | ----------------------- | ----------------------------------------------- |
 | rules[]                 |                                                 |
-| rules[].attributeFQCN   |                                                 |
-| rules[].propertyName    |                                                 |
-| rules[].isDefault       |                                                 |
-| rules[].fileMask        |                                                 |
 | rules[].actionType      | How search is triggered                         |
+| rules[].attributeFQCN   |                                                 |
+| rules[].fileMask        |                                                 |
 | rules[].formatterScript | A groovy script to reformat raw attribute value |
+| rules[].isDefault       |                                                 |
+| rules[].propertyName    |                                                 |
 
 - **rules[]**
-- **rules[].attributeFQCN**
-  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
-- **rules[].propertyName**
-  - **Default Value**: ``` path ```
-- **rules[].isDefault**
-  - **Default Value**: ``` true ```
-- **rules[].fileMask**
-  - **Default Value**: ``` *.yaml,*.yml,*.php ```
 - **rules[].actionType**
   - How search is triggered
   - **Default Value**: ``` find_in_file ```
+- **rules[].attributeFQCN**
+  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
+- **rules[].fileMask**
+  - **Default Value**: ``` *.yaml,*.yml,*.php ```
 - **rules[].formatterScript**
   - A groovy script to reformat raw attribute value
   - **Example**: ``` return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
  ```
+- **rules[].isDefault**
+  - **Default Value**: ``` true ```
+- **rules[].propertyName**
+  - **Default Value**: ``` path ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -352,15 +352,11 @@ attributeNavigation:
 <!-- generateDocumentationProperties("org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration","") -->
 | Property                | Description                                                                                                                                                                                                                              |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| useContextualNamespaces |                                                                                                                                                                                                                                          |
-| useIgnoreFile           |                                                                                                                                                                                                                                          |
 | contextualNamespaces[]  | List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context                                                                                                |
 | template                | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |
+| useContextualNamespaces |                                                                                                                                                                                                                                          |
+| useIgnoreFile           |                                                                                                                                                                                                                                          |
 
-- **useContextualNamespaces**
-  - **Default Value**: ``` true ```
-- **useIgnoreFile**
-  - **Default Value**: ``` true ```
 - **contextualNamespaces[]**
   - List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context
 - **template**
@@ -374,6 +370,10 @@ attributeNavigation:
 
 [/]
  ```
+- **useContextualNamespaces**
+  - **Default Value**: ``` true ```
+- **useIgnoreFile**
+  - **Default Value**: ``` true ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -426,18 +426,18 @@ consoleCleaner:
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.RoutesConfiguration","") -->
 | Property      | Description                                  |
 | ------------- | -------------------------------------------- |
+| attributeFQCN | Attribute used to detect routes              |
 | enabled       | Enabler for panel of routes                  |
 | namespaces[]  | List of namespaces where routes are searched |
-| attributeFQCN | Attribute used to detect routes              |
 
+- **attributeFQCN**
+  - Attribute used to detect routes
+  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
 - **enabled**
   - Enabler for panel of routes
   - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where routes are searched
-- **attributeFQCN**
-  - Attribute used to detect routes
-  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -459,18 +459,18 @@ routesConfiguration:
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.CommandsConfiguration","") -->
 | Property      | Description                                            |
 | ------------- | ------------------------------------------------------ |
+| attributeFQCN | Attribute used to detect console commands              |
 | enabled       | Enabler for panel of console commands                  |
 | namespaces[]  | List of namespaces where console commands are searched |
-| attributeFQCN | Attribute used to detect console commands              |
 
+- **attributeFQCN**
+  - Attribute used to detect console commands
+  - **Default Value**: ``` \Symfony\Component\Console\Attribute\AsCommand ```
 - **enabled**
   - Enabler for panel of console commands
   - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where console commands are searched
-- **attributeFQCN**
-  - Attribute used to detect console commands
-  - **Default Value**: ``` \Symfony\Component\Console\Attribute\AsCommand ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -493,18 +493,18 @@ commandsConfiguration:
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","") -->
 | Property      | Description                                             |
 | ------------- | ------------------------------------------------------- |
+| attributeFQCN | Attribute used to detect Entities                       |
 | enabled       | Enabler for panel of doctrine entities                  |
 | namespaces[]  | List of namespaces where doctrine entities are searched |
-| attributeFQCN | Attribute used to detect Entities                       |
 
+- **attributeFQCN**
+  - Attribute used to detect Entities
+  - **Default Value**: ``` \Doctrine\ORM\Mapping\Table ```
 - **enabled**
   - Enabler for panel of doctrine entities
   - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where doctrine entities are searched
-- **attributeFQCN**
-  - Attribute used to detect Entities
-  - **Default Value**: ``` \Doctrine\ORM\Mapping\Table ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -559,14 +559,14 @@ openAPIConfiguration:
 | tasks[].icon         | Path to the icon to display for this builtin task. Uses standard IntelliJ Platform icons                                                                                                      |
 | tasks[].id           | Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration                                                                           |
 | tasks[].label        | Label displayed to user in the interface. User-friendly name describing the task function                                                                                                     |
+| toolbar[]            | Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId                                                                        |
 | tree[]               | Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes) |
 | tree[].label         | Label displayed for this folder in the hierarchical tree. User-friendly name for organizing tasks into logical groups                                                                         |
 | tree[].tasks[]       | Array of child nodes contained in this folder. Can contain other folders (Path) or task references (Task)                                                                                     |
-| toolbar[]            | Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId                                                                        |
 | watchers[]           | File watchers configuration that automatically trigger tasks when specified files are modified                                                                                                |
-| watchers[].taskId    | Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration                                                                 |
 | watchers[].debounce  | Delay in milliseconds before task triggering after change detection. Prevents multiple executions during rapid successive modifications                                                       |
 | watchers[].notify    | Indicates if a notification should be displayed to the user upon triggering. False by default to avoid too frequent notifications                                                             |
+| watchers[].taskId    | Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration                                                                 |
 | watchers[].watches[] | Array of file patterns to watch. Supports wildcards and regular expressions to match file paths                                                                                               |
 
 - **enabled**
@@ -587,24 +587,24 @@ openAPIConfiguration:
 - **tasks[].label**
   - Label displayed to user in the interface. User-friendly name describing the task function
   - **Example**: ``` First task ```
+- **toolbar[]**
+  - Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId
 - **tree[]**
   - Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes)
 - **tree[].label**
   - Label displayed for this folder in the hierarchical tree. User-friendly name for organizing tasks into logical groups
 - **tree[].tasks[]**
   - Array of child nodes contained in this folder. Can contain other folders (Path) or task references (Task)
-- **toolbar[]**
-  - Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId
 - **watchers[]**
   - File watchers configuration that automatically trigger tasks when specified files are modified
-- **watchers[].taskId**
-  - Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration
 - **watchers[].debounce**
   - Delay in milliseconds before task triggering after change detection. Prevents multiple executions during rapid successive modifications
   - **Default Value**: ``` 1000 ```
 - **watchers[].notify**
   - Indicates if a notification should be displayed to the user upon triggering. False by default to avoid too frequent notifications
   - **Default Value**: ``` false ```
+- **watchers[].taskId**
+  - Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration
 - **watchers[].watches[]**
   - Array of file patterns to watch. Supports wildcards and regular expressions to match file paths
 <!-- generateDocumentationEnd -->

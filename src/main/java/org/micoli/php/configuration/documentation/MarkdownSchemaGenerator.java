@@ -2,7 +2,8 @@ package org.micoli.php.configuration.documentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.module.kotlin.KotlinFeature;
+import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +38,10 @@ public class MarkdownSchemaGenerator {
 
         ClassPropertiesDocumentationGenerator classPropertyTraverser = new ClassPropertiesDocumentationGenerator();
         List<ClassPropertiesDocumentationGenerator.PropertyInfo> fields =
-                classPropertyTraverser.getProperties(example, 5);
+                classPropertyTraverser.getProperties(example, 5).stream()
+                        .sorted(Comparator.comparing(
+                                ClassPropertiesDocumentationGenerator.PropertyInfo::dotNotationPath))
+                        .toList();
         List<Object> items = new ArrayList<>();
         for (ClassPropertiesDocumentationGenerator.PropertyInfo property : fields) {
             tableBuilder.addRow(
@@ -82,14 +86,17 @@ public class MarkdownSchemaGenerator {
     private static String dumpYaml(Object example) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+            mapper.registerModule(new KotlinModule.Builder()
+                    .configure(KotlinFeature.KotlinPropertyNameAsImplicitName, true)
+                    .build());
+            TreeMap value = mapper.readValue(mapper.writeValueAsString(example), TreeMap.class);
+
             DumperOptions options = new DumperOptions();
             options.setExplicitStart(false);
             options.setExplicitEnd(false);
             options.setCanonical(false);
             options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
-            return new Yaml(options).dump(mapper.readValue(mapper.writeValueAsString(example), TreeMap.class));
+            return new Yaml(options).dump(value);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
