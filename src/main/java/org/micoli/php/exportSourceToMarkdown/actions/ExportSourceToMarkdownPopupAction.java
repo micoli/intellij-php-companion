@@ -13,11 +13,12 @@ public class ExportSourceToMarkdownPopupAction extends AbstractExportSourceToMar
         ExportedSource export =
                 ExportSourceToMarkdownService.getInstance(project).generateMarkdownExport(selectedFiles);
         if (export == null) {
-            Notification.error("No files found for export.");
+            Notification.getInstance(project).error("No files found for export.");
             return;
         }
         ParsedContentDisplayPopup.showMarkdownPopup(project, export.content());
-        Notification.messageWithTimeout(
-                String.format("Approximatively number of tokens: %s", export.numberOfTokens()), 500);
+        Notification.getInstance(project)
+                .messageWithTimeout(
+                        String.format("Approximatively number of tokens: %s", export.numberOfTokens()), 500);
     }
 }

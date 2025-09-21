@@ -140,7 +140,7 @@ public class OpenAPIPathPanel extends AbstractListPanel<OpenAPIPathElementDTO> {
 
     private void searchOperationIdDeclaration(String searchText) {
         if (concurrentSearchManager.isSearchInProgress(searchText)) {
-            Notification.messageWithTimeout("Search already in progress", 1000);
+            Notification.getInstance(project).messageWithTimeout("Search already in progress", 1000);
             return;
         }
 
@@ -159,7 +159,7 @@ public class OpenAPIPathPanel extends AbstractListPanel<OpenAPIPathElementDTO> {
             SearchWithCompletionIndicator.findUsagesWithProgress(findModel, project, 1500, results -> {
                 concurrentSearchManager.removeSearch(searchText);
                 if (results == null || results.isEmpty()) {
-                    Notification.messageWithTimeout("No OperationId found", 1500);
+                    Notification.getInstance(project).messageWithTimeout("No OperationId found", 1500);
                     return;
                 }
                 results.stream()

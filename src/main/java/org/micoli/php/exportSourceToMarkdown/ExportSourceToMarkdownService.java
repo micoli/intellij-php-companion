@@ -93,7 +93,7 @@ public class ExportSourceToMarkdownService {
                 String extension = file.getExtension() != null ? file.getExtension() : "plain";
                 files.add(new FileData(file.getPath().replace(baseDir, ""), content, extension));
             } catch (IOException e) {
-                Notification.error(e.getMessage());
+                Notification.getInstance(project).error(e.getMessage());
             }
         }
         return files;

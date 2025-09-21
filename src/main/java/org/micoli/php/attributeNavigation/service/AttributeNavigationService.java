@@ -14,9 +14,12 @@ import org.micoli.php.ui.Notification;
 
 public class AttributeNavigationService {
 
+    private final Project project;
     private List<NavigationByAttributeRule> rules = new ArrayList<>();
 
-    public AttributeNavigationService() {}
+    public AttributeNavigationService(Project project) {
+        this.project = project;
+    }
 
     public static AttributeNavigationService getInstance(Project project) {
         return project.getService(AttributeNavigationService.class);
@@ -48,7 +51,7 @@ public class AttributeNavigationService {
             engine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
             return (String) engine.eval(formatterScript, bindings);
         } catch (ScriptException exception) {
-            Notification.error(String.format(exception.getMessage()));
+            Notification.getInstance(project).error(String.format(exception.getMessage()));
         }
         return value;
     }

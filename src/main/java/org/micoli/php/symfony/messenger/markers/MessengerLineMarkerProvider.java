@@ -135,7 +135,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
 
             ApplicationManager.getApplication().invokeLater(() -> {
                 if (elements.isEmpty()) {
-                    Notification.error("No usage found");
+                    Notification.getInstance(project).error("No usage found");
                     return;
                 }
                 if (elements.size() == 1) {

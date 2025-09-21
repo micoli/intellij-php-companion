@@ -16,6 +16,8 @@ import org.micoli.php.ui.Notification;
 import org.micoli.php.ui.PhpCompanionIcon;
 
 public class FileObserver {
+    private final Project project;
+
     public static final class IconAndPrefix {
         public Icon icon;
         public String prefix;
@@ -42,6 +44,7 @@ public class FileObserver {
 
     public FileObserver(Project project, ObservedFile observedFile) {
         this.projectRoot = PathUtil.getBaseDir(project);
+        this.project = project;
         this.observedFile = observedFile;
         activeRegularExpression = "^" + observedFile.variableName + "=";
         disabledRegularExpression = "^" + observedFile.commentPrefix + "\\s*" + observedFile.variableName + "=";
@@ -110,7 +113,8 @@ public class FileObserver {
         } catch (IOException e) {
             LOGGER.error(e);
         }
-        Notification.message(observedFile.variableName + " " + (toActive ? "activated" : "deactivated"));
+        Notification.getInstance(project)
+                .message(observedFile.variableName + " " + (toActive ? "activated" : "deactivated"));
     }
 
     private @NotNull StringBuilder replaceInFileContent(boolean toActive, String content) {

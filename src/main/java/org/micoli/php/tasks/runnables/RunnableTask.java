@@ -71,16 +71,17 @@ public class RunnableTask implements Runnable {
     private void runScript(String extension, String source) {
         IdeScriptEngine engine = IdeScriptEngineManager.getInstance().getEngineByFileExtension(extension, null);
         if (engine == null) {
-            Notification.error(String.format("Script engine with extension '%s' is not found", extension));
+            Notification.getInstance(project)
+                    .error(String.format("Script engine with extension '%s' is not found", extension));
             return;
         }
         try {
-            engine.setBinding("ui", new UI());
+            engine.setBinding("ui", new UI(project));
             engine.setBinding("fs", new FileSystem(project));
             engine.setBinding("core", new Core(project));
             engine.eval(source);
         } catch (Exception e) {
-            Notification.error(e.getMessage());
+            Notification.getInstance(project).error(e.getMessage());
         }
     }
 
@@ -108,7 +109,7 @@ public class RunnableTask implements Runnable {
         AnAction action = actionManager.getAction(actionId);
 
         if (action == null) {
-            Notification.error(String.format("Action '%s' doesn't exist.", actionId));
+            Notification.getInstance(project).error(String.format("Action '%s' doesn't exist.", actionId));
             return;
         }
 
@@ -124,7 +125,8 @@ public class RunnableTask implements Runnable {
                 ActionManager.getInstance().tryToExecute(action, null, null, ActionPlaces.UNKNOWN, true);
             }
         } catch (Exception e) {
-            Notification.error(String.format("Error while executing '%s' : %s", actionId, e.getMessage()));
+            Notification.getInstance(project)
+                    .error(String.format("Error while executing '%s' : %s", actionId, e.getMessage()));
         }
     }
 }

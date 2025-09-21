@@ -117,7 +117,7 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
     private void openGlobalSearchWithRouteExpression(
             Project project, MouseEvent mouseEvent, String searchText, String fileMask) {
         if (concurrentSearchManager.isSearchInProgress(searchText)) {
-            Notification.messageWithTimeout("Search already in progress", 1000);
+            Notification.getInstance(project).messageWithTimeout("Search already in progress", 1000);
             return;
         }
 
@@ -127,7 +127,7 @@ public class AttributeNavigationLineMarkerProvider implements LineMarkerProvider
             SearchWithCompletionIndicator.findUsagesWithProgress(findModel, project, 1500, results -> {
                 concurrentSearchManager.removeSearch(searchText);
                 if (results == null || results.isEmpty()) {
-                    Notification.messageWithTimeout("No Usage found", 1500);
+                    Notification.getInstance(project).messageWithTimeout("No Usage found", 1500);
                     return;
                 }
                 NavigableListPopup.showNavigablePopup(

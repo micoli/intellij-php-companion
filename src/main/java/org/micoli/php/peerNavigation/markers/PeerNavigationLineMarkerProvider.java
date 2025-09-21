@@ -3,6 +3,7 @@ package org.micoli.php.peerNavigation.markers;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
@@ -22,8 +23,6 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
 
     Icon navigateIcon = IconLoader.getIcon("icons/link.svg", PeerNavigationLineMarkerProvider.class);
 
-    public PeerNavigationLineMarkerProvider() {}
-
     @Override
     public @Nullable LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
         return null;
@@ -35,19 +34,20 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
         if (elements.isEmpty()) {
             return;
         }
-        PeerNavigationService peerNavigationService =
-                PeerNavigationService.getInstance(elements.getFirst().getProject());
+        Project project = elements.getFirst().getProject();
+        PeerNavigationService peerNavigationService = PeerNavigationService.getInstance(project);
         if (peerNavigationService.configurationIsEmpty()) {
             return;
         }
         for (PsiElement element : elements) {
             if (element instanceof PhpClass phpClass) {
-                processPhpClass(peerNavigationService, phpClass, result);
+                processPhpClass(project, peerNavigationService, phpClass, result);
             }
         }
     }
 
     private void processPhpClass(
+            Project project,
             PeerNavigationService peerNavigationService,
             PhpClass phpClass,
             Collection<? super LineMarkerInfo<?>> result) {
@@ -65,14 +65,14 @@ public class PeerNavigationLineMarkerProvider implements LineMarkerProvider {
                 leafElement.getTextRange(),
                 navigateIcon,
                 psiElement -> tooltip,
-                (mouseEvent, elt) -> navigateToAssociatedElements(mouseEvent, targetElements),
+                (mouseEvent, elt) -> navigateToAssociatedElements(project, mouseEvent, targetElements),
                 GutterIconRenderer.Alignment.CENTER,
                 () -> tooltip));
     }
 
-    private static void navigateToAssociatedElements(MouseEvent mouseEvent, List<PsiElement> targetElements) {
+    private void navigateToAssociatedElements(Project project, MouseEvent mouseEvent, List<PsiElement> targetElements) {
         if (targetElements.isEmpty()) {
-            Notification.error("No peer found");
+            Notification.getInstance(project).error("No peer found");
             return;
         }
         if (targetElements.size() == 1) {

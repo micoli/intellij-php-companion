@@ -103,7 +103,7 @@ public class ParsedContentDisplayPopup extends DialogWrapper {
         public void actionPerformed(ActionEvent e) {
             StringSelection stringSelection = new StringSelection(jsonContent);
             CopyPasteManager.getInstance().setContents(stringSelection);
-            Notification.messageWithTimeout("Content copied to clipboard", 500);
+            Notification.getInstance(project).messageWithTimeout("Content copied to clipboard", 500);
             close(OK_EXIT_CODE);
         }
     }

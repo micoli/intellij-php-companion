@@ -17,15 +17,17 @@ public class ExportSourceToMarkdownClipboardAction extends AbstractExportSourceT
         ExportedSource export =
                 ExportSourceToMarkdownService.getInstance(project).generateMarkdownExport(selectedFiles);
         if (export == null) {
-            Notification.error("No files found for export.");
+            Notification.getInstance(project).error("No files found for export.");
             return;
         }
 
         copyToClipboard(export.content());
-        Notification.messageWithTimeout(
-                String.format(
-                        "Content copied to clipboard, approximatively number of tokens: %s", export.numberOfTokens()),
-                500);
+        Notification.getInstance(project)
+                .messageWithTimeout(
+                        String.format(
+                                "Content copied to clipboard, approximatively number of tokens: %s",
+                                export.numberOfTokens()),
+                        500);
     }
 
     private static void copyToClipboard(String content) {

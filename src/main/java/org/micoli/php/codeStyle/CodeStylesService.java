@@ -38,12 +38,13 @@ public class CodeStylesService {
             setCodeStyle(phpSettings, codeStyle, changes, errors);
         }
 
+        Notification instance = Notification.getInstance(project);
         if (!changes.isEmpty()) {
             CodeStyleSettingsManager.getInstance(project).notifyCodeStyleSettingsChanged();
-            Notification.message("CodeStyle", getListMessage(changes));
+            instance.message("CodeStyle", getListMessage(changes));
         }
         if (!errors.isEmpty()) {
-            Notification.error("CodeStyle", getListMessage(errors));
+            instance.error("CodeStyle", getListMessage(errors));
         }
     }
 

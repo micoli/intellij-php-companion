@@ -3,19 +3,29 @@ package org.micoli.php.ui;
 import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.Project;
 import javax.swing.Timer;
 
 public class Notification {
-    public static void message(String message) {
+    private final Project project;
+
+    public Notification(Project project) {
+        this.project = project;
+    }
+
+    public static Notification getInstance(Project project) {
+        return project.getService(Notification.class);
+    }
+
+    public void message(String message) {
         notify(createMessage(message, NotificationType.INFORMATION));
     }
 
-    public static void message(String title, String message) {
+    public void message(String title, String message) {
         notify(createMessage(title, message, NotificationType.INFORMATION));
     }
 
-    public static void messageWithTimeout(String message, int delayInMs) {
+    public void messageWithTimeout(String message, int delayInMs) {
         try {
             com.intellij.notification.Notification notification =
                     createMessage(message, NotificationType.INFORMATION).setImportant(false);
@@ -32,27 +42,26 @@ public class Notification {
         }
     }
 
-    public static void error(String message) {
+    public void error(String message) {
         notify(createMessage(message, NotificationType.ERROR));
     }
 
-    public static void error(String title, String message) {
+    public void error(String title, String message) {
         notify(createMessage(title, message, NotificationType.ERROR));
     }
 
-    private static void notify(com.intellij.notification.Notification message) {
-        message.notify(ProjectManager.getInstance().getOpenProjects()[0]);
+    private void notify(com.intellij.notification.Notification message) {
+        message.notify(project);
     }
 
-    private static com.intellij.notification.Notification createMessage(
-            String message, NotificationType notificationType) {
+    private com.intellij.notification.Notification createMessage(String message, NotificationType notificationType) {
 
         return NotificationGroupManager.getInstance()
                 .getNotificationGroup("PHP Companion")
                 .createNotification(message, notificationType);
     }
 
-    private static com.intellij.notification.Notification createMessage(
+    private com.intellij.notification.Notification createMessage(
             String title, String message, NotificationType notificationType) {
 
         return NotificationGroupManager.getInstance()

@@ -147,7 +147,8 @@ public class TasksService implements FileListener.VfsHandler<TaskIdentifier> {
                 if (!watcherConfiguration.notify) {
                     return;
                 }
-                Notification.messageWithTimeout(String.format("%s done", watcherConfiguration.taskId), 800);
+                Notification.getInstance(project)
+                        .messageWithTimeout(String.format("%s done", watcherConfiguration.taskId), 800);
             });
             return;
         }

@@ -1,18 +1,24 @@
 package org.micoli.php.scripting;
 
+import com.intellij.openapi.project.Project;
 import org.micoli.php.ui.Notification;
 
 /**
  * known as `ui` in scripting engine
  */
 public final class UI {
+    private final Project project;
+
+    public UI(Project project) {
+        this.project = project;
+    }
     /**
      * Displays a closable popup
      *
      * @param message the message to display.
      */
     public void alert(String message) {
-        Notification.message(message);
+        Notification.getInstance(project).message(message);
     }
 
     /**
@@ -22,6 +28,6 @@ public final class UI {
      * @param delayInMs the delay in milliseconds before the popup is closed.
      */
     public void alert(String message, int delayInMs) {
-        Notification.messageWithTimeout(message, delayInMs);
+        Notification.getInstance(project).messageWithTimeout(message, delayInMs);
     }
 }

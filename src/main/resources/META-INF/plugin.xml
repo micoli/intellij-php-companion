@@ -36,9 +36,10 @@
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.peerNavigation.markers.PeerNavigationLineMarkerProvider"/>
-
         <projectService
                 serviceImplementation="org.micoli.php.codeStyle.CodeStylesService"/>
+        <projectService
+                serviceImplementation="org.micoli.php.ui.Notification"/>
         <projectService
                 serviceImplementation="org.micoli.php.symfony.messenger.service.MessengerService"/>
         <codeInsight.lineMarkerProvider
@@ -49,11 +50,9 @@
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.attributeNavigation.markers.AttributeNavigationLineMarkerProvider"/>
-
         <findUsagesHandlerFactory
             implementation="org.micoli.php.symfony.messenger.usage.MessengerFindUsagesHandlerFactory"
         />
-
         <gotoDeclarationHandler
             implementation="org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandler"
         />

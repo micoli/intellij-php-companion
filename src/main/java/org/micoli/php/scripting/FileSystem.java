@@ -85,7 +85,7 @@ public final class FileSystem {
             }
 
         } catch (ScriptingError e) {
-            Notification.error(e.getMessage());
+            Notification.getInstance(project).error(e.getMessage());
         } catch (Exception e) {
             LOG.warn("Error while cleaning path: " + path + " " + e.getMessage());
         }

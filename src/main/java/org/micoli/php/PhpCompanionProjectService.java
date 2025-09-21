@@ -89,21 +89,22 @@ public final class PhpCompanionProjectService
 
             DaemonCodeAnalyzer.getInstance(project).restart();
             if (!loadedConfiguration.ignoredProperties.isEmpty()) {
-                Notification.message(
-                        "PHP Companion Configuration loaded",
-                        "Unknown properties: " + String.join(",", loadedConfiguration.ignoredProperties));
+                Notification.getInstance(project)
+                        .message(
+                                "PHP Companion Configuration loaded",
+                                "Unknown properties: " + String.join(",", loadedConfiguration.ignoredProperties));
                 return;
             }
-            Notification.messageWithTimeout("PHP Companion Configuration loaded", 900);
+            Notification.getInstance(project).messageWithTimeout("PHP Companion Configuration loaded", 900);
 
         } catch (NoConfigurationFileException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {
-                Notification.error(e.getMessage());
+                Notification.getInstance(project).error(e.getMessage());
                 this.configurationTimestamp = e.serial;
             }
         } catch (ConfigurationException e) {
             if (!this.configurationTimestamp.equals(e.serial)) {
-                Notification.error("Configuration error while loading:", e.getMessage());
+                Notification.getInstance(project).error("Configuration error while loading:", e.getMessage());
                 this.configurationTimestamp = e.serial;
             }
         }
