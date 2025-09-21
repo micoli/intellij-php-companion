@@ -22,13 +22,12 @@ object YamlAssertUtils {
     }
 
     @Throws(IOException::class)
-    private fun filterYamlString(yamlString: String): String {
-        return Arrays.stream(yamlString.split("\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-          .filter { line: String? -> !line!!.startsWith("!!") }
-          .filter { line: String? -> !line!!.endsWith(": []") }
-          .filter { line: String? -> !line!!.endsWith(": null") }
-          .collect(Collectors.joining("\n"))
-    }
+    private fun filterYamlString(yamlString: String): String =
+      Arrays.stream(yamlString.split("\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+        .filter { line: String? -> !line!!.startsWith("!!") }
+        .filter { line: String? -> !line!!.endsWith(": []") }
+        .filter { line: String? -> !line!!.endsWith(": null") }
+        .collect(Collectors.joining("\n"))
 
     @Throws(IOException::class)
     fun compareFilesWithDiff(yamlA: String?, yamlB: String?): MutableList<String?> {

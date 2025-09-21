@@ -51,7 +51,7 @@ public final class PhpCompanionProjectService
         fileListener.setPatterns(Map.of(
                 "configFile",
                 List.of(FileSystems.getDefault()
-                        .getPathMatcher(ConfigurationFactory.acceptableConfigurationFilesGlob))));
+                        .getPathMatcher(new ConfigurationFactory().acceptableConfigurationFilesGlob))));
         this.messageBus = project.getMessageBus();
         this.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, fileListener.getVfsListener());
         this.messageBus.connect().subscribe(DumbService.DUMB_MODE, this);
@@ -74,25 +74,26 @@ public final class PhpCompanionProjectService
 
     public void loadConfiguration(boolean force) {
         try {
-            ConfigurationFactory.LoadedConfiguration loadedConfiguration =
-                    ConfigurationFactory.loadConfiguration(project.getBasePath(), this.configurationTimestamp, force);
+            ConfigurationFactory.LoadedConfiguration loadedConfiguration = new ConfigurationFactory()
+                    .loadConfiguration(project.getBasePath(), this.configurationTimestamp, force);
             if (loadedConfiguration == null) {
                 return;
             }
-            this.configurationTimestamp = loadedConfiguration.timestamp;
+            this.configurationTimestamp = loadedConfiguration.getTimestamp();
 
-            updateServicesConfigurations(loadedConfiguration.configuration);
+            updateServicesConfigurations(loadedConfiguration.getConfiguration());
 
             messageBus
                     .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)
-                    .configurationLoaded(loadedConfiguration.configuration);
+                    .configurationLoaded(loadedConfiguration.getConfiguration());
 
             DaemonCodeAnalyzer.getInstance(project).restart();
-            if (!loadedConfiguration.ignoredProperties.isEmpty()) {
+            loadedConfiguration.getIgnoredProperties();
+            if (!loadedConfiguration.getIgnoredProperties().isEmpty()) {
                 Notification.getInstance(project)
                         .message(
                                 "PHP Companion Configuration loaded",
-                                "Unknown properties: " + String.join(",", loadedConfiguration.ignoredProperties));
+                                "Unknown properties: " + String.join(",", loadedConfiguration.getIgnoredProperties()));
                 return;
             }
             Notification.getInstance(project).messageWithTimeout("PHP Companion Configuration loaded", 900);

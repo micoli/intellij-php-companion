@@ -12,9 +12,7 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
     var fs: FileSystem? = null
     var vf: VirtualFile? = null
 
-    override fun getTestDataPath(): String {
-        return "src/test/resources/filesystem/"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/filesystem/"
 
     fun initFixtures() {
         fs = FileSystem(project)
@@ -75,8 +73,6 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
     }
 
     companion object {
-        private fun normalizeStringList(expected: ImmutableList<String?>): String {
-            return expected.stream().sorted().toList().joinToString(",")
-        }
+        private fun normalizeStringList(expected: ImmutableList<String?>): String = expected.stream().sorted().toList().joinToString(",")
     }
 }

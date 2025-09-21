@@ -20,10 +20,7 @@ class PhpDumperHelperTest(private val filename: String?) {
         assertJsonEquals(readFile(".json"), PhpDumpHelper.parseCliDumperToJson(readFile(".txt")))
     }
 
-    @Throws(IOException::class)
-    private fun readFile(path: String?): String {
-        return Files.readAllLines(Paths.get(DIRECTORY + filename + path), StandardCharsets.UTF_8).joinToString("\n")
-    }
+    @Throws(IOException::class) private fun readFile(path: String?): String = Files.readAllLines(Paths.get(DIRECTORY + filename + path), StandardCharsets.UTF_8).joinToString("\n")
 
     companion object {
         private const val DIRECTORY = "src/test/resources/phpDumpHelperTestCases/"

@@ -11,7 +11,6 @@ import org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfigura
 import org.micoli.php.ui.Notification
 
 class CodeStylesSynchronizationTest : BasePlatformTestCase() {
-
     fun testItSetCodeStyleAndReportsErrorIfAny() {
         val lastError: AtomicReference<String?> = AtomicReference<String?>()
         val lastMessage: AtomicReference<String?> = AtomicReference<String?>()

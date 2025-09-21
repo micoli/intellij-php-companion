@@ -68,17 +68,16 @@ class DebouncedRunnablesTest {
         Assertions.assertEquals(1, callCounter.get())
     }
 
-    private fun getSameNameRunnable(callCounter: AtomicInteger, latch: CountDownLatch, delay: Long): DebouncedRunnable? {
-        return debouncedRunnables!!.run(
-          {
-              counter!!.incrementAndGet()
-              callCounter.incrementAndGet()
-              latch.countDown()
-          },
-          "sameNameRunnable",
-          delay,
-        )
-    }
+    private fun getSameNameRunnable(callCounter: AtomicInteger, latch: CountDownLatch, delay: Long): DebouncedRunnable? =
+      debouncedRunnables!!.run(
+        {
+            counter!!.incrementAndGet()
+            callCounter.incrementAndGet()
+            latch.countDown()
+        },
+        "sameNameRunnable",
+        delay,
+      )
 
     @Test
     @Throws(InterruptedException::class)

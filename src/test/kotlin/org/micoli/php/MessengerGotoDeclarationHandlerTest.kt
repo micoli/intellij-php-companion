@@ -10,14 +10,12 @@ import org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandl
 import org.micoli.php.symfony.messenger.service.MessengerService
 
 class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testData/"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testData/"
 
     @Throws(NoConfigurationFileException::class, ConfigurationException::class)
     fun testItDetectDispatchMethods() {
         myFixture.copyDirectoryToProject("src", "/src")
-        MessengerService.getInstance(project).loadConfiguration(ConfigurationFactory.loadConfiguration(testDataPath, 0L, true).configuration.symfonyMessenger)
+        MessengerService.getInstance(project).loadConfiguration(ConfigurationFactory().loadConfiguration(testDataPath, 0L, true)?.configuration?.symfonyMessenger)
         val files = myFixture.configureByFiles("src/UserInterface/Web/Api/Article/List/Controller.php")
         assertGotoEquals(files[0]!!, "->query(", "src/Core/Query/Article/Handler.php")
         assertGotoEquals(files[0]!!, "->notify(", "src/Core/Query/Article/Handler.php")

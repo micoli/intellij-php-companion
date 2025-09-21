@@ -10,9 +10,7 @@ import org.micoli.php.symfony.list.RouteElementDTO
 import org.micoli.php.symfony.list.RouteService
 
 class RouteListTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testData"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testData"
 
     fun testItGetRoutesFromAttributes() {
         myFixture.copyDirectoryToProject("src", "/src")
@@ -29,7 +27,7 @@ class RouteListTest : BasePlatformTestCase() {
 
     private fun loadPluginConfiguration(path: String?): RouteService {
         try {
-            val routeListConfiguration = ConfigurationFactory.loadConfiguration(path, 0L, true).configuration.routesConfiguration
+            val routeListConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.routesConfiguration
             val instance = RouteService.getInstance(project)
             instance.loadConfiguration(routeListConfiguration)
 

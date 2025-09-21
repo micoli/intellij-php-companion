@@ -25,13 +25,9 @@ class PostToggleScriptBuilder private constructor() {
         return this
     }
 
-    fun build(): PostToggleScript {
-        return script
-    }
+    fun build(): PostToggleScript = script
 
     companion object {
-        fun create(): PostToggleScriptBuilder {
-            return PostToggleScriptBuilder()
-        }
+        fun create(): PostToggleScriptBuilder = PostToggleScriptBuilder()
     }
 }

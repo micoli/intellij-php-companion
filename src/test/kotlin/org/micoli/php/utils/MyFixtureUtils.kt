@@ -49,13 +49,11 @@ class MyFixtureUtils {
             }
         }
 
-        fun filesMatching(myFixture: CodeInsightTestFixture, predicate: Predicate<String?>?): MutableList<String?> {
-            return getPathContent(myFixture.findFileInTempDir("/")).stream().filter(predicate).toList()
-        }
+        fun filesMatching(myFixture: CodeInsightTestFixture, predicate: Predicate<String?>?): MutableList<String?> =
+          getPathContent(myFixture.findFileInTempDir("/")).stream().filter(predicate).toList()
 
-        fun filesMatchingContains(myFixture: CodeInsightTestFixture, needle: String): MutableList<String?> {
-            return getPathContent(myFixture.findFileInTempDir("/")).stream().filter { s: String? -> s!!.contains(needle) }.toList()
-        }
+        fun filesMatchingContains(myFixture: CodeInsightTestFixture, needle: String): MutableList<String?> =
+          getPathContent(myFixture.findFileInTempDir("/")).stream().filter { s: String? -> s!!.contains(needle) }.toList()
 
         fun getPathContent(root: VirtualFile?): ImmutableList<String?> {
             val instance = MyFixtureUtils()
@@ -66,23 +64,21 @@ class MyFixtureUtils {
             return result.toImmutableList()
         }
 
-        private fun getFormattedFilename(level: Int, file: VirtualFile): String {
-            return "  ".repeat(level) + "- " + file.name
-        }
+        private fun getFormattedFilename(level: Int, file: VirtualFile): String = "  ".repeat(level) + "- " + file.name
 
         fun initGitRepository(myFixture: CodeInsightTestFixture) {
             myFixture.addFileToProject(
               "/.git/config",
               """
-            [core]
-                repositoryformatversion = 0
-                filemode = true
-                bare = false
-                logallrefupdates = true
-                ignorecase = true
-                precomposeunicode = true
+          [core]
+              repositoryformatversion = 0
+              filemode = true
+              bare = false
+              logallrefupdates = true
+              ignorecase = true
+              precomposeunicode = true
 
-                """
+          """
                 .trimIndent(),
             )
             myFixture.addFileToProject("/.git/description", "")

@@ -6,21 +6,19 @@ import junit.framework.TestCase
 import org.micoli.php.service.filesystem.FileListProcessor
 
 class FileListProcessorTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testMarkDownExporterData"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testMarkDownExporterData"
 
     private fun initFixtures(withExclusionRules: Boolean) {
         if (withExclusionRules) {
             myFixture.addFileToProject(
               "/.aiignore",
               """
-                    # Ignore test file
-                    target/**
-                    out/**
-                    **/*Test.java
+          # Ignore test file
+          target/**
+          out/**
+          **/*Test.java
 
-                """
+          """
                 .trimIndent(),
             )
         }

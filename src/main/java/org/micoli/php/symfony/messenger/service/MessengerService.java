@@ -304,6 +304,9 @@ public class MessengerService {
     }
 
     public void loadConfiguration(SymfonyMessengerConfiguration symfonyMessenger) {
+        if (symfonyMessenger == null) {
+            return;
+        }
         this.configuration = symfonyMessenger;
         this.compiledMessageClassNamePatterns = symfonyMessenger.messageClassNamePatterns != null
                 ? Pattern.compile(configuration.messageClassNamePatterns)

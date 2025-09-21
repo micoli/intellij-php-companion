@@ -30,14 +30,9 @@ class ScriptBuilder private constructor() {
         return this
     }
 
-    fun build(): Script {
-        return script
-    }
+    fun build(): Script = script
 
     companion object {
-        @JvmStatic
-        fun create(): ScriptBuilder {
-            return ScriptBuilder()
-        }
+        @JvmStatic fun create(): ScriptBuilder = ScriptBuilder()
     }
 }

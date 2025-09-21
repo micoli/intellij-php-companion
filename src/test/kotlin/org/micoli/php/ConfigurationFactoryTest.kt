@@ -56,12 +56,12 @@ class ConfigurationFactoryTest {
         testErroneousConfiguration(
           "misspelledConfiguration3",
           """
-                mapping values are not allowed here
-                 in 'reader', line 2, column 13:
-                      associates:
-                                ^
+        mapping values are not allowed here
+         in 'reader', line 2, column 13:
+              associates:
+                        ^
 
-            """
+        """
             .trimIndent(),
         )
     }
@@ -115,11 +115,7 @@ class ConfigurationFactoryTest {
     }
 
     @Throws(ConfigurationException::class, NoConfigurationFileException::class)
-    private fun getLoadedConfiguration(file: File): ConfigurationFactory.LoadedConfiguration? {
-        return ConfigurationFactory.loadConfiguration(file.absolutePath, 0L, true)
-    }
+    private fun getLoadedConfiguration(file: File): ConfigurationFactory.LoadedConfiguration? = ConfigurationFactory().loadConfiguration(file.absolutePath, 0L, true)
 
-    private fun getConfigurationPath(path: String): File {
-        return File(Objects.requireNonNull(javaClass.getClassLoader().getResource("configuration/$path")).file)
-    }
+    private fun getConfigurationPath(path: String): File = File(Objects.requireNonNull(javaClass.getClassLoader().getResource("configuration/$path")).file)
 }

@@ -10,9 +10,7 @@ import org.micoli.php.symfony.list.DoctrineEntityElementDTO
 import org.micoli.php.symfony.list.DoctrineEntityService
 
 class DoctrineEntityListTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testData"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testData"
 
     fun testItGetRoutesFromAttributes() {
         myFixture.copyDirectoryToProject("src", "/src")
@@ -25,7 +23,7 @@ class DoctrineEntityListTest : BasePlatformTestCase() {
 
     private fun loadPluginConfiguration(path: String?): DoctrineEntityService {
         try {
-            val doctrineEntityListConfiguration = (ConfigurationFactory.loadConfiguration(path, 0L, true)).configuration.doctrineEntitiesConfiguration
+            val doctrineEntityListConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.doctrineEntitiesConfiguration
             val instance = DoctrineEntityService.getInstance(project)
             instance.loadConfiguration(doctrineEntityListConfiguration)
 

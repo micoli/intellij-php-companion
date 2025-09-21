@@ -24,23 +24,21 @@ import org.yaml.snakeyaml.Yaml
 class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
     private val invalidYamlContent =
       """
-            peerNavigation:
-              peers:
-                - source: 123  # Error: should be a string
-                  target: App\Repository\*Repository
-              associates:
-                - classA: App\Entity\User
-                  invalidProperty: "This should not exist"  # invalid property
-            symfonyMessenger:
-              projectRootNamespace: true  # Error: should be a string
-              messageInterfaces: "not an array"  # Error: should be an array
+      peerNavigation:
+        peers:
+          - source: 123  # Error: should be a string
+            target: App\Repository\*Repository
+        associates:
+          - classA: App\Entity\User
+            invalidProperty: "This should not exist"  # invalid property
+      symfonyMessenger:
+        projectRootNamespace: true  # Error: should be a string
+        messageInterfaces: "not an array"  # Error: should be an array
 
-    """
+      """
         .trimIndent()
 
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testData"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testData"
 
     @Throws(Exception::class)
     override fun setUp() {
@@ -75,9 +73,9 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
         myFixture.configureByText(
           ".php-companion.yaml",
           """
-            aa: azeerty
+        aa: azeerty
 
-            """
+        """
             .trimIndent(),
         )
         val highlights = myFixture.doHighlighting()
@@ -90,32 +88,31 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
         val highlights = myFixture.doHighlighting()
         TestCase.assertEquals(
           """
-            2: - source: 123  # Error: should be a string [123] Schema validation: Incompatible types.
-             Required: string. Actual: integer.
-            8: projectRootNamespace: true  # Error: should be a string [true] Schema validation: Incompatible types.
-             Required: string. Actual: boolean.
-            9: messageInterfaces: "not an array"  # Error: should be an array ["not an array"] Schema validation: Incompatible types.
-             Required: array. Actual: string.
+        2: - source: 123  # Error: should be a string [123] Schema validation: Incompatible types.
+         Required: string. Actual: integer.
+        8: projectRootNamespace: true  # Error: should be a string [true] Schema validation: Incompatible types.
+         Required: string. Actual: boolean.
+        9: messageInterfaces: "not an array"  # Error: should be an array ["not an array"] Schema validation: Incompatible types.
+         Required: array. Actual: string.
 
-            """
+        """
             .trimIndent()
             .trim { it <= ' ' },
           formatHighlights(myFixture.editor.document, highlights).trim { it <= ' ' },
         )
     }
 
-    private fun formatHighlights(document: Document, highlights: MutableList<HighlightInfo?>): String {
-        return highlights
-          .stream()
-          .map { i: HighlightInfo? ->
-              val lineNumber = document.getLineNumber(i!!.getStartOffset())
-              val lineStart = document.getLineStartOffset(lineNumber)
-              val lineEnd = document.getLineEndOffset(lineNumber)
-              val lineContent = document.getText(TextRange(lineStart, lineEnd)).trim { it <= ' ' }
-              String.format("%s: %s [%s] %s", lineNumber, lineContent, i.text, i.description)
-          }
-          .collect(Collectors.joining("\n"))
-    }
+    private fun formatHighlights(document: Document, highlights: MutableList<HighlightInfo?>): String =
+      highlights
+        .stream()
+        .map { i: HighlightInfo? ->
+            val lineNumber = document.getLineNumber(i!!.getStartOffset())
+            val lineStart = document.getLineStartOffset(lineNumber)
+            val lineEnd = document.getLineEndOffset(lineNumber)
+            val lineContent = document.getText(TextRange(lineStart, lineEnd)).trim { it <= ' ' }
+            String.format("%s: %s [%s] %s", lineNumber, lineContent, i.text, i.description)
+        }
+        .collect(Collectors.joining("\n"))
 
     @Throws(IOException::class)
     fun testItGeneratesProperSchema() {
@@ -127,7 +124,5 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
     }
 
     @Throws(IOException::class)
-    private fun generateJsonSchemaThoughProvider(): String? {
-        return PhpCompanionJsonSchemaProviderFactory().getProviders(project).first().schemaFile?.let { VfsUtilCore.loadText(it) }
-    }
+    private fun generateJsonSchemaThoughProvider(): String? = PhpCompanionJsonSchemaProviderFactory().getProviders(project).first()?.schemaFile?.let { VfsUtilCore.loadText(it) }
 }

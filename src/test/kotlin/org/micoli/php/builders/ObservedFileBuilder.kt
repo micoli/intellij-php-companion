@@ -51,13 +51,9 @@ class ObservedFileBuilder private constructor() {
         return this
     }
 
-    fun build(): ObservedFile {
-        return observedFile
-    }
+    fun build(): ObservedFile = observedFile
 
     companion object {
-        fun create(): ObservedFileBuilder {
-            return ObservedFileBuilder()
-        }
+        fun create(): ObservedFileBuilder = ObservedFileBuilder()
     }
 }

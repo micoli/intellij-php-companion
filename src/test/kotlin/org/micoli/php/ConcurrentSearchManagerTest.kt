@@ -11,7 +11,6 @@ class ConcurrentSearchManagerTest : TestCase() {
         concurrentSearchManager.addSearch("test")
 
         assertTrue(concurrentSearchManager.isSearchInProgress("test"))
-
         assertFalse(concurrentSearchManager.isSearchInProgress("test2"))
         concurrentSearchManager.removeSearch("test")
         assertFalse(concurrentSearchManager.isSearchInProgress("test"))

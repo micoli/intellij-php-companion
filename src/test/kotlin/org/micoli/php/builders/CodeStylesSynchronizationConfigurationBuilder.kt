@@ -21,14 +21,9 @@ class CodeStylesSynchronizationConfigurationBuilder private constructor() {
         return this
     }
 
-    fun build(): CodeStylesSynchronizationConfiguration {
-        return codeStylesSynchronizationConfiguration
-    }
+    fun build(): CodeStylesSynchronizationConfiguration = codeStylesSynchronizationConfiguration
 
     companion object {
-        @JvmStatic
-        fun create(): CodeStylesSynchronizationConfigurationBuilder {
-            return CodeStylesSynchronizationConfigurationBuilder()
-        }
+        @JvmStatic fun create(): CodeStylesSynchronizationConfigurationBuilder = CodeStylesSynchronizationConfigurationBuilder()
     }
 }

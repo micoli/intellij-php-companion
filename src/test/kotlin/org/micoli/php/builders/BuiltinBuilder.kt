@@ -25,13 +25,9 @@ class BuiltinBuilder private constructor() {
         return this
     }
 
-    fun build(): Builtin {
-        return shell
-    }
+    fun build(): Builtin = shell
 
     companion object {
-        fun create(): BuiltinBuilder {
-            return BuiltinBuilder()
-        }
+        fun create(): BuiltinBuilder = BuiltinBuilder()
     }
 }

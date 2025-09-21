@@ -25,8 +25,8 @@ class ScriptingCoreTest : BasePlatformTestCase() {
               .withId("file1")
               .withSource(
                 """
-                                core.runActionInEditor("\${'$'}Copy");
-                                org.micoli.php.ScriptingCoreTest.exposedVariable++
+                    core.runActionInEditor("\${'$'}Copy");
+                    org.micoli.php.ScriptingCoreTest.exposedVariable++
 
                     """
                   .trimIndent()

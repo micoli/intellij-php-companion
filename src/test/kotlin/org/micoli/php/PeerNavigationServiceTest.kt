@@ -10,9 +10,7 @@ import org.micoli.php.peerNavigation.service.PeerNavigationService
 import org.micoli.php.service.intellij.psi.PhpUtil
 
 class PeerNavigationServiceTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testData"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testData"
 
     fun testItFindsPeerElement() {
         myFixture.copyDirectoryToProject("src", "src")
@@ -51,7 +49,7 @@ class PeerNavigationServiceTest : BasePlatformTestCase() {
 
     private fun loadPluginConfiguration(path: String?): PeerNavigationService {
         try {
-            val peerNavigationConfiguration = ConfigurationFactory.loadConfiguration(path, 0L, true).configuration.peerNavigation
+            val peerNavigationConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.peerNavigation
             val instance = PeerNavigationService.getInstance(project)
             instance.loadConfiguration(peerNavigationConfiguration)
 

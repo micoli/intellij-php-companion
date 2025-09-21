@@ -15,14 +15,9 @@ class CodeStyleBuilder private constructor() {
         return this
     }
 
-    fun build(): CodeStyle {
-        return codeStyle
-    }
+    fun build(): CodeStyle = codeStyle
 
     companion object {
-        @JvmStatic
-        fun create(): CodeStyleBuilder {
-            return CodeStyleBuilder()
-        }
+        @JvmStatic fun create(): CodeStyleBuilder = CodeStyleBuilder()
     }
 }

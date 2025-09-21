@@ -32,9 +32,7 @@ class FileListenerTest : BasePlatformTestCase() {
           }
     }
 
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testData"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testData"
 
     fun testFileListenerInitialization() {
         assertFalse("FileListener should be disabled by default", fileListener!!.isEnabled)
@@ -143,41 +141,23 @@ class FileListenerTest : BasePlatformTestCase() {
         val events =
           mutableListOf<VFileEvent>(
             object : VFileEvent(Any()) {
-                override fun getFile(): VirtualFile? {
-                    return null
-                }
+                override fun getFile(): VirtualFile? = null
 
-                override fun getFileSystem(): VirtualFileSystem {
-                    throw UnsupportedOperationException()
-                }
+                override fun getFileSystem(): VirtualFileSystem = throw UnsupportedOperationException()
 
-                override fun isValid(): Boolean {
-                    return false
-                }
+                override fun isValid(): Boolean = false
 
-                override fun hashCode(): Int {
-                    return 0
-                }
+                override fun hashCode(): Int = 0
 
-                override fun equals(o: Any?): Boolean {
-                    return false
-                }
+                override fun equals(o: Any?): Boolean = false
 
-                override fun isFromRefresh(): Boolean {
-                    return false
-                }
+                override fun isFromRefresh(): Boolean = false
 
-                override fun isFromSave(): Boolean {
-                    return false
-                }
+                override fun isFromSave(): Boolean = false
 
-                override fun getPath(): String {
-                    return "nonexistent"
-                }
+                override fun getPath(): String = "nonexistent"
 
-                override fun computePath(): String {
-                    return ""
-                }
+                override fun computePath(): String = ""
             }
           )
 

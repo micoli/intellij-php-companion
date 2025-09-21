@@ -51,14 +51,14 @@ class ActionTreeNodeConfiguratorTest : BasePlatformTestCase() {
     private fun assertTreeEquals() {
         assertEquals(
           """
-            00-(1)=>Root
-            01--(2)=>Shell Task
-            02--(2)=>Custom Script Label
-            03--(2)=>a Path
-            04---(3)=>Shell Task
-            05---(3)=>Custom Script Label
-            06--(2)=>an emptyPath
-            """
+        00-(1)=>Root
+        01--(2)=>Shell Task
+        02--(2)=>Custom Script Label
+        03--(2)=>a Path
+        04---(3)=>Shell Task
+        05---(3)=>Custom Script Label
+        06--(2)=>an emptyPath
+        """
             .trimIndent(),
           dumpTree(),
         )
@@ -71,9 +71,7 @@ class ActionTreeNodeConfiguratorTest : BasePlatformTestCase() {
             expectedLabels.add(
               when (node) {
                   is PathNode -> String.format("%02d%s(%d)=>%s", index, indent, level, node.label)
-
                   is LabeledTreeNode -> String.format("%02d%s(%d)=>%s", index, indent, level, node.label)
-
                   else -> String.format("%02d%s(%d)=>%s", index, indent, level, node.toString())
               }
             )

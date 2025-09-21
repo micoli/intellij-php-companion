@@ -7,9 +7,7 @@ import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration
 
 class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String {
-        return "src/test/resources/"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/"
 
     fun testItGeneratesMarkdownExportForSelectedFiles() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData", ".")
@@ -19,31 +17,31 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
         TestCase.assertEquals(
           """
-                ## /src/path1/path1_1/path1_1_file1.txt
+        ## /src/path1/path1_1/path1_1_file1.txt
 
-                ```txt
-                path1_1_file1
-                ```
+        ```txt
+        path1_1_file1
+        ```
 
-                ## /src/path1/path1_2/path1_2_file1.txt
+        ## /src/path1/path1_2/path1_2_file1.txt
 
-                ```txt
-                path1_2_file1
-                ```
+        ```txt
+        path1_2_file1
+        ```
 
-                ## /src/path1/path1_file1.txt
+        ## /src/path1/path1_file1.txt
 
-                ```txt
-                path1_file1
-                ```
+        ```txt
+        path1_file1
+        ```
 
-                ## /src/root_file1.txt
+        ## /src/root_file1.txt
 
-                ```txt
-                root_file1
-                ```
+        ```txt
+        root_file1
+        ```
 
-                """
+        """
             .trimIndent()
             .trim { it <= ' ' },
           exportedSource.content.trim { it <= ' ' },
@@ -57,12 +55,12 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         configuration.contextualNamespaces = arrayOf("App\\Core\\Models", "App\\Core\\Id")
         configuration.template =
           """
-                [(${'$'}{#strings.isEmpty(files) ? '' : ''})]
-                [# th:each="file : ${'$'}{files}"]
-                - [(${'$'}{file.path})]
-                [/]
+        [(${'$'}{#strings.isEmpty(files) ? '' : ''})]
+        [# th:each="file : ${'$'}{files}"]
+        - [(${'$'}{file.path})]
+        [/]
 
-            """
+        """
             .trimIndent()
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
 
@@ -70,15 +68,15 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
         TestCase.assertEquals(
           """
-                - /src/Core/Id/ArticleId.php
-                - /src/Core/Models/Article.php
-                - /src/Core/Models/Feed.php
-                - /src/Core/Query/Article/Query.php
-                - /src/Core/Query/ArticleDetails/Handler.php
-                - /src/Core/Query/ArticleDetails/Query.php
-                - /src/Core/Query/ArticleDetails/Result.php
+        - /src/Core/Id/ArticleId.php
+        - /src/Core/Models/Article.php
+        - /src/Core/Models/Feed.php
+        - /src/Core/Query/Article/Query.php
+        - /src/Core/Query/ArticleDetails/Handler.php
+        - /src/Core/Query/ArticleDetails/Query.php
+        - /src/Core/Query/ArticleDetails/Result.php
 
-                """
+        """
             .trimIndent()
             .trim { it <= ' ' },
           exportedSource.content.trim { it <= ' ' },
@@ -91,12 +89,12 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         val configuration = ExportSourceToMarkdownConfiguration()
         configuration.template =
           """
-                [(${'$'}{#strings.isEmpty(files) ? '' : ''})]
-                [# th:each="file : ${'$'}{files}"]
-                - [(${'$'}{file.path})]
-                [/]
+        [(${'$'}{#strings.isEmpty(files) ? '' : ''})]
+        [# th:each="file : ${'$'}{files}"]
+        - [(${'$'}{file.path})]
+        [/]
 
-            """
+        """
             .trimIndent()
 
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
@@ -104,12 +102,12 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
         TestCase.assertEquals(
           """
-                - /src/path1/path1_1/path1_1_file1.txt
-                - /src/path1/path1_2/path1_2_file1.txt
-                - /src/path1/path1_file1.txt
-                - /src/root_file1.txt
+        - /src/path1/path1_1/path1_1_file1.txt
+        - /src/path1/path1_2/path1_2_file1.txt
+        - /src/path1/path1_file1.txt
+        - /src/root_file1.txt
 
-                """
+        """
             .trimIndent()
             .trim { it <= ' ' },
           exportedSource.content.trim { it <= ' ' },

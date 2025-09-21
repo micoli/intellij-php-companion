@@ -11,9 +11,7 @@ import org.micoli.php.configuration.ConfigurationFactory
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException
 
 class AttributeNavigationTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testData"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testData"
 
     fun testItFormatValueUsingInlineFormatter() {
         val formattedValue = AttributeNavigationService.getInstance(project).getFormattedValue("cde", "return ('ab-'+value+'-fg').toLowerCase()")
@@ -48,7 +46,7 @@ class AttributeNavigationTest : BasePlatformTestCase() {
     private fun loadPluginConfiguration(path: String?): AttributeNavigationService {
         var attributeNavigationConfiguration: AttributeNavigationConfiguration?
         try {
-            attributeNavigationConfiguration = ConfigurationFactory.loadConfiguration(path, 0L, true).configuration.attributeNavigation
+            attributeNavigationConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.attributeNavigation
         } catch (e: ConfigurationException) {
             throw RuntimeException(e)
         } catch (e: NoConfigurationFileException) {

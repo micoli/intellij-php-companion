@@ -25,13 +25,9 @@ class WatcherBuilder private constructor() {
         return this
     }
 
-    fun build(): Watcher {
-        return watcher
-    }
+    fun build(): Watcher = watcher
 
     companion object {
-        fun create(): WatcherBuilder {
-            return WatcherBuilder()
-        }
+        fun create(): WatcherBuilder = WatcherBuilder()
     }
 }

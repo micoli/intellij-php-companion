@@ -17,36 +17,36 @@ import org.micoli.php.configuration.models.Configuration
 class DocumentationGenerationTest : TestCase() {
     private val initial =
       """
-    <!-- generateDocumentation%s("org.micoli.php.examples.TestConfiguration","%s") -->
-    xxxxx
-    <!-- generateDocumentationEnd -->
-    """
-        .trimIndent()
-        .trim()
+      <!-- generateDocumentation%s("org.micoli.php.examples.TestConfiguration","%s") -->
+      xxxxx
+      <!-- generateDocumentationEnd -->
+      """
+            .trimIndent()
+            .trim()
 
     fun testItGeneratesExampleWithoutRoot() {
         val processor = MarkdownProcessor()
         val expected =
-          """
-            <!-- generateDocumentationExample("org.micoli.php.examples.TestConfiguration","") -->
-            ```yaml
-            aBooleanValue: false
-            aSubConfiguration:
-            - aProperty1: default value of property1
-              aProperty2: ''
-            aSubSubConfiguration:
-            - type: ClassA
-              label: default value of property1
-              classADescription: default value of property1
-            - type: ClassB
-              label: default value of property1
-              classBDescription: default value of property1
-
-            ```
-            <!-- generateDocumentationEnd -->
             """
-            .trimIndent()
-            .trim()
+        <!-- generateDocumentationExample("org.micoli.php.examples.TestConfiguration","") -->
+        ```yaml
+        aBooleanValue: false
+        aSubConfiguration:
+        - aProperty1: default value of property1
+          aProperty2: ''
+        aSubSubConfiguration:
+        - type: ClassA
+          label: default value of property1
+          classADescription: default value of property1
+        - type: ClassB
+          label: default value of property1
+          classBDescription: default value of property1
+
+        ```
+        <!-- generateDocumentationEnd -->
+        """
+                .trimIndent()
+                .trim()
 
         val result = processor.processContent(String.format(initial, "Example", ""))
 
@@ -61,26 +61,26 @@ class DocumentationGenerationTest : TestCase() {
     fun testItGeneratesExampleWithRoot() {
         val processor = MarkdownProcessor()
         val expected =
-          """
-            <!-- generateDocumentationExample("org.micoli.php.examples.TestConfiguration","exampleRoot") -->
-            ```yaml
-            exampleRoot:
-              aBooleanValue: false
-              aSubConfiguration:
-              - aProperty1: default value of property1
-                aProperty2: ''
-              aSubSubConfiguration:
-              - type: ClassA
-                label: default value of property1
-                classADescription: default value of property1
-              - type: ClassB
-                label: default value of property1
-                classBDescription: default value of property1
-            ```
-            <!-- generateDocumentationEnd -->
             """
-            .trimIndent()
-            .trim()
+        <!-- generateDocumentationExample("org.micoli.php.examples.TestConfiguration","exampleRoot") -->
+        ```yaml
+        exampleRoot:
+          aBooleanValue: false
+          aSubConfiguration:
+          - aProperty1: default value of property1
+            aProperty2: ''
+          aSubSubConfiguration:
+          - type: ClassA
+            label: default value of property1
+            classADescription: default value of property1
+          - type: ClassB
+            label: default value of property1
+            classBDescription: default value of property1
+        ```
+        <!-- generateDocumentationEnd -->
+        """
+                .trimIndent()
+                .trim()
 
         val result = processor.processContent(String.format(initial, "Example", "exampleRoot"))
 
@@ -95,36 +95,36 @@ class DocumentationGenerationTest : TestCase() {
     fun testItGeneratesProperties() {
         val processor = MarkdownProcessor()
         val expected =
-          """
-            <!-- generateDocumentationProperties("org.micoli.php.examples.TestConfiguration","") -->
-            | Property                                 | Description              |
-            | ---------------------------------------- | ------------------------ |
-            | aBooleanValue                            | description of property1 |
-            | aSubConfiguration[]                      |                          |
-            | aSubConfiguration[].aProperty1           | description of property1 |
-            | aSubConfiguration[].aProperty2           |                          |
-            | aSubSubConfiguration[]                   |                          |
-            | aSubSubConfiguration[].classADescription | description of property1 |
-            
-            - **aBooleanValue**
-              - description of property1
-              - **Example**: ``` example value of property1 ```
-              - **Default Value**: ``` false ```
-            - **aSubConfiguration[]**
-            - **aSubConfiguration[].aProperty1**
-              - description of property1
-              - **Example**: ``` example value of property1 ```
-              - **Default Value**: ``` default value of property1 ```
-            - **aSubConfiguration[].aProperty2**
-            - **aSubSubConfiguration[]**
-            - **aSubSubConfiguration[].classADescription**
-              - description of property1
-              - **Example**: ``` example value of property1 ```
-              - **Default Value**: ``` default value of property1 ```
-            <!-- generateDocumentationEnd -->
             """
-            .trimIndent()
-            .trim()
+        <!-- generateDocumentationProperties("org.micoli.php.examples.TestConfiguration","") -->
+        | Property                                 | Description              |
+        | ---------------------------------------- | ------------------------ |
+        | aBooleanValue                            | description of property1 |
+        | aSubConfiguration[]                      |                          |
+        | aSubConfiguration[].aProperty1           | description of property1 |
+        | aSubConfiguration[].aProperty2           |                          |
+        | aSubSubConfiguration[]                   |                          |
+        | aSubSubConfiguration[].classADescription | description of property1 |
+
+        - **aBooleanValue**
+          - description of property1
+          - **Example**: ``` example value of property1 ```
+          - **Default Value**: ``` false ```
+        - **aSubConfiguration[]**
+        - **aSubConfiguration[].aProperty1**
+          - description of property1
+          - **Example**: ``` example value of property1 ```
+          - **Default Value**: ``` default value of property1 ```
+        - **aSubConfiguration[].aProperty2**
+        - **aSubSubConfiguration[]**
+        - **aSubSubConfiguration[].classADescription**
+          - description of property1
+          - **Example**: ``` example value of property1 ```
+          - **Default Value**: ``` default value of property1 ```
+        <!-- generateDocumentationEnd -->
+        """
+                .trimIndent()
+                .trim()
 
         val result = processor.processContent(String.format(initial, "Properties", ""))
 
@@ -139,13 +139,13 @@ class DocumentationGenerationTest : TestCase() {
     fun testItGeneratesDescription() {
         val processor = MarkdownProcessor()
         val expected =
-          """
-            <!-- generateDocumentationDescription("org.micoli.php.examples.TestConfiguration","") -->
-            description of TestConfiguration
-            <!-- generateDocumentationEnd -->
             """
-            .trimIndent()
-            .trim()
+        <!-- generateDocumentationDescription("org.micoli.php.examples.TestConfiguration","") -->
+        description of TestConfiguration
+        <!-- generateDocumentationEnd -->
+        """
+                .trimIndent()
+                .trim()
 
         val result = processor.processContent(String.format(initial, "Description", ""))
 
@@ -187,7 +187,7 @@ class DocumentationGenerationTest : TestCase() {
     fun testItGeneratesSourceDocumentation() {
         val processor = MarkdownProcessor()
         val expected =
-          """
+            """
         <!-- generateDocumentationSource("src/test/resources/javaDocumentation","") -->
         #### `Example`
 
@@ -200,20 +200,19 @@ class DocumentationGenerationTest : TestCase() {
         - `void anotherMethod(String anotherParameter, int yetAnotherParameter)`
 
         <!-- generateDocumentationEnd -->
-            """
-            .trimIndent()
-            .trim()
+        """
+                .trimIndent()
+                .trim()
 
         val result =
-          processor.processContent(
+            processor.processContent(
+                """
+            <!-- generateDocumentationSource("src/test/resources/javaDocumentation","") -->
+            xxxxx
+            <!-- generateDocumentationEnd -->
             """
-        <!-- generateDocumentationSource("src/test/resources/javaDocumentation","") -->
-        xxxxx
-        <!-- generateDocumentationEnd -->
-            """
-              .trimIndent()
-              .trim()
-          )
+                    .trimIndent()
+                    .trim())
 
         // Then it should change
         assertEquals(expected, result)
@@ -224,10 +223,13 @@ class DocumentationGenerationTest : TestCase() {
     }
 
     companion object {
-        private fun trimLines(existingReadMeContent: String): String {
-            return Arrays.stream(existingReadMeContent.split("\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-              .map { obj: String? -> obj!!.trimEnd() }
-              .collect(Collectors.joining("\n"))
-        }
+        private fun trimLines(existingReadMeContent: String): String =
+            Arrays.stream(
+                    existingReadMeContent
+                        .split("\\n".toRegex())
+                        .dropLastWhile { it.isEmpty() }
+                        .toTypedArray())
+                .map { obj: String? -> obj!!.trimEnd() }
+                .collect(Collectors.joining("\n"))
     }
 }

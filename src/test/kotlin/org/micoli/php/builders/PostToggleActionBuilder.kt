@@ -25,13 +25,9 @@ class PostToggleActionBuilder private constructor() {
         return this
     }
 
-    fun build(): PostToggleShell {
-        return action
-    }
+    fun build(): PostToggleShell = action
 
     companion object {
-        fun create(): PostToggleActionBuilder {
-            return PostToggleActionBuilder()
-        }
+        fun create(): PostToggleActionBuilder = PostToggleActionBuilder()
     }
 }

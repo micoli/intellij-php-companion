@@ -19,10 +19,7 @@ class JsonToPhpArrayConverterTest(private val filename: String?) {
         assert(readFile(".php") == JsonToPhpArrayConverter.convertJsonToPhp(readFile(".json")))
     }
 
-    @Throws(IOException::class)
-    private fun readFile(path: String?): String {
-        return Files.readAllLines(Paths.get(DIRECTORY + filename + path), StandardCharsets.UTF_8).joinToString("\n")
-    }
+    @Throws(IOException::class) private fun readFile(path: String?): String = Files.readAllLines(Paths.get(DIRECTORY + filename + path), StandardCharsets.UTF_8).joinToString("\n")
 
     companion object {
         private const val DIRECTORY = "src/test/resources/jsonToPhpArrayConverterTestCases/"

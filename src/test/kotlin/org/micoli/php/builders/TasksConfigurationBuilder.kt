@@ -54,13 +54,9 @@ class TasksConfigurationBuilder private constructor() {
         return this
     }
 
-    fun build(): TasksConfiguration {
-        return taskConfiguration
-    }
+    fun build(): TasksConfiguration = taskConfiguration
 
     companion object {
-        fun create(): TasksConfigurationBuilder {
-            return TasksConfigurationBuilder()
-        }
+        fun create(): TasksConfigurationBuilder = TasksConfigurationBuilder()
     }
 }

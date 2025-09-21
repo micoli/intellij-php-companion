@@ -16,14 +16,9 @@ class PathBuilder private constructor() {
         return this
     }
 
-    fun build(): Path {
-        return path
-    }
+    fun build(): Path = path
 
     companion object {
-        @JvmStatic
-        fun create(): PathBuilder {
-            return PathBuilder()
-        }
+        @JvmStatic fun create(): PathBuilder = PathBuilder()
     }
 }

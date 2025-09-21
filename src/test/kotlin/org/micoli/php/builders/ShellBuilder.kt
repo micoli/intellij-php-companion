@@ -30,14 +30,9 @@ class ShellBuilder private constructor() {
         return this
     }
 
-    fun build(): Shell {
-        return shell
-    }
+    fun build(): Shell = shell
 
     companion object {
-        @JvmStatic
-        fun create(): ShellBuilder {
-            return ShellBuilder()
-        }
+        @JvmStatic fun create(): ShellBuilder = ShellBuilder()
     }
 }

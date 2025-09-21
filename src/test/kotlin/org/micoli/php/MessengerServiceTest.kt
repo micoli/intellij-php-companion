@@ -12,9 +12,7 @@ import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfigurat
 import org.micoli.php.symfony.messenger.service.MessengerService
 
 class MessengerServiceTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String {
-        return "src/test/resources/testData"
-    }
+    override fun getTestDataPath(): String = "src/test/resources/testData"
 
     fun testItDetectMessageBasedOnPatternClass() {
         myFixture.configureByFile("/src/Core/Event/ArticleCreatedEvent.php")
@@ -94,7 +92,7 @@ class MessengerServiceTest : BasePlatformTestCase() {
 
     private fun loadPluginConfiguration(path: String?): MessengerService {
         try {
-            val symfonyMessengerConfiguration = ConfigurationFactory.loadConfiguration(path, 0L, true).configuration.symfonyMessenger
+            val symfonyMessengerConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.symfonyMessenger
             val messengerService = MessengerService.getInstance(project)
             messengerService.loadConfiguration(symfonyMessengerConfiguration)
 

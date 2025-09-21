@@ -15,14 +15,9 @@ class TaskBuilder private constructor() {
         return this
     }
 
-    fun build(): Task {
-        return task
-    }
+    fun build(): Task = task
 
     companion object {
-        @JvmStatic
-        fun create(): TaskBuilder {
-            return TaskBuilder()
-        }
+        @JvmStatic fun create(): TaskBuilder = TaskBuilder()
     }
 }
