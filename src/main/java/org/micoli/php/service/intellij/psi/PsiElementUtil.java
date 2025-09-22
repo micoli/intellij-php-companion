@@ -56,13 +56,13 @@ public class PsiElementUtil {
 
             if (element instanceof PsiNamedElement) {
                 return String.format(
-                        format, base, getFileExtract(element, 1).lineNumber(), ((PsiNamedElement) element).getName());
+                        format, base, getFileExtract(element, 1).lineNumber, ((PsiNamedElement) element).getName());
             }
 
             return String.format(
                     format,
                     base,
-                    getFileExtract(element, 1).lineNumber(),
+                getFileExtract(element, 1).lineNumber,
                     element.getText().replaceAll("\\s( *)", " "));
         });
     }

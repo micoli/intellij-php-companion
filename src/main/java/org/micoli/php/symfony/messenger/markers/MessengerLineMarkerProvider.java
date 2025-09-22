@@ -178,8 +178,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
 
     private @NotNull List<NavigableListPopupItem> addActionsToItems(
             Project project, String messageClassName, List<NavigableItem> navigableItemList) {
-        List<Navigatable> navigatableList =
-                navigableItemList.stream().map(NavigableItem::getNavigable).toList();
+        List<Navigatable> navigatableList = navigableItemList.stream().map( item -> item.navigable).toList();
         List<NavigableListPopupItem> finalList = new ArrayList<>(navigableItemList);
         finalList.add(new NavigableOpenAllAction(navigatableList));
         finalList.add(new NavigableOpenSearchAction(
@@ -192,7 +191,7 @@ public class MessengerLineMarkerProvider implements LineMarkerProvider {
 
     private static boolean hasMultipleFilesReferenced(List<NavigableItem> navigableItemList) {
         return navigableItemList.stream()
-                        .map(navigableItem -> navigableItem.getFileExtract().file())
+                        .map(navigableItem -> navigableItem.fileExtract.file)
                         .distinct()
                         .count()
                 > 1;

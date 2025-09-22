@@ -8,7 +8,6 @@ import org.micoli.php.builders.PathBuilder
 import org.micoli.php.builders.ScriptBuilder
 import org.micoli.php.builders.ShellBuilder
 import org.micoli.php.builders.TaskBuilder
-import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 import org.micoli.php.ui.components.tasks.tree.ActionTreeNodeConfigurator
 import org.micoli.php.ui.components.tasks.tree.LabeledTreeNode
 import org.micoli.php.ui.components.tasks.tree.PathNode
@@ -40,7 +39,7 @@ class ActionTreeNodeConfiguratorTest : BasePlatformTestCase() {
 
         val path2 = PathBuilder.create().withLabel("an emptyPath").withTasks(arrayOf()).build()
 
-        configurator.configureTree(mapOf<String, RunnableTaskConfiguration>(shell.id to shell, script.id to script), arrayOf(task1, task2, path1, path2))
+        configurator.configureTree(mapOf(shell.id to shell, script.id to script), arrayOf(task1, task2, path1, path2))
 
         assertFalse(tree.isRootVisible)
         assertTrue(tree.showsRootHandles)
@@ -70,8 +69,8 @@ class ActionTreeNodeConfiguratorTest : BasePlatformTestCase() {
             val indent = "-".repeat(level)
             expectedLabels.add(
               when (node) {
-                  is PathNode -> String.format("%02d%s(%d)=>%s", index, indent, level, node.label)
-                  is LabeledTreeNode -> String.format("%02d%s(%d)=>%s", index, indent, level, node.label)
+                  is PathNode -> String.format("%02d%s(%d)=>%s", index, indent, level, node.getLabel())
+                  is LabeledTreeNode -> String.format("%02d%s(%d)=>%s", index, indent, level, node.getLabel())
                   else -> String.format("%02d%s(%d)=>%s", index, indent, level, node.toString())
               }
             )

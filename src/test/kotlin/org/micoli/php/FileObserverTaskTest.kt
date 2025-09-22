@@ -35,7 +35,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Inactive, fileObserverTask.getStatus())
-        TestCase.assertEquals("# ", fileObserverTask.iconAndPrefix.prefix)
+        TestCase.assertEquals("# ", fileObserverTask.iconAndPrefix.getPrefix())
         assertFileContentEquals(filePath, "#variable1=value\n#variable2=value")
     }
 
@@ -58,7 +58,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Inactive, fileObserverTask.getStatus())
-        TestCase.assertEquals("# ", fileObserverTask.iconAndPrefix.prefix)
+        TestCase.assertEquals("# ", fileObserverTask.iconAndPrefix.getPrefix())
         assertFileContentEquals(specificFilePath, ";variable1=value")
     }
 
@@ -121,7 +121,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Active, fileObserverTask.getStatus())
-        TestCase.assertEquals("", fileObserverTask.iconAndPrefix.prefix)
+        TestCase.assertEquals("", fileObserverTask.iconAndPrefix.getPrefix())
         assertFileContentEquals(filePath, "variable1=value\nvariable2=value")
     }
 
@@ -135,7 +135,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
-        TestCase.assertEquals("? ", fileObserverTask.iconAndPrefix.prefix)
+        TestCase.assertEquals("? ", fileObserverTask.iconAndPrefix.getPrefix())
     }
 
     fun testStatusToggleOnUnknownFile() {
@@ -148,7 +148,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
-        TestCase.assertEquals("? ", fileObserverTask.iconAndPrefix.prefix)
+        TestCase.assertEquals("? ", fileObserverTask.iconAndPrefix.getPrefix())
     }
 
     private fun assertFileContentEquals(filepathPrm: String, content: String?) {
