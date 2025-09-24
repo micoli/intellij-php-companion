@@ -16,7 +16,7 @@ import org.micoli.php.configuration.models.Configuration
 
 class DocumentationGenerationTest : TestCase() {
     private val initial =
-      """
+        """
       <!-- generateDocumentation%s("org.micoli.php.examples.TestConfiguration","%s") -->
       xxxxx
       <!-- generateDocumentationEnd -->

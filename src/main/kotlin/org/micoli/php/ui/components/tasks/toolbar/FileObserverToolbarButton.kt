@@ -17,29 +17,38 @@ import org.micoli.php.ui.components.tasks.helpers.FileObserver
 import org.micoli.php.ui.components.tasks.helpers.FileObserver.IconAndPrefix
 
 class FileObserverToolbarButton(private val project: Project, observedFile: ObservedFile) :
-  AnAction(observedFile.label, observedFile.label, getIcon(observedFile.icon, PhpCompanionIcon::class.java)), Disposable {
+    AnAction(
+        observedFile.label,
+        observedFile.label,
+        getIcon(observedFile.icon, PhpCompanionIcon::class.java)),
+    Disposable {
     private val taskId: String = observedFile.id
     private val label: String? = observedFile.label
 
     private val messageBusConnection: MessageBusConnection = project.messageBus.connect()
 
     init {
-        this.messageBusConnection.subscribe<TaskNodeChangedEvents>(TaskNodeChangedEvents.NODE_CHANGED_EVENTS_TOPIC, this.taskNodeChangedEvents)
+        this.messageBusConnection.subscribe<TaskNodeChangedEvents>(
+            TaskNodeChangedEvents.NODE_CHANGED_EVENTS_TOPIC, this.taskNodeChangedEvents)
     }
 
     private val taskNodeChangedEvents: TaskNodeChangedEvents
-        get() = TaskNodeChangedEvents { taskIdParameter: String?, status: FileObserver.Status?, iconAndPrefix: IconAndPrefix? ->
-            if (taskIdParameter != this.taskId) {
-                return@TaskNodeChangedEvents
+        get() =
+            TaskNodeChangedEvents {
+                taskIdParameter: String?,
+                status: FileObserver.Status?,
+                iconAndPrefix: IconAndPrefix? ->
+                if (taskIdParameter != this.taskId) {
+                    return@TaskNodeChangedEvents
+                }
+                SwingUtilities.invokeLater {
+                    LOGGER.warn("Received node changed event for " + taskId + "-" + status!!.name)
+                    val presentation = templatePresentation
+                    presentation.setText(iconAndPrefix!!.getPrefix() + label)
+                    presentation.icon = iconAndPrefix.icon
+                    PresentationFactory.updatePresentation(this)
+                }
             }
-            SwingUtilities.invokeLater {
-                LOGGER.warn("Received node changed event for " + taskId + "-" + status!!.name)
-                val presentation = templatePresentation
-                presentation.setText(iconAndPrefix!!.getPrefix() + label)
-                presentation.icon = iconAndPrefix.icon
-                PresentationFactory.updatePresentation(this)
-            }
-        }
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {
         TasksService.getInstance(project).runTask(taskId)
@@ -50,6 +59,7 @@ class FileObserverToolbarButton(private val project: Project, observedFile: Obse
     }
 
     companion object {
-        private val LOGGER = Logger.getInstance(FileObserverToolbarButton::class.java.getSimpleName())
+        private val LOGGER =
+            Logger.getInstance(FileObserverToolbarButton::class.java.getSimpleName())
     }
 }

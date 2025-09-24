@@ -34,14 +34,14 @@ class DebouncedRunnableTest {
         val latch = CountDownLatch(1)
 
         debouncedRunnable =
-          DebouncedRunnable(
-            {
-                counter!!.incrementAndGet()
-                latch.countDown()
-            },
-            delay,
-            null,
-          )
+            DebouncedRunnable(
+                {
+                    counter!!.incrementAndGet()
+                    latch.countDown()
+                },
+                delay,
+                null,
+            )
 
         Assertions.assertEquals(0, counter!!.get())
         debouncedRunnable!!.run()
@@ -58,14 +58,14 @@ class DebouncedRunnableTest {
         val latch = CountDownLatch(1)
 
         debouncedRunnable =
-          DebouncedRunnable(
-            {
-                counter!!.incrementAndGet()
-                latch.countDown()
-            },
-            delay,
-            null,
-          )
+            DebouncedRunnable(
+                {
+                    counter!!.incrementAndGet()
+                    latch.countDown()
+                },
+                delay,
+                null,
+            )
 
         debouncedRunnable!!.run()
         Thread.sleep(100)
@@ -97,14 +97,14 @@ class DebouncedRunnableTest {
         val latch = CountDownLatch(1)
 
         debouncedRunnable =
-          DebouncedRunnable(
-            { counter!!.incrementAndGet() },
-            delay,
-            {
-                callbackCounter!!.incrementAndGet()
-                latch.countDown()
-            },
-          )
+            DebouncedRunnable(
+                { counter!!.incrementAndGet() },
+                delay,
+                {
+                    callbackCounter!!.incrementAndGet()
+                    latch.countDown()
+                },
+            )
 
         debouncedRunnable!!.run()
         Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))

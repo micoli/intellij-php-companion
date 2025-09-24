@@ -14,15 +14,14 @@ object NavigableListPopup {
         list.selectionMode = ListSelectionModel.SINGLE_SELECTION
 
         PopupChooserBuilder<NavigableListPopupItem?>(list)
-          .setItemChosenCallback(
-            Runnable {
-                val selected = list.getSelectedValue()
-                if (selected != null && selected.canNavigate()) {
-                    selected.navigate(true)
-                }
-            }
-          )
-          .createPopup()
-          .show(RelativePoint(mouseEvent))
+            .setItemChosenCallback(
+                Runnable {
+                    val selected = list.getSelectedValue()
+                    if (selected != null && selected.canNavigate()) {
+                        selected.navigate(true)
+                    }
+                })
+            .createPopup()
+            .show(RelativePoint(mouseEvent))
     }
 }

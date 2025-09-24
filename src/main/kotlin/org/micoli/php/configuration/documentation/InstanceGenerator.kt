@@ -6,9 +6,14 @@ import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
 
 class InstanceGenerator {
-    fun <T> get(clazz: Class<*>, useExampleAsDefaultValue: Boolean): T? = get(clazz, HashMap(), useExampleAsDefaultValue)
+    fun <T> get(clazz: Class<*>, useExampleAsDefaultValue: Boolean): T? =
+        get(clazz, HashMap(), useExampleAsDefaultValue)
 
-    private fun <T> get(clazz: Class<*>, recursionGuard: MutableMap<Class<*>?, Any?>, useExampleAsDefaultValue: Boolean): T? {
+    private fun <T> get(
+        clazz: Class<*>,
+        recursionGuard: MutableMap<Class<*>?, Any?>,
+        useExampleAsDefaultValue: Boolean
+    ): T? {
         if (recursionGuard.containsKey(clazz)) {
             return null
         }
@@ -44,7 +49,11 @@ class InstanceGenerator {
         }
     }
 
-    private fun generateFieldValue(field: Field, recursionGuard: MutableMap<Class<*>?, Any?>, useExampleAsDefaultValue: Boolean): Any? {
+    private fun generateFieldValue(
+        field: Field,
+        recursionGuard: MutableMap<Class<*>?, Any?>,
+        useExampleAsDefaultValue: Boolean
+    ): Any? {
         val fieldType = field.type
         val subtypes: JsonSubTypes? = getSubtypes(field)
 
@@ -59,9 +68,11 @@ class InstanceGenerator {
                 return convertExampleValues(examplesValues, fieldType)
             }
             if (subtypes != null) {
-                return generateArrayValues(fieldType.componentType, subtypes, recursionGuard, useExampleAsDefaultValue)
+                return generateArrayValues(
+                    fieldType.componentType, subtypes, recursionGuard, useExampleAsDefaultValue)
             }
-            return generateArrayValue(fieldType.componentType(), recursionGuard, useExampleAsDefaultValue)
+            return generateArrayValue(
+                fieldType.componentType(), recursionGuard, useExampleAsDefaultValue)
         }
 
         if (isPrimitiveOrWrapper(fieldType)) {
@@ -117,24 +128,42 @@ class InstanceGenerator {
         return result
     }
 
-    private fun generateArrayValue(componentType: Class<*>, recursionGuard: MutableMap<Class<*>?, Any?>, useExampleAsDefaultValue: Boolean): Any {
+    private fun generateArrayValue(
+        componentType: Class<*>,
+        recursionGuard: MutableMap<Class<*>?, Any?>,
+        useExampleAsDefaultValue: Boolean
+    ): Any {
         val array = java.lang.reflect.Array.newInstance(componentType, 1)
-        java.lang.reflect.Array.set(array, 0, getExampleValue(componentType, recursionGuard, useExampleAsDefaultValue))
+        java.lang.reflect.Array.set(
+            array, 0, getExampleValue(componentType, recursionGuard, useExampleAsDefaultValue))
 
         return array
     }
 
-    private fun generateArrayValues(componentType: Class<*>?, subTypes: JsonSubTypes, recursionGuard: MutableMap<Class<*>?, Any?>, useExampleAsDefaultValue: Boolean): Any {
+    private fun generateArrayValues(
+        componentType: Class<*>?,
+        subTypes: JsonSubTypes,
+        recursionGuard: MutableMap<Class<*>?, Any?>,
+        useExampleAsDefaultValue: Boolean
+    ): Any {
         val array = java.lang.reflect.Array.newInstance(componentType, subTypes.value.size)
 
         for (index in subTypes.value.indices) {
-            java.lang.reflect.Array.set(array, index, getExampleValue(subTypes.value[index].value.java, recursionGuard, useExampleAsDefaultValue))
+            java.lang.reflect.Array.set(
+                array,
+                index,
+                getExampleValue(
+                    subTypes.value[index].value.java, recursionGuard, useExampleAsDefaultValue))
         }
 
         return array
     }
 
-    private fun getExampleValue(subType: Class<*>, recursionGuard: MutableMap<Class<*>?, Any?>, useExampleAsDefaultValue: Boolean): Any? {
+    private fun getExampleValue(
+        subType: Class<*>,
+        recursionGuard: MutableMap<Class<*>?, Any?>,
+        useExampleAsDefaultValue: Boolean
+    ): Any? {
         if (isPrimitiveOrWrapper(subType)) {
             return getDefaultPrimitiveValue(subType)
         } else if (subType == String::class.java) {
@@ -153,15 +182,15 @@ class InstanceGenerator {
     }
 
     private fun isPrimitiveOrWrapper(type: Class<*>): Boolean =
-      type.isPrimitive ||
-        type == Boolean::class.java ||
-        type == Int::class.java ||
-        type == Long::class.java ||
-        type == Double::class.java ||
-        type == Float::class.java ||
-        type == Char::class.java ||
-        type == Byte::class.java ||
-        type == Short::class.java
+        type.isPrimitive ||
+            type == Boolean::class.java ||
+            type == Int::class.java ||
+            type == Long::class.java ||
+            type == Double::class.java ||
+            type == Float::class.java ||
+            type == Char::class.java ||
+            type == Byte::class.java ||
+            type == Short::class.java
 
     private fun getDefaultPrimitiveValue(type: Class<*>?): Any? {
         if (type == Boolean::class.javaPrimitiveType || type == Boolean::class.java) return false

@@ -25,15 +25,26 @@ class ListRowFilter<M, I> : RowFilter<M?, I?>() {
         this.searchText = searchText
         this.isRegexMode = isRegexMode
         searchPatterns =
-          if (isRegexMode)
-            Arrays.stream(searchText.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-              .map { obj: String? -> obj!!.trim { it <= ' ' } }
-              .map { expr: String? -> Pattern.compile("(?i)$expr") }
-              .toList()
-          else null
+            if (isRegexMode)
+                Arrays.stream(
+                        searchText
+                            .split(" ".toRegex())
+                            .dropLastWhile { it.isEmpty() }
+                            .toTypedArray())
+                    .map { obj: String? -> obj!!.trim { it <= ' ' } }
+                    .map { expr: String? -> Pattern.compile("(?i)$expr") }
+                    .toList()
+            else null
         searchParts =
-          if (!isRegexMode) Arrays.stream(searchText.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()).map { obj: String? -> obj!!.trim { it <= ' ' } }.toList()
-          else null
+            if (!isRegexMode)
+                Arrays.stream(
+                        searchText
+                            .split(" ".toRegex())
+                            .dropLastWhile { it.isEmpty() }
+                            .toTypedArray())
+                    .map { obj: String? -> obj!!.trim { it <= ' ' } }
+                    .toList()
+            else null
     }
 
     override fun include(entry: Entry<out M?, out I?>): Boolean {
@@ -44,11 +55,17 @@ class ListRowFilter<M, I> : RowFilter<M?, I?>() {
             val searchableRecord = entry.getValue(entry.valueCount - 1) as SearchableRecord
             if (isRegexMode) {
                 return searchPatterns!!.stream().allMatch { pattern: Pattern? ->
-                    searchableRecord.getSearchString().stream().anyMatch { c: String? -> pattern!!.matcher(c).find() }
+                    searchableRecord.getSearchString().stream().anyMatch { c: String? ->
+                        pattern!!.matcher(c).find()
+                    }
                 }
             }
             return searchParts!!.stream().allMatch { part: String? ->
-                searchableRecord.getSearchString().joinToString(" ").lowercase(Locale.getDefault()).contains(part!!.lowercase(Locale.getDefault()))
+                searchableRecord
+                    .getSearchString()
+                    .joinToString(" ")
+                    .lowercase(Locale.getDefault())
+                    .contains(part!!.lowercase(Locale.getDefault()))
             }
         }
         return false

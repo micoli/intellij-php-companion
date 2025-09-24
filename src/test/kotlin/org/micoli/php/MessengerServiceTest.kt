@@ -38,13 +38,14 @@ class MessengerServiceTest : BasePlatformTestCase() {
 
     fun testItDetectMessageBasedOnInterface() {
         myFixture.configureByFiles(
-          "/src/Core/Event/ArticleCreatedEvent.php",
-          "/src/Infrastructure/Bus/Message/Event/AsyncEventInterface.php",
-          "/src/Infrastructure/Bus/Message/Event/EventInterface.php",
-          "/src/Infrastructure/Bus/Message/MessageInterface.php",
+            "/src/Core/Event/ArticleCreatedEvent.php",
+            "/src/Infrastructure/Bus/Message/Event/AsyncEventInterface.php",
+            "/src/Infrastructure/Bus/Message/Event/EventInterface.php",
+            "/src/Infrastructure/Bus/Message/MessageInterface.php",
         )
         val symfonyMessengerConfiguration = SymfonyMessengerConfiguration()
-        symfonyMessengerConfiguration.messageInterfaces = arrayOf("App\\Infrastructure\\Bus\\Message\\MessageInterface")
+        symfonyMessengerConfiguration.messageInterfaces =
+            arrayOf("App\\Infrastructure\\Bus\\Message\\MessageInterface")
         val messengerService = MessengerService.getInstance(project)
         messengerService.loadConfiguration(symfonyMessengerConfiguration)
         val phpClass = PhpUtil.getPhpClassByFQN(project, "App\\Core\\Event\\ArticleCreatedEvent")
@@ -55,8 +56,11 @@ class MessengerServiceTest : BasePlatformTestCase() {
     fun testItCanFindHandlersByMessage() {
         myFixture.copyDirectoryToProject("src", "src")
         val messengerService = loadPluginConfiguration(testDataPath)
-        val handledMessages = messengerService.findHandlersByMessageName("App\\Core\\Event\\ArticleCreatedEvent")
-        assertContainsElements(handledMessages.stream().map { obj: Method? -> obj!!.fqn }.toList(), "\\App\\Core\\EventListener\\OnArticleCreated.__invoke")
+        val handledMessages =
+            messengerService.findHandlersByMessageName("App\\Core\\Event\\ArticleCreatedEvent")
+        assertContainsElements(
+            handledMessages.stream().map { obj: Method? -> obj!!.fqn }.toList(),
+            "\\App\\Core\\EventListener\\OnArticleCreated.__invoke")
     }
 
     fun testItCanFindLineMarkersForMessageHandler() {
@@ -67,24 +71,27 @@ class MessengerServiceTest : BasePlatformTestCase() {
         assertNotEmpty(lineMarkers)
 
         val specificMarkers =
-          lineMarkers
-            .stream()
-            .filter { it: GutterMark? ->
-                val tooltipText = it!!.tooltipText
-                if (tooltipText == null) {
-                    return@filter false
+            lineMarkers
+                .stream()
+                .filter { it: GutterMark? ->
+                    val tooltipText = it!!.tooltipText
+                    if (tooltipText == null) {
+                        return@filter false
+                    }
+                    tooltipText.contains("Search for usages") ||
+                        tooltipText.contains("Navigate to message handlers")
                 }
-                tooltipText.contains("Search for usages") || tooltipText.contains("Navigate to message handlers")
-            }
-            .toList()
+                .toList()
         TestCase.assertEquals(2, specificMarkers.size)
     }
 
     fun testItCanFindDispatchCallsForMessageClass() {
         myFixture.copyDirectoryToProject("src", "src")
         val messengerService = loadPluginConfiguration(testDataPath)
-        val callsWithoutRootNamespace = messengerService.findDispatchCallsForMessage("App\\Core\\Event\\ArticleCreatedEvent")
-        val callsWithRootNamespace = messengerService.findDispatchCallsForMessage("\\App\\Core\\Event\\ArticleCreatedEvent")
+        val callsWithoutRootNamespace =
+            messengerService.findDispatchCallsForMessage("App\\Core\\Event\\ArticleCreatedEvent")
+        val callsWithRootNamespace =
+            messengerService.findDispatchCallsForMessage("\\App\\Core\\Event\\ArticleCreatedEvent")
 
         TestCase.assertEquals(1, callsWithoutRootNamespace.size)
         TestCase.assertEquals(callsWithRootNamespace.size, callsWithoutRootNamespace.size)
@@ -92,7 +99,11 @@ class MessengerServiceTest : BasePlatformTestCase() {
 
     private fun loadPluginConfiguration(path: String?): MessengerService {
         try {
-            val symfonyMessengerConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.symfonyMessenger
+            val symfonyMessengerConfiguration =
+                ConfigurationFactory()
+                    .loadConfiguration(path, 0L, true)
+                    ?.configuration
+                    ?.symfonyMessenger
             val messengerService = MessengerService.getInstance(project)
             messengerService.loadConfiguration(symfonyMessengerConfiguration)
 

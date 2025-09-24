@@ -49,27 +49,27 @@ class ActionTreePanel(project: Project) : JPanel(), Disposable {
         mainPanel.add(comp, BorderLayout.CENTER)
         actionTreeNodeConfigurator = ActionTreeNodeConfigurator(project, tree)
         project.messageBus
-          .connect()
-          .subscribe<ConfigurationEvents>(
-            ConfigurationEvents.CONFIGURATION_UPDATED,
-            ConfigurationEvents { configuration: Configuration? ->
-                SwingUtilities.invokeLater {
-                    this.loadButtonBar(project, configuration!!.tasksConfiguration)
-                    this.loadActionTree(configuration.tasksConfiguration)
-                    refresh()
-                }
-            },
-          )
+            .connect()
+            .subscribe<ConfigurationEvents>(
+                ConfigurationEvents.CONFIGURATION_UPDATED,
+                ConfigurationEvents { configuration: Configuration? ->
+                    SwingUtilities.invokeLater {
+                        this.loadButtonBar(project, configuration!!.tasksConfiguration)
+                        this.loadActionTree(configuration.tasksConfiguration)
+                        refresh()
+                    }
+                },
+            )
     }
 
     fun refresh() {
         this.mainPanel.revalidate()
         TaskScheduler.scheduleLater(
-          {
-              LOGGER.warn("Refreshing all file observers")
-              TasksService.getInstance(project).refreshObservedFiles(true)
-          },
-          1000,
+            {
+                LOGGER.warn("Refreshing all file observers")
+                TasksService.getInstance(project).refreshObservedFiles(true)
+            },
+            1000,
         )
     }
 
@@ -91,22 +91,25 @@ class ActionTreePanel(project: Project) : JPanel(), Disposable {
         for (task in configuration.toolbar) {
             val runnable = configuration.tasksMap[task.taskId]
             val action =
-              when (runnable) {
-                  is Builtin -> TaskToolbarButton(project, runnable)
-                  is Shell -> TaskToolbarButton(project, runnable)
-                  is Script -> TaskToolbarButton(project, runnable)
-                  is ObservedFile -> FileObserverToolbarButton(project, runnable)
-                  else -> throw IllegalStateException("Unexpected value: $runnable")
-              }
+                when (runnable) {
+                    is Builtin -> TaskToolbarButton(project, runnable)
+                    is Shell -> TaskToolbarButton(project, runnable)
+                    is Script -> TaskToolbarButton(project, runnable)
+                    is ObservedFile -> FileObserverToolbarButton(project, runnable)
+                    else -> throw IllegalStateException("Unexpected value: $runnable")
+                }
 
-            actionManager.registerAction("PhpCompanion." + runnable.javaClass.getSimpleName() + "." + runnable.id, action)
+            actionManager.registerAction(
+                "PhpCompanion." + runnable.javaClass.getSimpleName() + "." + runnable.id, action)
             this.leftActionGroup.add(action)
         }
     }
 
     private fun createToolbar(): JComponent {
         val toolbarPanel = JPanel(BorderLayout())
-        val leftToolbar = ActionManager.getInstance().createActionToolbar("PhpCompanionRightToolbar", leftActionGroup, true)
+        val leftToolbar =
+            ActionManager.getInstance()
+                .createActionToolbar("PhpCompanionRightToolbar", leftActionGroup, true)
         leftToolbar.targetComponent = mainPanel
         toolbarPanel.add(leftToolbar.component, BorderLayout.WEST)
 

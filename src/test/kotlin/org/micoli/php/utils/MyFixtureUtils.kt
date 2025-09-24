@@ -49,11 +49,20 @@ class MyFixtureUtils {
             }
         }
 
-        fun filesMatching(myFixture: CodeInsightTestFixture, predicate: Predicate<String?>?): MutableList<String?> =
-          getPathContent(myFixture.findFileInTempDir("/")).stream().filter(predicate).toList()
+        fun filesMatching(
+            myFixture: CodeInsightTestFixture,
+            predicate: Predicate<String?>?
+        ): MutableList<String?> =
+            getPathContent(myFixture.findFileInTempDir("/")).stream().filter(predicate).toList()
 
-        fun filesMatchingContains(myFixture: CodeInsightTestFixture, needle: String): MutableList<String?> =
-          getPathContent(myFixture.findFileInTempDir("/")).stream().filter { s: String? -> s!!.contains(needle) }.toList()
+        fun filesMatchingContains(
+            myFixture: CodeInsightTestFixture,
+            needle: String
+        ): MutableList<String?> =
+            getPathContent(myFixture.findFileInTempDir("/"))
+                .stream()
+                .filter { s: String? -> s!!.contains(needle) }
+                .toList()
 
         fun getPathContent(root: VirtualFile?): ImmutableList<String?> {
             val instance = MyFixtureUtils()
@@ -64,12 +73,13 @@ class MyFixtureUtils {
             return result.toImmutableList()
         }
 
-        private fun getFormattedFilename(level: Int, file: VirtualFile): String = "  ".repeat(level) + "- " + file.name
+        private fun getFormattedFilename(level: Int, file: VirtualFile): String =
+            "  ".repeat(level) + "- " + file.name
 
         fun initGitRepository(myFixture: CodeInsightTestFixture) {
             myFixture.addFileToProject(
-              "/.git/config",
-              """
+                "/.git/config",
+                """
           [core]
               repositoryformatversion = 0
               filemode = true
@@ -79,7 +89,7 @@ class MyFixtureUtils {
               precomposeunicode = true
 
           """
-                .trimIndent(),
+                    .trimIndent(),
             )
             myFixture.addFileToProject("/.git/description", "")
             myFixture.addFileToProject("/.git/HEAD", "ref: refs/heads/main\n")

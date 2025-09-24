@@ -7,7 +7,8 @@ fun <T> appendToArray(originalArray: Array<T>?, newElement: T, componentType: Cl
         return newArray
     }
 
-    val newArray = java.lang.reflect.Array.newInstance(componentType, originalArray.size + 1) as Array<T>
+    val newArray =
+        java.lang.reflect.Array.newInstance(componentType, originalArray.size + 1) as Array<T>
     System.arraycopy(originalArray, 0, newArray, 0, originalArray.size)
     newArray[originalArray.size] = newElement
     return newArray

@@ -18,11 +18,11 @@ object JavaDocumentationGenerator {
         try {
             Files.walk(Paths.get(sourcePath)).use { paths ->
                 val javaFiles =
-                  paths
-                    .filter { path: Path? -> path != null }
-                    .filter { path: Path -> Files.isRegularFile(path) }
-                    .filter { path: Path -> path.toString().endsWith(".java") }
-                    .toList()
+                    paths
+                        .filter { path: Path? -> path != null }
+                        .filter { path: Path -> Files.isRegularFile(path) }
+                        .filter { path: Path -> path.toString().endsWith(".java") }
+                        .toList()
                 for (javaFile in javaFiles) {
                     try {
                         FileInputStream(javaFile.toFile()).use { `in` ->
@@ -32,44 +32,58 @@ object JavaDocumentationGenerator {
                             }
                             val cu = parseResult.getResult().get()
                             for (classDecl in cu.findAll(ClassOrInterfaceDeclaration::class.java)) {
-                                if (classDecl.nameAsString.contains("Error") || classDecl.nameAsString.contains("Exception")) {
+                                if (classDecl.nameAsString.contains("Error") ||
+                                    classDecl.nameAsString.contains("Exception")) {
                                     continue
                                 }
                                 val classInfo = ClassInfo()
                                 classInfo.name = classDecl.nameAsString
 
                                 val classJavadoc = classDecl.javadoc
-                                classJavadoc.ifPresent(Consumer { javadoc: Javadoc? -> classInfo.description = javadoc!!.description.toText() })
+                                classJavadoc.ifPresent(
+                                    Consumer { javadoc: Javadoc? ->
+                                        classInfo.description = javadoc!!.description.toText()
+                                    })
 
                                 for (methodDecl in classDecl.methods) {
                                     if (methodDecl.isPublic) {
                                         val methodInfo = MethodInfo()
                                         methodInfo.name = methodDecl.nameAsString
-                                        methodInfo.signature = methodDecl.getDeclarationAsString(false, false, true)
+                                        methodInfo.signature =
+                                            methodDecl.getDeclarationAsString(false, false, true)
 
                                         val methodJavadoc = methodDecl.javadoc
                                         if (methodJavadoc.isPresent) {
-                                            methodInfo.description = methodJavadoc.get().description.toText()
+                                            methodInfo.description =
+                                                methodJavadoc.get().description.toText()
 
                                             methodJavadoc
-                                              .get()
-                                              .blockTags
-                                              .stream()
-                                              .filter { tag: JavadocBlockTag? -> (tag!!.type == JavadocBlockTag.Type.PARAM) }
-                                              .forEach { tag: JavadocBlockTag? ->
-                                                  val paramInfo = ParameterInfo()
-                                                  paramInfo.name = tag!!.name.orElse("")
-                                                  paramInfo.description = tag.content.toText()
-                                                  methodInfo.parameters.add(paramInfo)
-                                              }
+                                                .get()
+                                                .blockTags
+                                                .stream()
+                                                .filter { tag: JavadocBlockTag? ->
+                                                    (tag!!.type == JavadocBlockTag.Type.PARAM)
+                                                }
+                                                .forEach { tag: JavadocBlockTag? ->
+                                                    val paramInfo = ParameterInfo()
+                                                    paramInfo.name = tag!!.name.orElse("")
+                                                    paramInfo.description = tag.content.toText()
+                                                    methodInfo.parameters.add(paramInfo)
+                                                }
 
                                             methodJavadoc
-                                              .get()
-                                              .blockTags
-                                              .stream()
-                                              .filter { tag: JavadocBlockTag? -> (tag!!.type == JavadocBlockTag.Type.RETURN) }
-                                              .findFirst()
-                                              .ifPresent(Consumer { tag: JavadocBlockTag? -> methodInfo.returnDescription = tag!!.content.toText() })
+                                                .get()
+                                                .blockTags
+                                                .stream()
+                                                .filter { tag: JavadocBlockTag? ->
+                                                    (tag!!.type == JavadocBlockTag.Type.RETURN)
+                                                }
+                                                .findFirst()
+                                                .ifPresent(
+                                                    Consumer { tag: JavadocBlockTag? ->
+                                                        methodInfo.returnDescription =
+                                                            tag!!.content.toText()
+                                                    })
                                         }
 
                                         classInfo.methods.add(methodInfo)
@@ -104,12 +118,20 @@ object JavaDocumentationGenerator {
                 for (methodInfo in classInfo.methods) {
                     markdown.append("- `").append(methodInfo.signature).append("`\n")
                     if (methodInfo.description != null) {
-                        markdown.append("  ").append(methodInfo.description!!.replace("\n".toRegex(), " ")).append("\n")
+                        markdown
+                            .append("  ")
+                            .append(methodInfo.description!!.replace("\n".toRegex(), " "))
+                            .append("\n")
                     }
 
                     if (!methodInfo.parameters.isEmpty()) {
                         for (paramInfo in methodInfo.parameters) {
-                            markdown.append("   - `").append(paramInfo.name).append("`: ").append(paramInfo.description!!.replace("\n".toRegex(), " ")).append("\n")
+                            markdown
+                                .append("   - `")
+                                .append(paramInfo.name)
+                                .append("`: ")
+                                .append(paramInfo.description!!.replace("\n".toRegex(), " "))
+                                .append("\n")
                         }
                         markdown.append("\n")
                     }

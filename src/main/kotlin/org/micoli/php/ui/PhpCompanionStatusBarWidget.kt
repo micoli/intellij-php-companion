@@ -18,7 +18,8 @@ import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService
 import org.micoli.php.symfony.messenger.service.MessengerService
 import org.micoli.php.tasks.TasksService
 
-class PhpCompanionStatusBarWidget(private val project: Project) : StatusBarWidget, TextPresentation {
+class PhpCompanionStatusBarWidget(private val project: Project) :
+    StatusBarWidget, TextPresentation {
     override fun ID(): String {
         return "PHPCompanion"
     }
@@ -53,71 +54,78 @@ class PhpCompanionStatusBarWidget(private val project: Project) : StatusBarWidge
         val group = DefaultActionGroup()
 
         group.add(
-          object : ToggleAction("SourceExport: Use .aiignore File", "", null) {
-              override fun getActionUpdateThread(): ActionUpdateThread {
-                  return ActionUpdateThread.BGT
-              }
+            object : ToggleAction("SourceExport: Use .aiignore File", "", null) {
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
 
-              override fun isSelected(e: AnActionEvent): Boolean {
-                  return ExportSourceToMarkdownService.getInstance(project).useIgnoreFile
-              }
+                override fun isSelected(e: AnActionEvent): Boolean {
+                    return ExportSourceToMarkdownService.getInstance(project).useIgnoreFile
+                }
 
-              override fun setSelected(e: AnActionEvent, state: Boolean) {
-                  ExportSourceToMarkdownService.getInstance(project).toggleUseIgnoreFile()
-              }
-          }
-        )
+                override fun setSelected(e: AnActionEvent, state: Boolean) {
+                    ExportSourceToMarkdownService.getInstance(project).toggleUseIgnoreFile()
+                }
+            })
         group.add(
-          object : ToggleAction("SourceExport: Use Contextual Namespaces", "", null) {
-              override fun getActionUpdateThread(): ActionUpdateThread {
-                  return ActionUpdateThread.BGT
-              }
+            object : ToggleAction("SourceExport: Use Contextual Namespaces", "", null) {
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
 
-              override fun isSelected(e: AnActionEvent): Boolean {
-                  return ExportSourceToMarkdownService.getInstance(project).useContextualNamespaces
-              }
+                override fun isSelected(e: AnActionEvent): Boolean {
+                    return ExportSourceToMarkdownService.getInstance(project)
+                        .useContextualNamespaces
+                }
 
-              override fun setSelected(e: AnActionEvent, state: Boolean) {
-                  ExportSourceToMarkdownService.getInstance(project).toggleUseContextualNamespaces()
-              }
-          }
-        )
-
-        group.add(
-          object : ToggleAction("SymfonyMessenger: Use Native GoTo Declaration", "", null) {
-              override fun getActionUpdateThread(): ActionUpdateThread {
-                  return ActionUpdateThread.BGT
-              }
-
-              override fun isSelected(e: AnActionEvent): Boolean {
-                  return MessengerService.getInstance(project).configuration.useNativeGoToDeclaration
-              }
-
-              override fun setSelected(e: AnActionEvent, state: Boolean) {
-                  MessengerService.getInstance(project).configuration.toggleUseNativeGoToDeclaration()
-              }
-          }
-        )
+                override fun setSelected(e: AnActionEvent, state: Boolean) {
+                    ExportSourceToMarkdownService.getInstance(project)
+                        .toggleUseContextualNamespaces()
+                }
+            })
 
         group.add(
-          object : ToggleAction("Watchers: Enabled", "", null) {
-              override fun getActionUpdateThread(): ActionUpdateThread {
-                  return ActionUpdateThread.BGT
-              }
+            object : ToggleAction("SymfonyMessenger: Use Native GoTo Declaration", "", null) {
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
 
-              override fun isSelected(e: AnActionEvent): Boolean {
-                  return TasksService.getInstance(project).isWatcherEnabled
-              }
+                override fun isSelected(e: AnActionEvent): Boolean {
+                    return MessengerService.getInstance(project)
+                        .configuration
+                        .useNativeGoToDeclaration
+                }
 
-              override fun setSelected(e: AnActionEvent, state: Boolean) {
-                  TasksService.getInstance(project).toggleWatcherEnabled()
-              }
-          }
-        )
+                override fun setSelected(e: AnActionEvent, state: Boolean) {
+                    MessengerService.getInstance(project)
+                        .configuration
+                        .toggleUseNativeGoToDeclaration()
+                }
+            })
+
+        group.add(
+            object : ToggleAction("Watchers: Enabled", "", null) {
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
+
+                override fun isSelected(e: AnActionEvent): Boolean {
+                    return TasksService.getInstance(project).isWatcherEnabled
+                }
+
+                override fun setSelected(e: AnActionEvent, state: Boolean) {
+                    TasksService.getInstance(project).toggleWatcherEnabled()
+                }
+            })
 
         JBPopupFactory.getInstance()
-          .createActionGroupPopup("Options", group, DataManager.getInstance().getDataContext(e.component), JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, true)
-          .showUnderneathOf(e.component)
+            .createActionGroupPopup(
+                "Options",
+                group,
+                DataManager.getInstance().getDataContext(e.component),
+                JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                true)
+            .showUnderneathOf(e.component)
     }
 
     class Factory : StatusBarWidgetFactory {

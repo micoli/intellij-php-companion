@@ -19,10 +19,14 @@ import kotlin.synchronized
 import org.micoli.php.symfony.list.CommandElementDTO
 import org.micoli.php.symfony.list.CommandService
 
-class CommandsPanel(project: Project) : AbstractListPanel<CommandElementDTO?>(project, "commands", COLUMN_NAMES) {
+class CommandsPanel(project: Project) :
+    AbstractListPanel<CommandElementDTO?>(project, "commands", COLUMN_NAMES) {
     override fun getSorter(): TableRowSorter<DefaultTableModel>? {
         innerSorter = TableRowSorter<DefaultTableModel>(model)
-        innerSorter?.setSortKeys(listOf<RowSorter.SortKey?>(RowSorter.SortKey(0, SortOrder.ASCENDING), RowSorter.SortKey(1, SortOrder.ASCENDING)))
+        innerSorter?.setSortKeys(
+            listOf<RowSorter.SortKey?>(
+                RowSorter.SortKey(0, SortOrder.ASCENDING),
+                RowSorter.SortKey(1, SortOrder.ASCENDING)))
         innerSorter?.setComparator(0, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(1, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(2, Comparator { _: Any?, _: Any? -> 0 })
@@ -39,7 +43,9 @@ class CommandsPanel(project: Project) : AbstractListPanel<CommandElementDTO?>(pr
 
     override fun handleActionClick(row: Int) {
         ApplicationManager.getApplication().invokeLater {
-            val elementDTO = table?.getValueAt(row, getColumnCount() - 1) as CommandElementDTO? ?: return@invokeLater
+            val elementDTO =
+                table?.getValueAt(row, getColumnCount() - 1) as CommandElementDTO?
+                    ?: return@invokeLater
             (elementDTO.element as? Navigatable)?.navigate(true)
         }
     }
@@ -51,35 +57,35 @@ class CommandsPanel(project: Project) : AbstractListPanel<CommandElementDTO?>(pr
                 clearItems()
 
                 val worker: SwingWorker<Void?, CommandElementDTO> =
-                  object : SwingWorker<Void?, CommandElementDTO>() {
-                      override fun doInBackground(): Void? {
-                          ApplicationManager.getApplication().runReadAction {
-                              val commandListService = CommandService.getInstance(project)
-                              val items = commandListService.getElements()
-                              if (items != null) {
-                                  for (item in items) {
-                                      publish(item)
-                                  }
-                              }
-                          }
-                          return null
-                      }
+                    object : SwingWorker<Void?, CommandElementDTO>() {
+                        override fun doInBackground(): Void? {
+                            ApplicationManager.getApplication().runReadAction {
+                                val commandListService = CommandService.getInstance(project)
+                                val items = commandListService.getElements()
+                                if (items != null) {
+                                    for (item in items) {
+                                        publish(item)
+                                    }
+                                }
+                            }
+                            return null
+                        }
 
-                      override fun process(chunks: MutableList<CommandElementDTO>) {
-                          SwingUtilities.invokeLater {
-                              for (item in chunks) {
-                                  model.addRow(arrayOf(item.command, item.description, item))
-                              }
-                          }
-                      }
+                        override fun process(chunks: MutableList<CommandElementDTO>) {
+                            SwingUtilities.invokeLater {
+                                for (item in chunks) {
+                                    model.addRow(arrayOf(item.command, item.description, item))
+                                }
+                            }
+                        }
 
-                      override fun done() {
-                          SwingUtilities.invokeLater {
-                              table?.emptyText?.text = "Nothing to show"
-                              model.fireTableDataChanged()
-                          }
-                      }
-                  }
+                        override fun done() {
+                            SwingUtilities.invokeLater {
+                                table?.emptyText?.text = "Nothing to show"
+                                model.fireTableDataChanged()
+                            }
+                        }
+                    }
                 worker.execute()
             } catch (e: Exception) {
                 LOGGER.error("Error refreshing CLI table", e)

@@ -5,9 +5,11 @@ import java.util.function.Consumer
 import kotlin.Boolean
 import kotlin.text.trimIndent
 
-class NavigableOpenAllAction(private val navigables: MutableList<Navigatable?>) : NavigableListPopupItem {
+class NavigableOpenAllAction(private val navigables: MutableList<Navigatable?>) :
+    NavigableListPopupItem {
     override fun navigate(requestFocus: Boolean) {
-        this.navigables.forEach(Consumer { navigable: Navigatable? -> navigable!!.navigate(requestFocus) })
+        this.navigables.forEach(
+            Consumer { navigable: Navigatable? -> navigable!!.navigate(requestFocus) })
     }
 
     override fun canNavigate(): Boolean {
@@ -20,7 +22,7 @@ class NavigableOpenAllAction(private val navigables: MutableList<Navigatable?>) 
 
     override fun getText(): String {
         return String.format(
-          """
+            """
                 <html>
                     <div style="padding:5px">
                         <i style="color: orange;font-weight:bold">%s</i>
@@ -28,8 +30,8 @@ class NavigableOpenAllAction(private val navigables: MutableList<Navigatable?>) 
                 </html>,
                 
                 """
-            .trimIndent(),
-          "Open results in Editor",
+                .trimIndent(),
+            "Open results in Editor",
         )
     }
 }

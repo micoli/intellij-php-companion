@@ -4,7 +4,8 @@ import org.micoli.php.codeStyle.configuration.CodeStyle
 import org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration
 
 class CodeStylesSynchronizationConfigurationBuilder private constructor() {
-    private val codeStylesSynchronizationConfiguration: CodeStylesSynchronizationConfiguration = CodeStylesSynchronizationConfiguration()
+    private val codeStylesSynchronizationConfiguration: CodeStylesSynchronizationConfiguration =
+        CodeStylesSynchronizationConfiguration()
 
     fun withCodeStyles(styles: Array<CodeStyle>): CodeStylesSynchronizationConfigurationBuilder {
         codeStylesSynchronizationConfiguration.styles = styles
@@ -12,7 +13,9 @@ class CodeStylesSynchronizationConfigurationBuilder private constructor() {
     }
 
     fun withAddedCodeStyle(codeStyle: CodeStyle): CodeStylesSynchronizationConfigurationBuilder {
-        codeStylesSynchronizationConfiguration.styles = appendToArray<CodeStyle>(codeStylesSynchronizationConfiguration.styles, codeStyle, CodeStyle::class.java)
+        codeStylesSynchronizationConfiguration.styles =
+            appendToArray<CodeStyle>(
+                codeStylesSynchronizationConfiguration.styles, codeStyle, CodeStyle::class.java)
         return this
     }
 
@@ -24,6 +27,8 @@ class CodeStylesSynchronizationConfigurationBuilder private constructor() {
     fun build(): CodeStylesSynchronizationConfiguration = codeStylesSynchronizationConfiguration
 
     companion object {
-        @JvmStatic fun create(): CodeStylesSynchronizationConfigurationBuilder = CodeStylesSynchronizationConfigurationBuilder()
+        @JvmStatic
+        fun create(): CodeStylesSynchronizationConfigurationBuilder =
+            CodeStylesSynchronizationConfigurationBuilder()
     }
 }

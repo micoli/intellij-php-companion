@@ -11,10 +11,10 @@ import kotlin.arrayOf
 import kotlin.text.trimIndent
 
 class NavigableOpenSearchAction(
-  private val project: Project,
-  private val navigables: MutableList<Navigatable?>?,
-  private val findWindowTitle: String?,
-  private val messageClassName: String?,
+    private val project: Project,
+    private val navigables: MutableList<Navigatable?>?,
+    private val findWindowTitle: String?,
+    private val messageClassName: String?,
 ) : NavigableListPopupItem {
     override fun navigate(requestFocus: Boolean) {
         if (this.navigables == null) {
@@ -39,7 +39,8 @@ class NavigableOpenSearchAction(
         presentation.toolwindowTitle = findWindowTitle
         presentation.isShowCancelButton = true
 
-        UsageViewManager.getInstance(project).showUsages(targets, usages.toTypedArray(), presentation)
+        UsageViewManager.getInstance(project)
+            .showUsages(targets, usages.toTypedArray(), presentation)
     }
 
     override fun canNavigate(): Boolean {
@@ -52,7 +53,7 @@ class NavigableOpenSearchAction(
 
     override fun getText(): String {
         return String.format(
-          """
+            """
                 <html>
                     <div style="padding:5px">
                         <i style="color: orange;font-weight:bold">%s</i>
@@ -60,8 +61,8 @@ class NavigableOpenSearchAction(
                 </html>
                 
                 """
-            .trimIndent(),
-          "Open results in Find window",
+                .trimIndent(),
+            "Open results in Find window",
         )
     }
 

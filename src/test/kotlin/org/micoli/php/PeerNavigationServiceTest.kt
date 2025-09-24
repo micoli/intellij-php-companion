@@ -16,8 +16,13 @@ class PeerNavigationServiceTest : BasePlatformTestCase() {
         myFixture.copyDirectoryToProject("src", "src")
         myFixture.copyDirectoryToProject("tests", "tests")
         val peerNavigationService = loadPluginConfiguration(testDataPath)
-        val fqn1 = PhpUtil.getPhpClassByFQN(project, "\\App\\UserInterface\\Web\\Api\\Article\\Get\\Controller")
-        val fqn2 = PhpUtil.getPhpClassByFQN(project, "\\App\\Tests\\Func\\UserInterface\\Web\\Api\\Article\\Get\\ControllerTest")
+        val fqn1 =
+            PhpUtil.getPhpClassByFQN(
+                project, "\\App\\UserInterface\\Web\\Api\\Article\\Get\\Controller")
+        val fqn2 =
+            PhpUtil.getPhpClassByFQN(
+                project,
+                "\\App\\Tests\\Func\\UserInterface\\Web\\Api\\Article\\Get\\ControllerTest")
         assertNotNull(fqn1)
         assertNotNull(fqn2)
         assertEquals(fqn2, peerNavigationService.getPeersElement(fqn1!!)?.first())
@@ -33,23 +38,27 @@ class PeerNavigationServiceTest : BasePlatformTestCase() {
         assertNotEmpty(lineMarkers)
 
         val specificMarkers =
-          lineMarkers
-            .stream()
-            .filter { it: GutterMark? ->
-                val tooltipText = it!!.tooltipText
-                if (tooltipText == null) {
-                    return@filter false
+            lineMarkers
+                .stream()
+                .filter { it: GutterMark? ->
+                    val tooltipText = it!!.tooltipText
+                    if (tooltipText == null) {
+                        return@filter false
+                    }
+                    tooltipText.contains("Search for peer of [")
                 }
-                tooltipText.contains("Search for peer of [")
-            }
-            .toList()
+                .toList()
 
         TestCase.assertEquals(1, specificMarkers.size)
     }
 
     private fun loadPluginConfiguration(path: String?): PeerNavigationService {
         try {
-            val peerNavigationConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.peerNavigation
+            val peerNavigationConfiguration =
+                ConfigurationFactory()
+                    .loadConfiguration(path, 0L, true)
+                    ?.configuration
+                    ?.peerNavigation
             val instance = PeerNavigationService.getInstance(project)
             instance.loadConfiguration(peerNavigationConfiguration)
 

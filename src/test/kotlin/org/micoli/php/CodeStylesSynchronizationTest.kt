@@ -15,57 +15,69 @@ class CodeStylesSynchronizationTest : BasePlatformTestCase() {
         val lastError: AtomicReference<String?> = AtomicReference<String?>()
         val lastMessage: AtomicReference<String?> = AtomicReference<String?>()
         val mockAppService: Notification =
-          object : Notification(project) {
-              override fun error(title: String?, message: String?) {
-                  lastError.set(message)
-              }
+            object : Notification(project) {
+                override fun error(title: String?, message: String?) {
+                    lastError.set(message)
+                }
 
-              override fun message(title: String?, message: String?) {
-                  lastMessage.set(message)
-              }
-          }
+                override fun message(title: String?, message: String?) {
+                    lastMessage.set(message)
+                }
+            }
         project.replaceService(Notification::class.java, mockAppService, testRootDisposable)
         lastError.set(null)
         lastMessage.set(null)
         // Given
         loadPluginConfiguration(
-          CodeStylesSynchronizationConfigurationBuilder.create()
-            .withEnabled(true)
-            .withCodeStyles(
-              arrayOf(
-                CodeStyleBuilder.create().withStyleAttribute("UNKNOWN_STYLE_ATTRIBUTE").withValue("true").build(),
-                CodeStyleBuilder.create().withStyleAttribute("ALIGN_MULTILINE_PARAMETERS_IN_CALLS").withValue("true").build(),
-              )
-            )
-            .build()
-        )
+            CodeStylesSynchronizationConfigurationBuilder.create()
+                .withEnabled(true)
+                .withCodeStyles(
+                    arrayOf(
+                        CodeStyleBuilder.create()
+                            .withStyleAttribute("UNKNOWN_STYLE_ATTRIBUTE")
+                            .withValue("true")
+                            .build(),
+                        CodeStyleBuilder.create()
+                            .withStyleAttribute("ALIGN_MULTILINE_PARAMETERS_IN_CALLS")
+                            .withValue("true")
+                            .build(),
+                    ))
+                .build())
 
         // Then
-        TestCase.assertEquals("<html><ul><li>Unknown attribute UNKNOWN_STYLE_ATTRIBUTE</li></ul></html>", lastError.get())
-        TestCase.assertEquals("<html><ul><li>ALIGN_MULTILINE_PARAMETERS_IN_CALLS: true</li></ul></html>", lastMessage.get())
+        TestCase.assertEquals(
+            "<html><ul><li>Unknown attribute UNKNOWN_STYLE_ATTRIBUTE</li></ul></html>",
+            lastError.get())
+        TestCase.assertEquals(
+            "<html><ul><li>ALIGN_MULTILINE_PARAMETERS_IN_CALLS: true</li></ul></html>",
+            lastMessage.get())
 
         // And rollback
         loadPluginConfiguration(
-          CodeStylesSynchronizationConfigurationBuilder.create()
-            .withEnabled(true)
-            .withCodeStyles(arrayOf(CodeStyleBuilder.create().withStyleAttribute("ALIGN_MULTILINE_PARAMETERS_IN_CALLS").withValue("false").build()))
-            .build()
-        )
+            CodeStylesSynchronizationConfigurationBuilder.create()
+                .withEnabled(true)
+                .withCodeStyles(
+                    arrayOf(
+                        CodeStyleBuilder.create()
+                            .withStyleAttribute("ALIGN_MULTILINE_PARAMETERS_IN_CALLS")
+                            .withValue("false")
+                            .build()))
+                .build())
     }
 
     fun testItMustNoSetPropertyIfAlreadySet() {
         val lastError: AtomicReference<String?> = AtomicReference<String?>()
         val lastMessage: AtomicReference<String?> = AtomicReference<String?>()
         val mockAppService: Notification =
-          object : Notification(project) {
-              override fun error(title: String?, message: String?) {
-                  lastError.set(message)
-              }
+            object : Notification(project) {
+                override fun error(title: String?, message: String?) {
+                    lastError.set(message)
+                }
 
-              override fun message(title: String?, message: String?) {
-                  lastMessage.set(message)
-              }
-          }
+                override fun message(title: String?, message: String?) {
+                    lastMessage.set(message)
+                }
+            }
         project.replaceService(Notification::class.java, mockAppService, testRootDisposable)
 
         lastError.set(null)
@@ -73,11 +85,15 @@ class CodeStylesSynchronizationTest : BasePlatformTestCase() {
 
         // Given
         loadPluginConfiguration(
-          CodeStylesSynchronizationConfigurationBuilder.create()
-            .withEnabled(true)
-            .withCodeStyles(arrayOf(CodeStyleBuilder.create().withStyleAttribute("ALIGN_MULTILINE_PARAMETERS_IN_CALLS").withValue("false").build()))
-            .build()
-        )
+            CodeStylesSynchronizationConfigurationBuilder.create()
+                .withEnabled(true)
+                .withCodeStyles(
+                    arrayOf(
+                        CodeStyleBuilder.create()
+                            .withStyleAttribute("ALIGN_MULTILINE_PARAMETERS_IN_CALLS")
+                            .withValue("false")
+                            .build()))
+                .build())
 
         // Then
         assertNull(lastMessage.get())

@@ -11,15 +11,15 @@ class FileListProcessorTest : BasePlatformTestCase() {
     private fun initFixtures(withExclusionRules: Boolean) {
         if (withExclusionRules) {
             myFixture.addFileToProject(
-              "/.aiignore",
-              """
+                "/.aiignore",
+                """
           # Ignore test file
           target/**
           out/**
           **/*Test.java
 
           """
-                .trimIndent(),
+                    .trimIndent(),
             )
         }
 
@@ -40,10 +40,15 @@ class FileListProcessorTest : BasePlatformTestCase() {
 
     fun testFileListProcessorWithExclusionRules() {
         initFixtures(true)
-        val filesToSelect = listOf<VirtualFile?>(myFixture.findFileInTempDir("/target"), myFixture.findFileInTempDir("/out"), myFixture.findFileInTempDir("/main"))
+        val filesToSelect =
+            listOf<VirtualFile?>(
+                myFixture.findFileInTempDir("/target"),
+                myFixture.findFileInTempDir("/out"),
+                myFixture.findFileInTempDir("/main"))
 
         val fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect)
-        val processedFiles = FileListProcessor.filterFiles(myFixture.findFileInTempDir(".aiignore"), fileList)
+        val processedFiles =
+            FileListProcessor.filterFiles(myFixture.findFileInTempDir(".aiignore"), fileList)
 
         assertNotContains(processedFiles, "App.class")
         assertNotContains(processedFiles, "Main.class")
@@ -56,7 +61,8 @@ class FileListProcessorTest : BasePlatformTestCase() {
         val filesToSelect = listOf<VirtualFile?>(myFixture.findFileInTempDir("/"))
 
         val fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect)
-        val processedFiles = FileListProcessor.filterFiles(myFixture.findFileInTempDir(".aiignore"), fileList)
+        val processedFiles =
+            FileListProcessor.filterFiles(myFixture.findFileInTempDir(".aiignore"), fileList)
 
         assertNotContains(processedFiles, "App.class")
         assertNotContains(processedFiles, "Main.class")
@@ -77,10 +83,16 @@ class FileListProcessorTest : BasePlatformTestCase() {
     }
 
     private fun assertContains(processedFiles: MutableList<VirtualFile?>, anObject: String) {
-        assertTrue(processedFiles.stream().anyMatch { file -> ((file as VirtualFile).canonicalPath)?.endsWith(anObject) == true })
+        assertTrue(
+            processedFiles.stream().anyMatch { file ->
+                ((file as VirtualFile).canonicalPath)?.endsWith(anObject) == true
+            })
     }
 
     private fun assertNotContains(processedFiles: MutableList<VirtualFile?>, anObject: String) {
-        assertTrue(processedFiles.stream().noneMatch { file -> ((file as VirtualFile).canonicalPath)?.endsWith(anObject) == true })
+        assertTrue(
+            processedFiles.stream().noneMatch { file ->
+                ((file as VirtualFile).canonicalPath)?.endsWith(anObject) == true
+            })
     }
 }

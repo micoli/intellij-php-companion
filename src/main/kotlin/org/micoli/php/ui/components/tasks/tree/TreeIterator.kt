@@ -6,7 +6,13 @@ import javax.swing.tree.TreePath
 
 class TreeIterator private constructor(private val leafProcessor: LeafProcessor) {
     fun interface LeafProcessor {
-        fun process(node: DefaultMutableTreeNode?, isLeaf: Boolean, path: TreePath?, level: Int, index: Int)
+        fun process(
+            node: DefaultMutableTreeNode?,
+            isLeaf: Boolean,
+            path: TreePath?,
+            level: Int,
+            index: Int
+        )
     }
 
     private var index: Int = -1
@@ -26,7 +32,8 @@ class TreeIterator private constructor(private val leafProcessor: LeafProcessor)
 
     companion object {
         fun forEach(tree: Tree, leafProcessor: LeafProcessor) {
-            TreeIterator(leafProcessor).forEachRecursive((tree.model.root as DefaultMutableTreeNode?)!!, 1)
+            TreeIterator(leafProcessor)
+                .forEachRecursive((tree.model.root as DefaultMutableTreeNode?)!!, 1)
         }
     }
 }

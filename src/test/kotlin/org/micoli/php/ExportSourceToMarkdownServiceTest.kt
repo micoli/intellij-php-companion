@@ -11,12 +11,16 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
 
     fun testItGeneratesMarkdownExportForSelectedFiles() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData", ".")
-        val filesToSelect = arrayOf<VirtualFile?>(myFixture.findFileInTempDir("root_file1.txt"), myFixture.findFileInTempDir("path1"), myFixture.findFileInTempDir("path1/path1_2"))
+        val filesToSelect =
+            arrayOf<VirtualFile?>(
+                myFixture.findFileInTempDir("root_file1.txt"),
+                myFixture.findFileInTempDir("path1"),
+                myFixture.findFileInTempDir("path1/path1_2"))
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
         exportSourceToMarkdownService.loadConfiguration(ExportSourceToMarkdownConfiguration())
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
         TestCase.assertEquals(
-          """
+            """
         ## /src/path1/path1_1/path1_1_file1.txt
 
         ```txt
@@ -42,32 +46,35 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         ```
 
         """
-            .trimIndent()
-            .trim { it <= ' ' },
-          exportedSource.content.trim { it <= ' ' },
+                .trimIndent()
+                .trim { it <= ' ' },
+            exportedSource.content.trim { it <= ' ' },
         )
     }
 
     fun testItGeneratesMarkdownExportForSelectedFilesWithContextualNamespaces() {
         myFixture.copyDirectoryToProject("testData/src", ".")
-        val filesToSelect = arrayOf<VirtualFile?>(myFixture.findFileInTempDir("Core/Query/Article/Query.php"), myFixture.findFileInTempDir("Core/Query/ArticleDetails"))
+        val filesToSelect =
+            arrayOf<VirtualFile?>(
+                myFixture.findFileInTempDir("Core/Query/Article/Query.php"),
+                myFixture.findFileInTempDir("Core/Query/ArticleDetails"))
         val configuration = ExportSourceToMarkdownConfiguration()
         configuration.contextualNamespaces = arrayOf("App\\Core\\Models", "App\\Core\\Id")
         configuration.template =
-          """
+            """
         [(${'$'}{#strings.isEmpty(files) ? '' : ''})]
         [# th:each="file : ${'$'}{files}"]
         - [(${'$'}{file.path})]
         [/]
 
         """
-            .trimIndent()
+                .trimIndent()
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
 
         exportSourceToMarkdownService.loadConfiguration(configuration)
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
         TestCase.assertEquals(
-          """
+            """
         - /src/Core/Id/ArticleId.php
         - /src/Core/Models/Article.php
         - /src/Core/Models/Feed.php
@@ -77,40 +84,44 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         - /src/Core/Query/ArticleDetails/Result.php
 
         """
-            .trimIndent()
-            .trim { it <= ' ' },
-          exportedSource.content.trim { it <= ' ' },
+                .trimIndent()
+                .trim { it <= ' ' },
+            exportedSource.content.trim { it <= ' ' },
         )
     }
 
     fun testItGeneratesExportStringForSelectedFilesWithCustomTemplate() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData", ".")
-        val filesToSelect = arrayOf<VirtualFile?>(myFixture.findFileInTempDir("root_file1.txt"), myFixture.findFileInTempDir("path1"), myFixture.findFileInTempDir("path1/path1_2"))
+        val filesToSelect =
+            arrayOf<VirtualFile?>(
+                myFixture.findFileInTempDir("root_file1.txt"),
+                myFixture.findFileInTempDir("path1"),
+                myFixture.findFileInTempDir("path1/path1_2"))
         val configuration = ExportSourceToMarkdownConfiguration()
         configuration.template =
-          """
+            """
         [(${'$'}{#strings.isEmpty(files) ? '' : ''})]
         [# th:each="file : ${'$'}{files}"]
         - [(${'$'}{file.path})]
         [/]
 
         """
-            .trimIndent()
+                .trimIndent()
 
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
         exportSourceToMarkdownService.loadConfiguration(configuration)
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
         TestCase.assertEquals(
-          """
+            """
         - /src/path1/path1_1/path1_1_file1.txt
         - /src/path1/path1_2/path1_2_file1.txt
         - /src/path1/path1_file1.txt
         - /src/root_file1.txt
 
         """
-            .trimIndent()
-            .trim { it <= ' ' },
-          exportedSource.content.trim { it <= ' ' },
+                .trimIndent()
+                .trim { it <= ' ' },
+            exportedSource.content.trim { it <= ' ' },
         )
     }
 

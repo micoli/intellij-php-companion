@@ -14,15 +14,18 @@ class CodeStyleGenerator : PropertyValueGenerator {
     override fun getValues(): ImmutableList<String> {
         val fields = CommonCodeStyleSettings::class.java.getFields()
         return Arrays.stream(fields)
-          .filter { field: Field? -> field != null }
-          .filter { field: Field -> Modifier.isPublic(field.modifiers) }
-          .filter { field: Field ->
-              field.type == Int::class.javaPrimitiveType || field.type == Int::class.java || field.type == Boolean::class.javaPrimitiveType || field.type == Boolean::class.java
-          }
-          .map { obj: Field -> obj.name }
-          .distinct()
-          .sorted()
-          .toList()
-          .toImmutableList()
+            .filter { field: Field? -> field != null }
+            .filter { field: Field -> Modifier.isPublic(field.modifiers) }
+            .filter { field: Field ->
+                field.type == Int::class.javaPrimitiveType ||
+                    field.type == Int::class.java ||
+                    field.type == Boolean::class.javaPrimitiveType ||
+                    field.type == Boolean::class.java
+            }
+            .map { obj: Field -> obj.name }
+            .distinct()
+            .sorted()
+            .toList()
+            .toImmutableList()
     }
 }

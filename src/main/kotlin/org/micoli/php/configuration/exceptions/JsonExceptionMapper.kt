@@ -12,16 +12,16 @@ import com.fasterxml.jackson.databind.exc.ValueInstantiationException
 
 object JsonExceptionMapper {
     fun getExceptionName(e: Exception): String =
-      when (e) {
-          is IgnoredPropertyException -> "Ignored Property"
-          is InvalidDefinitionException -> "Invalid Definition"
-          is InvalidFormatException -> "Invalid Format"
-          is InvalidNullException -> "Invalid Null"
-          is InvalidTypeIdException -> "Invalid Type Id"
-          is UnrecognizedPropertyException -> "Unrecognized Property"
-          is PropertyBindingException -> "Property Binding"
-          is MismatchedInputException -> "Mismatched Input"
-          is ValueInstantiationException -> "Value Instantiation"
-          else -> throw IllegalStateException("Unexpected value: " + e.javaClass.getName())
-      }
+        when (e) {
+            is IgnoredPropertyException -> "Ignored Property"
+            is InvalidDefinitionException -> "Invalid Definition"
+            is InvalidFormatException -> "Invalid Format"
+            is InvalidNullException -> "Invalid Null"
+            is InvalidTypeIdException -> "Invalid Type Id"
+            is UnrecognizedPropertyException -> "Unrecognized Property"
+            is PropertyBindingException -> "Property Binding"
+            is MismatchedInputException -> "Mismatched Input"
+            is ValueInstantiationException -> "Value Instantiation"
+            else -> throw IllegalStateException("Unexpected value: " + e.javaClass.getName())
+        }
 }

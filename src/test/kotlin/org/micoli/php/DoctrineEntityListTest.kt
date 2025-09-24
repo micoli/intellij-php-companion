@@ -16,14 +16,27 @@ class DoctrineEntityListTest : BasePlatformTestCase() {
         myFixture.copyDirectoryToProject("src", "/src")
         val doctrineEntityListService = loadPluginConfiguration(testDataPath)
         val lists = doctrineEntityListService.getElements()
-        val formattedList = lists.stream().map(DoctrineEntityElementDTO::name).sorted().collect(Collectors.joining(","))
-        val expectedList = ArrayList(mutableListOf<String?>("article__article", "article__feed")).stream().sorted().collect(Collectors.joining(","))
+        val formattedList =
+            lists
+                .stream()
+                .map(DoctrineEntityElementDTO::name)
+                .sorted()
+                .collect(Collectors.joining(","))
+        val expectedList =
+            ArrayList(mutableListOf<String?>("article__article", "article__feed"))
+                .stream()
+                .sorted()
+                .collect(Collectors.joining(","))
         TestCase.assertEquals(expectedList, formattedList)
     }
 
     private fun loadPluginConfiguration(path: String?): DoctrineEntityService {
         try {
-            val doctrineEntityListConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.doctrineEntitiesConfiguration
+            val doctrineEntityListConfiguration =
+                ConfigurationFactory()
+                    .loadConfiguration(path, 0L, true)
+                    ?.configuration
+                    ?.doctrineEntitiesConfiguration
             val instance = DoctrineEntityService.getInstance(project)
             instance.loadConfiguration(doctrineEntityListConfiguration)
 

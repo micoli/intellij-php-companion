@@ -8,5 +8,6 @@ class TestConfiguration {
 
     var aSubSubConfiguration: Array<AbstractSubConfiguration?> = arrayOf()
 
-    @Schema(description = "description of property1", example = "example value of property1") var aBooleanValue: Boolean = false
+    @Schema(description = "description of property1", example = "example value of property1")
+    var aBooleanValue: Boolean = false
 }

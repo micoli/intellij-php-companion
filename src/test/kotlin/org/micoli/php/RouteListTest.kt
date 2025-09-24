@@ -16,18 +16,29 @@ class RouteListTest : BasePlatformTestCase() {
         myFixture.copyDirectoryToProject("src", "/src")
         val routeListService = loadPluginConfiguration(testDataPath)
         val lists = routeListService.getElements()
-        val formattedList = lists.stream().map(RouteElementDTO::uri).sorted().collect(Collectors.joining(","))
+        val formattedList =
+            lists.stream().map(RouteElementDTO::uri).sorted().collect(Collectors.joining(","))
         val expectedList =
-          ArrayList(mutableListOf<String?>("/api/article/{articleId}", "/api/articles/feed/{feedId}", "/api/articles/list", "/api/articles/tag/{tag}", "/api/articles/user"))
-            .stream()
-            .sorted()
-            .collect(Collectors.joining(","))
+            ArrayList(
+                    mutableListOf<String?>(
+                        "/api/article/{articleId}",
+                        "/api/articles/feed/{feedId}",
+                        "/api/articles/list",
+                        "/api/articles/tag/{tag}",
+                        "/api/articles/user"))
+                .stream()
+                .sorted()
+                .collect(Collectors.joining(","))
         TestCase.assertEquals(expectedList, formattedList)
     }
 
     private fun loadPluginConfiguration(path: String?): RouteService {
         try {
-            val routeListConfiguration = ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.routesConfiguration
+            val routeListConfiguration =
+                ConfigurationFactory()
+                    .loadConfiguration(path, 0L, true)
+                    ?.configuration
+                    ?.routesConfiguration
             val instance = RouteService.getInstance(project)
             instance.loadConfiguration(routeListConfiguration)
 

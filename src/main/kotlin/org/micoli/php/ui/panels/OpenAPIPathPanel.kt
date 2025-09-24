@@ -32,13 +32,22 @@ import org.micoli.php.service.intellij.search.SearchWithCompletionIndicator
 import org.micoli.php.ui.Notification
 import org.micoli.php.ui.popup.NavigableItem
 
-class OpenAPIPathPanel(project: Project) : AbstractListPanel<OpenAPIPathElementDTO?>(project, "openAPI", COLUMN_NAMES) {
-    var concurrentSearchManager: ConcurrentSearchManager = ConcurrentSearchManager(Duration.ofSeconds(20))
+class OpenAPIPathPanel(project: Project) :
+    AbstractListPanel<OpenAPIPathElementDTO?>(project, "openAPI", COLUMN_NAMES) {
+    var concurrentSearchManager: ConcurrentSearchManager =
+        ConcurrentSearchManager(Duration.ofSeconds(20))
 
     override fun getSorter(): TableRowSorter<DefaultTableModel>? {
         innerSorter = TableRowSorter<DefaultTableModel>(model)
-        innerSorter?.setSortKeys(listOf<RowSorter.SortKey?>(RowSorter.SortKey(0, SortOrder.ASCENDING), RowSorter.SortKey(1, SortOrder.ASCENDING)))
-        innerSorter?.setComparator(0, Comparator { o1: OpenAPIPathElementDTO?, o2: OpenAPIPathElementDTO? -> String.CASE_INSENSITIVE_ORDER.compare(o1!!.uri, o2!!.uri) })
+        innerSorter?.setSortKeys(
+            listOf<RowSorter.SortKey?>(
+                RowSorter.SortKey(0, SortOrder.ASCENDING),
+                RowSorter.SortKey(1, SortOrder.ASCENDING)))
+        innerSorter?.setComparator(
+            0,
+            Comparator { o1: OpenAPIPathElementDTO?, o2: OpenAPIPathElementDTO? ->
+                String.CASE_INSENSITIVE_ORDER.compare(o1!!.uri, o2!!.uri)
+            })
         innerSorter?.setComparator(1, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(2, Comparator { _: Any?, _: Any? -> 0 })
         return innerSorter
@@ -52,18 +61,25 @@ class OpenAPIPathPanel(project: Project) : AbstractListPanel<OpenAPIPathElementD
         table?.getColumnModel()?.getColumn(2)?.setMaxWidth(50)
         table?.setRowHeight(table?.getRowHeight()?.times(2) ?: 20)
         table
-          ?.getColumnModel()
-          ?.getColumn(0)
-          ?.setCellRenderer(
-            object : DefaultTableCellRenderer() {
-                private val jLabel = JLabel()
+            ?.getColumnModel()
+            ?.getColumn(0)
+            ?.setCellRenderer(
+                object : DefaultTableCellRenderer() {
+                    private val jLabel = JLabel()
 
-                override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-                    val elementDTO = value as OpenAPIPathElementDTO?
-                    jLabel.setText(
-                      if (value != null)
-                        String.format(
-                          """
+                    override fun getTableCellRendererComponent(
+                        table: JTable,
+                        value: Any?,
+                        isSelected: Boolean,
+                        hasFocus: Boolean,
+                        row: Int,
+                        column: Int
+                    ): Component {
+                        val elementDTO = value as OpenAPIPathElementDTO?
+                        jLabel.setText(
+                            if (value != null)
+                                String.format(
+                                    """
                                         <html>
                                             <div>
                                                 %s<br>
@@ -72,27 +88,33 @@ class OpenAPIPathPanel(project: Project) : AbstractListPanel<OpenAPIPathElementD
                                         </html>
                                         
                                         """
-                            .trimIndent(),
-                          elementDTO!!.uri,
-                          elementDTO.description,
-                          elementDTO.operationId,
-                        )
-                      else ""
-                    )
+                                        .trimIndent(),
+                                    elementDTO!!.uri,
+                                    elementDTO.description,
+                                    elementDTO.operationId,
+                                )
+                            else "")
 
-                    jLabel.setBackground(if (isSelected) table.getSelectionBackground() else table.getBackground())
-                    jLabel.setForeground(if (isSelected) table.getSelectionForeground() else table.getForeground())
-                    jLabel.setSize(table.getColumnModel().getColumn(column).getWidth(), Short.MAX_VALUE.toInt())
+                        jLabel.setBackground(
+                            if (isSelected) table.getSelectionBackground()
+                            else table.getBackground())
+                        jLabel.setForeground(
+                            if (isSelected) table.getSelectionForeground()
+                            else table.getForeground())
+                        jLabel.setSize(
+                            table.getColumnModel().getColumn(column).getWidth(),
+                            Short.MAX_VALUE.toInt())
 
-                    return jLabel
-                }
-            }
-          )
+                        return jLabel
+                    }
+                })
     }
 
     override fun handleActionClick(row: Int) {
         ApplicationManager.getApplication().invokeLater {
-            val elementDTO = table?.getValueAt(row, getColumnCount() - 1) as OpenAPIPathElementDTO? ?: return@invokeLater
+            val elementDTO =
+                table?.getValueAt(row, getColumnCount() - 1) as OpenAPIPathElementDTO?
+                    ?: return@invokeLater
             searchOperationIdDeclaration("operationId: " + elementDTO.operationId)
         }
     }
@@ -104,35 +126,36 @@ class OpenAPIPathPanel(project: Project) : AbstractListPanel<OpenAPIPathElementD
                 clearItems()
 
                 val worker: SwingWorker<Void?, OpenAPIPathElementDTO> =
-                  object : SwingWorker<Void?, OpenAPIPathElementDTO>() {
-                      override fun doInBackground(): Void? {
-                          ApplicationManager.getApplication().runReadAction {
-                              val doctrineOpenAPIPathsService = OpenAPIService.getInstance(project)
-                              val items = doctrineOpenAPIPathsService.getElements()
-                              if (items != null) {
-                                  for (item in items) {
-                                      publish(item)
-                                  }
-                              }
-                          }
-                          return null
-                      }
+                    object : SwingWorker<Void?, OpenAPIPathElementDTO>() {
+                        override fun doInBackground(): Void? {
+                            ApplicationManager.getApplication().runReadAction {
+                                val doctrineOpenAPIPathsService =
+                                    OpenAPIService.getInstance(project)
+                                val items = doctrineOpenAPIPathsService.getElements()
+                                if (items != null) {
+                                    for (item in items) {
+                                        publish(item)
+                                    }
+                                }
+                            }
+                            return null
+                        }
 
-                      override fun process(chunks: MutableList<OpenAPIPathElementDTO>) {
-                          SwingUtilities.invokeLater {
-                              for (item in chunks) {
-                                  model.addRow(arrayOf<Any?>(item, item.method, item))
-                              }
-                          }
-                      }
+                        override fun process(chunks: MutableList<OpenAPIPathElementDTO>) {
+                            SwingUtilities.invokeLater {
+                                for (item in chunks) {
+                                    model.addRow(arrayOf<Any?>(item, item.method, item))
+                                }
+                            }
+                        }
 
-                      override fun done() {
-                          SwingUtilities.invokeLater {
-                              table?.emptyText?.text = "Nothing to show"
-                              model.fireTableDataChanged()
-                          }
-                      }
-                  }
+                        override fun done() {
+                            SwingUtilities.invokeLater {
+                                table?.emptyText?.text = "Nothing to show"
+                                model.fireTableDataChanged()
+                            }
+                        }
+                    }
                 worker.execute()
             } catch (e: Exception) {
                 LOGGER.error("Error refreshing OpenAPIPaths table", e)
@@ -158,33 +181,36 @@ class OpenAPIPathPanel(project: Project) : AbstractListPanel<OpenAPIPathElementD
             findModel.stringToFind = searchText
             findModel.setFileFilter("*.yaml,*.yml")
             SearchWithCompletionIndicator.findUsagesWithProgress(
-              findModel,
-              project,
-              1500,
-              Consumer { results: MutableList<UsageInfo?>? ->
-                  concurrentSearchManager.removeSearch(searchText)
-                  if (results == null || results.isEmpty()) {
-                      Notification.getInstance(project).messageWithTimeout("No OperationId found", 1500)
-                      return@Consumer
-                  }
-                  results
-                    .stream()
-                    .map(
-                      Function { usageInfo: UsageInfo? ->
-                          ApplicationManager.getApplication()
-                            .runReadAction<NavigableItem?>(
-                              Computable {
-                                  usageInfo!!.file ?: return@Computable null
+                findModel,
+                project,
+                1500,
+                Consumer { results: MutableList<UsageInfo?>? ->
+                    concurrentSearchManager.removeSearch(searchText)
+                    if (results == null || results.isEmpty()) {
+                        Notification.getInstance(project)
+                            .messageWithTimeout("No OperationId found", 1500)
+                        return@Consumer
+                    }
+                    results
+                        .stream()
+                        .map(
+                            Function { usageInfo: UsageInfo? ->
+                                ApplicationManager.getApplication()
+                                    .runReadAction<NavigableItem?>(
+                                        Computable {
+                                            usageInfo!!.file ?: return@Computable null
 
-                                  val fileExtract = PsiElementUtil.getFileExtract(usageInfo, 1)
-                                  NavigableItem(fileExtract, UsageInfo2UsageAdapter(usageInfo), usageInfo.icon)
-                              }
-                            )
-                      }
-                    )
-                    .toList()
-                    .forEach(Consumer { c: NavigableItem? -> c!!.navigate(true) })
-              },
+                                            val fileExtract =
+                                                PsiElementUtil.getFileExtract(usageInfo, 1)
+                                            NavigableItem(
+                                                fileExtract,
+                                                UsageInfo2UsageAdapter(usageInfo),
+                                                usageInfo.icon)
+                                        })
+                            })
+                        .toList()
+                        .forEach(Consumer { c: NavigableItem? -> c!!.navigate(true) })
+                },
             )
         }
     }

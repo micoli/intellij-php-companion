@@ -19,10 +19,14 @@ import kotlin.synchronized
 import org.micoli.php.symfony.list.DoctrineEntityElementDTO
 import org.micoli.php.symfony.list.DoctrineEntityService
 
-class DoctrineEntitiesPanel(project: Project) : AbstractListPanel<DoctrineEntityElementDTO?>(project, "doctrineEntities", COLUMN_NAMES) {
+class DoctrineEntitiesPanel(project: Project) :
+    AbstractListPanel<DoctrineEntityElementDTO?>(project, "doctrineEntities", COLUMN_NAMES) {
     override fun getSorter(): TableRowSorter<DefaultTableModel>? {
         innerSorter = TableRowSorter<DefaultTableModel>(model)
-        innerSorter?.setSortKeys(listOf<RowSorter.SortKey?>(RowSorter.SortKey(0, SortOrder.ASCENDING), RowSorter.SortKey(1, SortOrder.ASCENDING)))
+        innerSorter?.setSortKeys(
+            listOf<RowSorter.SortKey?>(
+                RowSorter.SortKey(0, SortOrder.ASCENDING),
+                RowSorter.SortKey(1, SortOrder.ASCENDING)))
         innerSorter?.setComparator(0, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(1, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(2, String.CASE_INSENSITIVE_ORDER)
@@ -41,7 +45,9 @@ class DoctrineEntitiesPanel(project: Project) : AbstractListPanel<DoctrineEntity
 
     override fun handleActionClick(row: Int) {
         ApplicationManager.getApplication().invokeLater {
-            val elementDTO = table?.getValueAt(row, getColumnCount() - 1) as DoctrineEntityElementDTO? ?: return@invokeLater
+            val elementDTO =
+                table?.getValueAt(row, getColumnCount() - 1) as DoctrineEntityElementDTO?
+                    ?: return@invokeLater
             (elementDTO.element as? Navigatable)?.navigate(true)
         }
     }
@@ -53,35 +59,37 @@ class DoctrineEntitiesPanel(project: Project) : AbstractListPanel<DoctrineEntity
                 clearItems()
 
                 val worker: SwingWorker<Void?, DoctrineEntityElementDTO> =
-                  object : SwingWorker<Void?, DoctrineEntityElementDTO>() {
-                      override fun doInBackground(): Void? {
-                          ApplicationManager.getApplication().runReadAction {
-                              val doctrineEntitiesService = DoctrineEntityService.getInstance(project)
-                              val items = doctrineEntitiesService.getElements()
-                              if (items != null) {
-                                  for (item in items) {
-                                      publish(item)
-                                  }
-                              }
-                          }
-                          return null
-                      }
+                    object : SwingWorker<Void?, DoctrineEntityElementDTO>() {
+                        override fun doInBackground(): Void? {
+                            ApplicationManager.getApplication().runReadAction {
+                                val doctrineEntitiesService =
+                                    DoctrineEntityService.getInstance(project)
+                                val items = doctrineEntitiesService.getElements()
+                                if (items != null) {
+                                    for (item in items) {
+                                        publish(item)
+                                    }
+                                }
+                            }
+                            return null
+                        }
 
-                      override fun process(chunks: MutableList<DoctrineEntityElementDTO>) {
-                          SwingUtilities.invokeLater {
-                              for (item in chunks) {
-                                  model.addRow(arrayOf(item.className, item.name, item.schema, item))
-                              }
-                          }
-                      }
+                        override fun process(chunks: MutableList<DoctrineEntityElementDTO>) {
+                            SwingUtilities.invokeLater {
+                                for (item in chunks) {
+                                    model.addRow(
+                                        arrayOf(item.className, item.name, item.schema, item))
+                                }
+                            }
+                        }
 
-                      override fun done() {
-                          SwingUtilities.invokeLater {
-                              table?.emptyText?.text = "Nothing to show"
-                              model.fireTableDataChanged()
-                          }
-                      }
-                  }
+                        override fun done() {
+                            SwingUtilities.invokeLater {
+                                table?.emptyText?.text = "Nothing to show"
+                                model.fireTableDataChanged()
+                            }
+                        }
+                    }
                 worker.execute()
             } catch (e: Exception) {
                 LOGGER.error("Error refreshing Entities table", e)

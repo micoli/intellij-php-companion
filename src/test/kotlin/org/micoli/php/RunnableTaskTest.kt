@@ -18,7 +18,13 @@ class RunnableTaskTest : BasePlatformTestCase() {
         exposedVariable = 0
 
         // When
-        RunnableTask(project, ScriptBuilder.create().withId("file1").withSource("org.micoli.php.RunnableTaskTest.exposedVariable++").build()).run()
+        RunnableTask(
+                project,
+                ScriptBuilder.create()
+                    .withId("file1")
+                    .withSource("org.micoli.php.RunnableTaskTest.exposedVariable++")
+                    .build())
+            .run()
 
         // Then
         TestCase.assertEquals(1, exposedVariable)
@@ -26,7 +32,9 @@ class RunnableTaskTest : BasePlatformTestCase() {
 
     fun testRunnableShellSucceed() {
         // Given
-        val runnableTask = RunnableTask(project, ShellBuilder.create().withId("file1").withCommand("ls / ").build())
+        val runnableTask =
+            RunnableTask(
+                project, ShellBuilder.create().withId("file1").withCommand("ls / ").build())
 
         // Then
         val exception = Assert.assertThrows(NullPointerException::class.java) { runnableTask.run() }
@@ -42,7 +50,9 @@ class RunnableTaskTest : BasePlatformTestCase() {
         myFixture.editor.selectionModel.setSelection(0, 3)
 
         // When
-        RunnableTask(project, BuiltinBuilder.create().withId("file1").withActionId("\$Copy").build()).run()
+        RunnableTask(
+                project, BuiltinBuilder.create().withId("file1").withActionId("\$Copy").build())
+            .run()
 
         // Then
         val contents = CopyPasteManager.getInstance().contents

@@ -23,7 +23,8 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
 
     private val projectRoot: VirtualFile? = PathUtil.getBaseDir(project)
     val activeRegularExpression: String = "^" + observedFile.variableName + "="
-    val disabledRegularExpression: String = "^" + observedFile.commentPrefix + "\\s*" + observedFile.variableName + "="
+    val disabledRegularExpression: String =
+        "^" + observedFile.commentPrefix + "\\s*" + observedFile.variableName + "="
 
     enum class Status {
         Active,
@@ -53,13 +54,19 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
 
     val iconAndPrefix: IconAndPrefix
         get() =
-          when (this.getStatus()) {
-              Status.Active -> IconAndPrefix(getIcon(observedFile.activeIcon, PhpCompanionIcon::class.java), "")
+            when (this.getStatus()) {
+                Status.Active ->
+                    IconAndPrefix(
+                        getIcon(observedFile.activeIcon, PhpCompanionIcon::class.java), "")
 
-              Status.Inactive -> IconAndPrefix(getIcon(observedFile.inactiveIcon, PhpCompanionIcon::class.java), "# ")
+                Status.Inactive ->
+                    IconAndPrefix(
+                        getIcon(observedFile.inactiveIcon, PhpCompanionIcon::class.java), "# ")
 
-              Status.Unknown -> IconAndPrefix(getIcon(observedFile.unknownIcon, PhpCompanionIcon::class.java), "? ")
-          }
+                Status.Unknown ->
+                    IconAndPrefix(
+                        getIcon(observedFile.unknownIcon, PhpCompanionIcon::class.java), "? ")
+            }
 
     fun getStatus(): Status {
         val file = projectRoot!!.findFileByRelativePath(observedFile.filePath)
@@ -93,11 +100,16 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
         }
 
         try {
-            WriteAction.run<IOException?> { VfsUtil.saveText(file, replaceInFileContent(toActive, VfsUtilCore.loadText(file)).toString()) }
+            WriteAction.run<IOException?> {
+                VfsUtil.saveText(
+                    file, replaceInFileContent(toActive, VfsUtilCore.loadText(file)).toString())
+            }
         } catch (e: IOException) {
             LOGGER.error(e)
         }
-        Notification.getInstance(project).message(observedFile.variableName + " " + (if (toActive) "activated" else "deactivated"))
+        Notification.getInstance(project)
+            .message(
+                observedFile.variableName + " " + (if (toActive) "activated" else "deactivated"))
     }
 
     private fun replaceInFileContent(toActive: Boolean, content: String): StringBuilder {
@@ -106,9 +118,14 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
 
         for (line in lines) {
             if (toActive) {
-                result.append(line.replaceFirst(disabledRegularExpression.toRegex(), observedFile.variableName + "="))
+                result.append(
+                    line.replaceFirst(
+                        disabledRegularExpression.toRegex(), observedFile.variableName + "="))
             } else {
-                result.append(line.replaceFirst(activeRegularExpression.toRegex(), observedFile.commentPrefix + observedFile.variableName + "="))
+                result.append(
+                    line.replaceFirst(
+                        activeRegularExpression.toRegex(),
+                        observedFile.commentPrefix + observedFile.variableName + "="))
             }
             result.append(System.lineSeparator())
         }

@@ -26,28 +26,43 @@ class TasksServiceTest : BasePlatformTestCase() {
         super.setUp()
         runnableLogs = ArrayList()
         tasksService =
-          object : TasksService(project) {
-              override fun runTask(taskId: String?) {
-                  super.runTask(taskId)
-                  runnableLogs!!.add(String.format("%s:%s", taskId, runnableActions[taskId]!!.javaClass.getSimpleName()))
-              }
+            object : TasksService(project) {
+                override fun runTask(taskId: String?) {
+                    super.runTask(taskId)
+                    runnableLogs!!.add(
+                        String.format(
+                            "%s:%s", taskId, runnableActions[taskId]!!.javaClass.getSimpleName()))
+                }
 
-              override fun updateFileObserver(fileObserverTask: FileObserverTask, force: Boolean) {
-                  super.updateFileObserver(fileObserverTask, force)
-                  runnableLogs!!.add(String.format("%s:%s", fileObserverTask.taskId, fileObserverTask.javaClass.getSimpleName()))
-              }
-          }
-        val debouncedRunnablesField = TasksService::class.java.getDeclaredField("debouncedRunnables")
+                override fun updateFileObserver(
+                    fileObserverTask: FileObserverTask,
+                    force: Boolean
+                ) {
+                    super.updateFileObserver(fileObserverTask, force)
+                    runnableLogs!!.add(
+                        String.format(
+                            "%s:%s",
+                            fileObserverTask.taskId,
+                            fileObserverTask.javaClass.getSimpleName()))
+                }
+            }
+        val debouncedRunnablesField =
+            TasksService::class.java.getDeclaredField("debouncedRunnables")
         debouncedRunnablesField.setAccessible(true)
         debouncedRunnablesField.set(
-          tasksService,
-          object : DebouncedRunnables() {
-              override fun run(task: Runnable, name: String, delayMillis: Long, callback: Runnable?): DebouncedRunnable? {
-                  task.run()
-                  runnableLogs!!.add(String.format("%s:%s", name, task.javaClass.getSimpleName()))
-                  return null
-              }
-          },
+            tasksService,
+            object : DebouncedRunnables() {
+                override fun run(
+                    task: Runnable,
+                    name: String,
+                    delayMillis: Long,
+                    callback: Runnable?
+                ): DebouncedRunnable? {
+                    task.run()
+                    runnableLogs!!.add(String.format("%s:%s", name, task.javaClass.getSimpleName()))
+                    return null
+                }
+            },
         )
     }
 
@@ -71,29 +86,38 @@ class TasksServiceTest : BasePlatformTestCase() {
     fun testLoadConfigurationWithTasks() {
         // When
         tasksService!!.loadConfiguration(
-          TasksConfigurationBuilder.create()
-            .withAddedRunnableTaskConfiguration(
-              ObservedFileBuilder.create()
-                .withId("file1")
-                .withFilePath("config.env")
-                .withVariableName("variable")
-                .withCommentPrefix("#")
-                .withActiveIcon("/icons/active.svg")
-                .withInactiveIcon("/icons/inactive.svg")
-                .withUnknownIcon("/icons/unknown.svg")
-                .build()
-            )
-            .withAddedRunnableTaskConfiguration(ScriptBuilder.create().withId("script1").build())
-            .withAddedRunnableTaskConfiguration(ShellBuilder.create().withId("shell1").withCommand("echo 'Hello World'").withCwd(".").build())
-            .build()
-        )
+            TasksConfigurationBuilder.create()
+                .withAddedRunnableTaskConfiguration(
+                    ObservedFileBuilder.create()
+                        .withId("file1")
+                        .withFilePath("config.env")
+                        .withVariableName("variable")
+                        .withCommentPrefix("#")
+                        .withActiveIcon("/icons/active.svg")
+                        .withInactiveIcon("/icons/inactive.svg")
+                        .withUnknownIcon("/icons/unknown.svg")
+                        .build())
+                .withAddedRunnableTaskConfiguration(
+                    ScriptBuilder.create().withId("script1").build())
+                .withAddedRunnableTaskConfiguration(
+                    ShellBuilder.create()
+                        .withId("shell1")
+                        .withCommand("echo 'Hello World'")
+                        .withCwd(".")
+                        .build())
+                .build())
     }
 
     fun testLoadConfigurationWithWatchers() {
         // When
         tasksService!!.loadConfiguration(
-          TasksConfigurationBuilder.create().withAddedWatcher(WatcherBuilder.create().withTaskId("task1").withWatches(arrayOf("glob:*.txt")).build()).build()
-        )
+            TasksConfigurationBuilder.create()
+                .withAddedWatcher(
+                    WatcherBuilder.create()
+                        .withTaskId("task1")
+                        .withWatches(arrayOf("glob:*.txt"))
+                        .build())
+                .build())
     }
 
     fun testRunTask() {
@@ -103,20 +127,18 @@ class TasksServiceTest : BasePlatformTestCase() {
         myFixture.addFileToProject(filePath, fileContent)
 
         tasksService!!.loadConfiguration(
-          TasksConfigurationBuilder.create()
-            .withAddedRunnableTaskConfiguration(
-              ObservedFileBuilder.create()
-                .withId("file1")
-                .withFilePath(filePath)
-                .withVariableName("variable")
-                .withCommentPrefix("#")
-                .withActiveIcon("/icons/active.svg")
-                .withInactiveIcon("/icons/inactive.svg")
-                .withUnknownIcon("/icons/unknown.svg")
-                .build()
-            )
-            .build()
-        )
+            TasksConfigurationBuilder.create()
+                .withAddedRunnableTaskConfiguration(
+                    ObservedFileBuilder.create()
+                        .withId("file1")
+                        .withFilePath(filePath)
+                        .withVariableName("variable")
+                        .withCommentPrefix("#")
+                        .withActiveIcon("/icons/active.svg")
+                        .withInactiveIcon("/icons/inactive.svg")
+                        .withUnknownIcon("/icons/unknown.svg")
+                        .build())
+                .build())
 
         // When
         tasksService!!.runTask("file1")
@@ -132,19 +154,18 @@ class TasksServiceTest : BasePlatformTestCase() {
         myFixture.addFileToProject(filePath, fileContent)
 
         val config =
-          TasksConfigurationBuilder.create()
-            .withAddedRunnableTaskConfiguration(
-              ObservedFileBuilder.create()
-                .withId("file1")
-                .withFilePath(filePath)
-                .withVariableName("variable")
-                .withCommentPrefix("#")
-                .withActiveIcon("/icons/active.svg")
-                .withInactiveIcon("/icons/inactive.svg")
-                .withUnknownIcon("/icons/unknown.svg")
+            TasksConfigurationBuilder.create()
+                .withAddedRunnableTaskConfiguration(
+                    ObservedFileBuilder.create()
+                        .withId("file1")
+                        .withFilePath(filePath)
+                        .withVariableName("variable")
+                        .withCommentPrefix("#")
+                        .withActiveIcon("/icons/active.svg")
+                        .withInactiveIcon("/icons/inactive.svg")
+                        .withUnknownIcon("/icons/unknown.svg")
+                        .build())
                 .build()
-            )
-            .build()
         tasksService!!.loadConfiguration(config)
 
         val taskIdentifier = TaskIdentifier("file1", config.tasks[0])
@@ -163,29 +184,48 @@ class TasksServiceTest : BasePlatformTestCase() {
         myFixture.addFileToProject("cache/test.log", "content")
 
         val config =
-          TasksConfigurationBuilder.create()
-            .withAddedAbstractNode(TaskBuilder.create().withTaskId("task1").withLabel("Test Task").build())
-            .withAddedRunnableTaskConfiguration(ScriptBuilder.create().withId("task1").withSource("fs.clearPath(\"cache\",false)").build())
-            .withAddedWatcher(WatcherBuilder.create().withTaskId("task1").withWatches(arrayOf("glob:*.txt")).withDebounce(100).withNotify(true).build())
-            .build()
+            TasksConfigurationBuilder.create()
+                .withAddedAbstractNode(
+                    TaskBuilder.create().withTaskId("task1").withLabel("Test Task").build())
+                .withAddedRunnableTaskConfiguration(
+                    ScriptBuilder.create()
+                        .withId("task1")
+                        .withSource("fs.clearPath(\"cache\",false)")
+                        .build())
+                .withAddedWatcher(
+                    WatcherBuilder.create()
+                        .withTaskId("task1")
+                        .withWatches(arrayOf("glob:*.txt"))
+                        .withDebounce(100)
+                        .withNotify(true)
+                        .build())
+                .build()
         tasksService!!.loadConfiguration(config)
 
         val taskIdentifier = TaskIdentifier("task1", config.watchers[0])
-        TestCase.assertEquals(1, MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
+        TestCase.assertEquals(
+            1, MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
 
         // When
         tasksService!!.vfsHandle(taskIdentifier, myFixture.findFileInTempDir(filePath))
 
         // Then
-        TestCase.assertEquals(0, MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
+        TestCase.assertEquals(
+            0, MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
         assertTrue(runnableLogs!!.stream().anyMatch { s: String? -> s == "task1:RunnableTask" })
     }
 
     fun testIfActionAreWellRegistered() {
         val tasksConfiguration =
-          TasksConfigurationBuilder.create()
-            .withAddedRunnableTaskConfiguration(ShellBuilder.create().withId("shell1").withCommand("echo 'Hello World'").withCwd(".").withIcon("test.svg").build())
-            .build()
+            TasksConfigurationBuilder.create()
+                .withAddedRunnableTaskConfiguration(
+                    ShellBuilder.create()
+                        .withId("shell1")
+                        .withCommand("echo 'Hello World'")
+                        .withCwd(".")
+                        .withIcon("test.svg")
+                        .build())
+                .build()
         tasksService!!.loadConfiguration(tasksConfiguration)
         tasksService!!.loadConfiguration(tasksConfiguration)
         val actionManager = ActionManager.getInstance()

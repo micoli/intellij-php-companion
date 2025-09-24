@@ -23,7 +23,7 @@ import org.yaml.snakeyaml.Yaml
 
 class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
     private val invalidYamlContent =
-      """
+        """
       peerNavigation:
         peers:
           - source: 123  # Error: should be a string
@@ -36,7 +36,7 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
         messageInterfaces: "not an array"  # Error: should be an array
 
       """
-        .trimIndent()
+            .trimIndent()
 
     override fun getTestDataPath(): String = "src/test/resources/testData"
 
@@ -45,15 +45,22 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
         super.setUp()
 
         InspectionProfileImpl.INIT_INSPECTIONS = true
-        myFixture.enableInspections(*arrayOf(RequiredAttributesInspection(), JsonSchemaComplianceInspection(), YamlJsonSchemaHighlightingInspection()))
+        myFixture.enableInspections(
+            *arrayOf(
+                RequiredAttributesInspection(),
+                JsonSchemaComplianceInspection(),
+                YamlJsonSchemaHighlightingInspection()))
     }
 
     fun testInvalidYamlConfiguration() {
-        val yamlFile = myFixture.configureByText(".php-companion.yaml", invalidYamlContent).virtualFile
+        val yamlFile =
+            myFixture.configureByText(".php-companion.yaml", invalidYamlContent).virtualFile
 
         val schemaFiles = JsonSchemaService.Impl.get(project).getSchemaFilesForFile(yamlFile)
         assertFalse("Schema must be found here", schemaFiles.isEmpty())
-        assertTrue("File must be accepted by the provider", PhpCompanionJsonSchemaProvider().isAvailable(yamlFile))
+        assertTrue(
+            "File must be accepted by the provider",
+            PhpCompanionJsonSchemaProvider().isAvailable(yamlFile))
     }
 
     fun testIfProviderIsWiredCorrectly() {
@@ -71,12 +78,12 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
     @Throws(IOException::class)
     fun testItValidateWithExtraProperty() {
         myFixture.configureByText(
-          ".php-companion.yaml",
-          """
+            ".php-companion.yaml",
+            """
         aa: azeerty
 
         """
-            .trimIndent(),
+                .trimIndent(),
         )
         val highlights = myFixture.doHighlighting()
         assertNotEmpty(highlights)
@@ -87,7 +94,7 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
 
         val highlights = myFixture.doHighlighting()
         TestCase.assertEquals(
-          """
+            """
         2: - source: 123  # Error: should be a string [123] Schema validation: Incompatible types.
          Required: string. Actual: integer.
         8: projectRootNamespace: true  # Error: should be a string [true] Schema validation: Incompatible types.
@@ -96,23 +103,26 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
          Required: array. Actual: string.
 
         """
-            .trimIndent()
-            .trim { it <= ' ' },
-          formatHighlights(myFixture.editor.document, highlights).trim { it <= ' ' },
+                .trimIndent()
+                .trim { it <= ' ' },
+            formatHighlights(myFixture.editor.document, highlights).trim { it <= ' ' },
         )
     }
 
-    private fun formatHighlights(document: Document, highlights: MutableList<HighlightInfo?>): String =
-      highlights
-        .stream()
-        .map { i: HighlightInfo? ->
-            val lineNumber = document.getLineNumber(i!!.getStartOffset())
-            val lineStart = document.getLineStartOffset(lineNumber)
-            val lineEnd = document.getLineEndOffset(lineNumber)
-            val lineContent = document.getText(TextRange(lineStart, lineEnd)).trim { it <= ' ' }
-            String.format("%s: %s [%s] %s", lineNumber, lineContent, i.text, i.description)
-        }
-        .collect(Collectors.joining("\n"))
+    private fun formatHighlights(
+        document: Document,
+        highlights: MutableList<HighlightInfo?>
+    ): String =
+        highlights
+            .stream()
+            .map { i: HighlightInfo? ->
+                val lineNumber = document.getLineNumber(i!!.getStartOffset())
+                val lineStart = document.getLineStartOffset(lineNumber)
+                val lineEnd = document.getLineEndOffset(lineNumber)
+                val lineContent = document.getText(TextRange(lineStart, lineEnd)).trim { it <= ' ' }
+                String.format("%s: %s [%s] %s", lineNumber, lineContent, i.text, i.description)
+            }
+            .collect(Collectors.joining("\n"))
 
     @Throws(IOException::class)
     fun testItGeneratesProperSchema() {
@@ -120,9 +130,13 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
         dumperOptions.indent = 2
         dumperOptions.isPrettyFlow = true
         dumperOptions.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
-        Yaml(dumperOptions).dump(ObjectMapper().readValue(generateJsonSchemaThoughProvider(), Any::class.java))
+        Yaml(dumperOptions)
+            .dump(ObjectMapper().readValue(generateJsonSchemaThoughProvider(), Any::class.java))
     }
 
     @Throws(IOException::class)
-    private fun generateJsonSchemaThoughProvider(): String? = PhpCompanionJsonSchemaProviderFactory().getProviders(project).first()?.schemaFile?.let { VfsUtilCore.loadText(it) }
+    private fun generateJsonSchemaThoughProvider(): String? =
+        PhpCompanionJsonSchemaProviderFactory().getProviders(project).first()?.schemaFile?.let {
+            VfsUtilCore.loadText(it)
+        }
 }

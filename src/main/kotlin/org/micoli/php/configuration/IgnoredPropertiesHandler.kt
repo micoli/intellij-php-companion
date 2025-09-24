@@ -7,12 +7,23 @@ import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler
 import kotlin.Any
 import kotlin.Boolean
 
-class IgnoredPropertiesHandler(private val ignorableClasses: MutableList<Class<*>>) : DeserializationProblemHandler() {
+class IgnoredPropertiesHandler(private val ignorableClasses: MutableList<Class<*>>) :
+    DeserializationProblemHandler() {
     private val unknownProperties: MutableList<String> = ArrayList()
     private val ignoredProperties: MutableList<String> = ArrayList()
 
-    override fun handleUnknownProperty(ctxt: DeserializationContext, p: JsonParser, deserializer: JsonDeserializer<*>, beanOrClass: Any, propertyName: String): Boolean {
-        val context = String.format("%s (%s)", buildPropertyPath(ctxt), ctxt.parser.currentTokenLocation().offsetDescription())
+    override fun handleUnknownProperty(
+        ctxt: DeserializationContext,
+        p: JsonParser,
+        deserializer: JsonDeserializer<*>,
+        beanOrClass: Any,
+        propertyName: String
+    ): Boolean {
+        val context =
+            String.format(
+                "%s (%s)",
+                buildPropertyPath(ctxt),
+                ctxt.parser.currentTokenLocation().offsetDescription())
         if (ignorableClasses.contains(beanOrClass.javaClass)) {
             ignoredProperties.add(context)
         } else {

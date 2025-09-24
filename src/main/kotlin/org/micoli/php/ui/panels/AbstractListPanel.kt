@@ -23,7 +23,12 @@ import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableRowSorter
 import org.micoli.php.ui.PhpCompanionIcon
 
-abstract class AbstractListPanel<T> protected constructor(protected val project: Project, panelName: String?, columnNames: Array<String?>?) : JPanel() {
+abstract class AbstractListPanel<T>
+protected constructor(
+    protected val project: Project,
+    panelName: String?,
+    columnNames: Array<String?>?
+) : JPanel() {
     protected val model: DefaultTableModel
     protected var innerSorter: TableRowSorter<DefaultTableModel>? = null
     protected var table: JBTable? = null
@@ -39,11 +44,11 @@ abstract class AbstractListPanel<T> protected constructor(protected val project:
 
     init {
         this.model =
-          object : DefaultTableModel(columnNames, 0) {
-              override fun isCellEditable(row: Int, column: Int): Boolean {
-                  return false
-              }
-          }
+            object : DefaultTableModel(columnNames, 0) {
+                override fun isCellEditable(row: Int, column: Int): Boolean {
+                    return false
+                }
+            }
 
         initializeComponents(panelName)
         setupLayout()
@@ -59,25 +64,27 @@ abstract class AbstractListPanel<T> protected constructor(protected val project:
         table!!.isStriped = true
         searchField = SearchTextField(true, true, panelName)
         rightActionGroup.add(
-          object : ToggleAction("Regex", "Toggle regex mode", PhpCompanionIcon.Regexp) {
-              var isRegex: Boolean = isRegexMode
+            object : ToggleAction("Regex", "Toggle regex mode", PhpCompanionIcon.Regexp) {
+                var isRegex: Boolean = isRegexMode
 
-              override fun getActionUpdateThread(): ActionUpdateThread {
-                  return ActionUpdateThread.BGT
-              }
+                override fun getActionUpdateThread(): ActionUpdateThread {
+                    return ActionUpdateThread.BGT
+                }
 
-              override fun isSelected(anActionEvent: AnActionEvent): Boolean {
-                  return isRegex
-              }
+                override fun isSelected(anActionEvent: AnActionEvent): Boolean {
+                    return isRegex
+                }
 
-              override fun setSelected(anActionEvent: AnActionEvent, b: Boolean) {
-                  isRegex = !isRegex
-                  isRegexMode = isRegex
-                  updateFilter(searchField!!.text)
-              }
-          }
-        )
-        val rightToolbar = ActionManager.getInstance().createActionToolbar("PhpCompanion" + panelName + "RightToolbar", rightActionGroup, true)
+                override fun setSelected(anActionEvent: AnActionEvent, b: Boolean) {
+                    isRegex = !isRegex
+                    isRegexMode = isRegex
+                    updateFilter(searchField!!.text)
+                }
+            })
+        val rightToolbar =
+            ActionManager.getInstance()
+                .createActionToolbar(
+                    "PhpCompanion" + panelName + "RightToolbar", rightActionGroup, true)
         rightToolbar.targetComponent = this
         searchFieldPanel!!.add(rightToolbar.component, BorderLayout.EAST)
 
@@ -103,28 +110,26 @@ abstract class AbstractListPanel<T> protected constructor(protected val project:
 
     private fun setupListeners() {
         searchField!!.addDocumentListener(
-          object : DocumentAdapter() {
-              override fun textChanged(e: DocumentEvent) {
-                  updateFilter(searchField!!.text)
-              }
-          }
-        )
+            object : DocumentAdapter() {
+                override fun textChanged(e: DocumentEvent) {
+                    updateFilter(searchField!!.text)
+                }
+            })
 
         table!!.addMouseListener(
-          object : MouseAdapter() {
-              override fun mouseClicked(e: MouseEvent) {
-                  val row = table!!.rowAtPoint(e.getPoint())
-                  val col = table!!.columnAtPoint(e.getPoint())
-                  if (e.getClickCount() == 2) {
-                      handleActionClick(row)
-                      return
-                  }
-                  if (col == getColumnCount() - 1) {
-                      handleActionClick(row)
-                  }
-              }
-          }
-        )
+            object : MouseAdapter() {
+                override fun mouseClicked(e: MouseEvent) {
+                    val row = table!!.rowAtPoint(e.getPoint())
+                    val col = table!!.columnAtPoint(e.getPoint())
+                    if (e.getClickCount() == 2) {
+                        handleActionClick(row)
+                        return
+                    }
+                    if (col == getColumnCount() - 1) {
+                        handleActionClick(row)
+                    }
+                }
+            })
 
         setupKeyListeners()
         setFocusable(true)
@@ -132,25 +137,23 @@ abstract class AbstractListPanel<T> protected constructor(protected val project:
 
     private fun setupKeyListeners() {
         table!!.addKeyListener(
-          object : KeyAdapter() {
-              override fun keyPressed(e: KeyEvent) {
-                  if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                      handleActionClick(table!!.selectedRow)
-                  }
-              }
-          }
-        )
+            object : KeyAdapter() {
+                override fun keyPressed(e: KeyEvent) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        handleActionClick(table!!.selectedRow)
+                    }
+                }
+            })
 
         searchField!!.addKeyListener(
-          object : KeyAdapter() {
-              override fun keyPressed(e: KeyEvent) {
-                  if (e.getKeyCode() == KeyEvent.VK_ENTER && table!!.getRowCount() > 0) {
-                      table!!.requestFocusInWindow()
-                      table!!.setRowSelectionInterval(0, 0)
-                  }
-              }
-          }
-        )
+            object : KeyAdapter() {
+                override fun keyPressed(e: KeyEvent) {
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER && table!!.getRowCount() > 0) {
+                        table!!.requestFocusInWindow()
+                        table!!.setRowSelectionInterval(0, 0)
+                    }
+                }
+            })
     }
 
     protected abstract fun handleActionClick(row: Int)
@@ -168,7 +171,9 @@ abstract class AbstractListPanel<T> protected constructor(protected val project:
             innerSorter!!.sort()
             textEditor.setBorder(border)
         } catch (_: Exception) {
-            textEditor.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.ORANGE), border))
+            textEditor.setBorder(
+                BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 0, 1, 0, JBColor.ORANGE), border))
         }
     }
 
@@ -182,6 +187,7 @@ abstract class AbstractListPanel<T> protected constructor(protected val project:
     abstract fun refresh()
 
     companion object {
-        protected val LOGGER: Logger = Logger.getInstance(AbstractListPanel::class.java.getSimpleName())
+        protected val LOGGER: Logger =
+            Logger.getInstance(AbstractListPanel::class.java.getSimpleName())
     }
 }

@@ -15,11 +15,20 @@ class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
     @Throws(NoConfigurationFileException::class, ConfigurationException::class)
     fun testItDetectDispatchMethods() {
         myFixture.copyDirectoryToProject("src", "/src")
-        MessengerService.getInstance(project).loadConfiguration(ConfigurationFactory().loadConfiguration(testDataPath, 0L, true)?.configuration?.symfonyMessenger)
-        val files = myFixture.configureByFiles("src/UserInterface/Web/Api/Article/List/Controller.php")
+        MessengerService.getInstance(project)
+            .loadConfiguration(
+                ConfigurationFactory()
+                    .loadConfiguration(testDataPath, 0L, true)
+                    ?.configuration
+                    ?.symfonyMessenger)
+        val files =
+            myFixture.configureByFiles("src/UserInterface/Web/Api/Article/List/Controller.php")
         assertGotoEquals(files[0]!!, "->query(", "src/Core/Query/Article/Handler.php")
         assertGotoEquals(files[0]!!, "->notify(", "src/Core/Query/Article/Handler.php")
-        assertGotoEquals(files[0]!!, "->query(new ArticleDetails\\Query())", "src/Core/Query/ArticleDetails/Handler.php")
+        assertGotoEquals(
+            files[0]!!,
+            "->query(new ArticleDetails\\Query())",
+            "src/Core/Query/ArticleDetails/Handler.php")
         assertGotoIsNull(files[0]!!, "->handle(")
         assertGotoIsNull(files[0]!!, "->dispatch")
         assertGotoIsNull(files[0]!!, "->queryBus")
@@ -29,17 +38,25 @@ class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
         val pos = file.text.indexOf(elementMatch)
         val element = file.findElementAt(pos + 2)
         val messengerGotoDeclarationHandler = MessengerGotoDeclarationHandler()
-        assertNull(messengerGotoDeclarationHandler.getGotoDeclarationTargets(element, 0, myFixture.editor))
+        assertNull(
+            messengerGotoDeclarationHandler.getGotoDeclarationTargets(element, 0, myFixture.editor))
     }
 
-    private fun assertGotoEquals(file: PsiFile, elementMatch: String, targetFileEnd: String, targetMethodStart: String = "public function __invoke") {
+    private fun assertGotoEquals(
+        file: PsiFile,
+        elementMatch: String,
+        targetFileEnd: String,
+        targetMethodStart: String = "public function __invoke"
+    ) {
         val pos = file.text.indexOf(elementMatch)
         val element = file.findElementAt(pos + 2)
         val messengerGotoDeclarationHandler = MessengerGotoDeclarationHandler()
-        val foundElements = messengerGotoDeclarationHandler.getGotoDeclarationTargets(element, 0, myFixture.editor)
+        val foundElements =
+            messengerGotoDeclarationHandler.getGotoDeclarationTargets(element, 0, myFixture.editor)
         assertNotNull(foundElements)
         TestCase.assertEquals(1, foundElements!!.size)
-        assertTrue(foundElements[0]!!.containingFile.virtualFile.canonicalPath!!.endsWith(targetFileEnd))
+        assertTrue(
+            foundElements[0]!!.containingFile.virtualFile.canonicalPath!!.endsWith(targetFileEnd))
         assertTrue(foundElements[0]!!.text.startsWith(targetMethodStart))
     }
 }

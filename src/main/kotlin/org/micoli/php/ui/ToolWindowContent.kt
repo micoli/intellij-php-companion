@@ -14,12 +14,16 @@ import org.micoli.php.events.IndexingEvents
 import org.micoli.php.ui.panels.*
 
 internal class ToolWindowContent(project: com.intellij.openapi.project.Project) {
-    private class PanelRefresher(val aPanel: Class<*>?, val configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?)
+    private class PanelRefresher(
+        val aPanel: Class<*>?,
+        val configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?
+    )
 
     val contentPanel: JPanel = JPanel()
     private val tabActions: DefaultActionGroup = DefaultActionGroup()
     private val tabs: JBTabs
-    private val tabMap: MutableMap<Class<*>, com.intellij.ui.tabs.TabInfo?> = java.util.HashMap<Class<*>, com.intellij.ui.tabs.TabInfo?>()
+    private val tabMap: MutableMap<Class<*>, com.intellij.ui.tabs.TabInfo?> =
+        java.util.HashMap<Class<*>, com.intellij.ui.tabs.TabInfo?>()
     private val panelMap: MutableMap<Class<*>, JPanel> = java.util.HashMap<Class<*>, JPanel>()
     private var configuration: org.micoli.php.configuration.models.Configuration? = null
     private val refresherList: MutableList<PanelRefresher?> = java.util.ArrayList<PanelRefresher?>()
@@ -36,41 +40,48 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
 
         tabs = JBTabsFactory.createTabs(project)
         tabActions.add(
-          object : AnAction("Refresh", "Refresh", PhpCompanionIcon.Refresh) {
-              override fun actionPerformed(e: AnActionEvent) {
-                  javax.swing.SwingUtilities.invokeLater { PhpCompanionProjectService.getInstance(project).loadConfiguration(true) }
-              }
-          }
-        )
+            object : AnAction("Refresh", "Refresh", PhpCompanionIcon.Refresh) {
+                override fun actionPerformed(e: AnActionEvent) {
+                    javax.swing.SwingUtilities.invokeLater {
+                        PhpCompanionProjectService.getInstance(project).loadConfiguration(true)
+                    }
+                }
+            })
         addTab(ActionTreePanel(project), "Actions") { configuration!!.tasksConfiguration }
         addTab(RoutesPanel(project), "Routes") { configuration!!.routesConfiguration }
         addTab(CommandsPanel(project), "CLI") { configuration!!.commandsConfiguration }
-        addTab(DoctrineEntitiesPanel(project), "Entities") { configuration!!.doctrineEntitiesConfiguration }
+        addTab(DoctrineEntitiesPanel(project), "Entities") {
+            configuration!!.doctrineEntitiesConfiguration
+        }
         addTab(OpenAPIPathPanel(project), "OAS") { configuration!!.openAPIConfiguration }
 
         mainPanel.add(tabs.component, java.awt.BorderLayout.CENTER)
         project.messageBus
-          .connect()
-          .subscribe<ConfigurationEvents>(
-            ConfigurationEvents.CONFIGURATION_UPDATED,
-            ConfigurationEvents { configuration: org.micoli.php.configuration.models.Configuration? ->
-                this.configuration = configuration
-                refreshTabs()
-            },
-          )
-        project.messageBus
-          .connect()
-          .subscribe<IndexingEvents>(
-            IndexingEvents.INDEXING_EVENTS,
-            IndexingEvents { isIndexing: Boolean ->
-                if (!isIndexing) {
+            .connect()
+            .subscribe<ConfigurationEvents>(
+                ConfigurationEvents.CONFIGURATION_UPDATED,
+                ConfigurationEvents {
+                    configuration: org.micoli.php.configuration.models.Configuration? ->
+                    this.configuration = configuration
                     refreshTabs()
-                }
-            },
-          )
+                },
+            )
+        project.messageBus
+            .connect()
+            .subscribe<IndexingEvents>(
+                IndexingEvents.INDEXING_EVENTS,
+                IndexingEvents { isIndexing: Boolean ->
+                    if (!isIndexing) {
+                        refreshTabs()
+                    }
+                },
+            )
     }
 
-    private fun manageTabVisibilityAndRefresh(classParameter: Class<*>?, configuration: DisactivableConfiguration?) {
+    private fun manageTabVisibilityAndRefresh(
+        classParameter: Class<*>?,
+        configuration: DisactivableConfiguration?
+    ) {
         val isEnabled = (configuration != null && configuration.isEnabled())
         tabMap[classParameter]!!.isHidden = !isEnabled
         if (isEnabled) {
@@ -87,16 +98,20 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
                 return@invokeLater
             }
             refresherList
-              .reversed()
-              .forEach(
-                java.util.function.Consumer { panelRefresher: PanelRefresher? ->
-                    manageTabVisibilityAndRefresh(panelRefresher!!.aPanel, panelRefresher.configurationRefresher!!.get())
-                }
-              )
+                .reversed()
+                .forEach(
+                    java.util.function.Consumer { panelRefresher: PanelRefresher? ->
+                        manageTabVisibilityAndRefresh(
+                            panelRefresher!!.aPanel, panelRefresher.configurationRefresher!!.get())
+                    })
         }
     }
 
-    private fun addTab(panel: JPanel, tabName: String, configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?) {
+    private fun addTab(
+        panel: JPanel,
+        tabName: String,
+        configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?
+    ) {
         val tabInfo = com.intellij.ui.tabs.TabInfo(panel)
         tabInfo.setText(tabName)
         tabInfo.setActions(tabActions, "TabActions")

@@ -25,8 +25,13 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
         fs!!.clearPath("path0/path1", false)
 
         Assert.assertEquals(
-          normalizeStringList(initialPathContent.stream().filter { s: String? -> !s!!.contains("/path1") }.toList().toImmutableList()),
-          normalizeStringList(MyFixtureUtils.getPathContent(vf)),
+            normalizeStringList(
+                initialPathContent
+                    .stream()
+                    .filter { s: String? -> !s!!.contains("/path1") }
+                    .toList()
+                    .toImmutableList()),
+            normalizeStringList(MyFixtureUtils.getPathContent(vf)),
         )
     }
 
@@ -35,7 +40,9 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
         val initialPathContent = MyFixtureUtils.getPathContent(vf)
         fs!!.clearPath("path0/path1")
 
-        Assert.assertEquals(normalizeStringList(initialPathContent), normalizeStringList(MyFixtureUtils.getPathContent(vf)))
+        Assert.assertEquals(
+            normalizeStringList(initialPathContent),
+            normalizeStringList(MyFixtureUtils.getPathContent(vf)))
     }
 
     fun testItDoesClearPathIfIsNotGitIgnoredButForced() {
@@ -43,7 +50,9 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
         val initialPathContent = MyFixtureUtils.getPathContent(vf)
         fs!!.clearPath("path0/path1", true)
 
-        Assert.assertEquals(normalizeStringList(initialPathContent), normalizeStringList(MyFixtureUtils.getPathContent(vf)))
+        Assert.assertEquals(
+            normalizeStringList(initialPathContent),
+            normalizeStringList(MyFixtureUtils.getPathContent(vf)))
     }
 
     fun testItClearPathIfIsGitIgnoredAtRoot() {
@@ -54,8 +63,13 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
         fs!!.clearPath("path0/path1")
 
         Assert.assertEquals(
-          normalizeStringList(initialPathContent.stream().filter { s: String? -> !s!!.contains("/path1") }.toList().toImmutableList()),
-          normalizeStringList(MyFixtureUtils.getPathContent(vf)),
+            normalizeStringList(
+                initialPathContent
+                    .stream()
+                    .filter { s: String? -> !s!!.contains("/path1") }
+                    .toList()
+                    .toImmutableList()),
+            normalizeStringList(MyFixtureUtils.getPathContent(vf)),
         )
     }
 
@@ -67,12 +81,18 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
         fs!!.clearPath("path0/path1")
 
         Assert.assertEquals(
-          normalizeStringList(initialPathContent.stream().filter { s: String? -> !s!!.contains("/path1") }.toList().toImmutableList()),
-          normalizeStringList(MyFixtureUtils.getPathContent(vf)),
+            normalizeStringList(
+                initialPathContent
+                    .stream()
+                    .filter { s: String? -> !s!!.contains("/path1") }
+                    .toList()
+                    .toImmutableList()),
+            normalizeStringList(MyFixtureUtils.getPathContent(vf)),
         )
     }
 
     companion object {
-        private fun normalizeStringList(expected: ImmutableList<String?>): String = expected.stream().sorted().toList().joinToString(",")
+        private fun normalizeStringList(expected: ImmutableList<String?>): String =
+            expected.stream().sorted().toList().joinToString(",")
     }
 }

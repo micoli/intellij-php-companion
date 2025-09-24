@@ -19,7 +19,10 @@ class JsonToPhpArrayConverterTest(private val filename: String?) {
         assert(readFile(".php") == JsonToPhpArrayConverter.convertJsonToPhp(readFile(".json")))
     }
 
-    @Throws(IOException::class) private fun readFile(path: String?): String = Files.readAllLines(Paths.get(DIRECTORY + filename + path), StandardCharsets.UTF_8).joinToString("\n")
+    @Throws(IOException::class)
+    private fun readFile(path: String?): String =
+        Files.readAllLines(Paths.get(DIRECTORY + filename + path), StandardCharsets.UTF_8)
+            .joinToString("\n")
 
     companion object {
         private const val DIRECTORY = "src/test/resources/jsonToPhpArrayConverterTestCases/"
@@ -30,10 +33,10 @@ class JsonToPhpArrayConverterTest(private val filename: String?) {
         fun parameters(): Collection<Array<String>> {
             Files.list(Paths.get(DIRECTORY)).use { stream ->
                 return stream
-                  .filter { path: Path? -> path != null }
-                  .filter { path: Path -> path.toString().endsWith(".json") }
-                  .map { path: Path -> arrayOf(path.fileName.toString().replace(".json", "")) }
-                  .collect(Collectors.toList())
+                    .filter { path: Path? -> path != null }
+                    .filter { path: Path -> path.toString().endsWith(".json") }
+                    .map { path: Path -> arrayOf(path.fileName.toString().replace(".json", "")) }
+                    .collect(Collectors.toList())
             }
         }
     }

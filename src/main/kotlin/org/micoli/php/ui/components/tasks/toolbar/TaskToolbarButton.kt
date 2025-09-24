@@ -9,7 +9,7 @@ import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 import org.micoli.php.ui.PhpCompanionIcon
 
 class TaskToolbarButton(private val project: Project, action: RunnableTaskConfiguration) :
-  AnAction(action.label, action.label, getIcon(action.getIcon(), PhpCompanionIcon::class.java)) {
+    AnAction(action.label, action.label, getIcon(action.getIcon(), PhpCompanionIcon::class.java)) {
     private val taskId: String? = action.id
 
     override fun actionPerformed(anActionEvent: AnActionEvent) {

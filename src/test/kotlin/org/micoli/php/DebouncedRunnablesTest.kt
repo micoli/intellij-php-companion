@@ -32,14 +32,14 @@ class DebouncedRunnablesTest {
         val latch = CountDownLatch(1)
 
         val runnable =
-          debouncedRunnables!!.run(
-            {
-                counter!!.incrementAndGet()
-                latch.countDown()
-            },
-            "testRunnable",
-            delay,
-          )
+            debouncedRunnables!!.run(
+                {
+                    counter!!.incrementAndGet()
+                    latch.countDown()
+                },
+                "testRunnable",
+                delay,
+            )
 
         Assertions.assertNotNull(runnable)
         Assertions.assertEquals(0, counter!!.get())
@@ -68,16 +68,20 @@ class DebouncedRunnablesTest {
         Assertions.assertEquals(1, callCounter.get())
     }
 
-    private fun getSameNameRunnable(callCounter: AtomicInteger, latch: CountDownLatch, delay: Long): DebouncedRunnable? =
-      debouncedRunnables!!.run(
-        {
-            counter!!.incrementAndGet()
-            callCounter.incrementAndGet()
-            latch.countDown()
-        },
-        "sameNameRunnable",
-        delay,
-      )
+    private fun getSameNameRunnable(
+        callCounter: AtomicInteger,
+        latch: CountDownLatch,
+        delay: Long
+    ): DebouncedRunnable? =
+        debouncedRunnables!!.run(
+            {
+                counter!!.incrementAndGet()
+                callCounter.incrementAndGet()
+                latch.countDown()
+            },
+            "sameNameRunnable",
+            delay,
+        )
 
     @Test
     @Throws(InterruptedException::class)
@@ -88,16 +92,16 @@ class DebouncedRunnablesTest {
         val callbackCounter = AtomicInteger(0)
 
         debouncedRunnables!!.run(
-          {
-              counter!!.incrementAndGet()
-              taskLatch.countDown()
-          },
-          "runnableWithCallback",
-          delay,
-          {
-              callbackCounter.incrementAndGet()
-              callbackLatch.countDown()
-          },
+            {
+                counter!!.incrementAndGet()
+                taskLatch.countDown()
+            },
+            "runnableWithCallback",
+            delay,
+            {
+                callbackCounter.incrementAndGet()
+                callbackLatch.countDown()
+            },
         )
 
         Assertions.assertTrue(taskLatch.await(delay + 200, TimeUnit.MILLISECONDS))
@@ -117,24 +121,24 @@ class DebouncedRunnablesTest {
         val counter2 = AtomicInteger(0)
 
         val runnable1 =
-          debouncedRunnables!!.run(
-            {
-                counter1.incrementAndGet()
-                latch1.countDown()
-            },
-            "runnable1",
-            delay,
-          )
+            debouncedRunnables!!.run(
+                {
+                    counter1.incrementAndGet()
+                    latch1.countDown()
+                },
+                "runnable1",
+                delay,
+            )
 
         val runnable2 =
-          debouncedRunnables!!.run(
-            {
-                counter2.incrementAndGet()
-                latch2.countDown()
-            },
-            "runnable2",
-            delay,
-          )
+            debouncedRunnables!!.run(
+                {
+                    counter2.incrementAndGet()
+                    latch2.countDown()
+                },
+                "runnable2",
+                delay,
+            )
 
         Assertions.assertNotSame(runnable1, runnable2)
 

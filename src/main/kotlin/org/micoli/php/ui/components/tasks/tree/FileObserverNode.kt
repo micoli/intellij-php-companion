@@ -12,21 +12,40 @@ import org.micoli.php.ui.PhpCompanionIcon
 import org.micoli.php.ui.components.tasks.helpers.FileObserver
 import org.micoli.php.ui.components.tasks.helpers.FileObserver.IconAndPrefix
 
-class FileObserverNode(project: Project, tree: Tree, private val initialLabel: String, observedFile: ObservedFile) :
-  DynamicTreeNode(project, tree, observedFile.id, getIcon(observedFile.unknownIcon, PhpCompanionIcon::class.java), initialLabel, observedFile), Disposable {
+class FileObserverNode(
+    project: Project,
+    tree: Tree,
+    private val initialLabel: String,
+    observedFile: ObservedFile
+) :
+    DynamicTreeNode(
+        project,
+        tree,
+        observedFile.id,
+        getIcon(observedFile.unknownIcon, PhpCompanionIcon::class.java),
+        initialLabel,
+        observedFile),
+    Disposable {
     private val messageBusConnection: MessageBusConnection = project.messageBus.connect()
 
     init {
-        messageBusConnection.subscribe<TaskNodeChangedEvents>(TaskNodeChangedEvents.NODE_CHANGED_EVENTS_TOPIC, this.taskNodeChangedEvents)
+        messageBusConnection.subscribe<TaskNodeChangedEvents>(
+            TaskNodeChangedEvents.NODE_CHANGED_EVENTS_TOPIC, this.taskNodeChangedEvents)
     }
 
     private val taskNodeChangedEvents: TaskNodeChangedEvents
-        get() = TaskNodeChangedEvents { taskId: String?, _: FileObserver.Status?, iconAndPrefix: IconAndPrefix? ->
-            if (taskId != this.taskId) {
-                return@TaskNodeChangedEvents
+        get() =
+            TaskNodeChangedEvents {
+                taskId: String?,
+                _: FileObserver.Status?,
+                iconAndPrefix: IconAndPrefix? ->
+                if (taskId != this.taskId) {
+                    return@TaskNodeChangedEvents
+                }
+                SwingUtilities.invokeLater {
+                    setIconAndLabel(iconAndPrefix!!.icon, iconAndPrefix.getPrefix() + initialLabel)
+                }
             }
-            SwingUtilities.invokeLater { setIconAndLabel(iconAndPrefix!!.icon, iconAndPrefix.getPrefix() + initialLabel) }
-        }
 
     override fun dispose() {
         messageBusConnection.disconnect()

@@ -19,15 +19,16 @@ open class Notification(private val project: Project?) {
 
     fun messageWithTimeout(message: String, delayInMs: Int) {
         try {
-            val notification = createMessage(message, NotificationType.INFORMATION).setImportant(false)
+            val notification =
+                createMessage(message, NotificationType.INFORMATION).setImportant(false)
             notify(notification)
             ApplicationManager.getApplication().invokeLater {
                 Timer(delayInMs) { _: ActionEvent? ->
-                      if (!notification.isExpired) {
-                          notification.hideBalloon()
-                      }
-                  }
-                  .start()
+                        if (!notification.isExpired) {
+                            notification.hideBalloon()
+                        }
+                    }
+                    .start()
             }
         } catch (ignored: Exception) {}
     }
@@ -45,11 +46,19 @@ open class Notification(private val project: Project?) {
     }
 
     private fun createMessage(message: String, notificationType: NotificationType): Notification {
-        return NotificationGroupManager.getInstance().getNotificationGroup("PHP Companion").createNotification(message, notificationType)
+        return NotificationGroupManager.getInstance()
+            .getNotificationGroup("PHP Companion")
+            .createNotification(message, notificationType)
     }
 
-    private fun createMessage(title: String, message: String, notificationType: NotificationType): Notification {
-        return NotificationGroupManager.getInstance().getNotificationGroup("PHP Companion").createNotification(title, message, notificationType)
+    private fun createMessage(
+        title: String,
+        message: String,
+        notificationType: NotificationType
+    ): Notification {
+        return NotificationGroupManager.getInstance()
+            .getNotificationGroup("PHP Companion")
+            .createNotification(title, message, notificationType)
     }
 
     companion object {

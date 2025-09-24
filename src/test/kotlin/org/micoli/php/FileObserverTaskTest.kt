@@ -15,19 +15,26 @@ class FileObserverTaskTest : BasePlatformTestCase() {
     override fun setUp() {
         super.setUp()
         val fileContent =
-          """
+            """
         variable1=value
         #variable2=value
 
         """
-            .trimIndent()
+                .trimIndent()
         filePath = "config.env"
         myFixture.addFileToProject(filePath, fileContent)
     }
 
     fun testStatusToggleOnKnownActiveVariable() {
         // Given
-        val fileObserverTask = FileObserverTask(project, ObservedFileBuilder.create().withId("file1").withFilePath(filePath).withVariableName("variable1").build())
+        val fileObserverTask =
+            FileObserverTask(
+                project,
+                ObservedFileBuilder.create()
+                    .withId("file1")
+                    .withFilePath(filePath)
+                    .withVariableName("variable1")
+                    .build())
         assertEquals(FileObserver.Status.Active, fileObserverTask.getStatus())
 
         // When
@@ -42,15 +49,22 @@ class FileObserverTaskTest : BasePlatformTestCase() {
     fun testStatusToggleWithSpecificPrefix() {
         // Given
         val fileContent =
-          """
+            """
         variable1=value
 
         """
-            .trimIndent()
+                .trimIndent()
         val specificFilePath = "config2.env"
         myFixture.addFileToProject(specificFilePath, fileContent)
         val fileObserverTask =
-          FileObserverTask(project, ObservedFileBuilder.create().withId("file1").withFilePath(specificFilePath).withCommentPrefix(";").withVariableName("variable1").build())
+            FileObserverTask(
+                project,
+                ObservedFileBuilder.create()
+                    .withId("file1")
+                    .withFilePath(specificFilePath)
+                    .withCommentPrefix(";")
+                    .withVariableName("variable1")
+                    .build())
         assertEquals(FileObserver.Status.Active, fileObserverTask.getStatus())
 
         // When
@@ -65,15 +79,18 @@ class FileObserverTaskTest : BasePlatformTestCase() {
     fun testItLaunchPostAction() {
         // Given
         val fileObserverTask =
-          FileObserverTask(
-            project,
-            ObservedFileBuilder.create()
-              .withId("file1")
-              .withFilePath(filePath)
-              .withVariableName("variable1")
-              .withPostToggle(PostToggleScriptBuilder.create().withSource("org.micoli.php.FileObserverTaskTest.exposedVariable++").build())
-              .build(),
-          )
+            FileObserverTask(
+                project,
+                ObservedFileBuilder.create()
+                    .withId("file1")
+                    .withFilePath(filePath)
+                    .withVariableName("variable1")
+                    .withPostToggle(
+                        PostToggleScriptBuilder.create()
+                            .withSource("org.micoli.php.FileObserverTaskTest.exposedVariable++")
+                            .build())
+                    .build(),
+            )
         assertEquals(FileObserver.Status.Active, fileObserverTask.getStatus())
         exposedVariable = 0
 
@@ -92,15 +109,18 @@ class FileObserverTaskTest : BasePlatformTestCase() {
     fun testItDoesNotLaunchPostActionIfActionFailed() {
         // Given
         val fileObserverTask =
-          FileObserverTask(
-            project,
-            ObservedFileBuilder.create()
-              .withId("file1")
-              .withFilePath(filePath)
-              .withVariableName("unknownVariable")
-              .withPostToggle(PostToggleScriptBuilder.create().withSource("org.micoli.php.FileObserverTaskTest.exposedVariable++").build())
-              .build(),
-          )
+            FileObserverTask(
+                project,
+                ObservedFileBuilder.create()
+                    .withId("file1")
+                    .withFilePath(filePath)
+                    .withVariableName("unknownVariable")
+                    .withPostToggle(
+                        PostToggleScriptBuilder.create()
+                            .withSource("org.micoli.php.FileObserverTaskTest.exposedVariable++")
+                            .build())
+                    .build(),
+            )
         assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
         exposedVariable = 0
 
@@ -113,7 +133,14 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
     fun testStatusToggleOnKnownInactiveVariable() {
         // Given
-        val fileObserverTask = FileObserverTask(project, ObservedFileBuilder.create().withId("file1").withFilePath(filePath).withVariableName("variable2").build())
+        val fileObserverTask =
+            FileObserverTask(
+                project,
+                ObservedFileBuilder.create()
+                    .withId("file1")
+                    .withFilePath(filePath)
+                    .withVariableName("variable2")
+                    .build())
         assertEquals(FileObserver.Status.Inactive, fileObserverTask.getStatus())
 
         // When
@@ -127,7 +154,14 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
     fun testStatusToggleOnUnknownVariable() {
         // Given
-        val fileObserverTask = FileObserverTask(project, ObservedFileBuilder.create().withId("file1").withFilePath(filePath).withVariableName("unknownVariable").build())
+        val fileObserverTask =
+            FileObserverTask(
+                project,
+                ObservedFileBuilder.create()
+                    .withId("file1")
+                    .withFilePath(filePath)
+                    .withVariableName("unknownVariable")
+                    .build())
         assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
 
         // When
@@ -140,7 +174,14 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
     fun testStatusToggleOnUnknownFile() {
         // Given
-        val fileObserverTask = FileObserverTask(project, ObservedFileBuilder.create().withId("file1").withFilePath("unknown-config.env").withVariableName("variable").build())
+        val fileObserverTask =
+            FileObserverTask(
+                project,
+                ObservedFileBuilder.create()
+                    .withId("file1")
+                    .withFilePath("unknown-config.env")
+                    .withVariableName("variable")
+                    .build())
         assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
 
         // When
@@ -153,7 +194,9 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
     private fun assertFileContentEquals(filepathPrm: String, content: String?) {
         try {
-            TestCase.assertEquals(content, VfsUtilCore.loadText(myFixture.findFileInTempDir(filepathPrm)).trim { it <= ' ' })
+            TestCase.assertEquals(
+                content,
+                VfsUtilCore.loadText(myFixture.findFileInTempDir(filepathPrm)).trim { it <= ' ' })
         } catch (_: IOException) {
             fail("File not found: $filepathPrm")
         }

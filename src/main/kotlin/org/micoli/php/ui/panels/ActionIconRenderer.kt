@@ -7,7 +7,14 @@ import javax.swing.JTable
 import javax.swing.table.TableCellRenderer
 
 class ActionIconRenderer : TableCellRenderer {
-    override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+    override fun getTableCellRendererComponent(
+        table: JTable,
+        value: Any?,
+        isSelected: Boolean,
+        hasFocus: Boolean,
+        row: Int,
+        column: Int
+    ): Component {
         val label = JLabel()
         label.setHorizontalAlignment(JLabel.CENTER)
         label.setIcon(AllIcons.Actions.Lightning)

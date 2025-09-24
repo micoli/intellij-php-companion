@@ -11,12 +11,14 @@ import org.micoli.php.configuration.ConfigurationFactory
 import org.micoli.php.configuration.models.Configuration
 
 class PhpCompanionJsonSchemaProviderFactory : JsonSchemaProviderFactory {
-    override fun getProviders(project: Project): List<PhpCompanionJsonSchemaProvider> = listOf(PhpCompanionJsonSchemaProvider())
+    override fun getProviders(project: Project): List<PhpCompanionJsonSchemaProvider> =
+        listOf(PhpCompanionJsonSchemaProvider())
 
     class PhpCompanionJsonSchemaProvider : JsonSchemaFileProvider {
         override fun getName(): String = "PHP Companion Configuration"
 
-        override fun isAvailable(file: VirtualFile): Boolean = ConfigurationFactory().acceptableConfigurationFiles.contains(file.name)
+        override fun isAvailable(file: VirtualFile): Boolean =
+            ConfigurationFactory().acceptableConfigurationFiles.contains(file.name)
 
         override fun getSchemaType(): SchemaType = SchemaType.embeddedSchema
 
@@ -25,7 +27,8 @@ class PhpCompanionJsonSchemaProviderFactory : JsonSchemaProviderFactory {
         override fun getSchemaFile(): VirtualFile {
             val filename = "php-companion-schema.json"
             if (jsonSchema == null) {
-                jsonSchema = ConfigurationJsonSchemaGenerator().generateSchema(Configuration::class.java)
+                jsonSchema =
+                    ConfigurationJsonSchemaGenerator().generateSchema(Configuration::class.java)
             }
             return LightVirtualFile(filename, jsonSchema!!)
         }

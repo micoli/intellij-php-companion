@@ -15,7 +15,11 @@ import org.micoli.php.symfony.list.SearchableRecord
 import org.micoli.php.ui.panels.ListRowFilter
 
 @RunWith(Parameterized::class)
-class ListRowFilterTest(private val searchText: String?, private val isRegexMode: Boolean, private val expectedResult: String?) {
+class ListRowFilterTest(
+    private val searchText: String?,
+    private val isRegexMode: Boolean,
+    private val expectedResult: String?
+) {
     @JvmRecord
     data class TestElementDTO(val uri: String, val name: String) : SearchableRecord {
         override fun getSearchString(): List<String> = listOf(uri, name)
@@ -44,11 +48,11 @@ class ListRowFilterTest(private val searchText: String?, private val isRegexMode
         defaultRowSorter.sort()
         table.selectAll()
         Assertions.assertEquals(
-          expectedResult,
-          Arrays.stream(table.getSelectionModel().getSelectedIndices())
-            .mapToObj(IntFunction { index: Int -> table.model.getValueAt(index, 0).toString() })
-            .toList()
-            .joinToString(","),
+            expectedResult,
+            Arrays.stream(table.getSelectionModel().getSelectedIndices())
+                .mapToObj(IntFunction { index: Int -> table.model.getValueAt(index, 0).toString() })
+                .toList()
+                .joinToString(","),
         )
     }
 
@@ -57,25 +61,25 @@ class ListRowFilterTest(private val searchText: String?, private val isRegexMode
         @Parameterized.Parameters(name = "Filter with \"{0}\" and isRegex is {1}")
         @Throws(IOException::class)
         fun parameters(): Collection<Array<Any?>> =
-          listOf(
-            arrayOf("", false, "t1,t2,t3,t4,t5,t6,t7"),
-            arrayOf("", true, "t1,t2,t3,t4,t5,t6,t7"),
-            arrayOf("good", false, "t1"),
-            arrayOf("description", false, "t1,t2"),
-            arrayOf("test", false, "t1,t2,t3,t4"),
-            arrayOf("nonexistent", false, ""),
-            arrayOf("/test/.*", false, ""),
-            arrayOf("/test/.*toto", true, "t1,t2,t3"),
-            arrayOf("/test/.*", true, "t1,t2,t3,t4"),
-            arrayOf(".*\\{id\\}.*", true, "t1,t2,t3"),
-            arrayOf("^/actor.*", true, "t1,t2"),
-            arrayOf("resource.*delete", true, "t1"),
-            arrayOf("acToR update", false, "t1"),
-            arrayOf("ACTOR", false, "t1,t2"),
-            arrayOf("Update", false, "t1"),
-            arrayOf("/{id}/", false, "t1,t2,t3"),
-            arrayOf("toto", false, "t1,t2,t3"),
-            arrayOf(".*toto$", true, "t1,t2,t3"),
-          )
+            listOf(
+                arrayOf("", false, "t1,t2,t3,t4,t5,t6,t7"),
+                arrayOf("", true, "t1,t2,t3,t4,t5,t6,t7"),
+                arrayOf("good", false, "t1"),
+                arrayOf("description", false, "t1,t2"),
+                arrayOf("test", false, "t1,t2,t3,t4"),
+                arrayOf("nonexistent", false, ""),
+                arrayOf("/test/.*", false, ""),
+                arrayOf("/test/.*toto", true, "t1,t2,t3"),
+                arrayOf("/test/.*", true, "t1,t2,t3,t4"),
+                arrayOf(".*\\{id\\}.*", true, "t1,t2,t3"),
+                arrayOf("^/actor.*", true, "t1,t2"),
+                arrayOf("resource.*delete", true, "t1"),
+                arrayOf("acToR update", false, "t1"),
+                arrayOf("ACTOR", false, "t1,t2"),
+                arrayOf("Update", false, "t1"),
+                arrayOf("/{id}/", false, "t1,t2,t3"),
+                arrayOf("toto", false, "t1,t2,t3"),
+                arrayOf(".*toto$", true, "t1,t2,t3"),
+            )
     }
 }

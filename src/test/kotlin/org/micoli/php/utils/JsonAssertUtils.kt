@@ -16,7 +16,11 @@ object JsonAssertUtils {
         val actualElement = JsonParser.parseString(actual)
 
         if (!jsonEquals(expectedElement, actualElement)) {
-            val message = String.format("JSON strings are not equal:\nExpected:\n%s\n\nActual:\n%s", gson.toJson(expectedElement), gson.toJson(actualElement))
+            val message =
+                String.format(
+                    "JSON strings are not equal:\nExpected:\n%s\n\nActual:\n%s",
+                    gson.toJson(expectedElement),
+                    gson.toJson(actualElement))
 
             throw AssertionError(message)
         }
@@ -102,7 +106,11 @@ object JsonAssertUtils {
         val actualElement = JsonParser.parseString(actual)
 
         if (!jsonEqualsOrdered(expectedElement, actualElement)) {
-            val message = String.format("JSON strings are not equal (ordered):\nExpected:\n%s\n\nActual:\n%s", gson.toJson(expectedElement), gson.toJson(actualElement))
+            val message =
+                String.format(
+                    "JSON strings are not equal (ordered):\nExpected:\n%s\n\nActual:\n%s",
+                    gson.toJson(expectedElement),
+                    gson.toJson(actualElement))
             throw AssertionError(message)
         }
     }

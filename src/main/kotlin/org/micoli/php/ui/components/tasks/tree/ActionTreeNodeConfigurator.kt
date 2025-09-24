@@ -32,7 +32,10 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
         this.registerEnterKeyAction(tree)
     }
 
-    fun configureTree(runnables: Map<String, RunnableTaskConfiguration>, nodes: Array<AbstractNode>?) {
+    fun configureTree(
+        runnables: Map<String, RunnableTaskConfiguration>,
+        nodes: Array<AbstractNode>?
+    ) {
         cleanup()
         treeModel.reload()
 
@@ -42,14 +45,24 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
         tree.setShowsRootHandles(true)
         tree.repaint()
 
-        TreeIterator.forEach(tree) { _: DefaultMutableTreeNode?, isLeaf: Boolean, _: TreePath?, level: Int, index: Int ->
+        TreeIterator.forEach(tree) {
+            _: DefaultMutableTreeNode?,
+            isLeaf: Boolean,
+            _: TreePath?,
+            level: Int,
+            index: Int ->
             if (!isLeaf && level <= 1) {
                 tree.expandRow(index)
             }
         }
     }
 
-    private fun addSubNodes(tree: Tree, parent: DefaultMutableTreeNode, runnables: Map<String, RunnableTaskConfiguration>, nodes: Array<AbstractNode>?) {
+    private fun addSubNodes(
+        tree: Tree,
+        parent: DefaultMutableTreeNode,
+        runnables: Map<String, RunnableTaskConfiguration>,
+        nodes: Array<AbstractNode>?
+    ) {
         if (nodes == null) {
             return
         }
@@ -78,29 +91,41 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
         }
     }
 
-    private fun createTaskNode(tree: Tree, task: Task, runnable: RunnableTaskConfiguration): DefaultMutableTreeNode {
+    private fun createTaskNode(
+        tree: Tree,
+        task: Task,
+        runnable: RunnableTaskConfiguration
+    ): DefaultMutableTreeNode {
         return when (runnable) {
             is Shell ->
-              DynamicTreeNode(
-                project,
-                tree,
-                runnable.id,
-                getIcon(runnable.icon, PhpCompanionIcon::class.java),
-                Objects.requireNonNullElse(task.label, Objects.requireNonNullElse(runnable.label, runnable.id)),
-                runnable,
-              )
+                DynamicTreeNode(
+                    project,
+                    tree,
+                    runnable.id,
+                    getIcon(runnable.icon, PhpCompanionIcon::class.java),
+                    Objects.requireNonNullElse(
+                        task.label, Objects.requireNonNullElse(runnable.label, runnable.id)),
+                    runnable,
+                )
 
             is Script ->
-              DynamicTreeNode(
-                project,
-                tree,
-                runnable.id,
-                getIcon(runnable.icon, PhpCompanionIcon::class.java),
-                Objects.requireNonNullElse(task.label, Objects.requireNonNullElse(runnable.label, runnable.id)),
-                runnable,
-              )
+                DynamicTreeNode(
+                    project,
+                    tree,
+                    runnable.id,
+                    getIcon(runnable.icon, PhpCompanionIcon::class.java),
+                    Objects.requireNonNullElse(
+                        task.label, Objects.requireNonNullElse(runnable.label, runnable.id)),
+                    runnable,
+                )
 
-            is ObservedFile -> FileObserverNode(project, tree, Objects.requireNonNullElse(task.label, Objects.requireNonNullElse(runnable.label, runnable.id)), runnable)
+            is ObservedFile ->
+                FileObserverNode(
+                    project,
+                    tree,
+                    Objects.requireNonNullElse(
+                        task.label, Objects.requireNonNullElse(runnable.label, runnable.id)),
+                    runnable)
 
             else -> throw IllegalStateException("Unexpected value: $runnable")
         }
@@ -108,29 +133,31 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
 
     private fun registerDoubleClickAction(tree: Tree) {
         tree.addMouseListener(
-          object : MouseAdapter() {
-              override fun mouseClicked(e: MouseEvent) {
-                  if (e.getClickCount() != 2) {
-                      return
-                  }
-                  val path = tree.getPathForRow(tree.getClosestRowForLocation(e.getX(), e.getY())) ?: return
-                  val node = path.lastPathComponent as DefaultMutableTreeNode?
-                  handleLeafAction(node, tree)
-              }
-          }
-        )
+            object : MouseAdapter() {
+                override fun mouseClicked(e: MouseEvent) {
+                    if (e.getClickCount() != 2) {
+                        return
+                    }
+                    val path =
+                        tree.getPathForRow(tree.getClosestRowForLocation(e.getX(), e.getY()))
+                            ?: return
+                    val node = path.lastPathComponent as DefaultMutableTreeNode?
+                    handleLeafAction(node, tree)
+                }
+            })
     }
 
     private fun registerEnterKeyAction(tree: Tree) {
         val enterAction: AnAction =
-          object : AnAction() {
-              override fun actionPerformed(e: AnActionEvent) {
-                  val selectedPath = tree.selectionPath
-                  if (selectedPath != null) {
-                      handleLeafAction(selectedPath.lastPathComponent as DefaultMutableTreeNode?, tree)
-                  }
-              }
-          }
+            object : AnAction() {
+                override fun actionPerformed(e: AnActionEvent) {
+                    val selectedPath = tree.selectionPath
+                    if (selectedPath != null) {
+                        handleLeafAction(
+                            selectedPath.lastPathComponent as DefaultMutableTreeNode?, tree)
+                    }
+                }
+            }
 
         enterAction.registerCustomShortcutSet(CommonShortcuts.ENTER, tree)
     }
@@ -151,7 +178,12 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
     }
 
     private fun cleanup() {
-        TreeIterator.forEach(tree) { node: DefaultMutableTreeNode?, _: Boolean, _: TreePath?, _: Int, _: Int ->
+        TreeIterator.forEach(tree) {
+            node: DefaultMutableTreeNode?,
+            _: Boolean,
+            _: TreePath?,
+            _: Int,
+            _: Int ->
             if (node is Disposable) {
                 node.dispose()
             }
@@ -160,6 +192,7 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
     }
 
     companion object {
-        private val LOGGER: Logger = Logger.getInstance(ActionTreeNodeConfigurator::class.java.getSimpleName())
+        private val LOGGER: Logger =
+            Logger.getInstance(ActionTreeNodeConfigurator::class.java.getSimpleName())
     }
 }

@@ -20,20 +20,19 @@ class ScriptingCoreTest : BasePlatformTestCase() {
 
         // When
         RunnableTask(
-            project,
-            ScriptBuilder.create()
-              .withId("file1")
-              .withSource(
-                """
+                project,
+                ScriptBuilder.create()
+                    .withId("file1")
+                    .withSource(
+                        """
                     core.runActionInEditor("\${'$'}Copy");
                     org.micoli.php.ScriptingCoreTest.exposedVariable++
 
                     """
-                  .trimIndent()
-              )
-              .build(),
-          )
-          .run()
+                            .trimIndent())
+                    .build(),
+            )
+            .run()
 
         // Then
         val contents = CopyPasteManager.getInstance().contents
@@ -46,23 +45,31 @@ class ScriptingCoreTest : BasePlatformTestCase() {
         val lastError: AtomicReference<String?> = AtomicReference<String?>()
         val lastMessage: AtomicReference<String?> = AtomicReference<String?>()
         val mockAppService: Notification =
-          object : Notification(project) {
-              override fun error(message: String?) {
-                  lastError.set(message)
-              }
+            object : Notification(project) {
+                override fun error(message: String?) {
+                    lastError.set(message)
+                }
 
-              override fun message(message: String?) {
-                  lastMessage.set(message)
-              }
-          }
+                override fun message(message: String?) {
+                    lastMessage.set(message)
+                }
+            }
         project.replaceService(Notification::class.java, mockAppService, testRootDisposable)
         lastError.set(null)
         lastMessage.set(null)
 
-        RunnableTask(project, ScriptBuilder.create().withSource("org.micoli.php.ScriptingCoreTest.unUnknownExposedVariable++").build()).run()
+        RunnableTask(
+                project,
+                ScriptBuilder.create()
+                    .withSource("org.micoli.php.ScriptingCoreTest.unUnknownExposedVariable++")
+                    .build())
+            .run()
 
         // Then
-        TestCase.assertEquals("groovy.lang.MissingPropertyException: No such property: unUnknownExposedVariable for class:" + " org.micoli.php.ScriptingCoreTest", lastError.get())
+        TestCase.assertEquals(
+            "groovy.lang.MissingPropertyException: No such property: unUnknownExposedVariable for class:" +
+                " org.micoli.php.ScriptingCoreTest",
+            lastError.get())
     }
 
     companion object {

@@ -22,50 +22,68 @@ class SchemaCompletionContributor : CompletionContributor() {
         initializeAutocompletes()
 
         val generatorClass: CompletionProvider<CompletionParameters?> =
-          object : CompletionProvider<CompletionParameters?>() {
-              override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-                  if (!ConfigurationFactory().acceptableConfigurationFiles.contains(parameters.originalFile.originalFile.name)) {
-                      return
-                  }
+            object : CompletionProvider<CompletionParameters?>() {
+                override fun addCompletions(
+                    parameters: CompletionParameters,
+                    context: ProcessingContext,
+                    result: CompletionResultSet
+                ) {
+                    if (!ConfigurationFactory()
+                        .acceptableConfigurationFiles
+                        .contains(parameters.originalFile.originalFile.name)) {
+                        return
+                    }
 
-                  for (action in autocompleteValues[context.get(GENERATOR_CLASS) as Class<*>?]!!) {
-                      result.addElement(LookupElementBuilder.create(action).withPresentableText(action).withTypeText(action, true))
-                  }
-              }
-          }
+                    for (action in
+                        autocompleteValues[context.get(GENERATOR_CLASS) as Class<*>?]!!) {
+                        result.addElement(
+                            LookupElementBuilder.create(action)
+                                .withPresentableText(action)
+                                .withTypeText(action, true))
+                    }
+                }
+            }
 
         val pattern: PatternCondition<PsiElement?> =
-          object : PatternCondition<PsiElement?>("isYamlProperty") {
-              override fun accepts(element: PsiElement, context: ProcessingContext): Boolean {
-                  when (val parent = element.parent) {
-                      is YAMLValue -> {
-                          val property = parent.parent
-                          if (property is YAMLKeyValue) {
-                              if (acceptablePropertyName[property.keyText] != null) {
-                                  context.put(GENERATOR_CLASS, acceptablePropertyName[property.keyText]!!)
-                                  return true
-                              }
-                          }
-                      }
-                      is JsonStringLiteral -> {
-                          val property = parent.parent
-                          if (property is JsonProperty) {
-                              if (acceptablePropertyName[property.name] != null) {
-                                  context.put(GENERATOR_CLASS, acceptablePropertyName[property.name]!!)
-                                  return true
-                              }
-                          }
-                      }
-                      else -> {
-                          return false
-                      }
-                  }
-                  return false
-              }
-          }
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(YAMLLanguage.INSTANCE).with(pattern), generatorClass)
+            object : PatternCondition<PsiElement?>("isYamlProperty") {
+                override fun accepts(element: PsiElement, context: ProcessingContext): Boolean {
+                    when (val parent = element.parent) {
+                        is YAMLValue -> {
+                            val property = parent.parent
+                            if (property is YAMLKeyValue) {
+                                if (acceptablePropertyName[property.keyText] != null) {
+                                    context.put(
+                                        GENERATOR_CLASS, acceptablePropertyName[property.keyText]!!)
+                                    return true
+                                }
+                            }
+                        }
+                        is JsonStringLiteral -> {
+                            val property = parent.parent
+                            if (property is JsonProperty) {
+                                if (acceptablePropertyName[property.name] != null) {
+                                    context.put(
+                                        GENERATOR_CLASS, acceptablePropertyName[property.name]!!)
+                                    return true
+                                }
+                            }
+                        }
+                        else -> {
+                            return false
+                        }
+                    }
+                    return false
+                }
+            }
+        extend(
+            CompletionType.BASIC,
+            PlatformPatterns.psiElement().withLanguage(YAMLLanguage.INSTANCE).with(pattern),
+            generatorClass)
 
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(JsonLanguage.INSTANCE).with(pattern), generatorClass)
+        extend(
+            CompletionType.BASIC,
+            PlatformPatterns.psiElement().withLanguage(JsonLanguage.INSTANCE).with(pattern),
+            generatorClass)
     }
 
     companion object {
@@ -78,7 +96,8 @@ private val acceptablePropertyName: MutableMap<String, Class<*>> = HashMap()
 
 private fun initializeAutocompletes() {
     if (autocompleteValues.isEmpty() && acceptablePropertyName.isEmpty()) {
-        for (generator in listOf(ActionIdValueGenerator(), IconValueGenerator(), CodeStyleGenerator())) {
+        for (generator in
+            listOf(ActionIdValueGenerator(), IconValueGenerator(), CodeStyleGenerator())) {
             autocompleteValues[generator::class.java] = generator.getValues()
             for (fieldName in generator.getFieldNames()) {
                 acceptablePropertyName[fieldName] = generator::class.java

@@ -5,14 +5,22 @@ import com.google.gson.JsonObject
 
 object GsonTools {
     @Throws(JsonObjectExtensionConflictException::class)
-    fun extendJsonObject(destinationObject: JsonObject, conflictResolutionStrategy: ConflictStrategy, vararg objs: JsonObject) {
+    fun extendJsonObject(
+        destinationObject: JsonObject,
+        conflictResolutionStrategy: ConflictStrategy,
+        vararg objs: JsonObject
+    ) {
         for (obj in objs) {
             extendJsonObject(destinationObject, obj, conflictResolutionStrategy)
         }
     }
 
     @Throws(JsonObjectExtensionConflictException::class)
-    private fun extendJsonObject(leftObj: JsonObject, rightObj: JsonObject, conflictStrategy: ConflictStrategy) {
+    private fun extendJsonObject(
+        leftObj: JsonObject,
+        rightObj: JsonObject,
+        conflictStrategy: ConflictStrategy
+    ) {
         for (rightEntry in rightObj.entrySet()) {
             val rightKey = rightEntry.key
             val rightVal = rightEntry.value
@@ -39,17 +47,24 @@ object GsonTools {
     }
 
     @Throws(JsonObjectExtensionConflictException::class)
-    private fun handleMergeConflict(key: String, leftObj: JsonObject, leftVal: JsonElement, rightVal: JsonElement, conflictStrategy: ConflictStrategy) {
+    private fun handleMergeConflict(
+        key: String,
+        leftObj: JsonObject,
+        leftVal: JsonElement,
+        rightVal: JsonElement,
+        conflictStrategy: ConflictStrategy
+    ) {
         run {
             when (conflictStrategy) {
                 ConflictStrategy.PREFER_FIRST_OBJ -> {}
                 ConflictStrategy.PREFER_SECOND_OBJ -> leftObj.add(key, rightVal)
                 ConflictStrategy.PREFER_NON_NULL ->
-                  if (leftVal.isJsonNull && !rightVal.isJsonNull) {
-                      leftObj.add(key, rightVal)
-                  }
+                    if (leftVal.isJsonNull && !rightVal.isJsonNull) {
+                        leftObj.add(key, rightVal)
+                    }
                 ConflictStrategy.THROW_EXCEPTION ->
-                  throw JsonObjectExtensionConflictException(("Key $key exists in both objects and the conflict resolution strategy is $conflictStrategy"))
+                    throw JsonObjectExtensionConflictException(
+                        ("Key $key exists in both objects and the conflict resolution strategy is $conflictStrategy"))
             }
         }
     }

@@ -15,7 +15,11 @@ import java.awt.event.ActionEvent
 import javax.swing.*
 import org.micoli.php.ui.Notification
 
-class ParsedContentDisplayPopup(private val popupType: PopupType, private val project: Project, private val jsonContent: String) : DialogWrapper(project) {
+class ParsedContentDisplayPopup(
+    private val popupType: PopupType,
+    private val project: Project,
+    private val jsonContent: String
+) : DialogWrapper(project) {
     enum class PopupType {
         JSON,
         PHP,
@@ -47,7 +51,9 @@ class ParsedContentDisplayPopup(private val popupType: PopupType, private val pr
     }
 
     private fun createJsonEditor(popupType: PopupType?): Editor {
-        val fileType = FileTypeManager.getInstance().getFileTypeByExtension(if (popupType == PopupType.PHP) "php" else "json")
+        val fileType =
+            FileTypeManager.getInstance()
+                .getFileTypeByExtension(if (popupType == PopupType.PHP) "php" else "json")
 
         val editorFactory = EditorFactory.getInstance()
         val document = editorFactory.createDocument(jsonContent)
@@ -62,7 +68,8 @@ class ParsedContentDisplayPopup(private val popupType: PopupType, private val pr
         settings.isWheelFontChangeEnabled = false
 
         if (editor is EditorEx) {
-            val highlighter = EditorHighlighterFactory.getInstance().createEditorHighlighter(project, fileType)
+            val highlighter =
+                EditorHighlighterFactory.getInstance().createEditorHighlighter(project, fileType)
             editor.highlighter = highlighter
         }
 
@@ -75,7 +82,8 @@ class ParsedContentDisplayPopup(private val popupType: PopupType, private val pr
 
     private inner class CopyAction : AbstractAction("Copy") {
         init {
-            putValue(SHORT_DESCRIPTION, "Copy " + (if (popupType == PopupType.PHP) "PHP" else "JSON"))
+            putValue(
+                SHORT_DESCRIPTION, "Copy " + (if (popupType == PopupType.PHP) "PHP" else "JSON"))
         }
 
         override fun actionPerformed(e: ActionEvent?) {

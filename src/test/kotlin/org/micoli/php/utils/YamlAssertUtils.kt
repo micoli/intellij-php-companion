@@ -16,18 +16,23 @@ object YamlAssertUtils {
         val differences = compareFilesWithDiff(expectedElement, actualElement)
         if (!differences.isEmpty()) {
             val message =
-              String.format("JSON strings are not equal:\n--------------\n%s\n-----\nExpected:\n%s\n\nActual:\n%s", differences.joinToString("\n"), expectedElement, actualElement)
+                String.format(
+                    "JSON strings are not equal:\n--------------\n%s\n-----\nExpected:\n%s\n\nActual:\n%s",
+                    differences.joinToString("\n"),
+                    expectedElement,
+                    actualElement)
             throw AssertionError(message)
         }
     }
 
     @Throws(IOException::class)
     private fun filterYamlString(yamlString: String): String =
-      Arrays.stream(yamlString.split("\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-        .filter { line: String? -> !line!!.startsWith("!!") }
-        .filter { line: String? -> !line!!.endsWith(": []") }
-        .filter { line: String? -> !line!!.endsWith(": null") }
-        .collect(Collectors.joining("\n"))
+        Arrays.stream(
+                yamlString.split("\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+            .filter { line: String? -> !line!!.startsWith("!!") }
+            .filter { line: String? -> !line!!.endsWith(": []") }
+            .filter { line: String? -> !line!!.endsWith(": null") }
+            .collect(Collectors.joining("\n"))
 
     @Throws(IOException::class)
     fun compareFilesWithDiff(yamlA: String?, yamlB: String?): MutableList<String?> {
@@ -104,7 +109,12 @@ object YamlAssertUtils {
         return remainingItems.isEmpty()
     }
 
-    private fun compareObjectsWithDiff(obj1: Any?, obj2: Any?, path: String, differences: MutableList<String?>) {
+    private fun compareObjectsWithDiff(
+        obj1: Any?,
+        obj2: Any?,
+        path: String,
+        differences: MutableList<String?>
+    ) {
         if (obj1 == null && obj2 == null) {
             return
         }
@@ -118,19 +128,30 @@ object YamlAssertUtils {
         }
 
         if (obj1 is MutableMap<*, *> && obj2 is MutableMap<*, *>) {
-            compareMapsWithDiff(obj1 as MutableMap<String?, Any?>, obj2 as MutableMap<String?, Any?>, path, differences)
+            compareMapsWithDiff(
+                obj1 as MutableMap<String?, Any?>,
+                obj2 as MutableMap<String?, Any?>,
+                path,
+                differences)
         } else if (obj1 is MutableList<*> && obj2 is MutableList<*>) {
             compareListsWithDiff(obj1, obj2, path, differences)
         } else if (obj1 is Number && obj2 is Number) {
             if (obj1.toString() != obj2.toString()) {
-                differences.add(String.format("Path [%s] : values differs (%s != %s)", path, obj1, obj2))
+                differences.add(
+                    String.format("Path [%s] : values differs (%s != %s)", path, obj1, obj2))
             }
         } else if (obj1 != obj2) {
-            differences.add(String.format("Path [%s] : values differs (%s != %s)", path, obj1, obj2))
+            differences.add(
+                String.format("Path [%s] : values differs (%s != %s)", path, obj1, obj2))
         }
     }
 
-    private fun compareMapsWithDiff(map1: MutableMap<String?, Any?>, map2: MutableMap<String?, Any?>, path: String, differences: MutableList<String?>) {
+    private fun compareMapsWithDiff(
+        map1: MutableMap<String?, Any?>,
+        map2: MutableMap<String?, Any?>,
+        path: String,
+        differences: MutableList<String?>
+    ) {
         val allKeys: MutableSet<String?> = HashSet()
         allKeys.addAll(map1.keys)
         allKeys.addAll(map2.keys)
@@ -139,27 +160,39 @@ object YamlAssertUtils {
             val currentPath: String = (if (path.isEmpty()) key else "$path.$key")!!
 
             if (!map1.containsKey(key)) {
-                differences.add(String.format("path [%s] : missing key in expected file", currentPath))
+                differences.add(
+                    String.format("path [%s] : missing key in expected file", currentPath))
             } else if (!map2.containsKey(key)) {
-                differences.add(String.format("path [%s] : missing key in actual file", currentPath))
+                differences.add(
+                    String.format("path [%s] : missing key in actual file", currentPath))
             } else {
                 compareObjectsWithDiff(map1[key], map2[key], currentPath, differences)
             }
         }
     }
 
-    private fun compareListsWithDiff(list1: MutableList<*>, list2: MutableList<*>, path: String?, differences: MutableList<String?>) {
+    private fun compareListsWithDiff(
+        list1: MutableList<*>,
+        list2: MutableList<*>,
+        path: String?,
+        differences: MutableList<String?>
+    ) {
         if (list1.size != list2.size) {
             differences.add(
-              String.format(
-                "Path [%s] : list size are different (expected file: %d != actual file: %d / [%s]/[%s])",
-                path,
-                list1.size,
-                list2.size,
-                list1.stream().map { obj: Any? -> obj.toString() }.collect(Collectors.joining(",")),
-                list2.stream().map { obj: Any? -> obj.toString() }.collect(Collectors.joining(",")),
-              )
-            )
+                String.format(
+                    "Path [%s] : list size are different (expected file: %d != actual file: %d / [%s]/[%s])",
+                    path,
+                    list1.size,
+                    list2.size,
+                    list1
+                        .stream()
+                        .map { obj: Any? -> obj.toString() }
+                        .collect(Collectors.joining(",")),
+                    list2
+                        .stream()
+                        .map { obj: Any? -> obj.toString() }
+                        .collect(Collectors.joining(",")),
+                ))
             return
         }
 
@@ -179,7 +212,8 @@ object YamlAssertUtils {
             }
 
             if (!found) {
-                differences.add(String.format("Path [%s][%d] : missing element in actual file", path, i))
+                differences.add(
+                    String.format("Path [%s][%d] : missing element in actual file", path, i))
             }
         }
     }

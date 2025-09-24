@@ -9,13 +9,19 @@ import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 class TasksConfigurationBuilder private constructor() {
     private val taskConfiguration: TasksConfiguration = TasksConfiguration()
 
-    fun withRunnableTaskConfigurations(tasks: Array<RunnableTaskConfiguration>): TasksConfigurationBuilder {
+    fun withRunnableTaskConfigurations(
+        tasks: Array<RunnableTaskConfiguration>
+    ): TasksConfigurationBuilder {
         taskConfiguration.tasks = tasks
         return this
     }
 
-    fun withAddedRunnableTaskConfiguration(task: RunnableTaskConfiguration): TasksConfigurationBuilder {
-        taskConfiguration.tasks = appendToArray<RunnableTaskConfiguration>(taskConfiguration.tasks, task, RunnableTaskConfiguration::class.java)
+    fun withAddedRunnableTaskConfiguration(
+        task: RunnableTaskConfiguration
+    ): TasksConfigurationBuilder {
+        taskConfiguration.tasks =
+            appendToArray<RunnableTaskConfiguration>(
+                taskConfiguration.tasks, task, RunnableTaskConfiguration::class.java)
         return this
     }
 
@@ -25,7 +31,8 @@ class TasksConfigurationBuilder private constructor() {
     }
 
     fun withAddedAbstractNode(node: AbstractNode): TasksConfigurationBuilder {
-        taskConfiguration.tree = appendToArray<AbstractNode>(taskConfiguration.tree, node, AbstractNode::class.java)
+        taskConfiguration.tree =
+            appendToArray<AbstractNode>(taskConfiguration.tree, node, AbstractNode::class.java)
         return this
     }
 
@@ -35,7 +42,8 @@ class TasksConfigurationBuilder private constructor() {
     }
 
     fun withAddedWatcher(watcher: Watcher): TasksConfigurationBuilder {
-        taskConfiguration.watchers = appendToArray<Watcher>(taskConfiguration.watchers, watcher, Watcher::class.java)
+        taskConfiguration.watchers =
+            appendToArray<Watcher>(taskConfiguration.watchers, watcher, Watcher::class.java)
         return this
     }
 
@@ -45,7 +53,8 @@ class TasksConfigurationBuilder private constructor() {
     }
 
     fun withAddedTaskInToolbar(task: Task): TasksConfigurationBuilder {
-        taskConfiguration.toolbar = appendToArray<Task>(taskConfiguration.toolbar, task, Task::class.java)
+        taskConfiguration.toolbar =
+            appendToArray<Task>(taskConfiguration.toolbar, task, Task::class.java)
         return this
     }
 

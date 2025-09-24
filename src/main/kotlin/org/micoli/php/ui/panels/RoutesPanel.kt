@@ -21,11 +21,19 @@ import kotlin.text.trimIndent
 import org.micoli.php.symfony.list.RouteElementDTO
 import org.micoli.php.symfony.list.RouteService
 
-class RoutesPanel(project: Project) : AbstractListPanel<RouteElementDTO?>(project, "routes", COLUMN_NAMES) {
+class RoutesPanel(project: Project) :
+    AbstractListPanel<RouteElementDTO?>(project, "routes", COLUMN_NAMES) {
     override fun getSorter(): TableRowSorter<DefaultTableModel>? {
         innerSorter = TableRowSorter<DefaultTableModel>(model)
-        innerSorter?.setSortKeys(listOf<RowSorter.SortKey?>(RowSorter.SortKey(0, SortOrder.ASCENDING), RowSorter.SortKey(1, SortOrder.ASCENDING)))
-        innerSorter?.setComparator(0, Comparator { o1: RouteElementDTO?, o2: RouteElementDTO? -> String.CASE_INSENSITIVE_ORDER.compare(o1!!.uri, o2!!.uri) })
+        innerSorter?.setSortKeys(
+            listOf<RowSorter.SortKey?>(
+                RowSorter.SortKey(0, SortOrder.ASCENDING),
+                RowSorter.SortKey(1, SortOrder.ASCENDING)))
+        innerSorter?.setComparator(
+            0,
+            Comparator { o1: RouteElementDTO?, o2: RouteElementDTO? ->
+                String.CASE_INSENSITIVE_ORDER.compare(o1!!.uri, o2!!.uri)
+            })
         innerSorter?.setComparator(1, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(2, Comparator { _: Any?, _: Any? -> 0 })
         return innerSorter
@@ -40,19 +48,26 @@ class RoutesPanel(project: Project) : AbstractListPanel<RouteElementDTO?>(projec
         val baseRowHeight = table?.getRowHeight()
         table?.setRowHeight(baseRowHeight?.times(2) ?: 20)
         table
-          ?.getColumnModel()
-          ?.getColumn(0)
-          ?.setCellRenderer(
-            object : DefaultTableCellRenderer() {
-                private val jLabel = JLabel()
+            ?.getColumnModel()
+            ?.getColumn(0)
+            ?.setCellRenderer(
+                object : DefaultTableCellRenderer() {
+                    private val jLabel = JLabel()
 
-                override fun getTableCellRendererComponent(table: JTable, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
-                    val elementDTO = value as RouteElementDTO?
-                    jLabel.setText(
-                      if (value == null) ""
-                      else
-                        String.format(
-                          """
+                    override fun getTableCellRendererComponent(
+                        table: JTable,
+                        value: Any?,
+                        isSelected: Boolean,
+                        hasFocus: Boolean,
+                        row: Int,
+                        column: Int
+                    ): Component {
+                        val elementDTO = value as RouteElementDTO?
+                        jLabel.setText(
+                            if (value == null) ""
+                            else
+                                String.format(
+                                    """
                             <html>
                                 <div>
                                     %s<br>
@@ -61,20 +76,24 @@ class RoutesPanel(project: Project) : AbstractListPanel<RouteElementDTO?>(projec
                             </html>
                             
                             """
-                            .trimIndent(),
-                          elementDTO!!.uri,
-                          elementDTO.fqcn,
-                        )
-                    )
+                                        .trimIndent(),
+                                    elementDTO!!.uri,
+                                    elementDTO.fqcn,
+                                ))
 
-                    jLabel.setBackground(if (isSelected) table.getSelectionBackground() else table.getBackground())
-                    jLabel.setForeground(if (isSelected) table.getSelectionForeground() else table.getForeground())
-                    jLabel.setSize(table.getColumnModel().getColumn(column).getWidth(), Short.MAX_VALUE.toInt())
+                        jLabel.setBackground(
+                            if (isSelected) table.getSelectionBackground()
+                            else table.getBackground())
+                        jLabel.setForeground(
+                            if (isSelected) table.getSelectionForeground()
+                            else table.getForeground())
+                        jLabel.setSize(
+                            table.getColumnModel().getColumn(column).getWidth(),
+                            Short.MAX_VALUE.toInt())
 
-                    return jLabel
-                }
-            }
-          )
+                        return jLabel
+                    }
+                })
     }
 
     override fun handleActionClick(row: Int) {
@@ -91,35 +110,35 @@ class RoutesPanel(project: Project) : AbstractListPanel<RouteElementDTO?>(projec
                 clearItems()
 
                 val worker: SwingWorker<Void?, RouteElementDTO> =
-                  object : SwingWorker<Void?, RouteElementDTO>() {
-                      override fun doInBackground(): Void? {
-                          ApplicationManager.getApplication().runReadAction {
-                              val routeListService = RouteService.getInstance(project)
-                              val items = routeListService.getElements()
-                              if (items != null) {
-                                  for (item in items) {
-                                      publish(item)
-                                  }
-                              }
-                          }
-                          return null
-                      }
+                    object : SwingWorker<Void?, RouteElementDTO>() {
+                        override fun doInBackground(): Void? {
+                            ApplicationManager.getApplication().runReadAction {
+                                val routeListService = RouteService.getInstance(project)
+                                val items = routeListService.getElements()
+                                if (items != null) {
+                                    for (item in items) {
+                                        publish(item)
+                                    }
+                                }
+                            }
+                            return null
+                        }
 
-                      override fun process(chunks: MutableList<RouteElementDTO>) {
-                          SwingUtilities.invokeLater {
-                              for (item in chunks) {
-                                  model.addRow(arrayOf<Any?>(item, item.methods, item))
-                              }
-                          }
-                      }
+                        override fun process(chunks: MutableList<RouteElementDTO>) {
+                            SwingUtilities.invokeLater {
+                                for (item in chunks) {
+                                    model.addRow(arrayOf<Any?>(item, item.methods, item))
+                                }
+                            }
+                        }
 
-                      override fun done() {
-                          SwingUtilities.invokeLater {
-                              table?.emptyText?.text = "Nothing to show"
-                              model.fireTableDataChanged()
-                          }
-                      }
-                  }
+                        override fun done() {
+                            SwingUtilities.invokeLater {
+                                table?.emptyText?.text = "Nothing to show"
+                                model.fireTableDataChanged()
+                            }
+                        }
+                    }
                 worker.execute()
             } catch (e: Exception) {
                 LOGGER.error("Error refreshing routes table", e)
