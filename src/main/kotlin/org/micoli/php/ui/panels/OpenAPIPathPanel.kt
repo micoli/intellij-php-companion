@@ -131,13 +131,11 @@ class OpenAPIPathPanel(project: Project) :
                     object : SwingWorker<Void?, OpenAPIPathElementDTO>() {
                         override fun doInBackground(): Void? {
                             ApplicationManager.getApplication().runReadAction {
-                                val doctrineOpenAPIPathsService =
-                                    OpenAPIService.getInstance(project)
-                                val items = doctrineOpenAPIPathsService.getElements()
-                                if (items != null) {
-                                    for (item in items) {
-                                        publish(item)
-                                    }
+                                val items =
+                                    OpenAPIService.getInstance(project).getElements()
+                                        ?: return@runReadAction
+                                for (item in items) {
+                                    publish(item)
                                 }
                             }
                             return null

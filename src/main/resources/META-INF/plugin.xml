@@ -71,8 +71,6 @@
         <projectService
                 serviceImplementation="org.micoli.php.symfony.list.DoctrineEntityService"/>
         <projectService
-                serviceImplementation="org.micoli.php.openAPI.OpenAPIService"/>
-        <projectService
                 serviceImplementation="org.micoli.php.tasks.TasksService"/>
         <consoleInputFilterProvider
                 implementation="org.micoli.php.consoleCleaner.PhpUnitConsoleFilterProvider"/>
