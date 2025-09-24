@@ -10,7 +10,6 @@ import com.intellij.openapi.util.IconLoader.getIcon
 import com.intellij.ui.treeStructure.Tree
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.util.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
@@ -61,7 +60,7 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
         tree: Tree,
         parent: DefaultMutableTreeNode,
         runnables: Map<String, RunnableTaskConfiguration>,
-        nodes: Array<AbstractNode>?
+        nodes: Array<AbstractNode>?,
     ) {
         if (nodes == null) {
             return
@@ -80,7 +79,7 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
                 }
 
                 is Path -> {
-                    val treeNode = PathNode(node, node.label)
+                    val treeNode = PathNode(node, node.label!!)
                     parent.add(treeNode)
                     treeModel.nodesWereInserted(parent, intArrayOf(parent.childCount - 1))
                     addSubNodes(tree, treeNode, runnables, node.tasks)
@@ -96,36 +95,31 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
         task: Task,
         runnable: RunnableTaskConfiguration
     ): DefaultMutableTreeNode {
+        val label = task.label ?: runnable.label ?: runnable.id ?: "N/A"
+
         return when (runnable) {
-            is Shell ->
+            is Shell -> {
                 DynamicTreeNode(
                     project,
                     tree,
-                    runnable.id,
+                    runnable.id!!,
                     getIcon(runnable.icon, PhpCompanionIcon::class.java),
-                    Objects.requireNonNullElse(
-                        task.label, Objects.requireNonNullElse(runnable.label, runnable.id)),
+                    label,
                     runnable,
                 )
+            }
 
             is Script ->
                 DynamicTreeNode(
                     project,
                     tree,
-                    runnable.id,
+                    runnable.id!!,
                     getIcon(runnable.icon, PhpCompanionIcon::class.java),
-                    Objects.requireNonNullElse(
-                        task.label, Objects.requireNonNullElse(runnable.label, runnable.id)),
+                    label,
                     runnable,
                 )
 
-            is ObservedFile ->
-                FileObserverNode(
-                    project,
-                    tree,
-                    Objects.requireNonNullElse(
-                        task.label, Objects.requireNonNullElse(runnable.label, runnable.id)),
-                    runnable)
+            is ObservedFile -> FileObserverNode(project, tree, label, runnable)
 
             else -> throw IllegalStateException("Unexpected value: $runnable")
         }

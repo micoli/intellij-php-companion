@@ -11,7 +11,7 @@ class TreeCellRenderer : NodeRenderer() {
         expanded: Boolean,
         leaf: Boolean,
         row: Int,
-        hasFocus: Boolean
+        hasFocus: Boolean,
     ) {
         if (value is PathNode) {
             this.append(value.getLabel())

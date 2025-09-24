@@ -20,7 +20,8 @@ object YamlAssertUtils {
                     "JSON strings are not equal:\n--------------\n%s\n-----\nExpected:\n%s\n\nActual:\n%s",
                     differences.joinToString("\n"),
                     expectedElement,
-                    actualElement)
+                    actualElement,
+                )
             throw AssertionError(message)
         }
     }
@@ -150,7 +151,7 @@ object YamlAssertUtils {
         map1: MutableMap<String?, Any?>,
         map2: MutableMap<String?, Any?>,
         path: String,
-        differences: MutableList<String?>
+        differences: MutableList<String?>,
     ) {
         val allKeys: MutableSet<String?> = HashSet()
         allKeys.addAll(map1.keys)
@@ -175,7 +176,7 @@ object YamlAssertUtils {
         list1: MutableList<*>,
         list2: MutableList<*>,
         path: String?,
-        differences: MutableList<String?>
+        differences: MutableList<String?>,
     ) {
         if (list1.size != list2.size) {
             differences.add(

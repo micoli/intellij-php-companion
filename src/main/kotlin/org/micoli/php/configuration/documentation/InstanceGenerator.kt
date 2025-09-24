@@ -12,7 +12,7 @@ class InstanceGenerator {
     private fun <T> get(
         clazz: Class<*>,
         recursionGuard: MutableMap<Class<*>?, Any?>,
-        useExampleAsDefaultValue: Boolean
+        useExampleAsDefaultValue: Boolean,
     ): T? {
         if (recursionGuard.containsKey(clazz)) {
             return null
@@ -25,7 +25,6 @@ class InstanceGenerator {
             val fields = clazz.getDeclaredFields()
             for (field in fields) {
                 field.setAccessible(true)
-
                 val currentValue = field.get(instance)
                 if (currentValue != null && !shouldOverrideDefaultValue(currentValue)) {
                     continue
@@ -52,7 +51,7 @@ class InstanceGenerator {
     private fun generateFieldValue(
         field: Field,
         recursionGuard: MutableMap<Class<*>?, Any?>,
-        useExampleAsDefaultValue: Boolean
+        useExampleAsDefaultValue: Boolean,
     ): Any? {
         val fieldType = field.type
         val subtypes: JsonSubTypes? = getSubtypes(field)
@@ -131,7 +130,7 @@ class InstanceGenerator {
     private fun generateArrayValue(
         componentType: Class<*>,
         recursionGuard: MutableMap<Class<*>?, Any?>,
-        useExampleAsDefaultValue: Boolean
+        useExampleAsDefaultValue: Boolean,
     ): Any {
         val array = java.lang.reflect.Array.newInstance(componentType, 1)
         java.lang.reflect.Array.set(
@@ -144,7 +143,7 @@ class InstanceGenerator {
         componentType: Class<*>?,
         subTypes: JsonSubTypes,
         recursionGuard: MutableMap<Class<*>?, Any?>,
-        useExampleAsDefaultValue: Boolean
+        useExampleAsDefaultValue: Boolean,
     ): Any {
         val array = java.lang.reflect.Array.newInstance(componentType, subTypes.value.size)
 
@@ -153,7 +152,8 @@ class InstanceGenerator {
                 array,
                 index,
                 getExampleValue(
-                    subTypes.value[index].value.java, recursionGuard, useExampleAsDefaultValue))
+                    subTypes.value[index].value.java, recursionGuard, useExampleAsDefaultValue),
+            )
         }
 
         return array
@@ -162,7 +162,7 @@ class InstanceGenerator {
     private fun getExampleValue(
         subType: Class<*>,
         recursionGuard: MutableMap<Class<*>?, Any?>,
-        useExampleAsDefaultValue: Boolean
+        useExampleAsDefaultValue: Boolean,
     ): Any? {
         if (isPrimitiveOrWrapper(subType)) {
             return getDefaultPrimitiveValue(subType)

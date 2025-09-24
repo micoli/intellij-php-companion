@@ -15,15 +15,15 @@ import org.micoli.php.ui.panels.*
 
 internal class ToolWindowContent(project: com.intellij.openapi.project.Project) {
     private class PanelRefresher(
-        val aPanel: Class<*>?,
-        val configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?
+        val aPanel: Class<*>,
+        val configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?,
     )
 
     val contentPanel: JPanel = JPanel()
     private val tabActions: DefaultActionGroup = DefaultActionGroup()
     private val tabs: JBTabs
-    private val tabMap: MutableMap<Class<*>, com.intellij.ui.tabs.TabInfo?> =
-        java.util.HashMap<Class<*>, com.intellij.ui.tabs.TabInfo?>()
+    private val tabMap: MutableMap<Class<*>, com.intellij.ui.tabs.TabInfo> =
+        java.util.HashMap<Class<*>, com.intellij.ui.tabs.TabInfo>()
     private val panelMap: MutableMap<Class<*>, JPanel> = java.util.HashMap<Class<*>, JPanel>()
     private var configuration: org.micoli.php.configuration.models.Configuration? = null
     private val refresherList: MutableList<PanelRefresher?> = java.util.ArrayList<PanelRefresher?>()
@@ -102,7 +102,9 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
                 .forEach(
                     java.util.function.Consumer { panelRefresher: PanelRefresher? ->
                         manageTabVisibilityAndRefresh(
-                            panelRefresher!!.aPanel, panelRefresher.configurationRefresher!!.get())
+                            panelRefresher!!.aPanel,
+                            panelRefresher.configurationRefresher!!.get(),
+                        )
                     })
         }
     }
@@ -110,7 +112,7 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
     private fun addTab(
         panel: JPanel,
         tabName: String,
-        configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?
+        configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?,
     ) {
         val tabInfo = com.intellij.ui.tabs.TabInfo(panel)
         tabInfo.setText(tabName)

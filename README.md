@@ -633,6 +633,7 @@ tasksConfiguration:
     extension: groovy
     icon: debugger/threadRunning.svg
   - type: observedFile
+    icon: ''
     id: null
     label: null
     commentPrefix: '#'
@@ -647,7 +648,6 @@ tasksConfiguration:
       label: null
       actionId: null
       icon: debugger/threadRunning.svg
-    icon: actions/inlayRenameInComments.svg
   toolbar:
   - null
   tree:

@@ -21,16 +21,19 @@ class FileObserverNode(
     DynamicTreeNode(
         project,
         tree,
-        observedFile.id,
+        observedFile.id!!,
         getIcon(observedFile.unknownIcon, PhpCompanionIcon::class.java),
         initialLabel,
-        observedFile),
+        observedFile,
+    ),
     Disposable {
     private val messageBusConnection: MessageBusConnection = project.messageBus.connect()
 
     init {
         messageBusConnection.subscribe<TaskNodeChangedEvents>(
-            TaskNodeChangedEvents.NODE_CHANGED_EVENTS_TOPIC, this.taskNodeChangedEvents)
+            TaskNodeChangedEvents.NODE_CHANGED_EVENTS_TOPIC,
+            this.taskNodeChangedEvents,
+        )
     }
 
     private val taskNodeChangedEvents: TaskNodeChangedEvents

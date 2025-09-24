@@ -20,7 +20,8 @@ object JsonAssertUtils {
                 String.format(
                     "JSON strings are not equal:\nExpected:\n%s\n\nActual:\n%s",
                     gson.toJson(expectedElement),
-                    gson.toJson(actualElement))
+                    gson.toJson(actualElement),
+                )
 
             throw AssertionError(message)
         }
@@ -110,7 +111,8 @@ object JsonAssertUtils {
                 String.format(
                     "JSON strings are not equal (ordered):\nExpected:\n%s\n\nActual:\n%s",
                     gson.toJson(expectedElement),
-                    gson.toJson(actualElement))
+                    gson.toJson(actualElement),
+                )
             throw AssertionError(message)
         }
     }

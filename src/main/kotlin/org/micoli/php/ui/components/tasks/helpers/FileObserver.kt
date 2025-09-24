@@ -69,7 +69,8 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
             }
 
     fun getStatus(): Status {
-        val file = projectRoot!!.findFileByRelativePath(observedFile.filePath)
+        val relPath = observedFile.filePath ?: return Status.Unknown
+        val file = projectRoot!!.findFileByRelativePath(relPath)
         if (file == null || !file.exists()) {
             return Status.Unknown
         }
@@ -94,7 +95,8 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
     }
 
     fun replaceInFile(toActive: Boolean) {
-        val file = projectRoot!!.findFileByRelativePath(observedFile.filePath)
+        val relPath = observedFile.filePath ?: return
+        val file = projectRoot!!.findFileByRelativePath(relPath)
         if (file == null || !file.exists()) {
             return
         }
@@ -125,7 +127,8 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
                 result.append(
                     line.replaceFirst(
                         activeRegularExpression.toRegex(),
-                        observedFile.commentPrefix + observedFile.variableName + "="))
+                        observedFile.commentPrefix + observedFile.variableName + "=",
+                    ))
             }
             result.append(System.lineSeparator())
         }

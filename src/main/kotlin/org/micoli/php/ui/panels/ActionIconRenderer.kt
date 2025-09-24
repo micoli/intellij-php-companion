@@ -13,7 +13,7 @@ class ActionIconRenderer : TableCellRenderer {
         isSelected: Boolean,
         hasFocus: Boolean,
         row: Int,
-        column: Int
+        column: Int,
     ): Component {
         val label = JLabel()
         label.setHorizontalAlignment(JLabel.CENTER)

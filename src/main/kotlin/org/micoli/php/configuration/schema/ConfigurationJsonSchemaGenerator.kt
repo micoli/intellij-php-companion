@@ -25,7 +25,8 @@ class ConfigurationJsonSchemaGenerator {
                                     JacksonModule(
                                         JacksonOption.RESPECT_JSONPROPERTY_ORDER,
                                         JacksonOption.RESPECT_JSONPROPERTY_REQUIRED,
-                                        JacksonOption.FLATTENED_ENUMS_FROM_JSONVALUE))
+                                        JacksonOption.FLATTENED_ENUMS_FROM_JSONVALUE,
+                                    ))
                                 .build())
                         .generateSchema(clazz))
             schemaNode.put("additionalProperties", false)

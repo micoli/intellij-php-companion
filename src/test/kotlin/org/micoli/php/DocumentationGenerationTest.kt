@@ -105,7 +105,8 @@ class DocumentationGenerationTest : TestCase() {
         | aSubConfiguration[].aProperty2           |                          |
         | aSubSubConfiguration[]                   |                          |
         | aSubSubConfiguration[].classADescription | description of property1 |
-
+        | aSubSubConfiguration[].label             | description of property1 |
+        
         - **aBooleanValue**
           - description of property1
           - **Example**: ``` example value of property1 ```
@@ -118,6 +119,10 @@ class DocumentationGenerationTest : TestCase() {
         - **aSubConfiguration[].aProperty2**
         - **aSubSubConfiguration[]**
         - **aSubSubConfiguration[].classADescription**
+          - description of property1
+          - **Example**: ``` example value of property1 ```
+          - **Default Value**: ``` default value of property1 ```
+        - **aSubSubConfiguration[].label**
           - description of property1
           - **Example**: ``` example value of property1 ```
           - **Default Value**: ``` default value of property1 ```

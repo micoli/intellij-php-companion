@@ -34,14 +34,15 @@ class FileObserverTaskTest : BasePlatformTestCase() {
                     .withId("file1")
                     .withFilePath(filePath)
                     .withVariableName("variable1")
-                    .build())
-        assertEquals(FileObserver.Status.Active, fileObserverTask.getStatus())
+                    .build(),
+            )
+        assertEquals(FileObserver.Status.Active, fileObserverTask.status)
 
         // When
         fileObserverTask.run()
 
         // Then
-        assertEquals(FileObserver.Status.Inactive, fileObserverTask.getStatus())
+        assertEquals(FileObserver.Status.Inactive, fileObserverTask.status)
         TestCase.assertEquals("# ", fileObserverTask.iconAndPrefix.getPrefix())
         assertFileContentEquals(filePath, "#variable1=value\n#variable2=value")
     }
@@ -64,14 +65,15 @@ class FileObserverTaskTest : BasePlatformTestCase() {
                     .withFilePath(specificFilePath)
                     .withCommentPrefix(";")
                     .withVariableName("variable1")
-                    .build())
-        assertEquals(FileObserver.Status.Active, fileObserverTask.getStatus())
+                    .build(),
+            )
+        assertEquals(FileObserver.Status.Active, fileObserverTask.status)
 
         // When
         fileObserverTask.run()
 
         // Then
-        assertEquals(FileObserver.Status.Inactive, fileObserverTask.getStatus())
+        assertEquals(FileObserver.Status.Inactive, fileObserverTask.status)
         TestCase.assertEquals("# ", fileObserverTask.iconAndPrefix.getPrefix())
         assertFileContentEquals(specificFilePath, ";variable1=value")
     }
@@ -91,14 +93,14 @@ class FileObserverTaskTest : BasePlatformTestCase() {
                             .build())
                     .build(),
             )
-        assertEquals(FileObserver.Status.Active, fileObserverTask.getStatus())
+        assertEquals(FileObserver.Status.Active, fileObserverTask.status)
         exposedVariable = 0
 
         // When
         fileObserverTask.run()
 
         // Then
-        assertEquals(FileObserver.Status.Inactive, fileObserverTask.getStatus())
+        assertEquals(FileObserver.Status.Inactive, fileObserverTask.status)
         TestCase.assertEquals(1, exposedVariable)
 
         // And when
@@ -121,7 +123,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
                             .build())
                     .build(),
             )
-        assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
+        assertEquals(FileObserver.Status.Unknown, fileObserverTask.status)
         exposedVariable = 0
 
         // When
@@ -140,14 +142,15 @@ class FileObserverTaskTest : BasePlatformTestCase() {
                     .withId("file1")
                     .withFilePath(filePath)
                     .withVariableName("variable2")
-                    .build())
-        assertEquals(FileObserver.Status.Inactive, fileObserverTask.getStatus())
+                    .build(),
+            )
+        assertEquals(FileObserver.Status.Inactive, fileObserverTask.status)
 
         // When
         fileObserverTask.run()
 
         // Then
-        assertEquals(FileObserver.Status.Active, fileObserverTask.getStatus())
+        assertEquals(FileObserver.Status.Active, fileObserverTask.status)
         TestCase.assertEquals("", fileObserverTask.iconAndPrefix.getPrefix())
         assertFileContentEquals(filePath, "variable1=value\nvariable2=value")
     }
@@ -161,14 +164,15 @@ class FileObserverTaskTest : BasePlatformTestCase() {
                     .withId("file1")
                     .withFilePath(filePath)
                     .withVariableName("unknownVariable")
-                    .build())
-        assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
+                    .build(),
+            )
+        assertEquals(FileObserver.Status.Unknown, fileObserverTask.status)
 
         // When
         fileObserverTask.run()
 
         // Then
-        assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
+        assertEquals(FileObserver.Status.Unknown, fileObserverTask.status)
         TestCase.assertEquals("? ", fileObserverTask.iconAndPrefix.getPrefix())
     }
 
@@ -181,14 +185,15 @@ class FileObserverTaskTest : BasePlatformTestCase() {
                     .withId("file1")
                     .withFilePath("unknown-config.env")
                     .withVariableName("variable")
-                    .build())
-        assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
+                    .build(),
+            )
+        assertEquals(FileObserver.Status.Unknown, fileObserverTask.status)
 
         // When
         fileObserverTask.run()
 
         // Then
-        assertEquals(FileObserver.Status.Unknown, fileObserverTask.getStatus())
+        assertEquals(FileObserver.Status.Unknown, fileObserverTask.status)
         TestCase.assertEquals("? ", fileObserverTask.iconAndPrefix.getPrefix())
     }
 
@@ -196,7 +201,8 @@ class FileObserverTaskTest : BasePlatformTestCase() {
         try {
             TestCase.assertEquals(
                 content,
-                VfsUtilCore.loadText(myFixture.findFileInTempDir(filepathPrm)).trim { it <= ' ' })
+                VfsUtilCore.loadText(myFixture.findFileInTempDir(filepathPrm)).trim { it <= ' ' },
+            )
         } catch (_: IOException) {
             fail("File not found: $filepathPrm")
         }

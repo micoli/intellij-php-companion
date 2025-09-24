@@ -29,7 +29,8 @@ class ConfigurationFactoryTest {
     fun testItReportErroneousConfiguration() {
         testErroneousConfiguration(
             "erroneousConfiguration",
-            "Unrecognized Property: attributeNavigation.unknownSubProperty (line: 1, column: 57)")
+            "Unrecognized Property: attributeNavigation.unknownSubProperty (line: 1, column: 57)",
+        )
     }
 
     @Test
@@ -37,7 +38,8 @@ class ConfigurationFactoryTest {
     fun testItReportExtraPropertiesButLoadConfiguration() {
         testSuccessfulConfiguration(
             "allowExtraMainProperties",
-            mutableListOf("aa (line: 1, column: 7)", "aa.test (line: 1, column: 15)"))
+            mutableListOf("aa (line: 1, column: 7)", "aa.test (line: 1, column: 15)"),
+        )
     }
 
     @Test
@@ -45,7 +47,8 @@ class ConfigurationFactoryTest {
     fun testItFailsWithExtraSubProperties() {
         testErroneousConfiguration(
             "erroneousExtraSubProperties",
-            "Unrecognized Property: attributeNavigation.unknownSubProperty (line: 1, column: 57)")
+            "Unrecognized Property: attributeNavigation.unknownSubProperty (line: 1, column: 57)",
+        )
     }
 
     @Test
@@ -136,12 +139,14 @@ class ConfigurationFactoryTest {
                                     .getClassLoader()
                                     .getResource("configuration/$testPath/expect.yaml"))
                             .file),
-                    StandardCharsets.UTF_8)
+                    StandardCharsets.UTF_8,
+                )
                 .read()
         assertYamlEquals(expectedConfiguration, loadedConfiguration)
         Assert.assertEquals(
             expectedIgnoredProperties.joinToString(","),
-            createdConfiguration.ignoredProperties.joinToString(","))
+            createdConfiguration.ignoredProperties.joinToString(","),
+        )
     }
 
     @Throws(ConfigurationException::class, NoConfigurationFileException::class)

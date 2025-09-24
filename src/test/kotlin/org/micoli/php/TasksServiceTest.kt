@@ -31,7 +31,9 @@ class TasksServiceTest : BasePlatformTestCase() {
                     super.runTask(taskId)
                     runnableLogs!!.add(
                         String.format(
-                            "%s:%s", taskId, runnableActions[taskId]!!.javaClass.getSimpleName()))
+                            "%s:%s",
+                            taskId,
+                            runnableActions?.get(taskId)!!.javaClass.getSimpleName()))
                 }
 
                 override fun updateFileObserver(
@@ -56,7 +58,7 @@ class TasksServiceTest : BasePlatformTestCase() {
                     task: Runnable,
                     name: String,
                     delayMillis: Long,
-                    callback: Runnable?
+                    callback: Runnable?,
                 ): DebouncedRunnable? {
                     task.run()
                     runnableLogs!!.add(String.format("%s:%s", name, task.javaClass.getSimpleName()))
@@ -128,6 +130,7 @@ class TasksServiceTest : BasePlatformTestCase() {
 
         tasksService!!.loadConfiguration(
             TasksConfigurationBuilder.create()
+                .withEnabled(true)
                 .withAddedRunnableTaskConfiguration(
                     ObservedFileBuilder.create()
                         .withId("file1")
@@ -155,6 +158,7 @@ class TasksServiceTest : BasePlatformTestCase() {
 
         val config =
             TasksConfigurationBuilder.create()
+                .withEnabled(true)
                 .withAddedRunnableTaskConfiguration(
                     ObservedFileBuilder.create()
                         .withId("file1")
@@ -185,6 +189,7 @@ class TasksServiceTest : BasePlatformTestCase() {
 
         val config =
             TasksConfigurationBuilder.create()
+                .withEnabled(true)
                 .withAddedAbstractNode(
                     TaskBuilder.create().withTaskId("task1").withLabel("Test Task").build())
                 .withAddedRunnableTaskConfiguration(
@@ -218,6 +223,7 @@ class TasksServiceTest : BasePlatformTestCase() {
     fun testIfActionAreWellRegistered() {
         val tasksConfiguration =
             TasksConfigurationBuilder.create()
+                .withEnabled(true)
                 .withAddedRunnableTaskConfiguration(
                     ShellBuilder.create()
                         .withId("shell1")

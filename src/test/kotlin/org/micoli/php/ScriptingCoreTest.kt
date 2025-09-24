@@ -46,11 +46,11 @@ class ScriptingCoreTest : BasePlatformTestCase() {
         val lastMessage: AtomicReference<String?> = AtomicReference<String?>()
         val mockAppService: Notification =
             object : Notification(project) {
-                override fun error(message: String?) {
+                override fun error(message: String) {
                     lastError.set(message)
                 }
 
-                override fun message(message: String?) {
+                override fun message(message: String) {
                     lastMessage.set(message)
                 }
             }
@@ -62,14 +62,16 @@ class ScriptingCoreTest : BasePlatformTestCase() {
                 project,
                 ScriptBuilder.create()
                     .withSource("org.micoli.php.ScriptingCoreTest.unUnknownExposedVariable++")
-                    .build())
+                    .build(),
+            )
             .run()
 
         // Then
         TestCase.assertEquals(
             "groovy.lang.MissingPropertyException: No such property: unUnknownExposedVariable for class:" +
                 " org.micoli.php.ScriptingCoreTest",
-            lastError.get())
+            lastError.get(),
+        )
     }
 
     companion object {

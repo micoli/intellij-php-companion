@@ -42,6 +42,7 @@ class ClassPropertiesDocumentationGenerator {
 
         val fields: MutableSet<Field> = HashSet()
         var currentClass: Class<*>? = `object`.javaClass
+        // System.out.println(currentPath)
         while (currentClass != null) {
             fields.addAll(listOf(*currentClass.getDeclaredFields()))
             fields.addAll(listOf(*currentClass.getFields()))

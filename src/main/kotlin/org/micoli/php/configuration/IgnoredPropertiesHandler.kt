@@ -17,7 +17,7 @@ class IgnoredPropertiesHandler(private val ignorableClasses: MutableList<Class<*
         p: JsonParser,
         deserializer: JsonDeserializer<*>,
         beanOrClass: Any,
-        propertyName: String
+        propertyName: String,
     ): Boolean {
         val context =
             String.format(

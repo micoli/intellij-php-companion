@@ -22,7 +22,8 @@ class MarkdownProcessor {
                     generateDocumentation(
                         matcher.group("className"),
                         matcher.group("exportType"),
-                        matcher.group("extraArgument")),
+                        matcher.group("extraArgument"),
+                    ),
                     matcher.group("endTag"),
                 )
 

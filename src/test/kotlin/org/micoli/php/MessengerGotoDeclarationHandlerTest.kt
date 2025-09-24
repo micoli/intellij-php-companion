@@ -28,7 +28,8 @@ class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
         assertGotoEquals(
             files[0]!!,
             "->query(new ArticleDetails\\Query())",
-            "src/Core/Query/ArticleDetails/Handler.php")
+            "src/Core/Query/ArticleDetails/Handler.php",
+        )
         assertGotoIsNull(files[0]!!, "->handle(")
         assertGotoIsNull(files[0]!!, "->dispatch")
         assertGotoIsNull(files[0]!!, "->queryBus")
@@ -46,7 +47,7 @@ class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
         file: PsiFile,
         elementMatch: String,
         targetFileEnd: String,
-        targetMethodStart: String = "public function __invoke"
+        targetMethodStart: String = "public function __invoke",
     ) {
         val pos = file.text.indexOf(elementMatch)
         val element = file.findElementAt(pos + 2)

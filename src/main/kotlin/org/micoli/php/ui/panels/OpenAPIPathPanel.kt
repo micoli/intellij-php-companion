@@ -42,12 +42,14 @@ class OpenAPIPathPanel(project: Project) :
         innerSorter?.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.ASCENDING),
-                RowSorter.SortKey(1, SortOrder.ASCENDING)))
+                RowSorter.SortKey(1, SortOrder.ASCENDING),
+            ))
         innerSorter?.setComparator(
             0,
             Comparator { o1: OpenAPIPathElementDTO?, o2: OpenAPIPathElementDTO? ->
                 String.CASE_INSENSITIVE_ORDER.compare(o1!!.uri, o2!!.uri)
-            })
+            },
+        )
         innerSorter?.setComparator(1, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(2, Comparator { _: Any?, _: Any? -> 0 })
         return innerSorter
@@ -73,7 +75,7 @@ class OpenAPIPathPanel(project: Project) :
                         isSelected: Boolean,
                         hasFocus: Boolean,
                         row: Int,
-                        column: Int
+                        column: Int,
                     ): Component {
                         val elementDTO = value as OpenAPIPathElementDTO?
                         jLabel.setText(

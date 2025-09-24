@@ -23,7 +23,8 @@ class RunnableTaskTest : BasePlatformTestCase() {
                 ScriptBuilder.create()
                     .withId("file1")
                     .withSource("org.micoli.php.RunnableTaskTest.exposedVariable++")
-                    .build())
+                    .build(),
+            )
             .run()
 
         // Then

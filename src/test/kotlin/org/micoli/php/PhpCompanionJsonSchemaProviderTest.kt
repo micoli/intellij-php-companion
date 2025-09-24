@@ -49,7 +49,8 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
             *arrayOf(
                 RequiredAttributesInspection(),
                 JsonSchemaComplianceInspection(),
-                YamlJsonSchemaHighlightingInspection()))
+                YamlJsonSchemaHighlightingInspection(),
+            ))
     }
 
     fun testInvalidYamlConfiguration() {

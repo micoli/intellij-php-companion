@@ -42,7 +42,8 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
 
         Assert.assertEquals(
             normalizeStringList(initialPathContent),
-            normalizeStringList(MyFixtureUtils.getPathContent(vf)))
+            normalizeStringList(MyFixtureUtils.getPathContent(vf)),
+        )
     }
 
     fun testItDoesClearPathIfIsNotGitIgnoredButForced() {
@@ -52,7 +53,8 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
 
         Assert.assertEquals(
             normalizeStringList(initialPathContent),
-            normalizeStringList(MyFixtureUtils.getPathContent(vf)))
+            normalizeStringList(MyFixtureUtils.getPathContent(vf)),
+        )
     }
 
     fun testItClearPathIfIsGitIgnoredAtRoot() {

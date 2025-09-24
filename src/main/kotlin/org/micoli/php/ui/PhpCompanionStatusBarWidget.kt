@@ -124,7 +124,8 @@ class PhpCompanionStatusBarWidget(private val project: Project) :
                 group,
                 DataManager.getInstance().getDataContext(e.component),
                 JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                true)
+                true,
+            )
             .showUnderneathOf(e.component)
     }
 

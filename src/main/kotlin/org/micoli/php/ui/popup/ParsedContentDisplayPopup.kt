@@ -18,7 +18,7 @@ import org.micoli.php.ui.Notification
 class ParsedContentDisplayPopup(
     private val popupType: PopupType,
     private val project: Project,
-    private val jsonContent: String
+    private val jsonContent: String,
 ) : DialogWrapper(project) {
     enum class PopupType {
         JSON,

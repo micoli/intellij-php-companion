@@ -8,7 +8,7 @@ object GsonTools {
     fun extendJsonObject(
         destinationObject: JsonObject,
         conflictResolutionStrategy: ConflictStrategy,
-        vararg objs: JsonObject
+        vararg objs: JsonObject,
     ) {
         for (obj in objs) {
             extendJsonObject(destinationObject, obj, conflictResolutionStrategy)
@@ -52,7 +52,7 @@ object GsonTools {
         leftObj: JsonObject,
         leftVal: JsonElement,
         rightVal: JsonElement,
-        conflictStrategy: ConflictStrategy
+        conflictStrategy: ConflictStrategy,
     ) {
         run {
             when (conflictStrategy) {

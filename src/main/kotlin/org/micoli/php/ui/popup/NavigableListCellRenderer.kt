@@ -11,7 +11,7 @@ class NavigableListCellRenderer : DefaultListCellRenderer() {
         value: Any?,
         index: Int,
         isSelected: Boolean,
-        cellHasFocus: Boolean
+        cellHasFocus: Boolean,
     ): Component? {
         if (value is NavigableListPopupItem) {
             return getNavigableItemLabel(list, index, isSelected, cellHasFocus, value)
@@ -25,7 +25,7 @@ class NavigableListCellRenderer : DefaultListCellRenderer() {
         index: Int,
         isSelected: Boolean,
         cellHasFocus: Boolean,
-        item: NavigableListPopupItem?
+        item: NavigableListPopupItem?,
     ): JLabel {
         if (item is NavigableOpenSearchAction || item is NavigableOpenAllAction) {
             val label =

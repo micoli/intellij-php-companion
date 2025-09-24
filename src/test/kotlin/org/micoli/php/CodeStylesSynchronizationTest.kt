@@ -16,11 +16,11 @@ class CodeStylesSynchronizationTest : BasePlatformTestCase() {
         val lastMessage: AtomicReference<String?> = AtomicReference<String?>()
         val mockAppService: Notification =
             object : Notification(project) {
-                override fun error(title: String?, message: String?) {
+                override fun error(title: String, message: String) {
                     lastError.set(message)
                 }
 
-                override fun message(title: String?, message: String?) {
+                override fun message(title: String, message: String) {
                     lastMessage.set(message)
                 }
             }
@@ -47,10 +47,12 @@ class CodeStylesSynchronizationTest : BasePlatformTestCase() {
         // Then
         TestCase.assertEquals(
             "<html><ul><li>Unknown attribute UNKNOWN_STYLE_ATTRIBUTE</li></ul></html>",
-            lastError.get())
+            lastError.get(),
+        )
         TestCase.assertEquals(
             "<html><ul><li>ALIGN_MULTILINE_PARAMETERS_IN_CALLS: true</li></ul></html>",
-            lastMessage.get())
+            lastMessage.get(),
+        )
 
         // And rollback
         loadPluginConfiguration(
@@ -70,11 +72,11 @@ class CodeStylesSynchronizationTest : BasePlatformTestCase() {
         val lastMessage: AtomicReference<String?> = AtomicReference<String?>()
         val mockAppService: Notification =
             object : Notification(project) {
-                override fun error(title: String?, message: String?) {
+                override fun error(title: String, message: String) {
                     lastError.set(message)
                 }
 
-                override fun message(title: String?, message: String?) {
+                override fun message(title: String, message: String) {
                     lastMessage.set(message)
                 }
             }

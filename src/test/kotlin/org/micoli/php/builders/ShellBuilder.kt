@@ -2,7 +2,7 @@ package org.micoli.php.builders
 
 import org.micoli.php.tasks.configuration.runnableTask.Shell
 
-class ShellBuilder private constructor() {
+class ShellBuilder() {
     private val shell: Shell = Shell()
 
     fun withId(id: String): ShellBuilder {

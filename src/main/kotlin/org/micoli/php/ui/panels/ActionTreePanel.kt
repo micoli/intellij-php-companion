@@ -74,7 +74,7 @@ class ActionTreePanel(project: Project) : JPanel(), Disposable {
     }
 
     private fun loadActionTree(configuration: TasksConfiguration?) {
-        if (configuration == null || configuration.tree == null) {
+        if (configuration == null) {
             return
         }
         actionTreeNodeConfigurator.configureTree(configuration.tasksMap, configuration.tree)
@@ -84,23 +84,23 @@ class ActionTreePanel(project: Project) : JPanel(), Disposable {
         val actionManager = ActionManager.getInstance()
         cleanupActionGroup(actionManager)
 
-        if (configuration == null || configuration.toolbar == null) {
+        if (configuration == null) {
             return
         }
 
-        for (task in configuration.toolbar) {
-            val runnable = configuration.tasksMap[task.taskId]
+        for (toolbarTask in configuration.toolbar) {
+            val task = configuration.tasksMap[toolbarTask.taskId] ?: continue
             val action =
-                when (runnable) {
-                    is Builtin -> TaskToolbarButton(project, runnable)
-                    is Shell -> TaskToolbarButton(project, runnable)
-                    is Script -> TaskToolbarButton(project, runnable)
-                    is ObservedFile -> FileObserverToolbarButton(project, runnable)
-                    else -> throw IllegalStateException("Unexpected value: $runnable")
+                when (task) {
+                    is Builtin -> TaskToolbarButton(project, task)
+                    is Shell -> TaskToolbarButton(project, task)
+                    is Script -> TaskToolbarButton(project, task)
+                    is ObservedFile -> FileObserverToolbarButton(project, task)
+                    else -> throw IllegalStateException("Unexpected value: $task")
                 }
 
             actionManager.registerAction(
-                "PhpCompanion." + runnable.javaClass.getSimpleName() + "." + runnable.id, action)
+                "PhpCompanion." + task.javaClass.getSimpleName() + "." + task.id, action)
             this.leftActionGroup.add(action)
         }
     }

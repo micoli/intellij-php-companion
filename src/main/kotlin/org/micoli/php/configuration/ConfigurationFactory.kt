@@ -35,7 +35,8 @@ class ConfigurationFactory {
             ".php-companion.json",
             ".php-companion.yaml",
             ".php-companion.local.json",
-            ".php-companion.local.yaml")
+            ".php-companion.local.yaml",
+        )
 
     data class LoadedConfiguration(val configuration: Configuration?, val timestamp: Long?) {
         var ignoredProperties: MutableList<String> = ArrayList()
@@ -45,7 +46,7 @@ class ConfigurationFactory {
     fun loadConfiguration(
         projectPath: String?,
         previousLatestFileTimestampUpdate: Long,
-        force: Boolean
+        force: Boolean,
     ): LoadedConfiguration? {
         val files =
             acceptableConfigurationFiles
@@ -77,7 +78,8 @@ class ConfigurationFactory {
                     "Unrecognized Property: " + unknownProperties.joinToString(", "),
                     latestFileUpdateTimestamp,
                     "",
-                    stringContent)
+                    stringContent,
+                )
             }
             loadedConfiguration.ignoredProperties = propertiesHandler.getIgnoredProperties()
             return loadedConfiguration
@@ -86,7 +88,8 @@ class ConfigurationFactory {
                 configurationException.message,
                 latestFileUpdateTimestamp,
                 configurationException.descriptorString,
-                configurationException.originalContent)
+                configurationException.originalContent,
+            )
         } catch (mappingException: JsonMappingException) {
             throw ConfigurationException(
                 (JsonExceptionMapper.getExceptionName(mappingException) +
@@ -101,7 +104,8 @@ class ConfigurationFactory {
                 exception.message,
                 latestFileUpdateTimestamp,
                 exception.javaClass.descriptorString(),
-                stringContent)
+                stringContent,
+            )
         }
     }
 

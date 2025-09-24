@@ -60,7 +60,8 @@ class MessengerServiceTest : BasePlatformTestCase() {
             messengerService.findHandlersByMessageName("App\\Core\\Event\\ArticleCreatedEvent")
         assertContainsElements(
             handledMessages.stream().map { obj: Method? -> obj!!.fqn }.toList(),
-            "\\App\\Core\\EventListener\\OnArticleCreated.__invoke")
+            "\\App\\Core\\EventListener\\OnArticleCreated.__invoke",
+        )
     }
 
     fun testItCanFindLineMarkersForMessageHandler() {

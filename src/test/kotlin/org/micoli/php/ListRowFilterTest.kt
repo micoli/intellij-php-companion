@@ -16,9 +16,9 @@ import org.micoli.php.ui.panels.ListRowFilter
 
 @RunWith(Parameterized::class)
 class ListRowFilterTest(
-    private val searchText: String?,
+    private val searchText: String,
     private val isRegexMode: Boolean,
-    private val expectedResult: String?
+    private val expectedResult: String,
 ) {
     @JvmRecord
     data class TestElementDTO(val uri: String, val name: String) : SearchableRecord {

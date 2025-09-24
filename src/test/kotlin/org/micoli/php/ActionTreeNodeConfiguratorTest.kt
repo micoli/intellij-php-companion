@@ -52,7 +52,9 @@ class ActionTreeNodeConfiguratorTest : BasePlatformTestCase() {
         val path2 = PathBuilder.create().withLabel("an emptyPath").withTasks(arrayOf()).build()
 
         configurator.configureTree(
-            mapOf(shell.id to shell, script.id to script), arrayOf(task1, task2, path1, path2))
+            mapOf(shell.id!! to shell, script.id!! to script),
+            arrayOf(task1, task2, path1, path2),
+        )
 
         assertFalse(tree.isRootVisible)
         assertTrue(tree.showsRootHandles)

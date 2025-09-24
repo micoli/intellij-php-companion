@@ -61,7 +61,15 @@ class MarkdownSchemaGenerator {
     }
 
     private fun generateYamlExample(exampleRoot: String?, clazz: Class<*>): String {
-        val yamlContent: String = dumpYaml(InstanceGenerator().get(clazz, true))
+        val example = InstanceGenerator().get<Any?>(clazz, true)
+        var yamlContent: String = dumpYaml(example)
+
+        // @TODO remove when kotlin migration is finished
+        yamlContent =
+            yamlContent
+                .split("\n".toRegex())
+                .filter { !it.contains("isEnabled:") }
+                .joinToString("\n")
 
         if (exampleRoot == null || exampleRoot.isEmpty()) {
             return yamlContent

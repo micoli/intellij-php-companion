@@ -26,7 +26,8 @@ class DoctrineEntitiesPanel(project: Project) :
         innerSorter?.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.ASCENDING),
-                RowSorter.SortKey(1, SortOrder.ASCENDING)))
+                RowSorter.SortKey(1, SortOrder.ASCENDING),
+            ))
         innerSorter?.setComparator(0, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(1, String.CASE_INSENSITIVE_ORDER)
         innerSorter?.setComparator(2, String.CASE_INSENSITIVE_ORDER)

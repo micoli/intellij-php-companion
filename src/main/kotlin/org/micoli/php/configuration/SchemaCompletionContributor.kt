@@ -26,7 +26,7 @@ class SchemaCompletionContributor : CompletionContributor() {
                 override fun addCompletions(
                     parameters: CompletionParameters,
                     context: ProcessingContext,
-                    result: CompletionResultSet
+                    result: CompletionResultSet,
                 ) {
                     if (!ConfigurationFactory()
                         .acceptableConfigurationFiles
@@ -78,12 +78,14 @@ class SchemaCompletionContributor : CompletionContributor() {
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement().withLanguage(YAMLLanguage.INSTANCE).with(pattern),
-            generatorClass)
+            generatorClass,
+        )
 
         extend(
             CompletionType.BASIC,
             PlatformPatterns.psiElement().withLanguage(JsonLanguage.INSTANCE).with(pattern),
-            generatorClass)
+            generatorClass,
+        )
     }
 
     companion object {

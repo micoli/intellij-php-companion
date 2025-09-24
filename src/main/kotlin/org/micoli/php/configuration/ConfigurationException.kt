@@ -4,5 +4,5 @@ class ConfigurationException(
     message: String?,
     @JvmField val serial: Long?,
     val descriptorString: String?,
-    val originalContent: String?
+    val originalContent: String?,
 ) : Exception(message)

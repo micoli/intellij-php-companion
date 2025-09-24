@@ -71,7 +71,7 @@ class DebouncedRunnablesTest {
     private fun getSameNameRunnable(
         callCounter: AtomicInteger,
         latch: CountDownLatch,
-        delay: Long
+        delay: Long,
     ): DebouncedRunnable? =
         debouncedRunnables!!.run(
             {

@@ -30,7 +30,7 @@ open class Notification(private val project: Project?) {
                     }
                     .start()
             }
-        } catch (ignored: Exception) {}
+        } catch (_: Exception) {}
     }
 
     open fun error(message: String) {

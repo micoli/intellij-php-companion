@@ -25,7 +25,8 @@ class RouteListTest : BasePlatformTestCase() {
                         "/api/articles/feed/{feedId}",
                         "/api/articles/list",
                         "/api/articles/tag/{tag}",
-                        "/api/articles/user"))
+                        "/api/articles/user",
+                    ))
                 .stream()
                 .sorted()
                 .collect(Collectors.joining(","))

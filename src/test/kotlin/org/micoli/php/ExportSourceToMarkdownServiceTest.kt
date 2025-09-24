@@ -15,7 +15,8 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
             arrayOf<VirtualFile?>(
                 myFixture.findFileInTempDir("root_file1.txt"),
                 myFixture.findFileInTempDir("path1"),
-                myFixture.findFileInTempDir("path1/path1_2"))
+                myFixture.findFileInTempDir("path1/path1_2"),
+            )
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
         exportSourceToMarkdownService.loadConfiguration(ExportSourceToMarkdownConfiguration())
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
@@ -57,7 +58,8 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         val filesToSelect =
             arrayOf<VirtualFile?>(
                 myFixture.findFileInTempDir("Core/Query/Article/Query.php"),
-                myFixture.findFileInTempDir("Core/Query/ArticleDetails"))
+                myFixture.findFileInTempDir("Core/Query/ArticleDetails"),
+            )
         val configuration = ExportSourceToMarkdownConfiguration()
         configuration.contextualNamespaces = arrayOf("App\\Core\\Models", "App\\Core\\Id")
         configuration.template =
@@ -96,7 +98,8 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
             arrayOf<VirtualFile?>(
                 myFixture.findFileInTempDir("root_file1.txt"),
                 myFixture.findFileInTempDir("path1"),
-                myFixture.findFileInTempDir("path1/path1_2"))
+                myFixture.findFileInTempDir("path1/path1_2"),
+            )
         val configuration = ExportSourceToMarkdownConfiguration()
         configuration.template =
             """

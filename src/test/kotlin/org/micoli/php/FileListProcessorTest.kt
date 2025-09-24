@@ -44,7 +44,8 @@ class FileListProcessorTest : BasePlatformTestCase() {
             listOf<VirtualFile?>(
                 myFixture.findFileInTempDir("/target"),
                 myFixture.findFileInTempDir("/out"),
-                myFixture.findFileInTempDir("/main"))
+                myFixture.findFileInTempDir("/main"),
+            )
 
         val fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect)
         val processedFiles =

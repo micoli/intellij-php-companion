@@ -45,7 +45,8 @@ class FileListenerTest : BasePlatformTestCase() {
             Map.of<String?, MutableList<PathMatcher?>?>(
                 "php",
                 mutableListOf<PathMatcher?>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php"))),
+                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+            ),
             object : ArrayList<VirtualFile?>() {},
         )
 
@@ -58,7 +59,8 @@ class FileListenerTest : BasePlatformTestCase() {
             Map.of<String?, MutableList<PathMatcher?>?>(
                 "php",
                 mutableListOf<PathMatcher?>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php"))),
+                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+            ),
             object : ArrayList<VirtualFile?>() {},
         )
 
@@ -90,7 +92,8 @@ class FileListenerTest : BasePlatformTestCase() {
             Map.of<String?, MutableList<PathMatcher?>?>(
                 "php-files",
                 mutableListOf<PathMatcher?>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php"))),
+                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+            ),
             listOf(testFile) as MutableList<VirtualFile?>,
         )
 
@@ -106,7 +109,8 @@ class FileListenerTest : BasePlatformTestCase() {
             Map.of<String?, MutableList<PathMatcher?>?>(
                 "php-files",
                 mutableListOf<PathMatcher?>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php"))),
+                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+            ),
             listOf<VirtualFile?>(myFixture.createFile("test.js", "console.log('test');"))
                 as MutableList<VirtualFile?>,
         )
@@ -144,7 +148,8 @@ class FileListenerTest : BasePlatformTestCase() {
         initializeListenerAndTriggerFileEvent(
             Map.of<String?, MutableList<PathMatcher?>?>(
                 "all-files",
-                mutableListOf<PathMatcher?>(FileSystems.getDefault().getPathMatcher("glob:**/*"))),
+                mutableListOf<PathMatcher?>(FileSystems.getDefault().getPathMatcher("glob:**/*")),
+            ),
             listOf<VirtualFile?>(myFixture.tempDirFixture.findOrCreateDir("testDir"))
                 as MutableList<VirtualFile?>,
         )
@@ -193,7 +198,7 @@ class FileListenerTest : BasePlatformTestCase() {
 
     private fun initializeListenerAndTriggerFileEvent(
         patterns: MutableMap<String?, MutableList<PathMatcher?>?>?,
-        testFiles: MutableList<VirtualFile?>
+        testFiles: MutableList<VirtualFile?>,
     ) {
         this.patterns = patterns
         this.fileListener!!.setPatterns(patterns)
