@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
 import org.micoli.php.service.StringCaseConverter;
 import org.micoli.php.service.attributes.AttributeMapping;
 import org.micoli.php.service.intellij.psi.PhpUtil;
@@ -37,7 +36,7 @@ public class DoctrineEntityService
                 attribute);
     }
 
-    private @NotNull String normalizeEntityName(String className, String namespace) {
+    private String normalizeEntityName(String className, String namespace) {
         className = PhpUtil.normalizeNonRootFQN(className);
         className = className.replace(PhpUtil.normalizeNonRootFQN(namespace), "");
         return className.replaceFirst("^\\\\", "");
@@ -53,10 +52,10 @@ public class DoctrineEntityService
         Map<String, String> values = mapping.clone().extractValues(attribute);
         for (String childClassName : PhpUtil.getPhpClassChildByFQN(phpIndex, className)) {
             elements.add(new DoctrineEntityElementDTO(
-                    Objects.requireNonNullElse(normalizeEntityName(childClassName, namespace), ""),
-                    Objects.requireNonNullElse(normalizeTableNameFromClass(childClassName), ""),
+                    normalizeEntityName(childClassName, namespace),
+                    normalizeTableNameFromClass(childClassName),
                     Objects.requireNonNullElse(values.get("schema"), ""),
-                    Objects.requireNonNullElse(childClassName, ""),
+                    childClassName,
                     attribute));
         }
     }

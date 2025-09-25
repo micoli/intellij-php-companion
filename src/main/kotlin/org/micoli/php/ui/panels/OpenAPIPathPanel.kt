@@ -184,7 +184,7 @@ class OpenAPIPathPanel(project: Project) :
                 findModel,
                 project,
                 1500,
-                Consumer { results: MutableList<UsageInfo?>? ->
+                Consumer { results: MutableList<UsageInfo>? ->
                     concurrentSearchManager.removeSearch(searchText)
                     if (results == null || results.isEmpty()) {
                         Notification.getInstance(project)

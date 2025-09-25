@@ -31,7 +31,7 @@ class FileListProcessorTest : BasePlatformTestCase() {
 
     fun testBasicFileListProcessor() {
         myFixture.copyDirectoryToProject(".", ".")
-        val filesToSelect = listOf<VirtualFile?>(myFixture.findFileInTempDir("/"))
+        val filesToSelect = listOf<VirtualFile>(myFixture.findFileInTempDir("/")).toMutableList()
 
         val processedFiles = FileListProcessor.findFilesFromSelectedFiles(filesToSelect)
 
@@ -41,13 +41,14 @@ class FileListProcessorTest : BasePlatformTestCase() {
     fun testFileListProcessorWithExclusionRules() {
         initFixtures(true)
         val filesToSelect =
-            listOf<VirtualFile?>(
-                myFixture.findFileInTempDir("/target"),
-                myFixture.findFileInTempDir("/out"),
-                myFixture.findFileInTempDir("/main"),
-            )
+            listOf<VirtualFile>(
+                    myFixture.findFileInTempDir("/target"),
+                    myFixture.findFileInTempDir("/out"),
+                    myFixture.findFileInTempDir("/main"),
+                )
+                .toMutableList()
 
-        val fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect)
+        val fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect).toMutableList()
         val processedFiles =
             FileListProcessor.filterFiles(myFixture.findFileInTempDir(".aiignore"), fileList)
 
@@ -59,11 +60,12 @@ class FileListProcessorTest : BasePlatformTestCase() {
 
     fun testFileListProcessorWithExclusionRulesAndOnlyOneSelection() {
         initFixtures(true)
-        val filesToSelect = listOf<VirtualFile?>(myFixture.findFileInTempDir("/"))
+        val filesToSelect = listOf<VirtualFile>(myFixture.findFileInTempDir("/")).toMutableList()
 
-        val fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect)
+        val fileList = FileListProcessor.findFilesFromSelectedFiles(filesToSelect).toMutableList()
         val processedFiles =
             FileListProcessor.filterFiles(myFixture.findFileInTempDir(".aiignore"), fileList)
+                .toMutableList()
 
         assertNotContains(processedFiles, "App.class")
         assertNotContains(processedFiles, "Main.class")
@@ -73,9 +75,10 @@ class FileListProcessorTest : BasePlatformTestCase() {
 
     fun testFileListProcessorWithoutExclusionRules() {
         initFixtures(false)
-        val filesToSelect = listOf<VirtualFile?>(myFixture.findFileInTempDir("/"))
+        val filesToSelect = listOf<VirtualFile>(myFixture.findFileInTempDir("/")).toMutableList()
 
-        val processedFiles = FileListProcessor.findFilesFromSelectedFiles(filesToSelect)
+        val processedFiles =
+            FileListProcessor.findFilesFromSelectedFiles(filesToSelect).toMutableList()
 
         assertContains(processedFiles, "App.class")
         assertContains(processedFiles, "Main.class")
@@ -83,14 +86,14 @@ class FileListProcessorTest : BasePlatformTestCase() {
         assertContains(processedFiles, "App.java")
     }
 
-    private fun assertContains(processedFiles: MutableList<VirtualFile?>, anObject: String) {
+    private fun assertContains(processedFiles: MutableList<VirtualFile>, anObject: String) {
         assertTrue(
             processedFiles.stream().anyMatch { file ->
                 ((file as VirtualFile).canonicalPath)?.endsWith(anObject) == true
             })
     }
 
-    private fun assertNotContains(processedFiles: MutableList<VirtualFile?>, anObject: String) {
+    private fun assertNotContains(processedFiles: MutableList<VirtualFile>, anObject: String) {
         assertTrue(
             processedFiles.stream().noneMatch { file ->
                 ((file as VirtualFile).canonicalPath)?.endsWith(anObject) == true

@@ -129,6 +129,7 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
         this.isWatcherEnabled = !this.isWatcherEnabled
     }
 
+    @Synchronized
     fun registerTaskActions() {
         val actionManager = ActionManager.getInstance()
 

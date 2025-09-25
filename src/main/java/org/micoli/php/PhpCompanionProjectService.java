@@ -135,7 +135,7 @@ public final class PhpCompanionProjectService
     }
 
     @Override
-    public void vfsHandle(String id, VirtualFile file) {
+    public void vfsHandle(String id, @NotNull VirtualFile file) {
         loadConfiguration(false);
     }
 }
