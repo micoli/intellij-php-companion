@@ -1,10 +1,15 @@
 package org.micoli.php
 
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.common.io.Files
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.Objects
+import java.util.TreeMap
 import org.junit.Assert
 import org.junit.Test
 import org.micoli.php.configuration.ConfigurationException
@@ -126,11 +131,7 @@ class ConfigurationFactoryTest {
         val createdConfiguration: ConfigurationFactory.LoadedConfiguration =
             checkNotNull(getLoadedConfiguration(file))
         // Then
-        val dumperOptions = DumperOptions()
-        dumperOptions.indent = 4
-        dumperOptions.isPrettyFlow = true
-        dumperOptions.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
-        val loadedConfiguration = Yaml(dumperOptions).dump(createdConfiguration.configuration)
+        val loadedConfiguration = dumpYaml(createdConfiguration.configuration)
         val expectedConfiguration =
             Files.asCharSource(
                     File(
@@ -147,6 +148,26 @@ class ConfigurationFactoryTest {
             expectedIgnoredProperties.joinToString(","),
             createdConfiguration.ignoredProperties.joinToString(","),
         )
+    }
+
+    private fun dumpYaml(example: Any?): String {
+        try {
+            val mapper = ObjectMapper()
+            mapper.registerModule(
+                KotlinModule.Builder()
+                    .configure(KotlinFeature.KotlinPropertyNameAsImplicitName, true)
+                    .build())
+            val value = mapper.readValue(mapper.writeValueAsString(example), TreeMap::class.java)
+
+            val options = DumperOptions()
+            options.isExplicitStart = false
+            options.isExplicitEnd = false
+            options.isCanonical = false
+            options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+            return Yaml(options).dump(value)
+        } catch (e: JsonProcessingException) {
+            throw RuntimeException(e)
+        }
     }
 
     @Throws(ConfigurationException::class, NoConfigurationFileException::class)

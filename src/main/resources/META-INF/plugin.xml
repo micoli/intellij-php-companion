@@ -45,8 +45,6 @@
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.symfony.messenger.markers.MessengerLineMarkerProvider"/>
-        <projectService
-                serviceImplementation="org.micoli.php.attributeNavigation.service.AttributeNavigationService"/>
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.attributeNavigation.markers.AttributeNavigationLineMarkerProvider"/>

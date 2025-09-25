@@ -137,7 +137,7 @@ class ConfigurationFactory {
                 GsonTools.extendJsonObject(
                     mergedJson, ConflictStrategy.PREFER_SECOND_OBJ, asJsonObject)
             } catch (e: IllegalStateException) {
-                if (!e.message!!.contains("Not a JSON Object: null")) {
+                if (!e.localizedMessage.contains("Not a JSON Object: null")) {
                     throw e
                 }
             }

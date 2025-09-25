@@ -44,10 +44,10 @@ class AttributeNavigationTest : BasePlatformTestCase() {
         val formattedValue =
             instance.getFormattedValue(
                 "/templates/{templateId}/documents/{documentId}", rule.formatterScript)
-        TestCase.assertEquals("/templates/[^/]*/documents/[^/]*:", formattedValue)
+        assertEquals("/templates/[^/]*/documents/[^/]*:", formattedValue)
     }
 
-    private fun loadPluginConfiguration(path: String?): AttributeNavigationService {
+    private fun loadPluginConfiguration(path: String): AttributeNavigationService {
         var attributeNavigationConfiguration: AttributeNavigationConfiguration?
         try {
             attributeNavigationConfiguration =

@@ -322,8 +322,9 @@ peerNavigation:
   - **Default Value**: ``` *.yaml,*.yml,*.php ```
 - **rules[].formatterScript**
   - A groovy script to reformat raw attribute value
-  - **Example**: ``` return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
- ```
+  - **Example**: ```
+      return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
+       ```
 - **rules[].isDefault**
   - **Default Value**: ``` true ```
 - **rules[].propertyName**
@@ -340,8 +341,8 @@ attributeNavigation:
     isDefault: true
     fileMask: '*.yaml,*.yml,*.php'
     actionType: find_in_file
-    formatterScript: |
-      return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
+    formatterScript: "\n        return (value.replaceAll(\"(\\\\{.*?\\\\})\", \"[^/]*\"\
+      )+ \":\");\n        "
 ```
 <!-- generateDocumentationEnd -->
 

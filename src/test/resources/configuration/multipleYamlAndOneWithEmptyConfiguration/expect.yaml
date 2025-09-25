@@ -14,8 +14,7 @@ peerNavigation:
   associates:
     -   classA: \\App\\Tests\\Func\\(?<type>.*)\\Web\\(?<path>.*)\\ControllerTest
         classB: \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller
-  peers: [
-  ]
+  peers: []
 symfonyMessenger:
   useNativeGoToDeclaration: false
   asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler

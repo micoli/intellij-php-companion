@@ -31,13 +31,12 @@ class ConcurrentSearchManager(private val searchTimeout: Duration) {
         }
     }
 
-    val isEmpty: Boolean
-        get() {
-            cleanExpiredSearches()
-            return searchInProgressList.isEmpty()
-        }
+    fun isEmpty(): Boolean {
+        cleanExpiredSearches()
+        return searchInProgressList.isEmpty()
+    }
 
     private fun cleanExpiredSearches() {
-        searchInProgressList.removeIf { entry: SearchEntry? -> entry!!.isExpired(searchTimeout) }
+        searchInProgressList.removeIf { it.isExpired(searchTimeout) }
     }
 }
