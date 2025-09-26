@@ -37,8 +37,6 @@
                 language="PHP"
                 implementationClass="org.micoli.php.peerNavigation.markers.PeerNavigationLineMarkerProvider"/>
         <projectService
-                serviceImplementation="org.micoli.php.codeStyle.CodeStylesService"/>
-        <projectService
                 serviceImplementation="org.micoli.php.ui.Notification"/>
         <projectService
                 serviceImplementation="org.micoli.php.symfony.messenger.service.MessengerService"/>
