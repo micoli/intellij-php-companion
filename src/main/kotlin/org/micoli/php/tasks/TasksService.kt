@@ -90,19 +90,19 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
         }
     }
 
-    override fun vfsHandle(taskIdentifier: TaskIdentifier, file: VirtualFile) {
-        val runnableTask = runnableActions[taskIdentifier.taskId] ?: return
+    override fun vfsHandle(id: TaskIdentifier, file: VirtualFile) {
+        val runnableTask = runnableActions[id.taskId] ?: return
         if (runnableTask is FileObserverTask) {
             updateFileObserver(runnableTask, true)
             return
         }
-        if (taskIdentifier.configuration is Watcher) {
-            val watcherConfiguration = taskIdentifier.configuration
+        if (id.configuration is Watcher) {
+            val watcherConfiguration = id.configuration
             if (!this.isWatcherEnabled) {
                 return
             }
             this.debouncedRunnables.run(
-                runnableTask, taskIdentifier.taskId, watcherConfiguration.debounce.toLong()) {
+                runnableTask, id.taskId, watcherConfiguration.debounce.toLong()) {
                     if (!watcherConfiguration.notify) {
                         return@run
                     }

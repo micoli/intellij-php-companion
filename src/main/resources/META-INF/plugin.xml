@@ -31,8 +31,6 @@
             bundle="messages.MyBundle"
             key="notification.group.php.companion"
         />
-        <projectService
-                serviceImplementation="org.micoli.php.peerNavigation.service.PeerNavigationService"/>
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.peerNavigation.markers.PeerNavigationLineMarkerProvider"/>
