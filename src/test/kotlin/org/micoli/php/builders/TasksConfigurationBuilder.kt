@@ -20,8 +20,7 @@ class TasksConfigurationBuilder private constructor() {
         task: RunnableTaskConfiguration
     ): TasksConfigurationBuilder {
         taskConfiguration.tasks =
-            appendToArray(
-                taskConfiguration.tasks, task, RunnableTaskConfiguration::class.java)
+            appendToArray(taskConfiguration.tasks, task, RunnableTaskConfiguration::class.java)
         return this
     }
 
@@ -53,8 +52,7 @@ class TasksConfigurationBuilder private constructor() {
     }
 
     fun withAddedTaskInToolbar(task: Task): TasksConfigurationBuilder {
-        taskConfiguration.toolbar =
-            appendToArray(taskConfiguration.toolbar, task, Task::class.java)
+        taskConfiguration.toolbar = appendToArray(taskConfiguration.toolbar, task, Task::class.java)
         return this
     }
 
