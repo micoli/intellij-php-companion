@@ -49,7 +49,7 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         """
                 .trimIndent()
                 .trim { it <= ' ' },
-            exportedSource.content.trim { it <= ' ' },
+            exportedSource?.content?.trim { it <= ' ' },
         )
     }
 
@@ -88,7 +88,7 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         """
                 .trimIndent()
                 .trim { it <= ' ' },
-            exportedSource.content.trim { it <= ' ' },
+            exportedSource?.content?.trim { it <= ' ' },
         )
     }
 
@@ -124,7 +124,7 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         """
                 .trimIndent()
                 .trim { it <= ' ' },
-            exportedSource.content.trim { it <= ' ' },
+            exportedSource?.content?.trim { it <= ' ' },
         )
     }
 
@@ -135,6 +135,6 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
 
         exportSourceToMarkdownService.loadConfiguration(ExportSourceToMarkdownConfiguration())
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
-        TestCase.assertEquals(18, exportedSource.numberOfTokens)
+        TestCase.assertEquals(18, exportedSource?.numberOfTokens)
     }
 }

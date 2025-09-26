@@ -55,7 +55,7 @@ class PeerNavigationService(private val project: Project) {
         if (sourceElement !is PhpClass) {
             return null
         }
-        val sourceClassFQN = sourceElement.getFQN()
+        val sourceClassFQN = sourceElement.fqn
         val result = HashSet<PsiElement?>()
 
         for (peer in peers) {

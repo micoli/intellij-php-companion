@@ -50,8 +50,6 @@
         <gotoDeclarationHandler
             implementation="org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandler"
         />
-        <projectService
-                serviceImplementation="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService"/>
         <statusBarWidgetFactory id="org.micoli.php.exportSourceToMarkdown"
                                 implementation="org.micoli.php.ui.PhpCompanionStatusBarWidget$Factory"
                                 order="before CodeStyleStatusBarWidget"/>

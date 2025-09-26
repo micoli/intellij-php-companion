@@ -29,9 +29,8 @@ class PeerNavigationLineMarkerProvider : LineMarkerProvider {
         if (elements.isEmpty()) {
             return
         }
-        val project: Project = elements.first()?.getProject() ?: return
-        val peerNavigationService: PeerNavigationService =
-            PeerNavigationService.Companion.getInstance(project)
+        val project = elements.first()?.project ?: return
+        val peerNavigationService = PeerNavigationService.getInstance(project)
         if (peerNavigationService.configurationIsEmpty()) {
             return
         }
@@ -48,19 +47,15 @@ class PeerNavigationLineMarkerProvider : LineMarkerProvider {
         phpClass: PhpClass,
         result: MutableCollection<in LineMarkerInfo<*>?>
     ) {
-        val targetElements = peerNavigationService.getPeersElement(phpClass)
-
-        if (targetElements == null) {
-            return
-        }
+        val targetElements = peerNavigationService.getPeersElement(phpClass) ?: return
 
         val leafElement = findFirstLeafElement(phpClass)
 
-        val tooltip = "Search for peer of [" + phpClass.getFQN() + "]"
+        val tooltip = "Search for peer of [" + phpClass.fqn + "]"
         result.add(
             LineMarkerInfo(
                 leafElement,
-                leafElement.getTextRange(),
+                leafElement.textRange,
                 navigateIcon,
                 { tooltip },
                 { mouseEvent: MouseEvent?, _: PsiElement? ->
