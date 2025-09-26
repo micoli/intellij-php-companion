@@ -6,8 +6,8 @@ import org.micoli.php.configuration.models.DisactivableConfiguration
 import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 
 class TasksConfiguration : DisactivableConfiguration {
-    override fun isEnabled(): Boolean {
-        return enabled
+    override fun isDisabled(): Boolean {
+        return !enabled
     }
 
     @Schema(description = "Enabler for panel of Task and actions", example = "true")

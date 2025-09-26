@@ -14,7 +14,7 @@ class CodeStylesSynchronizationConfigurationBuilder private constructor() {
 
     fun withAddedCodeStyle(codeStyle: CodeStyle): CodeStylesSynchronizationConfigurationBuilder {
         codeStylesSynchronizationConfiguration.styles =
-            appendToArray<CodeStyle>(
+            appendToArray(
                 codeStylesSynchronizationConfiguration.styles, codeStyle, CodeStyle::class.java)
         return this
     }

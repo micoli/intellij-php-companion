@@ -82,7 +82,7 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
         classParameter: Class<*>?,
         configuration: DisactivableConfiguration?
     ) {
-        val isEnabled = (configuration != null && configuration.isEnabled())
+        val isEnabled = (configuration != null && !configuration.isDisabled())
         tabMap[classParameter]!!.isHidden = !isEnabled
         if (isEnabled) {
             val jbPanel: JPanel? = panelMap[classParameter]

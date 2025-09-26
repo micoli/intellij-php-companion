@@ -69,6 +69,8 @@ class MarkdownSchemaGenerator {
             yamlContent
                 .split("\n".toRegex())
                 .filter { !it.contains("isEnabled:") }
+                .filter { !it.contains("disabled:") }
+                .filter { !it.contains("isDisabled:") }
                 .joinToString("\n")
 
         if (exampleRoot == null || exampleRoot.isEmpty()) {

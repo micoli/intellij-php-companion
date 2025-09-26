@@ -35,7 +35,7 @@ public abstract class AbstractAttributeService<T, C extends DisactivableConfigur
         if (this.configuration == null) {
             return null;
         }
-        if (!this.configuration.isEnabled()) {
+        if (this.configuration.isDisabled()) {
             return null;
         }
 

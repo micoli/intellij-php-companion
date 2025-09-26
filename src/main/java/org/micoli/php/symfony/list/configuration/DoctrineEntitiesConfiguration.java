@@ -5,8 +5,8 @@ import org.micoli.php.configuration.models.DisactivableConfiguration;
 
 public final class DoctrineEntitiesConfiguration implements DisactivableConfiguration {
     @Override
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isDisabled() {
+        return !enabled;
     }
 
     @Schema(description = "Enabler for panel of doctrine entities")

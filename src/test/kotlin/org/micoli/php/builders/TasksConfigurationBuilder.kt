@@ -20,7 +20,7 @@ class TasksConfigurationBuilder private constructor() {
         task: RunnableTaskConfiguration
     ): TasksConfigurationBuilder {
         taskConfiguration.tasks =
-            appendToArray<RunnableTaskConfiguration>(
+            appendToArray(
                 taskConfiguration.tasks, task, RunnableTaskConfiguration::class.java)
         return this
     }
@@ -32,7 +32,7 @@ class TasksConfigurationBuilder private constructor() {
 
     fun withAddedAbstractNode(node: AbstractNode): TasksConfigurationBuilder {
         taskConfiguration.tree =
-            appendToArray<AbstractNode>(taskConfiguration.tree, node, AbstractNode::class.java)
+            appendToArray(taskConfiguration.tree, node, AbstractNode::class.java)
         return this
     }
 
@@ -43,7 +43,7 @@ class TasksConfigurationBuilder private constructor() {
 
     fun withAddedWatcher(watcher: Watcher): TasksConfigurationBuilder {
         taskConfiguration.watchers =
-            appendToArray<Watcher>(taskConfiguration.watchers, watcher, Watcher::class.java)
+            appendToArray(taskConfiguration.watchers, watcher, Watcher::class.java)
         return this
     }
 
@@ -54,7 +54,7 @@ class TasksConfigurationBuilder private constructor() {
 
     fun withAddedTaskInToolbar(task: Task): TasksConfigurationBuilder {
         taskConfiguration.toolbar =
-            appendToArray<Task>(taskConfiguration.toolbar, task, Task::class.java)
+            appendToArray(taskConfiguration.toolbar, task, Task::class.java)
         return this
     }
 
