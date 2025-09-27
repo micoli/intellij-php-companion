@@ -65,7 +65,7 @@ class DoctrineEntitiesPanel(project: Project) :
                             ApplicationManager.getApplication().runReadAction {
                                 val doctrineEntitiesService =
                                     DoctrineEntityService.getInstance(project)
-                                val items = doctrineEntitiesService.getElements()
+                                val items = doctrineEntitiesService?.getElements()
                                 if (items != null) {
                                     for (item in items) {
                                         publish(item)

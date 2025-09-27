@@ -1,6 +1,8 @@
 package org.micoli.php.openAPI
 
 import com.intellij.psi.PsiElement
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.micoli.php.symfony.list.SearchableRecord
 
 @JvmRecord
@@ -12,7 +14,7 @@ data class OpenAPIPathElementDTO(
     val operationId: String,
     val element: PsiElement?
 ) : SearchableRecord {
-    override fun getSearchString(): List<String> {
-        return listOf(uri, method, description, operationId, rootPath)
+    override fun getSearchString(): ImmutableList<String> {
+        return persistentListOf(uri, method, description, operationId, rootPath)
     }
 }

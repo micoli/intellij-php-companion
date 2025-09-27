@@ -89,10 +89,10 @@ class InstanceGenerator {
         return null
     }
 
-    private fun getClassToInstantiate(clazz: Class<*>): Class<*> {
+    private fun <I> getClassToInstantiate(clazz: Class<I>): Class<out I> {
         val subtypes = clazz.getAnnotation(JsonSubTypes::class.java)
         if (subtypes != null && subtypes.value.isNotEmpty()) {
-            return subtypes.value[0].value.java
+            @Suppress("UNCHECKED_CAST") return subtypes.value[0].value.java as Class<out I>
         }
         return clazz
     }

@@ -93,13 +93,13 @@ class PhpCompanionStatusBarWidget(private val project: Project) :
                 override fun isSelected(e: AnActionEvent): Boolean {
                     return MessengerService.getInstance(project)
                         .configuration
-                        .useNativeGoToDeclaration
+                        ?.useNativeGoToDeclaration ?: false
                 }
 
                 override fun setSelected(e: AnActionEvent, state: Boolean) {
                     MessengerService.getInstance(project)
                         .configuration
-                        .toggleUseNativeGoToDeclaration()
+                        ?.toggleUseNativeGoToDeclaration()
                 }
             })
 

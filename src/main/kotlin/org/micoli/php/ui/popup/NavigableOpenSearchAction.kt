@@ -9,10 +9,11 @@ import com.intellij.usages.*
 import kotlin.Boolean
 import kotlin.arrayOf
 import kotlin.text.trimIndent
+import kotlinx.collections.immutable.ImmutableList
 
 class NavigableOpenSearchAction(
     private val project: Project,
-    private val navigables: MutableList<Navigatable?>?,
+    private val navigables: ImmutableList<Navigatable?>?,
     private val findWindowTitle: String?,
     private val messageClassName: String?,
 ) : NavigableListPopupItem {

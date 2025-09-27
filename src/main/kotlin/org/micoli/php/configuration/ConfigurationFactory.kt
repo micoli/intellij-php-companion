@@ -64,8 +64,7 @@ class ConfigurationFactory {
             return null
         }
         val objectMapper = ObjectMapper()
-        val propertiesHandler =
-            IgnoredPropertiesHandler(listOf(Configuration::class.java) as MutableList<Class<*>>)
+        val propertiesHandler = IgnoredPropertiesHandler(mutableListOf(Configuration::class.java))
         objectMapper.addHandler(propertiesHandler)
         var stringContent: String? = ""
         try {

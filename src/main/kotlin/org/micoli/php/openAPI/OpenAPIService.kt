@@ -3,7 +3,6 @@ package org.micoli.php.openAPI
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.lang.psi.elements.PhpAttribute
-import com.jetbrains.php.lang.psi.elements.PhpAttribute.PhpAttributeArgument
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.parser.OpenAPIV3Parser
@@ -11,50 +10,42 @@ import io.swagger.v3.parser.core.models.ParseOptions
 import io.swagger.v3.parser.exception.EncodingNotSupportedException
 import io.swagger.v3.parser.exception.ReadContentException
 import java.util.*
-import java.util.function.Function
 import java.util.stream.Collectors
 import java.util.stream.Stream
-import org.micoli.php.service.attributes.AttributeMapping
 import org.micoli.php.symfony.list.AbstractAttributeService
 import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration
 
 @Service(Service.Level.PROJECT)
-class OpenAPIService(project: Project?) :
-    AbstractAttributeService<OpenAPIPathElementDTO?, OpenAPIConfiguration?>(project) {
-    init {
-        mapping =
-            AttributeMapping(
-                object : LinkedHashMap<String, Function<PhpAttributeArgument, String>>() {
-                    init {
-                        put("uri") { attributeArgument: PhpAttributeArgument? ->
-                            getStringableValue(attributeArgument)
-                        }
-                        put(
-                            "description",
-                        ) { attributeArgument: PhpAttributeArgument? ->
-                            getStringableValue(attributeArgument)
-                        }
-                    }
-                })
-    }
+class OpenAPIService(project: Project) :
+    AbstractAttributeService<OpenAPIPathElementDTO, OpenAPIConfiguration>(project) {
+    //    private val mapping: AttributeMapping =
+    //            AttributeMapping(
+    //                object :
+    //                    LinkedHashMap<String, java.util.function.Function<PhpAttributeArgument,
+    // String>>() {
+    //                    init {
+    //                        put("uri") { getStringableValue(it) }
+    //                        put("description") { getStringableValue(it) }
+    //                    }
+    //                })
 
     override fun createElementDTO(
-        className: String?,
-        attribute: PhpAttribute?,
-        namespace: String?
+        className: String,
+        attribute: PhpAttribute,
+        namespace: String
     ): OpenAPIPathElementDTO? {
         return null
     }
 
-    override fun getElements(): MutableList<OpenAPIPathElementDTO>? {
+    override fun getElements(): MutableList<OpenAPIPathElementDTO?>? {
         if (this.configuration == null) {
             return null
         }
-        val elements: MutableList<OpenAPIPathElementDTO> = ArrayList()
+        val elements = ArrayList<OpenAPIPathElementDTO>()
         for (root in this.configuration!!.specificationRoots) {
             addElementsFromOpenAPIRoot(root, elements)
         }
-        return elements
+        return elements.toMutableList()
     }
 
     private fun addElementsFromOpenAPIRoot(
@@ -89,7 +80,7 @@ class OpenAPIService(project: Project?) :
         } catch (_: ReadContentException) {} catch (_: EncodingNotSupportedException) {}
     }
 
-    override fun getNamespaces(): Array<String?>? {
+    override fun getNamespaces(): Array<String>? {
         return null
     }
 

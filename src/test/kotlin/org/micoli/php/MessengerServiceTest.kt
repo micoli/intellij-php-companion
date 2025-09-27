@@ -22,7 +22,7 @@ class MessengerServiceTest : BasePlatformTestCase() {
         messengerService.loadConfiguration(symfonyMessengerConfiguration)
         val phpClass = PhpUtil.getPhpClassByFQN(project, "App\\Core\\Event\\ArticleCreatedEvent")
         assertNotNull(phpClass)
-        assertTrue(messengerService.isMessageClass(phpClass))
+        assertTrue(messengerService.isMessageClass(phpClass!!))
     }
 
     fun testItDoesNotDetectMessageBasedOnPatternIfPatternIsWrong() {
@@ -33,7 +33,7 @@ class MessengerServiceTest : BasePlatformTestCase() {
         messengerService.loadConfiguration(symfonyMessengerConfiguration)
         val phpClass = PhpUtil.getPhpClassByFQN(project, "App\\Core\\Event\\ArticleCreatedEvent")
         assertNotNull(phpClass)
-        assertFalse(messengerService.isMessageClass(phpClass))
+        assertFalse(messengerService.isMessageClass(phpClass!!))
     }
 
     fun testItDetectMessageBasedOnInterface() {
@@ -50,7 +50,7 @@ class MessengerServiceTest : BasePlatformTestCase() {
         messengerService.loadConfiguration(symfonyMessengerConfiguration)
         val phpClass = PhpUtil.getPhpClassByFQN(project, "App\\Core\\Event\\ArticleCreatedEvent")
         assertNotNull(phpClass)
-        assertTrue(messengerService.isMessageClass(phpClass))
+        assertTrue(messengerService.isMessageClass(phpClass!!))
     }
 
     fun testItCanFindHandlersByMessage() {

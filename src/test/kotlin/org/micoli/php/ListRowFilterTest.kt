@@ -7,6 +7,8 @@ import javax.swing.JTable
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableModel
 import javax.swing.table.TableRowSorter
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
@@ -22,7 +24,7 @@ class ListRowFilterTest(
 ) {
     @JvmRecord
     data class TestElementDTO(val uri: String, val name: String) : SearchableRecord {
-        override fun getSearchString(): List<String> = listOf(uri, name)
+        override fun getSearchString(): ImmutableList<String> = persistentListOf(uri, name)
     }
 
     @Test

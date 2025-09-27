@@ -4,8 +4,9 @@ import com.intellij.pom.Navigatable
 import java.util.function.Consumer
 import kotlin.Boolean
 import kotlin.text.trimIndent
+import kotlinx.collections.immutable.ImmutableList
 
-class NavigableOpenAllAction(private val navigables: MutableList<Navigatable?>) :
+class NavigableOpenAllAction(private val navigables: ImmutableList<Navigatable?>) :
     NavigableListPopupItem {
     override fun navigate(requestFocus: Boolean) {
         this.navigables.forEach(

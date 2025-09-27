@@ -13,6 +13,7 @@ import org.micoli.php.symfony.cliDumpParser.JsonToPhpArrayConverter
 
 @RunWith(Parameterized::class)
 class JsonToPhpArrayConverterTest(private val filename: String?) {
+
     @Test
     @Throws(IOException::class)
     fun testItConvertJsonToPhp() {

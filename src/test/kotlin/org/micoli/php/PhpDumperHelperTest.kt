@@ -17,7 +17,7 @@ class PhpDumperHelperTest(private val filename: String?) {
     @Test
     @Throws(IOException::class)
     fun testItParseDump() {
-        assertJsonEquals(readFile(".json"), PhpDumpHelper.parseCliDumperToJson(readFile(".txt")))
+        assertJsonEquals(readFile(".json"), PhpDumpHelper.parseCliDumperToJson(readFile(".txt"))!!)
     }
 
     @Throws(IOException::class)
