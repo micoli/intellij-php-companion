@@ -12,7 +12,7 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
     fun testItGeneratesMarkdownExportForSelectedFiles() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData", ".")
         val filesToSelect =
-            arrayOf<VirtualFile?>(
+            arrayOf<VirtualFile>(
                 myFixture.findFileInTempDir("root_file1.txt"),
                 myFixture.findFileInTempDir("path1"),
                 myFixture.findFileInTempDir("path1/path1_2"),
@@ -56,7 +56,7 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
     fun testItGeneratesMarkdownExportForSelectedFilesWithContextualNamespaces() {
         myFixture.copyDirectoryToProject("testData/src", ".")
         val filesToSelect =
-            arrayOf<VirtualFile?>(
+            arrayOf<VirtualFile>(
                 myFixture.findFileInTempDir("Core/Query/Article/Query.php"),
                 myFixture.findFileInTempDir("Core/Query/ArticleDetails"),
             )
@@ -95,7 +95,7 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
     fun testItGeneratesExportStringForSelectedFilesWithCustomTemplate() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData", ".")
         val filesToSelect =
-            arrayOf<VirtualFile?>(
+            arrayOf<VirtualFile>(
                 myFixture.findFileInTempDir("root_file1.txt"),
                 myFixture.findFileInTempDir("path1"),
                 myFixture.findFileInTempDir("path1/path1_2"),
@@ -130,7 +130,7 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
 
     fun testItCountTokens() {
         myFixture.copyDirectoryToProject("testMarkDownExporterData", ".")
-        val filesToSelect = arrayOf<VirtualFile?>(myFixture.findFileInTempDir("root_file1.txt"))
+        val filesToSelect = arrayOf<VirtualFile>(myFixture.findFileInTempDir("root_file1.txt"))
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
 
         exportSourceToMarkdownService.loadConfiguration(ExportSourceToMarkdownConfiguration())

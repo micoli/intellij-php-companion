@@ -30,19 +30,23 @@ class FileObserverToolbarButton(private val project: Project, observedFile: Obse
 
     private val taskNodeChangedEvents: TaskNodeChangedEvents
         get() =
-            TaskNodeChangedEvents {
-                taskIdParameter: String?,
-                status: FileObserver.Status?,
-                iconAndPrefix: IconAndPrefix? ->
-                if (taskIdParameter != this.taskId) {
-                    return@TaskNodeChangedEvents
-                }
-                SwingUtilities.invokeLater {
-                    LOGGER.warn("Received node changed event for " + taskId + "-" + status!!.name)
-                    val presentation = templatePresentation
-                    presentation.setText(iconAndPrefix!!.getPrefix() + label)
-                    presentation.icon = iconAndPrefix.icon
-                    PresentationFactory.updatePresentation(this)
+            object : TaskNodeChangedEvents {
+                override fun setNodeChangedEventsTopic(
+                    taskIdParameter: String?,
+                    status: FileObserver.Status?,
+                    iconAndPrefix: IconAndPrefix?
+                ) {
+                    if (taskIdParameter != taskId) {
+                        return
+                    }
+                    SwingUtilities.invokeLater {
+                        LOGGER.warn(
+                            "Received node changed event for " + taskId + "-" + status!!.name)
+                        val presentation = templatePresentation
+                        presentation.setText(iconAndPrefix!!.getPrefix() + label)
+                        presentation.icon = iconAndPrefix.icon
+                        PresentationFactory.updatePresentation(this@FileObserverToolbarButton)
+                    }
                 }
             }
 

@@ -6,7 +6,6 @@ import junit.framework.TestCase
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException
-import org.micoli.php.symfony.list.RouteElementDTO
 import org.micoli.php.symfony.list.RouteService
 
 class RouteListTest : BasePlatformTestCase() {
@@ -16,8 +15,7 @@ class RouteListTest : BasePlatformTestCase() {
         myFixture.copyDirectoryToProject("src", "/src")
         val routeListService = loadPluginConfiguration(testDataPath)
         val lists = routeListService.getElements()
-        val formattedList =
-            lists.stream().map(RouteElementDTO::uri).sorted().collect(Collectors.joining(","))
+        val formattedList = lists!!.map { it?.uri.toString() }.sorted().joinToString(",")
         val expectedList =
             ArrayList(
                     mutableListOf<String?>(

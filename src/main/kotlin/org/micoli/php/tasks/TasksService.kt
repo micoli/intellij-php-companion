@@ -120,7 +120,7 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
             return
         }
         project.messageBus
-            .syncPublisher<TaskNodeChangedEvents>(TaskNodeChangedEvents.NODE_CHANGED_EVENTS_TOPIC)
+            .syncPublisher(TaskNodeChangedEvents.NODE_CHANGED_EVENTS_TOPIC)
             .setNodeChangedEventsTopic(
                 fileObserverTask.taskId, fileObserverTask.status, fileObserverTask.iconAndPrefix)
     }

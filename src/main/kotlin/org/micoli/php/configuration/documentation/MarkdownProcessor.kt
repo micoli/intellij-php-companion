@@ -5,6 +5,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import org.micoli.php.configuration.documentation.sourceCode.SourceDocumentationGenerator
 
 class MarkdownProcessor {
     @Throws(IOException::class)
@@ -49,7 +50,7 @@ class MarkdownProcessor {
                     markdownSchemaGenerator.generateMarkdownProperties(Class.forName(className))
                 "Description" ->
                     markdownSchemaGenerator.generateMarkdownDescription(Class.forName(className))
-                "Source" -> JavaDocumentationGenerator.generateMarkdownDocumentation(className)
+                "Source" -> SourceDocumentationGenerator.generateMarkdownDocumentation(className)
                 else -> throw IllegalStateException("Unexpected value: $type")
             }
         } catch (e: ClassNotFoundException) {

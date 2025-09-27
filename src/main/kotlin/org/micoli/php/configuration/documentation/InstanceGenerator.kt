@@ -36,7 +36,7 @@ class InstanceGenerator {
                 }
             }
 
-            return instance as T?
+            @Suppress("UNCHECKED_CAST") return instance as T?
         } catch (e: IllegalAccessException) {
             throw RuntimeException(e)
         } catch (e: InvocationTargetException) {

@@ -3,7 +3,6 @@ package org.micoli.php
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.Arrays
@@ -12,6 +11,7 @@ import junit.framework.TestCase
 import org.micoli.php.configuration.documentation.InstanceGenerator
 import org.micoli.php.configuration.documentation.MarkdownProcessor
 import org.micoli.php.configuration.documentation.MarkdownSchemaGenerator
+import org.micoli.php.configuration.documentation.sourceCode.SourceDocumentationGenerator
 import org.micoli.php.configuration.models.Configuration
 
 class DocumentationGenerationTest : TestCase() {
@@ -180,7 +180,6 @@ class DocumentationGenerationTest : TestCase() {
         markdownSchemaGenerator.generateMarkdownProperties(Configuration::class.java)
     }
 
-    @Throws(IOException::class)
     fun testItVerifyReadmeMdIsUpToDate() {
         val processor = MarkdownProcessor()
         val readmeMdPath = "./README.md"
@@ -189,30 +188,37 @@ class DocumentationGenerationTest : TestCase() {
         assertEquals(trimLines(existingReadMeContent), trimLines(newContent))
     }
 
+    fun testItGenerateJavadocDocumentation() {
+        val newContent =
+            SourceDocumentationGenerator.generateMarkdownDocumentation("org.micoli.php.scripting")
+        assertTrue(newContent.contains("#### `Core`"))
+    }
+
     fun testItGeneratesSourceDocumentation() {
         val processor = MarkdownProcessor()
         val expected =
             """
-        <!-- generateDocumentationSource("src/test/resources/javaDocumentation","") -->
-        #### `Example`
-
-        known as `example` in scripting engine
-
-        - `void aMethod(String aParameter)`
-          Method description
-           - `aParameter`: the description of the parameter
-
-        - `void anotherMethod(String anotherParameter, int yetAnotherParameter)`
-
-        <!-- generateDocumentationEnd -->
-        """
+            <!-- generateDocumentationSource("org.micoli.php.examples.javaDocumentation","") -->
+            #### `Example`
+            
+            - **Example****
+            - **aMethod****
+               - `aParameter`: String
+            
+            - **anotherMethod****
+               - `anotherParameter`: String
+               - `yetAnotherParameter`: Int
+            
+            
+            <!-- generateDocumentationEnd -->
+            """
                 .trimIndent()
                 .trim()
 
         val result =
             processor.processContent(
                 """
-            <!-- generateDocumentationSource("src/test/resources/javaDocumentation","") -->
+            <!-- generateDocumentationSource("org.micoli.php.examples.javaDocumentation","") -->
             xxxxx
             <!-- generateDocumentationEnd -->
             """

@@ -8,6 +8,7 @@ import com.intellij.ui.tabs.JBTabs
 import com.intellij.ui.tabs.JBTabsFactory
 import javax.swing.JPanel
 import org.micoli.php.PhpCompanionProjectService
+import org.micoli.php.configuration.models.Configuration
 import org.micoli.php.configuration.models.DisactivableConfiguration
 import org.micoli.php.events.ConfigurationEvents
 import org.micoli.php.events.IndexingEvents
@@ -25,7 +26,7 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
     private val tabMap: MutableMap<Class<*>, com.intellij.ui.tabs.TabInfo> =
         java.util.HashMap<Class<*>, com.intellij.ui.tabs.TabInfo>()
     private val panelMap: MutableMap<Class<*>, JPanel> = java.util.HashMap<Class<*>, JPanel>()
-    private var configuration: org.micoli.php.configuration.models.Configuration? = null
+    private var configuration: Configuration? = null
     private val refresherList: MutableList<PanelRefresher?> = java.util.ArrayList<PanelRefresher?>()
 
     init {
@@ -58,21 +59,23 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
         mainPanel.add(tabs.component, java.awt.BorderLayout.CENTER)
         project.messageBus
             .connect()
-            .subscribe<ConfigurationEvents>(
+            .subscribe(
                 ConfigurationEvents.CONFIGURATION_UPDATED,
-                ConfigurationEvents {
-                    configuration: org.micoli.php.configuration.models.Configuration? ->
-                    this.configuration = configuration
-                    refreshTabs()
-                },
-            )
+                object : ConfigurationEvents {
+                    override fun configurationLoaded(loadedConfiguration: Configuration?) {
+                        configuration = loadedConfiguration
+                        refreshTabs()
+                    }
+                })
         project.messageBus
             .connect()
             .subscribe<IndexingEvents>(
                 IndexingEvents.INDEXING_EVENTS,
-                IndexingEvents { isIndexing: Boolean ->
-                    if (!isIndexing) {
-                        refreshTabs()
+                object : IndexingEvents {
+                    override fun indexingStatusChanged(isIndexing: Boolean) {
+                        if (!isIndexing) {
+                            refreshTabs()
+                        }
                     }
                 },
             )

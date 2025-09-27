@@ -708,44 +708,32 @@ codeStyleSynchronization:
 
 ### Scripting Classes
 
-<!-- generateDocumentationSource("src/main/java/org/micoli/php/scripting","%s") -->
-#### `UI`
+<!-- generateDocumentationSource("org.micoli.php.scripting","%s") -->
+#### `Core`
 
-known as `ui` in scripting engine
+- **runAction****
+   - `actionId`: String
 
-- `void alert(String message)`
-  Displays a closable popup
-   - `message`: the message to display.
-
-- `void alert(String message, int delayInMs)`
-  Displays a closable popup and automatically close it after a given delay
-   - `message`: the message to display.
-   - `delayInMs`: the delay in milliseconds before the popup is closed.
+- **runActionInEditor****
+   - `actionId`: String
 
 #### `FileSystem`
 
-known as `fs` in scripting engine
+- **clearPath****
+   - `path`: String
 
-- `void clearPath(String path)`
-  Removes a path and it's sub content. Path must be ignored by GIT.
-   - `path`: the relative filepath
+- **clearPath****
+   - `path`: String
+   - `mustBeGitIgnored`: Boolean
 
-- `void clearPath(String path, boolean mustBeGitIgnored)`
-  Removes a path and it's sub content.
-   - `path`: the relative filepath
-   - `mustBeGitIgnored`: if false, the path will be removed even if it's not ignored by GIT.
+#### `UI`
 
-#### `Core`
+- **alert****
+   - `message`: String
 
-known as `core` in scripting engine
-
-- `void runAction(String actionId)`
-  Runs a registered action.
-   - `actionId`: the ID of the action to run
-
-- `void runActionInEditor(String actionId)`
-  Activates the currently opened editor and runs a registered action.
-   - `actionId`: the ID of the action to run
+- **alert****
+   - `message`: String
+   - `delayInMs`: Int
 
 
 <!-- generateDocumentationEnd -->

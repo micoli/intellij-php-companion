@@ -52,11 +52,15 @@ class ActionTreePanel(project: Project) : JPanel(), Disposable {
             .connect()
             .subscribe<ConfigurationEvents>(
                 ConfigurationEvents.CONFIGURATION_UPDATED,
-                ConfigurationEvents { configuration: Configuration? ->
-                    SwingUtilities.invokeLater {
-                        this.loadButtonBar(project, configuration!!.tasksConfiguration)
-                        this.loadActionTree(configuration.tasksConfiguration)
-                        refresh()
+                object : ConfigurationEvents {
+                    override fun configurationLoaded(loadedConfiguration: Configuration?) {
+                        SwingUtilities.invokeLater {
+                            this@ActionTreePanel.loadButtonBar(
+                                project, loadedConfiguration!!.tasksConfiguration)
+                            this@ActionTreePanel.loadActionTree(
+                                loadedConfiguration.tasksConfiguration)
+                            refresh()
+                        }
                     }
                 },
             )

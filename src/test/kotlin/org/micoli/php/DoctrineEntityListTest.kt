@@ -6,7 +6,6 @@ import junit.framework.TestCase
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException
-import org.micoli.php.symfony.list.DoctrineEntityElementDTO
 import org.micoli.php.symfony.list.DoctrineEntityService
 
 class DoctrineEntityListTest : BasePlatformTestCase() {
@@ -16,12 +15,10 @@ class DoctrineEntityListTest : BasePlatformTestCase() {
         myFixture.copyDirectoryToProject("src", "/src")
         val doctrineEntityListService = loadPluginConfiguration(testDataPath)
         val lists = doctrineEntityListService.getElements()
-        val formattedList =
-            lists
-                .stream()
-                .map(DoctrineEntityElementDTO::name)
-                .sorted()
-                .collect(Collectors.joining(","))
+        if (lists == null) {
+            fail("list is empty")
+        }
+        val formattedList = lists!!.map { it?.name.toString() }.sorted().joinToString(",")
         val expectedList =
             ArrayList(mutableListOf<String?>("article__article", "article__feed"))
                 .stream()

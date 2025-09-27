@@ -129,6 +129,7 @@ object YamlAssertUtils {
         }
 
         if (obj1 is MutableMap<*, *> && obj2 is MutableMap<*, *>) {
+            @Suppress("UNCHECKED_CAST")
             compareMapsWithDiff(
                 obj1 as MutableMap<String?, Any?>,
                 obj2 as MutableMap<String?, Any?>,

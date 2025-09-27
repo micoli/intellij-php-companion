@@ -25,10 +25,12 @@ class PhpUnitConsoleFilterProvider : ConsoleDependentInputFilterProvider() {
     ): MutableList<InputFilter?> {
         project.messageBus
             .connect()
-            .subscribe<ConfigurationEvents>(
+            .subscribe(
                 ConfigurationEvents.CONFIGURATION_UPDATED,
-                ConfigurationEvents { configuration: Configuration? ->
-                    loadConfiguration(configuration!!.consoleCleaner)
+                object : ConfigurationEvents {
+                    override fun configurationLoaded(loadedConfiguration: Configuration?) {
+                        loadConfiguration(loadedConfiguration!!.consoleCleaner)
+                    }
                 })
         return mutableListOf(cleanup())
     }

@@ -247,7 +247,6 @@ object JsonToPhpArrayConverter {
         return indentString.repeat(max(0, level))
     }
 
-    // Utility method for one-line output (no formatting)
     fun convertJsonToPhpOneLine(jsonString: String?): String {
         val jsonElement = gson.fromJson(jsonString, JsonElement::class.java)
         return convertJsonElementToPhpOneLine(jsonElement)

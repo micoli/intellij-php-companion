@@ -38,15 +38,19 @@ class FileObserverNode(
 
     private val taskNodeChangedEvents: TaskNodeChangedEvents
         get() =
-            TaskNodeChangedEvents {
-                taskId: String?,
-                _: FileObserver.Status?,
-                iconAndPrefix: IconAndPrefix? ->
-                if (taskId != this.taskId) {
-                    return@TaskNodeChangedEvents
-                }
-                SwingUtilities.invokeLater {
-                    setIconAndLabel(iconAndPrefix!!.icon, iconAndPrefix.getPrefix() + initialLabel)
+            object : TaskNodeChangedEvents {
+                override fun setNodeChangedEventsTopic(
+                    taskIdParameter: String?,
+                    status: FileObserver.Status?,
+                    iconAndPrefix: IconAndPrefix?
+                ) {
+                    if (taskIdParameter != this@FileObserverNode.taskId) {
+                        return
+                    }
+                    SwingUtilities.invokeLater {
+                        setIconAndLabel(
+                            iconAndPrefix!!.icon, iconAndPrefix.getPrefix() + initialLabel)
+                    }
                 }
             }
 
