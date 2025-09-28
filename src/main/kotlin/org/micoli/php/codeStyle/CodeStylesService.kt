@@ -8,6 +8,8 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.NumberFormatException
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.micoli.php.codeStyle.configuration.CodeStyle
 import org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration
 import org.micoli.php.ui.Notification
@@ -35,10 +37,10 @@ class CodeStylesService(private val project: Project) {
         val instance = Notification.getInstance(project)
         if (!changes.isEmpty()) {
             CodeStyleSettingsManager.getInstance(project).notifyCodeStyleSettingsChanged()
-            instance.message("CodeStyle", getListMessage(changes))
+            instance.message("CodeStyle", getListMessage(changes.toImmutableList()))
         }
         if (!errors.isEmpty()) {
-            instance.error("CodeStyle", getListMessage(errors))
+            instance.error("CodeStyle", getListMessage(errors.toImmutableList()))
         }
     }
 
@@ -48,7 +50,7 @@ class CodeStylesService(private val project: Project) {
             return project.getService(CodeStylesService::class.java)
         }
 
-        private fun getListMessage(changes: MutableList<String>): String {
+        private fun getListMessage(changes: ImmutableList<String>): String {
             return "<html><ul><li>" + changes.joinToString("</li><li>") + "</li></ul></html>"
         }
 

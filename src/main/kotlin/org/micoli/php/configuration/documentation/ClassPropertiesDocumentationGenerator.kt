@@ -20,28 +20,28 @@ class ClassPropertiesDocumentationGenerator {
     private val visitedClasses: MutableSet<Class<*>> = HashSet()
     private val properties: MutableList<PropertyInfo> = ArrayList<PropertyInfo>()
 
-    fun getProperties(`object`: Any?, maxDepth: Int): MutableList<PropertyInfo> {
+    fun getProperties(clazz: Any?, maxDepth: Int): MutableList<PropertyInfo> {
         visitedClasses.clear()
-        traverseClass(`object`, "", maxDepth)
+        traverseClass(clazz, "", maxDepth)
         return properties
     }
 
-    private fun traverseClass(`object`: Any?, currentPath: String, maxDepth: Int) {
+    private fun traverseClass(clazz: Any?, currentPath: String, maxDepth: Int) {
         if (maxDepth == 0) {
             return
         }
-        if (`object` == null ||
-            visitedClasses.contains(`object`.javaClass) ||
-            isPrimitiveOrWrapper(`object`.javaClass) ||
-            `object`.javaClass == String::class.java ||
-            `object`.javaClass.getName().startsWith("java.")) {
+        if (clazz == null ||
+            visitedClasses.contains(clazz.javaClass) ||
+            isPrimitiveOrWrapper(clazz.javaClass) ||
+            clazz.javaClass == String::class.java ||
+            clazz.javaClass.getName().startsWith("java.")) {
             return
         }
 
-        visitedClasses.add(`object`.javaClass)
+        visitedClasses.add(clazz.javaClass)
 
         val fields: MutableSet<Field> = HashSet()
-        var currentClass: Class<*>? = `object`.javaClass
+        var currentClass: Class<*>? = clazz.javaClass
         // System.out.println(currentPath)
         while (currentClass != null) {
             fields.addAll(listOf(*currentClass.getDeclaredFields()))
@@ -56,7 +56,7 @@ class ClassPropertiesDocumentationGenerator {
             }
             val fieldValue: Any?
             try {
-                fieldValue = field.get(`object`)
+                fieldValue = field.get(clazz)
             } catch (e: IllegalAccessException) {
                 throw RuntimeException(e)
             }

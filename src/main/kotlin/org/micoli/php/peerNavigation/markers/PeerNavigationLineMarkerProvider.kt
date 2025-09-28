@@ -10,6 +10,8 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import java.awt.event.MouseEvent
 import javax.swing.Icon
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.micoli.php.peerNavigation.service.PeerNavigationService
 import org.micoli.php.service.intellij.psi.PsiElementUtil.findFirstLeafElement
 import org.micoli.php.service.intellij.psi.PsiElementsPopup.showLinksToElementsPopup
@@ -23,7 +25,7 @@ class PeerNavigationLineMarkerProvider : LineMarkerProvider {
     }
 
     override fun collectSlowLineMarkers(
-        elements: MutableList<out PsiElement?>,
+        elements: List<PsiElement?>,
         result: MutableCollection<in LineMarkerInfo<*>?>
     ) {
         if (elements.isEmpty()) {
@@ -62,7 +64,8 @@ class PeerNavigationLineMarkerProvider : LineMarkerProvider {
                     if (mouseEvent == null) {
                         return@LineMarkerInfo
                     }
-                    navigateToAssociatedElements(project, mouseEvent, targetElements)
+                    navigateToAssociatedElements(
+                        project, mouseEvent, targetElements.toImmutableList())
                 },
                 GutterIconRenderer.Alignment.CENTER,
                 { tooltip }))
@@ -71,7 +74,7 @@ class PeerNavigationLineMarkerProvider : LineMarkerProvider {
     private fun navigateToAssociatedElements(
         project: Project,
         mouseEvent: MouseEvent,
-        targetElements: MutableList<PsiElement?>
+        targetElements: ImmutableList<PsiElement?>
     ) {
         if (targetElements.isEmpty()) {
             getInstance(project).error("No peer found")

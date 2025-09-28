@@ -6,10 +6,12 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.*
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 class KDocumentationGenerator {
 
-    fun extractKDocs(sourcePath: String): MutableList<ClassInfo> {
+    fun extractKDocs(sourcePath: String): ImmutableList<ClassInfo> {
         return ClassGraph()
             .acceptPackages(sourcePath)
             .scan()
@@ -21,7 +23,7 @@ class KDocumentationGenerator {
             .sortedBy { it.name }
             .map { Class.forName(it.name).kotlin }
             .map { extractClassInfo(it) }
-            .toMutableList()
+            .toImmutableList()
     }
 
     fun extractClassInfo(kClass: KClass<*>): ClassInfo {

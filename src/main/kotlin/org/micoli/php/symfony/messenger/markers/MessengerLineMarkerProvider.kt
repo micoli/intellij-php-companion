@@ -167,11 +167,14 @@ class MessengerLineMarkerProvider : LineMarkerProvider {
                             .stream()
                             .filter { it != null }
                             .map { it as NavigableListPopupItem }
-                            .toList())
+                            .toList()
+                            .toImmutableList())
                     return@invokeLater
                 }
                 showNavigablePopup(
-                    mouseEvent, addActionsToItems(project, messageClassName, navigableItemList))
+                    mouseEvent,
+                    addActionsToItems(project, messageClassName, navigableItemList)
+                        .toImmutableList())
             }
         }
     }

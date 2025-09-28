@@ -51,7 +51,7 @@ class PhpCompanionProjectService(private val project: Project) :
                 .scheduleWithFixedDelay({ loadConfiguration(false) }, 0, 10, TimeUnit.SECONDS)
         val fileListener = FileListener<String>(this)
         fileListener.setPatterns(
-            Map.of<String, MutableList<PathMatcher>>(
+            Map.of(
                 "configFile",
                 listOf<PathMatcher>(
                         FileSystems.getDefault()
@@ -78,6 +78,7 @@ class PhpCompanionProjectService(private val project: Project) :
             .indexingStatusChanged(true)
     }
 
+    @Synchronized
     fun loadConfiguration(force: Boolean) {
         try {
             val loadedConfiguration =

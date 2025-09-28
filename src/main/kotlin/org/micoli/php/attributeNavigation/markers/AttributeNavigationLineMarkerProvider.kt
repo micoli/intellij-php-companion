@@ -20,6 +20,7 @@ import com.jetbrains.php.lang.psi.elements.PhpAttribute
 import java.awt.event.MouseEvent
 import java.time.Duration
 import javax.swing.Icon
+import kotlinx.collections.immutable.toImmutableList
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService
 import org.micoli.php.service.intellij.psi.PhpUtil.normalizeNonRootFQN
 import org.micoli.php.service.intellij.psi.PsiElementUtil
@@ -153,7 +154,7 @@ class AttributeNavigationLineMarkerProvider : LineMarkerProvider {
                         .map { it as NavigableListPopupItem }
                         .filter { it != null }
                         .toList()
-                        .toMutableList())
+                        .toImmutableList())
             }
         }
     }
@@ -184,9 +185,9 @@ class AttributeNavigationLineMarkerProvider : LineMarkerProvider {
         findModel.isProjectScope = true
         findModel.isRegularExpressions = true
         findModel.isWithSubdirectories = true
-        findModel.setFileFilter(null)
+        findModel.fileFilter = null
         findModel.stringToFind = searchText
-        findModel.setFileFilter(fileMask)
+        findModel.fileFilter = fileMask
 
         return findModel
     }

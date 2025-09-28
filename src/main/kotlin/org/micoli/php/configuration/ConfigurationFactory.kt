@@ -16,6 +16,9 @@ import kotlin.Boolean
 import kotlin.Exception
 import kotlin.IllegalStateException
 import kotlin.Throws
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import org.micoli.php.configuration.GsonTools.ConflictStrategy
 import org.micoli.php.configuration.GsonTools.JsonObjectExtensionConflictException
 import org.micoli.php.configuration.exceptions.JsonExceptionMapper
@@ -29,8 +32,8 @@ class ConfigurationFactory {
     var acceptableConfigurationFilesGlob: String = "glob:**/.php-companion{,.local}.{json,yaml}"
 
     @JvmField
-    val acceptableConfigurationFiles: MutableList<String> =
-        mutableListOf(
+    val acceptableConfigurationFiles: ImmutableList<String> =
+        persistentListOf(
             ".php-companion.json",
             ".php-companion.yaml",
             ".php-companion.local.json",
@@ -48,7 +51,11 @@ class ConfigurationFactory {
         force: Boolean,
     ): LoadedConfiguration? {
         val files =
-            acceptableConfigurationFiles.stream().filter { File(projectPath, it).exists() }.toList()
+            acceptableConfigurationFiles
+                .stream()
+                .filter { File(projectPath, it).exists() }
+                .toList()
+                .toImmutableList()
         if (files.isEmpty()) {
             throw NoConfigurationFileException(
                 "No .php-companion(.local).(json|yaml) configuration file(s) found.", 0L)
@@ -123,7 +130,7 @@ class ConfigurationFactory {
         ConfigurationException::class,
         IOException::class,
         JsonObjectExtensionConflictException::class)
-    private fun loadConfigurationFiles(projectPath: String?, files: MutableList<String>): String {
+    private fun loadConfigurationFiles(projectPath: String?, files: ImmutableList<String>): String {
         val mergedJson = JsonObject()
         for (file in files) {
             try {
@@ -161,7 +168,7 @@ class ConfigurationFactory {
 
     private fun getLatestFileTimestampUpdate(
         projectPath: String?,
-        files: MutableList<String>
+        files: ImmutableList<String>
     ): Long {
         var max = 0L
         for (file in files) {

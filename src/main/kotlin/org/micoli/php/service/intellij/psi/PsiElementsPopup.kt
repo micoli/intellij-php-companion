@@ -8,14 +8,15 @@ import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.intellij.ui.awt.RelativePoint
 import java.awt.event.MouseEvent
+import kotlinx.collections.immutable.ImmutableList
 
 object PsiElementsPopup {
     @JvmStatic
-    fun showLinksToElementsPopup(mouseEvent: MouseEvent, elements: MutableList<PsiElement?>) {
+    fun showLinksToElementsPopup(mouseEvent: MouseEvent, elements: ImmutableList<PsiElement?>) {
         showPopup(mouseEvent, elements)
     }
 
-    private fun showPopup(mouseEvent: MouseEvent, elements: MutableList<PsiElement?>) {
+    private fun showPopup(mouseEvent: MouseEvent, elements: ImmutableList<PsiElement?>) {
         JBPopupFactory.getInstance()
             .createListPopup(
                 object : BaseListPopupStep<PsiElement>("Navigate to Element", elements) {
