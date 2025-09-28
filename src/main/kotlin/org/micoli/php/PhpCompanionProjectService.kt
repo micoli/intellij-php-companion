@@ -31,6 +31,8 @@ import org.micoli.php.openAPI.OpenAPIService
 import org.micoli.php.peerNavigation.service.PeerNavigationService
 import org.micoli.php.service.filesystem.FileListener
 import org.micoli.php.service.filesystem.FileListener.VfsHandler
+import org.micoli.php.service.filesystem.WatchEvent
+import org.micoli.php.service.filesystem.Watchee
 import org.micoli.php.symfony.list.CommandService
 import org.micoli.php.symfony.list.DoctrineEntityService
 import org.micoli.php.symfony.list.RouteService
@@ -53,11 +55,13 @@ class PhpCompanionProjectService(private val project: Project) :
         fileListener.setPatterns(
             Map.of(
                 "configFile",
-                listOf<PathMatcher>(
-                        FileSystems.getDefault()
-                            .getPathMatcher(
-                                ConfigurationFactory().acceptableConfigurationFilesGlob))
-                    .toMutableList()))
+                Watchee(
+                    listOf<PathMatcher>(
+                            FileSystems.getDefault()
+                                .getPathMatcher(
+                                    ConfigurationFactory().acceptableConfigurationFilesGlob))
+                        .toMutableList(),
+                    WatchEvent.all())))
         this.messageBus = project.messageBus
         this.messageBus
             .connect()

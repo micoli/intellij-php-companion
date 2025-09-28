@@ -568,6 +568,7 @@ openAPIConfiguration:
 | tree[].tasks[]       | Array of child nodes contained in this folder. Can contain other folders (Path) or task references (Task)                                                                                     |
 | watchers[]           | File watchers configuration that automatically trigger tasks when specified files are modified                                                                                                |
 | watchers[].debounce  | Delay in milliseconds before task triggering after change detection. Prevents multiple executions during rapid successive modifications                                                       |
+| watchers[].events    | List all events triggering the watcher, by default, all events                                                                                                                                |
 | watchers[].notify    | Indicates if a notification should be displayed to the user upon triggering. False by default to avoid too frequent notifications                                                             |
 | watchers[].taskId    | Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration                                                                 |
 | watchers[].watches[] | Array of file patterns to watch. Supports wildcards and regular expressions to match file paths                                                                                               |
@@ -609,6 +610,8 @@ openAPIConfiguration:
 - **watchers[].debounce**
   - Delay in milliseconds before task triggering after change detection. Prevents multiple executions during rapid successive modifications
   - **Default Value**: ``` 1000 ```
+- **watchers[].events**
+  - List all events triggering the watcher, by default, all events
 - **watchers[].notify**
   - Indicates if a notification should be displayed to the user upon triggering. False by default to avoid too frequent notifications
   - **Default Value**: ``` false ```
@@ -673,6 +676,13 @@ tasksConfiguration:
     notify: false
     watches:
     - ''
+    events:
+    - CREATE
+    - CONTENT_CHANGED
+    - COPY
+    - DELETE
+    - MOVE
+    - PROPERTY_CHANGED
 ```
 <!-- generateDocumentationEnd -->
 

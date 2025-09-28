@@ -3,6 +3,7 @@ package org.micoli.php
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.io.IOException
@@ -11,6 +12,8 @@ import java.nio.file.PathMatcher
 import java.util.Map
 import junit.framework.TestCase
 import org.micoli.php.service.filesystem.FileListener
+import org.micoli.php.service.filesystem.WatchEvent
+import org.micoli.php.service.filesystem.Watchee
 
 class FileListenerTest : BasePlatformTestCase() {
     private var handledIds: MutableList<String> = ArrayList()
@@ -23,7 +26,7 @@ class FileListenerTest : BasePlatformTestCase() {
                     handledFiles.add(file)
                 }
             })
-    private var patterns: MutableMap<String, MutableList<PathMatcher>>? = null
+    private var patterns: MutableMap<String, Watchee>? = null
 
     override fun getTestDataPath(): String = "src/test/resources/testData"
 
@@ -35,10 +38,9 @@ class FileListenerTest : BasePlatformTestCase() {
 
     fun testSetPatternsEnablesListener() {
         initializeListenerAndTriggerFileEvent(
-            Map.of<String, MutableList<PathMatcher>>(
+            Map.of(
                 "php",
-                mutableListOf<PathMatcher>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+                Watchee(mutableListOf(createMatcher("glob:**/*.php")), WatchEvent.all()),
             ),
             object : ArrayList<VirtualFile>() {},
         )
@@ -49,10 +51,9 @@ class FileListenerTest : BasePlatformTestCase() {
 
     fun testResetDisablesListener() {
         initializeListenerAndTriggerFileEvent(
-            Map.of<String, MutableList<PathMatcher>>(
+            Map.of(
                 "php",
-                mutableListOf<PathMatcher>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+                Watchee(mutableListOf(createMatcher("glob:**/*.php")), WatchEvent.all()),
             ),
             object : ArrayList<VirtualFile>() {},
         )
@@ -81,12 +82,11 @@ class FileListenerTest : BasePlatformTestCase() {
         val testFile = myFixture.createFile("test.php", "<?php echo 'test'; ?>")
 
         initializeListenerAndTriggerFileEvent(
-            Map.of<String, MutableList<PathMatcher>>(
+            Map.of(
                 "php-files",
-                mutableListOf<PathMatcher>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+                Watchee(mutableListOf(createMatcher("glob:**/*.php")), WatchEvent.all()),
             ),
-            listOf(testFile) as MutableList<VirtualFile>,
+            listOf(testFile) as MutableList,
         )
 
         TestCase.assertEquals("One ID should have been processed", 1, handledIds.size)
@@ -96,15 +96,45 @@ class FileListenerTest : BasePlatformTestCase() {
         assertEquals("The correct file should have been processed", testFile, handledFiles[0])
     }
 
+    fun testFileEventHandlingWithMatchingPatternAndEvent() {
+        val testFile = myFixture.createFile("test.php", "<?php echo 'test'; ?>")
+
+        initializeListenerAndTriggerFileEvent(
+            Map.of(
+                "php-files",
+                Watchee(mutableListOf(createMatcher("glob:**/*.php")), setOf(WatchEvent.DELETE)),
+            ),
+            listOf(testFile) as MutableList,
+            isContentChangeEvent = false,
+        )
+
+        TestCase.assertEquals("One ID should have been processed", 1, handledIds.size)
+        TestCase.assertEquals(
+            "The correct ID should have been processed", "php-files", handledIds[0])
+        TestCase.assertEquals("One file should have been processed", 1, handledFiles.size)
+        assertEquals("The correct file should have been processed", testFile, handledFiles[0])
+
+        initializeListenerAndTriggerFileEvent(
+            Map.of(
+                "php-files",
+                Watchee(mutableListOf(createMatcher("glob:**/*.php")), setOf(WatchEvent.DELETE)),
+            ),
+            listOf(testFile) as MutableList,
+            isContentChangeEvent = true,
+        )
+
+        TestCase.assertEquals(0, handledIds.size)
+        TestCase.assertEquals(0, handledFiles.size)
+    }
+
     fun testFileEventHandlingWithNonMatchingPattern() {
         initializeListenerAndTriggerFileEvent(
-            Map.of<String, MutableList<PathMatcher>>(
+            Map.of(
                 "php-files",
-                mutableListOf<PathMatcher>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+                Watchee(mutableListOf(createMatcher("glob:**/*.php")), WatchEvent.all()),
             ),
             listOf<VirtualFile>(myFixture.createFile("test.js", "console.log('test');"))
-                as MutableList<VirtualFile>,
+                as MutableList,
         )
 
         assertTrue("No ID should have been processed", handledIds.isEmpty())
@@ -116,14 +146,13 @@ class FileListenerTest : BasePlatformTestCase() {
         val phpFile = myFixture.createFile("test.php", "<?php echo 'test'; ?>")
         val jsFile = myFixture.createFile("test.js", "console.log('test');")
         initializeListenerAndTriggerFileEvent(
-            Map.of<String, MutableList<PathMatcher>>(
+            Map.of(
                 "php-files",
-                mutableListOf<PathMatcher>(
-                    FileSystems.getDefault().getPathMatcher("glob:**/*.php")),
+                Watchee(mutableListOf(createMatcher("glob:**/*.php")), WatchEvent.all()),
                 "js-files",
-                mutableListOf<PathMatcher>(FileSystems.getDefault().getPathMatcher("glob:**/*.js")),
+                Watchee(mutableListOf(createMatcher("glob:**/*.js")), WatchEvent.all()),
             ),
-            listOf<VirtualFile>(phpFile, jsFile) as MutableList<VirtualFile>,
+            listOf<VirtualFile>(phpFile, jsFile) as MutableList,
         )
 
         TestCase.assertEquals("Two IDs should have been processed", 2, handledIds.size)
@@ -137,22 +166,21 @@ class FileListenerTest : BasePlatformTestCase() {
     @Throws(IOException::class)
     fun testDirectoryEventsAreIgnored() {
         initializeListenerAndTriggerFileEvent(
-            Map.of<String, MutableList<PathMatcher>>(
+            Map.of(
                 "all-files",
-                mutableListOf<PathMatcher>(FileSystems.getDefault().getPathMatcher("glob:**/*")),
+                Watchee(mutableListOf(createMatcher("glob:**/*")), WatchEvent.all()),
             ),
-            listOf<VirtualFile>(myFixture.tempDirFixture.findOrCreateDir("testDir"))
-                as MutableList<VirtualFile>,
+            listOf<VirtualFile>(myFixture.tempDirFixture.findOrCreateDir("testDir")) as MutableList,
         )
 
-        assertTrue("No ID should have been processed for a directory", handledIds.isEmpty())
-        assertTrue("No file should have been processed for a directory", handledFiles.isEmpty())
+        assertTrue("IDs should have been processed for a directory", !handledIds.isEmpty())
+        assertTrue("Files should have been processed for a directory", !handledFiles.isEmpty())
     }
 
     fun testNullFileEventIsIgnored() {
-        val patterns: MutableMap<String, MutableList<PathMatcher>> = HashMap()
-        val allMatcher = FileSystems.getDefault().getPathMatcher("glob:**/*")
-        patterns["all-files"] = mutableListOf(allMatcher)
+        val patterns: MutableMap<String, Watchee> = HashMap()
+        val allMatcher = createMatcher("glob:**/*")
+        patterns["all-files"] = Watchee(mutableListOf(allMatcher), WatchEvent.all())
         fileListener.setPatterns(patterns)
 
         val events =
@@ -188,19 +216,28 @@ class FileListenerTest : BasePlatformTestCase() {
     }
 
     private fun initializeListenerAndTriggerFileEvent(
-        patterns: MutableMap<String, MutableList<PathMatcher>>,
+        patterns: MutableMap<String, Watchee>,
         testFiles: MutableList<VirtualFile>,
+        isContentChangeEvent: Boolean = true,
     ) {
         this.patterns = patterns
         this.fileListener.setPatterns(patterns)
+        this.handledIds = ArrayList()
+        this.handledFiles = ArrayList()
 
         val events: MutableList<VFileEvent> =
             testFiles
                 .stream()
-                .map { testFile: VirtualFile -> VFileContentChangeEvent(null, testFile, 0L, 0L) }
+                .map { testFile: VirtualFile ->
+                    if (isContentChangeEvent) VFileContentChangeEvent(null, testFile, 0L, 0L)
+                    else VFileDeleteEvent(null, testFile)
+                }
                 .toList()
                 .toMutableList()
 
         this.fileListener.vfsListener.after(events)
     }
+
+    private fun createMatcher(syntaxAndPattern: String): PathMatcher =
+        FileSystems.getDefault().getPathMatcher(syntaxAndPattern)
 }

@@ -8,11 +8,9 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.util.containers.stream
 import io.ktor.util.reflect.instanceOf
 import java.nio.file.FileSystems
-import java.nio.file.PathMatcher
 import kotlin.Boolean
 import kotlin.IllegalStateException
 import kotlin.collections.HashMap
-import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.get
 import kotlinx.collections.immutable.ImmutableMap
@@ -22,6 +20,8 @@ import org.micoli.php.events.TaskNodeChangedEvents
 import org.micoli.php.service.DebouncedRunnables
 import org.micoli.php.service.filesystem.FileListener
 import org.micoli.php.service.filesystem.FileListener.VfsHandler
+import org.micoli.php.service.filesystem.WatchEvent
+import org.micoli.php.service.filesystem.Watchee
 import org.micoli.php.tasks.configuration.TasksConfiguration
 import org.micoli.php.tasks.configuration.Watcher
 import org.micoli.php.tasks.configuration.runnableTask.Builtin
@@ -67,7 +67,7 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
     }
 
     private fun initializeFileListener(tasksConfiguration: TasksConfiguration) {
-        val pathMatcherMap: MutableMap<TaskIdentifier, MutableList<PathMatcher>> = HashMap()
+        val pathMatcherMap: MutableMap<TaskIdentifier, Watchee> = HashMap()
         pathMatcherMap.putAll(getWatchedFilesFromWatcher(tasksConfiguration))
         pathMatcherMap.putAll(getWatchedFilesFromObservedFiles(tasksConfiguration))
         fileListener.setPatterns(pathMatcherMap)
@@ -170,31 +170,36 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
 
     private fun getWatchedFilesFromObservedFiles(
         tasksConfiguration: TasksConfiguration
-    ): ImmutableMap<TaskIdentifier, MutableList<PathMatcher>> {
+    ): ImmutableMap<TaskIdentifier, Watchee> {
         return tasksConfiguration.tasks
             .filter { it.isFullyInitialized() }
             .filter { it.instanceOf(ObservedFile::class) }
             .map { it as ObservedFile }
             .associate {
                 TaskIdentifier(it.id, it) to
-                    mutableListOf(FileSystems.getDefault().getPathMatcher("glob:${it.filePath}"))
+                    Watchee(
+                        mutableListOf(
+                            FileSystems.getDefault().getPathMatcher("glob:${it.filePath}")),
+                        WatchEvent.all())
             }
             .toImmutableMap()
     }
 
     private fun getWatchedFilesFromWatcher(
         tasksConfiguration: TasksConfiguration
-    ): ImmutableMap<TaskIdentifier, MutableList<PathMatcher>> {
+    ): ImmutableMap<TaskIdentifier, Watchee> {
 
         return tasksConfiguration.watchers
             .filter { it.instanceOf(Watcher::class) }
             .filter { it.taskId != null }
             .associate {
                 TaskIdentifier(it.taskId!!, it) to
-                    it.watches
-                        .stream()
-                        .map { subIt -> FileSystems.getDefault().getPathMatcher(subIt) }
-                        .toList()
+                    Watchee(
+                        it.watches
+                            .stream()
+                            .map { subIt -> FileSystems.getDefault().getPathMatcher(subIt) }
+                            .toList(),
+                        it.events)
             }
             .toImmutableMap()
     }
