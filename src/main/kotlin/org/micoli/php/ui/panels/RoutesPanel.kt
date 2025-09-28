@@ -23,36 +23,36 @@ import org.micoli.php.symfony.list.RouteService
 
 class RoutesPanel(project: Project) :
     AbstractListPanel<RouteElementDTO?>(project, "routes", COLUMN_NAMES) {
-    override fun getSorter(): TableRowSorter<DefaultTableModel>? {
+    override fun getSorter(): TableRowSorter<DefaultTableModel> {
         innerSorter = TableRowSorter<DefaultTableModel>(model)
-        innerSorter?.setSortKeys(
+        innerSorter.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.ASCENDING),
                 RowSorter.SortKey(1, SortOrder.ASCENDING),
             ))
-        innerSorter?.setComparator(
+        innerSorter.setComparator(
             0,
             Comparator { o1: RouteElementDTO?, o2: RouteElementDTO? ->
                 String.CASE_INSENSITIVE_ORDER.compare(o1!!.uri, o2!!.uri)
             },
         )
-        innerSorter?.setComparator(1, String.CASE_INSENSITIVE_ORDER)
-        innerSorter?.setComparator(2, Comparator { _: Any?, _: Any? -> 0 })
+        innerSorter.setComparator(1, String.CASE_INSENSITIVE_ORDER)
+        innerSorter.setComparator(2, Comparator { _: Any?, _: Any? -> 0 })
         return innerSorter
     }
 
     override fun configureTableColumns() {
-        table?.getColumnModel()?.getColumn(0)?.setMaxWidth(1600)
-        table?.getColumnModel()?.getColumn(1)?.setMaxWidth(90)
-        table?.getColumnModel()?.getColumn(2)?.setCellRenderer(ActionIconRenderer())
-        table?.getColumnModel()?.getColumn(2)?.setMinWidth(50)
-        table?.getColumnModel()?.getColumn(2)?.setMaxWidth(50)
-        val baseRowHeight = table?.getRowHeight()
-        table?.setRowHeight(baseRowHeight?.times(2) ?: 20)
+        table.getColumnModel()?.getColumn(0)?.setMaxWidth(1600)
+        table.getColumnModel()?.getColumn(1)?.setMaxWidth(90)
+        table.getColumnModel()?.getColumn(2)?.setCellRenderer(ActionIconRenderer())
+        table.getColumnModel()?.getColumn(2)?.setMinWidth(50)
+        table.getColumnModel()?.getColumn(2)?.setMaxWidth(50)
+        val baseRowHeight = table.getRowHeight()
+        table.setRowHeight(baseRowHeight.times(2))
         table
-            ?.getColumnModel()
-            ?.getColumn(0)
-            ?.setCellRenderer(
+            .getColumnModel()
+            .getColumn(0)
+            .setCellRenderer(
                 object : DefaultTableCellRenderer() {
                     private val jLabel = JLabel()
 
@@ -100,7 +100,7 @@ class RoutesPanel(project: Project) :
 
     override fun handleActionClick(row: Int) {
         ApplicationManager.getApplication().invokeLater {
-            val elementDTO = table?.getValueAt(row, getColumnCount() - 1) as RouteElementDTO
+            val elementDTO = table.getValueAt(row, getColumnCount() - 1) as RouteElementDTO
             (elementDTO.element as? Navigatable)?.navigate(true)
         }
     }
@@ -108,7 +108,7 @@ class RoutesPanel(project: Project) :
     override fun refresh() {
         synchronized(lock) {
             try {
-                table?.emptyText?.text = "Loading routes, please wait..."
+                table.emptyText.text = "Loading routes, please wait..."
                 clearItems()
 
                 val worker: SwingWorker<Void?, RouteElementDTO> =
@@ -116,11 +116,8 @@ class RoutesPanel(project: Project) :
                         override fun doInBackground(): Void? {
                             ApplicationManager.getApplication().runReadAction {
                                 val routeListService = RouteService.getInstance(project)
-                                val items = routeListService.getElements()
-                                if (items != null) {
-                                    for (item in items) {
-                                        publish(item)
-                                    }
+                                for (item in routeListService.getElements()) {
+                                    publish(item)
                                 }
                             }
                             return null
@@ -136,7 +133,7 @@ class RoutesPanel(project: Project) :
 
                         override fun done() {
                             SwingUtilities.invokeLater {
-                                table?.emptyText?.text = "Nothing to show"
+                                table.emptyText.text = "Nothing to show"
                                 model.fireTableDataChanged()
                             }
                         }
@@ -153,6 +150,6 @@ class RoutesPanel(project: Project) :
     }
 
     companion object {
-        private val COLUMN_NAMES = arrayOf<kotlin.String?>("URI", "Method", "Actions")
+        private val COLUMN_NAMES = arrayOf("URI", "Method", "Actions")
     }
 }

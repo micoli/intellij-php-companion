@@ -11,8 +11,8 @@ import org.micoli.php.service.DebouncedRunnable
 import org.micoli.php.service.DebouncedRunnables
 
 class DebouncedRunnablesTest {
-    private var debouncedRunnables: DebouncedRunnables? = null
-    private var counter: AtomicInteger? = null
+    private var debouncedRunnables: DebouncedRunnables = DebouncedRunnables()
+    private var counter: AtomicInteger = AtomicInteger(0)
 
     @Before
     fun setUp() {
@@ -22,7 +22,7 @@ class DebouncedRunnablesTest {
 
     @After
     fun tearDown() {
-        debouncedRunnables!!.reset()
+        debouncedRunnables.reset()
     }
 
     @Test
@@ -32,9 +32,9 @@ class DebouncedRunnablesTest {
         val latch = CountDownLatch(1)
 
         val runnable =
-            debouncedRunnables!!.run(
+            debouncedRunnables.run(
                 {
-                    counter!!.incrementAndGet()
+                    counter.incrementAndGet()
                     latch.countDown()
                 },
                 "testRunnable",
@@ -42,40 +42,39 @@ class DebouncedRunnablesTest {
             )
 
         Assertions.assertNotNull(runnable)
-        Assertions.assertEquals(0, counter!!.get())
+        Assertions.assertEquals(0, counter.get())
 
         Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertEquals(1, counter!!.get())
+        Assertions.assertEquals(1, counter.get())
     }
 
     @Test
     @Throws(InterruptedException::class)
     fun testRunReusesSameRunnableForSameName() {
-        val delay: Long = 600
         val latch = CountDownLatch(1)
         val callCounter = AtomicInteger(0)
 
-        val runnable1 = getSameNameRunnable(callCounter, latch, delay)
+        val runnable1 = getSameNameRunnable(callCounter, latch)
         for (_i in 0..9) {
-            getSameNameRunnable(callCounter, latch, delay)
+            getSameNameRunnable(callCounter, latch)
         }
         Thread.sleep(100)
-        val runnable2 = getSameNameRunnable(callCounter, latch, delay)
+        val runnable2 = getSameNameRunnable(callCounter, latch)
 
         Assertions.assertSame(runnable1, runnable2)
 
-        Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
+        Assertions.assertTrue(latch.await(600 + 200, TimeUnit.MILLISECONDS))
         Assertions.assertEquals(1, callCounter.get())
     }
 
     private fun getSameNameRunnable(
         callCounter: AtomicInteger,
         latch: CountDownLatch,
-        delay: Long,
+        delay: Long = 600,
     ): DebouncedRunnable? =
-        debouncedRunnables!!.run(
+        debouncedRunnables.run(
             {
-                counter!!.incrementAndGet()
+                counter.incrementAndGet()
                 callCounter.incrementAndGet()
                 latch.countDown()
             },
@@ -91,9 +90,9 @@ class DebouncedRunnablesTest {
         val callbackLatch = CountDownLatch(1)
         val callbackCounter = AtomicInteger(0)
 
-        debouncedRunnables!!.run(
+        debouncedRunnables.run(
             {
-                counter!!.incrementAndGet()
+                counter.incrementAndGet()
                 taskLatch.countDown()
             },
             "runnableWithCallback",
@@ -107,7 +106,7 @@ class DebouncedRunnablesTest {
         Assertions.assertTrue(taskLatch.await(delay + 200, TimeUnit.MILLISECONDS))
         Assertions.assertTrue(callbackLatch.await(100, TimeUnit.MILLISECONDS))
 
-        Assertions.assertEquals(1, counter!!.get())
+        Assertions.assertEquals(1, counter.get())
         Assertions.assertEquals(1, callbackCounter.get())
     }
 
@@ -121,7 +120,7 @@ class DebouncedRunnablesTest {
         val counter2 = AtomicInteger(0)
 
         val runnable1 =
-            debouncedRunnables!!.run(
+            debouncedRunnables.run(
                 {
                     counter1.incrementAndGet()
                     latch1.countDown()
@@ -131,7 +130,7 @@ class DebouncedRunnablesTest {
             )
 
         val runnable2 =
-            debouncedRunnables!!.run(
+            debouncedRunnables.run(
                 {
                     counter2.incrementAndGet()
                     latch2.countDown()
@@ -154,13 +153,13 @@ class DebouncedRunnablesTest {
     fun testReset() {
         val delay: Long = 400
 
-        debouncedRunnables!!.run({ counter!!.incrementAndGet() }, "runnable1", delay)
-        debouncedRunnables!!.run({ counter!!.incrementAndGet() }, "runnable2", delay)
+        debouncedRunnables.run({ counter.incrementAndGet() }, "runnable1", delay)
+        debouncedRunnables.run({ counter.incrementAndGet() }, "runnable2", delay)
 
-        debouncedRunnables!!.reset()
+        debouncedRunnables.reset()
 
         Thread.sleep(delay + 1700)
 
-        Assertions.assertEquals(0, counter!!.get())
+        Assertions.assertEquals(0, counter.get())
     }
 }

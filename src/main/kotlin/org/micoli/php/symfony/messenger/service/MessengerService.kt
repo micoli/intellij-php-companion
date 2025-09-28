@@ -16,7 +16,6 @@ import com.jetbrains.php.lang.psi.elements.*
 import java.util.*
 import java.util.function.Consumer
 import java.util.regex.Pattern
-import java.util.stream.Collectors
 import org.micoli.php.service.intellij.psi.PhpUtil.getPhpClassByFQN
 import org.micoli.php.service.intellij.psi.PhpUtil.hasAttribute
 import org.micoli.php.service.intellij.psi.PhpUtil.implementsInterfaces
@@ -25,7 +24,8 @@ import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfigurat
 
 @Service(Service.Level.PROJECT)
 class MessengerService(private val project: Project) {
-    var configuration: SymfonyMessengerConfiguration? = SymfonyMessengerConfiguration()
+    var enabled: Boolean = false
+    var configuration: SymfonyMessengerConfiguration = SymfonyMessengerConfiguration()
     private var compiledMessageClassNamePatterns: Pattern? = null
 
     /**
@@ -61,7 +61,10 @@ class MessengerService(private val project: Project) {
     }
 
     fun getInvokableMethod(handlerClass: PhpClass): Method? {
-        for (methodName in this.configuration!!.handlerMethods) {
+        if (!enabled) {
+            return null
+        }
+        for (methodName in configuration.handlerMethods) {
             val invokeMethod = handlerClass.findOwnMethodByName(methodName)
             if (invokeMethod != null) {
                 return invokeMethod
@@ -92,7 +95,7 @@ class MessengerService(private val project: Project) {
 
     fun findDispatchCallsForMessageAsync(
         messageClassName: String,
-        callback: Consumer<MutableCollection<MethodReference?>?>
+        callback: Consumer<MutableCollection<MethodReference>>
     ) {
         ProgressManager.getInstance()
             .run(
@@ -104,13 +107,16 @@ class MessengerService(private val project: Project) {
                 })
     }
 
-    fun findDispatchCallsForMessage(messageClassName: String): MutableCollection<MethodReference?> {
-        val dispatchCalls: MutableList<MethodReference?> = ArrayList<MethodReference?>()
+    fun findDispatchCallsForMessage(messageClassName: String): MutableCollection<MethodReference> {
+        val dispatchCalls: MutableList<MethodReference> = ArrayList<MethodReference>()
+        if (!enabled) {
+            return dispatchCalls
+        }
 
         val searchHelper = PsiSearchHelper.getInstance(project)
         val scope = GlobalSearchScope.projectScope(project)
 
-        for (methodName in this.configuration!!.dispatchMethods) {
+        for (methodName in configuration.dispatchMethods) {
             searchHelper.processElementsWithWord(
                 { element: PsiElement?, _: Int ->
                     val methodRef =
@@ -131,20 +137,22 @@ class MessengerService(private val project: Project) {
                 false)
         }
 
-        return dispatchCalls.stream().distinct().collect(Collectors.toList())
+        return dispatchCalls.stream().distinct().toList()
     }
 
     fun findHandlersByMessageName(messageClassName: String): MutableCollection<Method?> {
         val phpIndex = PhpIndex.getInstance(project)
 
         val handlers: MutableSet<Method?> = HashSet<Method?>()
+        if (!enabled) {
+            return handlers
+        }
 
         // Method 1: Find by interface implementation
         val interfaceHandlers: MutableCollection<PhpClass> = LinkedList<PhpClass>()
-        for (interfaceFQN in this.configuration!!.messageHandlerInterfaces) {
-            PhpIndex.getInstance(project).processAllSubclasses(interfaceFQN) { phpClass: PhpClass?
-                ->
-                interfaceHandlers.add(phpClass!!)
+        for (interfaceFQN in configuration.messageHandlerInterfaces) {
+            PhpIndex.getInstance(project).processAllSubclasses(interfaceFQN) {
+                interfaceHandlers.add(it)
                 true
             }
         }
@@ -157,7 +165,7 @@ class MessengerService(private val project: Project) {
         // Method 2: Scan all classes for __invoke method with right parameter
         // (This is expensive, so we might want to cache results)
         val allClasses =
-            phpIndex.getAllClassFqns(PlainPrefixMatcher(this.configuration!!.projectRootNamespace))
+            phpIndex.getAllClassFqns(PlainPrefixMatcher(this.configuration.projectRootNamespace))
         for (className in allClasses) {
             for (phpClass in phpIndex.getClassesByFQN(normalizeRootFQN(className))) {
                 if (handlesMessageType(phpClass, messageClassName)) {
@@ -240,39 +248,55 @@ class MessengerService(private val project: Project) {
     }
 
     fun implementsMessageHandlerInterfaces(phpClass: PhpClass): Boolean {
-        return implementsInterfaces(phpClass, this.configuration!!.messageHandlerInterfaces)
+        if (!enabled) {
+            return false
+        }
+
+        return implementsInterfaces(phpClass, configuration.messageHandlerInterfaces)
     }
 
     fun implementsMessageInterfaces(phpClass: PhpClass): Boolean {
-        return implementsInterfaces(phpClass, this.configuration!!.messageInterfaces)
+        if (!enabled) {
+            return false
+        }
+        return implementsInterfaces(phpClass, configuration.messageInterfaces)
     }
 
     fun hasHandlerAttribute(phpClass: PhpClass): Boolean {
-        return hasAttribute(phpClass, this.configuration!!.asMessageHandlerAttribute)
+        if (!enabled) {
+            return false
+        }
+        return hasAttribute(phpClass, configuration.asMessageHandlerAttribute)
     }
 
     fun isDispatchMethod(methodName: String?): Boolean {
-        return listOf(*this.configuration!!.dispatchMethods).contains(methodName)
+        if (!enabled) {
+            return false
+        }
+        return listOf(*configuration.dispatchMethods).contains(methodName)
     }
 
     fun isHandlerMethod(methodName: String?): Boolean {
-        return listOf(*this.configuration!!.handlerMethods).contains(methodName)
+        if (!enabled) {
+            return false
+        }
+        return listOf(*configuration.handlerMethods).contains(methodName)
     }
 
     fun matchMessagePattern(className: String): Boolean {
-        if (this.compiledMessageClassNamePatterns == null) {
-            return false
-        }
-        return this.compiledMessageClassNamePatterns!!.matcher(className).matches()
+        val compiledMessageClassNamePatterns = this.compiledMessageClassNamePatterns ?: return false
+        return compiledMessageClassNamePatterns.matcher(className).matches()
     }
 
-    fun loadConfiguration(symfonyMessenger: SymfonyMessengerConfiguration?) {
-        if (symfonyMessenger == null) {
+    fun loadConfiguration(symfonyMessengerConfiguration: SymfonyMessengerConfiguration?) {
+        if (symfonyMessengerConfiguration == null) {
+            enabled = false
             return
         }
-        this.configuration = symfonyMessenger
+        enabled = true
+        configuration = symfonyMessengerConfiguration
         this.compiledMessageClassNamePatterns =
-            Pattern.compile(configuration!!.messageClassNamePatterns)
+            Pattern.compile(configuration.messageClassNamePatterns)
     }
 
     fun getHandledMessages(handlerClass: PhpClass): MutableSet<String?> {

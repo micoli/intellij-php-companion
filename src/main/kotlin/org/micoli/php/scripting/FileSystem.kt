@@ -51,11 +51,9 @@ class FileSystem(private val project: Project) : ScriptFileSystem {
                 return
             }
 
-            if (virtualBaseDir.canonicalPath == null) {
-                return
-            }
-
-            if (!virtualPath.canonicalPath!!.startsWith(virtualBaseDir.canonicalPath!!)) {
+            val virtualDirCanonical = virtualBaseDir.canonicalPath ?: return
+            val virtualPathCanonical = virtualPath.canonicalPath
+            if (!virtualPathCanonical!!.startsWith(virtualDirCanonical)) {
                 return
             }
 
@@ -72,9 +70,9 @@ class FileSystem(private val project: Project) : ScriptFileSystem {
                 this.localFileSystem.refreshAndFindFileByIoFile(File(parentPath))
             }
         } catch (e: ScriptingError) {
-            getInstance(project).error(e.message!!)
+            getInstance(project).error(e.localizedMessage)
         } catch (e: Exception) {
-            LOG.warn("Error while cleaning path: " + path + " " + e.message)
+            LOG.warn("Error while cleaning path: " + path + " " + e.localizedMessage)
         }
     }
 

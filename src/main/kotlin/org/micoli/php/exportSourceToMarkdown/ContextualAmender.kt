@@ -35,7 +35,7 @@ class ContextualAmender(
         processedFiles: MutableList<VirtualFile>
     ): MutableList<VirtualFile> {
         val filesInContext: MutableList<VirtualFile> = ArrayList(processedFiles)
-        if (configuration.contextualNamespaces == null) {
+        if (configuration.contextualNamespaces.isEmpty()) {
             return filesInContext
         }
         val additionalFiles: MutableList<VirtualFile> = ArrayList()
@@ -64,8 +64,8 @@ class ContextualAmender(
     }
 
     private fun matchContextualNamespace(fqnImport: String): Boolean {
-        for (contextualNamespace in configuration.contextualNamespaces!!) {
-            if (fqnImport.startsWith(normalizeRootFQN(contextualNamespace!!))) {
+        for (contextualNamespace in configuration.contextualNamespaces) {
+            if (fqnImport.startsWith(normalizeRootFQN(contextualNamespace))) {
                 return true
             }
         }

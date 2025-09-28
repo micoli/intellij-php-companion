@@ -59,14 +59,14 @@ class CodeStylesService(private val project: Project) {
             errors: MutableList<String>
         ) {
             try {
-                if (codeStyle.styleAttribute == null || codeStyle.value == null) {
+                if (!codeStyle.isFullyInitialized()) {
                     return
                 }
-                val field = CommonCodeStyleSettings::class.java.getField(codeStyle.styleAttribute!!)
+                val field = CommonCodeStyleSettings::class.java.getField(codeStyle.styleAttribute)
                 val fieldType = field.type
                 if (fieldType == Boolean::class.javaPrimitiveType ||
                     fieldType == Boolean::class.java) {
-                    val boolValue = codeStyle.value!!.toBoolean()
+                    val boolValue = codeStyle.value.toBoolean()
                     if (field.getBoolean(phpSettings) != boolValue) {
                         changes.add(
                             String.format(
@@ -77,7 +77,7 @@ class CodeStylesService(private val project: Project) {
                     }
                 } else if (fieldType == Int::class.javaPrimitiveType ||
                     fieldType == Int::class.java) {
-                    val intValue = codeStyle.value!!.toInt()
+                    val intValue = codeStyle.value.toInt()
                     if (field.getInt(phpSettings) != intValue) {
                         changes.add("${codeStyle.styleAttribute}: $intValue")
                         field.setInt(phpSettings, intValue)

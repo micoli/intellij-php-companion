@@ -9,7 +9,6 @@ import com.intellij.util.containers.stream
 import io.ktor.util.reflect.instanceOf
 import java.nio.file.FileSystems
 import java.nio.file.PathMatcher
-import java.util.function.Function
 import kotlin.Boolean
 import kotlin.IllegalStateException
 import kotlin.collections.HashMap
@@ -134,7 +133,7 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
         val actionManager = ActionManager.getInstance()
 
         actionManager.getActionIdList("phpcompanion.tasks.").forEach {
-            actionManager.unregisterAction(it!!)
+            actionManager.unregisterAction(it)
         }
 
         if (runnableActions.isEmpty()) {
@@ -152,9 +151,9 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
     private fun initializeRunnableActions(tasksConfiguration: TasksConfiguration) {
         runnableActions =
             tasksConfiguration.tasks
-                .filter { !it.id.isNullOrEmpty() }
+                .filter { it.isFullyInitialized() }
                 .associate {
-                    it.id!! to
+                    it.id to
                         when (it) {
                             is ObservedFile -> FileObserverTask(project, it)
                             is Builtin -> RunnableTask(project, it)
@@ -173,11 +172,11 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
         tasksConfiguration: TasksConfiguration
     ): ImmutableMap<TaskIdentifier, MutableList<PathMatcher>> {
         return tasksConfiguration.tasks
+            .filter { it.isFullyInitialized() }
             .filter { it.instanceOf(ObservedFile::class) }
             .map { it as ObservedFile }
-            .filter { it.id != null }
             .associate {
-                TaskIdentifier(it.id!!, it) to
+                TaskIdentifier(it.id, it) to
                     mutableListOf(FileSystems.getDefault().getPathMatcher("glob:${it.filePath}"))
             }
             .toImmutableMap()
@@ -194,10 +193,7 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
                 TaskIdentifier(it.taskId!!, it) to
                     it.watches
                         .stream()
-                        .map(
-                            Function { syntaxAndPattern: String ->
-                                FileSystems.getDefault().getPathMatcher(syntaxAndPattern)
-                            })
+                        .map { subIt -> FileSystems.getDefault().getPathMatcher(subIt) }
                         .toList()
             }
             .toImmutableMap()

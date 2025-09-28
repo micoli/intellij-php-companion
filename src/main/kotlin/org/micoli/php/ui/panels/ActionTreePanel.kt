@@ -53,10 +53,10 @@ class ActionTreePanel(project: Project) : JPanel(), Disposable {
             .subscribe<ConfigurationEvents>(
                 ConfigurationEvents.CONFIGURATION_UPDATED,
                 object : ConfigurationEvents {
-                    override fun configurationLoaded(loadedConfiguration: Configuration?) {
+                    override fun configurationLoaded(loadedConfiguration: Configuration) {
                         SwingUtilities.invokeLater {
                             this@ActionTreePanel.loadButtonBar(
-                                project, loadedConfiguration!!.tasksConfiguration)
+                                project, loadedConfiguration.tasksConfiguration)
                             this@ActionTreePanel.loadActionTree(
                                 loadedConfiguration.tasksConfiguration)
                             refresh()

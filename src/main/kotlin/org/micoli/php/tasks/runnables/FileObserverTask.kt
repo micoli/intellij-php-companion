@@ -9,9 +9,9 @@ class FileObserverTask(project: Project, observedFile: ObservedFile) :
     RunnableTask(project, observedFile) {
     private val fileObserver: FileObserver = FileObserver(project, observedFile)
     private val postToggle: RunnableTask?
-    val taskId: String = observedFile.id!!
+    val taskId: String = observedFile.id
+    var status: FileObserver.Status = FileObserver.Status.Unknown
 
-    var status: FileObserver.Status?
     private var firstCheck = true
 
     init {

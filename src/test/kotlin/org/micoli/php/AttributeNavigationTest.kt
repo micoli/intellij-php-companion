@@ -1,6 +1,5 @@
 package org.micoli.php
 
-import com.intellij.codeInsight.daemon.GutterMark
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration
@@ -29,7 +28,7 @@ class AttributeNavigationTest : BasePlatformTestCase() {
         val specificMarkers =
             lineMarkers
                 .stream()
-                .filter { it: GutterMark? ->
+                .filter {
                     val tooltipText = it?.tooltipText ?: return@filter false
                     tooltipText.contains("Search for [")
                 }

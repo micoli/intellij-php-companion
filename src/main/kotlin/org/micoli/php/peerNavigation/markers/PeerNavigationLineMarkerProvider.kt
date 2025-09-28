@@ -59,7 +59,10 @@ class PeerNavigationLineMarkerProvider : LineMarkerProvider {
                 navigateIcon,
                 { tooltip },
                 { mouseEvent: MouseEvent?, _: PsiElement? ->
-                    navigateToAssociatedElements(project, mouseEvent!!, targetElements)
+                    if (mouseEvent == null) {
+                        return@LineMarkerInfo
+                    }
+                    navigateToAssociatedElements(project, mouseEvent, targetElements)
                 },
                 GutterIconRenderer.Alignment.CENTER,
                 { tooltip }))

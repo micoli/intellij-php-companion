@@ -18,19 +18,17 @@ abstract class AbstractAttributeService<T, C : DisactivableConfiguration> {
         this.project = project
     }
 
-    open fun getElements(): MutableList<T?>? {
-        if (this.configuration == null) {
-            return null
-        }
-        if (this.configuration!!.isDisabled()) {
-            return null
+    open fun getElements(): MutableList<T> {
+        val elements = ArrayList<T>()
+        val currentConfiguration = this.configuration ?: return elements
+        if (currentConfiguration.isDisabled()) {
+            return elements
         }
 
         val phpIndex = PhpIndex.getInstance(project)
-        val elements = ArrayList<T?>()
         val attributeFQCN = PhpUtil.normalizeRootFQN(this.getAttributeFQCN()!!)
 
-        for (namespace in this.getNamespaces()!!) {
+        for (namespace in this.getNamespaces()) {
             val allClasses = phpIndex.getAllClassFqns(PlainPrefixMatcher(namespace))
             for (className in allClasses) {
                 val normalizeNonRootFQN = normalizeNonRootFQN(className)
@@ -92,7 +90,7 @@ abstract class AbstractAttributeService<T, C : DisactivableConfiguration> {
         namespace: String
     ): T?
 
-    abstract fun getNamespaces(): Array<String>?
+    abstract fun getNamespaces(): Array<String>
 
     abstract fun getAttributeFQCN(): String?
 

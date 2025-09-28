@@ -1,6 +1,5 @@
 package org.micoli.php
 
-import com.intellij.codeInsight.daemon.GutterMark
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.micoli.php.configuration.ConfigurationException
@@ -40,11 +39,8 @@ class PeerNavigationServiceTest : BasePlatformTestCase() {
         val specificMarkers =
             lineMarkers
                 .stream()
-                .filter { it: GutterMark? ->
-                    val tooltipText = it!!.tooltipText
-                    if (tooltipText == null) {
-                        return@filter false
-                    }
+                .filter {
+                    val tooltipText = it!!.tooltipText ?: return@filter false
                     tooltipText.contains("Search for peer of [")
                 }
                 .toList()

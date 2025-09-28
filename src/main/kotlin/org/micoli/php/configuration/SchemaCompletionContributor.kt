@@ -35,7 +35,7 @@ class SchemaCompletionContributor : CompletionContributor() {
                     }
 
                     for (action in
-                        autocompleteValues[context.get(GENERATOR_CLASS) as Class<*>?]!!) {
+                        autocompleteValues[context.get(GENERATOR_CLASS) as Class<*>?] ?: return) {
                         result.addElement(
                             LookupElementBuilder.create(action)
                                 .withPresentableText(action)
@@ -61,9 +61,9 @@ class SchemaCompletionContributor : CompletionContributor() {
                         is JsonStringLiteral -> {
                             val property = parent.parent
                             if (property is JsonProperty) {
-                                if (acceptablePropertyName[property.name] != null) {
-                                    context.put(
-                                        GENERATOR_CLASS, acceptablePropertyName[property.name]!!)
+                                val klass = acceptablePropertyName[property.name]
+                                if (klass != null) {
+                                    context.put(GENERATOR_CLASS, klass)
                                     return true
                                 }
                             }

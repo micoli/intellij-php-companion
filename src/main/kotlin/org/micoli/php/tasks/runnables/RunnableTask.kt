@@ -27,6 +27,7 @@ import org.micoli.php.tasks.configuration.runnableTask.Builtin
 import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 import org.micoli.php.tasks.configuration.runnableTask.Script
 import org.micoli.php.tasks.configuration.runnableTask.Shell
+import org.micoli.php.tasks.configuration.runnableTask.TaskWithIcon
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleBuiltin
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleScript
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleShell
@@ -62,9 +63,13 @@ open class RunnableTask(
                 }
             val presentation: Presentation = action.templatePresentation
             presentation.setText(this.configuration.id, false)
-            val icon = this.configuration.icon
-            if (icon != null && icon != "") {
-                presentation.icon = IconLoader.getIcon(icon, PhpCompanionIcon.Companion::class.java)
+
+            if (this.configuration is TaskWithIcon) {
+                val icon = this.configuration.icon
+                if (icon != "") {
+                    presentation.icon =
+                        IconLoader.getIcon(icon, PhpCompanionIcon.Companion::class.java)
+                }
             }
             presentation.description =
                 "Run task: " +

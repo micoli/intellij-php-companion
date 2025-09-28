@@ -561,6 +561,8 @@ openAPIConfiguration:
 | tasks[].id           | Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration                                                                           |
 | tasks[].label        | Label displayed to user in the interface. User-friendly name describing the task function                                                                                                     |
 | toolbar[]            | Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId                                                                        |
+| toolbar[].label      | If set, it will overide task label in tree                                                                                                                                                    |
+| toolbar[].taskId     | Identifier of the referenced task. Must match the ID of an existing task in the TasksConfiguration tasks array                                                                                |
 | tree[]               | Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes) |
 | tree[].label         | Label displayed for this folder in the hierarchical tree. User-friendly name for organizing tasks into logical groups                                                                         |
 | tree[].tasks[]       | Array of child nodes contained in this folder. Can contain other folders (Path) or task references (Task)                                                                                     |
@@ -590,6 +592,12 @@ openAPIConfiguration:
   - **Example**: ``` First task ```
 - **toolbar[]**
   - Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId
+- **toolbar[].label**
+  - If set, it will overide task label in tree
+  - **Example**: ``` aLabel ```
+- **toolbar[].taskId**
+  - Identifier of the referenced task. Must match the ID of an existing task in the TasksConfiguration tasks array
+  - **Example**: ``` aTaskId ```
 - **tree[]**
   - Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes)
 - **tree[].label**
@@ -617,25 +625,24 @@ tasksConfiguration:
   enabled: false
   tasks:
   - type: builtin
-    id: null
+    id: aTaskId
     label: null
     actionId: $Copy
     icon: debugger/threadRunning.svg
   - type: shell
-    id: null
+    id: aTaskId
     label: null
     command: make clear-cache
     cwd: ''
     icon: debugger/threadRunning.svg
   - type: script
-    id: null
+    id: aTaskId
     label: null
     source: ''
     extension: groovy
     icon: debugger/threadRunning.svg
   - type: observedFile
-    icon: ''
-    id: null
+    id: aTaskId
     label: null
     commentPrefix: '#'
     filePath: ''
@@ -645,20 +652,20 @@ tasksConfiguration:
     unknownIcon: expui/fileTypes/unknown.svg
     postToggle:
       type: builtin
-      id: null
+      id: aTaskId
       label: null
       actionId: null
       icon: debugger/threadRunning.svg
   toolbar:
-  - null
+  - type: task
+    taskId: aTaskId
+    label: aLabel
   tree:
   - type: path
     label: ''
     tasks:
     - null
-    - type: task
-      taskId: aTaskId
-      label: aLabel
+    - null
   - null
   watchers:
   - taskId: ''

@@ -22,7 +22,9 @@ class InstanceGenerator {
             val instance = getClassToInstantiate(clazz).getDeclaredConstructor().newInstance()
             recursionGuard[clazz] = instance
 
-            val fields = clazz.getDeclaredFields()
+            val fields: MutableSet<Field> = HashSet()
+            fields.addAll(listOf(*clazz.getDeclaredFields()))
+            fields.addAll(listOf(*clazz.getFields()))
             for (field in fields) {
                 field.setAccessible(true)
                 val currentValue = field.get(instance)
@@ -220,7 +222,7 @@ class InstanceGenerator {
                 String::class.java -> example
                 else -> throw RuntimeException("Unsupported type: $targetType")
             }
-        } catch (ignored: NumberFormatException) {}
+        } catch (_: NumberFormatException) {}
         return example
     }
 

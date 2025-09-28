@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.stream.Collectors
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -34,9 +33,9 @@ class PhpDumperHelperTest(private val filename: String?) {
         fun parameters(): Collection<Array<String>> {
             Files.list(Paths.get(DIRECTORY)).use { stream ->
                 return stream
-                    .filter { path: Path? -> path.toString().endsWith(".txt") }
-                    .map { path: Path? -> arrayOf(path!!.fileName.toString().replace(".txt", "")) }
-                    .collect(Collectors.toList())
+                    .filter { path: Path -> path.toString().endsWith(".txt") }
+                    .map { path: Path -> arrayOf(path.fileName.toString().replace(".txt", "")) }
+                    .toList()
             }
         }
     }

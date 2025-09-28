@@ -4,7 +4,7 @@ import com.intellij.util.messages.Topic
 import org.micoli.php.configuration.models.Configuration
 
 interface ConfigurationEvents {
-    fun configurationLoaded(loadedConfiguration: Configuration?)
+    fun configurationLoaded(loadedConfiguration: Configuration)
 
     companion object {
         @JvmField

@@ -37,7 +37,7 @@ class AttributeNavigationService(private val project: Project) {
             engine.setBindings(bindings, ScriptContext.ENGINE_SCOPE)
             return engine.eval(formatterScript, bindings) as String?
         } catch (exception: ScriptException) {
-            Notification.getInstance(project).error(String.format(exception.message!!))
+            Notification.getInstance(project).error(String.format(exception.localizedMessage))
         }
         return value
     }

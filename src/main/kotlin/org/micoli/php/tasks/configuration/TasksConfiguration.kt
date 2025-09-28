@@ -41,11 +41,9 @@ class TasksConfiguration : DisactivableConfiguration {
     val tasksMap: MutableMap<String, RunnableTaskConfiguration>
         get() =
             tasks
-                .filter {
-                    it.id != null && it.id!!.isNotEmpty()
-                } // Notez le changement de isEmpty() à isNotEmpty()
+                .filter { it.isFullyInitialized() }
                 .associateBy(
-                    keySelector = { task: RunnableTaskConfiguration -> task.id!! },
+                    keySelector = { task: RunnableTaskConfiguration -> task.id },
                     valueTransform = { task: RunnableTaskConfiguration -> task },
                 )
                 .toMutableMap()

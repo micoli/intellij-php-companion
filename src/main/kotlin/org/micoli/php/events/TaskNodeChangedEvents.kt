@@ -6,9 +6,9 @@ import org.micoli.php.ui.components.tasks.helpers.FileObserver.IconAndPrefix
 
 interface TaskNodeChangedEvents {
     fun setNodeChangedEventsTopic(
-        taskIdParameter: String?,
-        status: FileObserver.Status?,
-        iconAndPrefix: IconAndPrefix?
+        taskIdParameter: String,
+        status: FileObserver.Status,
+        iconAndPrefix: IconAndPrefix
     )
 
     companion object {

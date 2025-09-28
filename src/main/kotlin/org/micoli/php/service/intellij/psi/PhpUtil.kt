@@ -54,7 +54,7 @@ object PhpUtil {
         for (interfaceFQN in interfaceFQNs) {
             if (PhpIndexUtil.getAllSubclasses(phpIndex, normalizeRootFQN(interfaceFQN))
                 .stream()
-                .map { obj: PhpClass -> obj.fqn }
+                .map { it.fqn }
                 .toList()
                 .contains(phpClass.fqn)) {
                 return true
@@ -67,7 +67,8 @@ object PhpUtil {
     fun hasAttribute(phpClass: PhpClass, attributeFQN: String): Boolean {
         // TODO: Implement PHP 8 attribute parsing
         // For now, check for attribute in comments as fallback
-        val docComment = if (phpClass.docComment != null) phpClass.docComment!!.text else ""
+        val docComment1 = phpClass.docComment
+        val docComment = if (docComment1 != null) docComment1.text else ""
         return docComment.contains(attributeFQN)
     }
 
@@ -119,6 +120,6 @@ object PhpUtil {
             phpClasses.add(it)
             true
         }
-        return phpClasses.stream().map { it!!.fqn }.toList().toTypedArray()
+        return phpClasses.stream().filter { it != null }.map { it.fqn }.toList().toTypedArray()
     }
 }

@@ -27,13 +27,13 @@ abstract class AbstractListPanel<T>
 protected constructor(
     protected val project: Project,
     panelName: String?,
-    columnNames: Array<String?>?
+    columnNames: Array<String>
 ) : JPanel() {
     protected val model: DefaultTableModel
-    protected var innerSorter: TableRowSorter<DefaultTableModel>? = null
-    protected var table: JBTable? = null
-    protected var searchFieldPanel: JPanel? = null
-    protected var searchField: SearchTextField? = null
+    protected lateinit var innerSorter: TableRowSorter<DefaultTableModel>
+    protected lateinit var table: JBTable
+    protected lateinit var searchFieldPanel: JPanel
+    protected lateinit var searchField: SearchTextField
     protected val lock: Any = Any()
     protected var isRegexMode: Boolean = false
     private val rightActionGroup = DefaultActionGroup()
@@ -57,11 +57,11 @@ protected constructor(
 
     private fun initializeComponents(panelName: String?) {
         searchFieldPanel = JPanel()
-        searchFieldPanel!!.setLayout(BorderLayout())
+        searchFieldPanel.setLayout(BorderLayout())
         table = JBTable()
-        table!!.model = model
-        table!!.setShowGrid(false)
-        table!!.isStriped = true
+        table.model = model
+        table.setShowGrid(false)
+        table.isStriped = true
         searchField = SearchTextField(true, true, panelName)
         rightActionGroup.add(
             object : ToggleAction("Regex", "Toggle regex mode", PhpCompanionIcon.Regexp) {
@@ -78,7 +78,7 @@ protected constructor(
                 override fun setSelected(anActionEvent: AnActionEvent, b: Boolean) {
                     isRegex = !isRegex
                     isRegexMode = isRegex
-                    updateFilter(searchField!!.text)
+                    updateFilter(searchField.text)
                 }
             })
         val rightToolbar =
@@ -86,20 +86,20 @@ protected constructor(
                 .createActionToolbar(
                     "PhpCompanion" + panelName + "RightToolbar", rightActionGroup, true)
         rightToolbar.targetComponent = this
-        searchFieldPanel!!.add(rightToolbar.component, BorderLayout.EAST)
+        searchFieldPanel.add(rightToolbar.component, BorderLayout.EAST)
 
         innerSorter = getSorter()
-        innerSorter!!.setRowFilter(rowFilter)
-        table!!.setRowSorter(innerSorter)
+        innerSorter.setRowFilter(rowFilter)
+        table.setRowSorter(innerSorter)
     }
 
-    protected abstract fun getSorter(): TableRowSorter<DefaultTableModel>?
+    protected abstract fun getSorter(): TableRowSorter<DefaultTableModel>
 
     private fun setupLayout() {
         val scrollPane = JBScrollPane(table)
         scrollPane.setBorder(JBUI.Borders.empty())
         setLayout(BorderLayout())
-        searchFieldPanel!!.add(searchField, BorderLayout.CENTER)
+        searchFieldPanel.add(searchField, BorderLayout.CENTER)
         add(searchFieldPanel, BorderLayout.NORTH)
         add(scrollPane, BorderLayout.CENTER)
 
@@ -109,18 +109,18 @@ protected constructor(
     protected abstract fun configureTableColumns()
 
     private fun setupListeners() {
-        searchField!!.addDocumentListener(
+        searchField.addDocumentListener(
             object : DocumentAdapter() {
                 override fun textChanged(e: DocumentEvent) {
-                    updateFilter(searchField!!.text)
+                    updateFilter(searchField.text)
                 }
             })
 
-        table!!.addMouseListener(
+        table.addMouseListener(
             object : MouseAdapter() {
                 override fun mouseClicked(e: MouseEvent) {
-                    val row = table!!.rowAtPoint(e.getPoint())
-                    val col = table!!.columnAtPoint(e.getPoint())
+                    val row = table.rowAtPoint(e.getPoint())
+                    val col = table.columnAtPoint(e.getPoint())
                     if (e.getClickCount() == 2) {
                         handleActionClick(row)
                         return
@@ -136,21 +136,21 @@ protected constructor(
     }
 
     private fun setupKeyListeners() {
-        table!!.addKeyListener(
+        table.addKeyListener(
             object : KeyAdapter() {
                 override fun keyPressed(e: KeyEvent) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                        handleActionClick(table!!.selectedRow)
+                        handleActionClick(table.selectedRow)
                     }
                 }
             })
 
-        searchField!!.addKeyListener(
+        searchField.addKeyListener(
             object : KeyAdapter() {
                 override fun keyPressed(e: KeyEvent) {
-                    if (e.getKeyCode() == KeyEvent.VK_ENTER && table!!.getRowCount() > 0) {
-                        table!!.requestFocusInWindow()
-                        table!!.setRowSelectionInterval(0, 0)
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER && table.getRowCount() > 0) {
+                        table.requestFocusInWindow()
+                        table.setRowSelectionInterval(0, 0)
                     }
                 }
             })
@@ -165,10 +165,10 @@ protected constructor(
     }
 
     fun updateFilter(text: String) {
-        val textEditor = searchField!!.textEditor
+        val textEditor = searchField.textEditor
         try {
             rowFilter.updateFilter(text, isRegexMode)
-            innerSorter!!.sort()
+            innerSorter.sort()
             textEditor.setBorder(border)
         } catch (_: Exception) {
             textEditor.setBorder(
@@ -180,7 +180,7 @@ protected constructor(
     val isEmpty: Boolean
         get() {
             synchronized(lock) {
-                return table!!.getRowCount() == 0
+                return table.getRowCount() == 0
             }
         }
 

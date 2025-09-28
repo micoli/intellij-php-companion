@@ -71,11 +71,11 @@ class DoctrineEntityService(project: Project) :
     }
 
     override fun getNamespaces(): Array<String> {
-        return configuration!!.namespaces
+        return configuration?.namespaces ?: emptyArray()
     }
 
     override fun getAttributeFQCN(): String? {
-        return configuration!!.attributeFQCN
+        return configuration?.attributeFQCN
     }
 
     companion object {

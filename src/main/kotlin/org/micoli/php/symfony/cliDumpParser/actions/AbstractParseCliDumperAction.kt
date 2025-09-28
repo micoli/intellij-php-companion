@@ -14,8 +14,8 @@ abstract class AbstractParseCliDumperAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val selection = getCurrentSelection(e) ?: return
-        if (e.project == null) return
-        parseCliDumperOutput(selection, e.project!!)
+        val project = e.project ?: return
+        parseCliDumperOutput(selection, project)
     }
 
     override fun update(e: AnActionEvent) {

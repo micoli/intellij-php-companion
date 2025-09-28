@@ -1,8 +1,8 @@
 package org.micoli.php
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import java.util.stream.Collectors
 import junit.framework.TestCase
+import kotlin.streams.toList
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException
@@ -14,8 +14,7 @@ class RouteListTest : BasePlatformTestCase() {
     fun testItGetRoutesFromAttributes() {
         myFixture.copyDirectoryToProject("src", "/src")
         val routeListService = loadPluginConfiguration(testDataPath)
-        val lists = routeListService.getElements()
-        val formattedList = lists!!.map { it?.uri.toString() }.sorted().joinToString(",")
+        val formattedList = routeListService.getElements().map { it.uri }.sorted().joinToString(",")
         val expectedList =
             ArrayList(
                     mutableListOf<String?>(
@@ -27,7 +26,8 @@ class RouteListTest : BasePlatformTestCase() {
                     ))
                 .stream()
                 .sorted()
-                .collect(Collectors.joining(","))
+                .toList()
+                .joinToString(",")
         TestCase.assertEquals(expectedList, formattedList)
     }
 

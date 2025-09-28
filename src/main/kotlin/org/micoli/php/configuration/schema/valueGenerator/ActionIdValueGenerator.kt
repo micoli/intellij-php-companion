@@ -12,7 +12,7 @@ class ActionIdValueGenerator : PropertyValueGenerator {
         ActionManager.getInstance()
             .getActionIdList("")
             .stream()
-            .filter { s: String? -> s != null }
+            .filter { it != null }
             .filter { s: String -> s.contains("anonymous-group-") }
             .distinct()
             .sorted()

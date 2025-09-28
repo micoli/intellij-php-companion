@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.Arrays
 import java.util.TreeMap
-import java.util.stream.Collectors
 import net.steppschuh.markdowngenerator.list.UnorderedList
 import net.steppschuh.markdowngenerator.table.Table
 import org.yaml.snakeyaml.DumperOptions
@@ -57,7 +55,7 @@ class MarkdownSchemaGenerator {
 
         return (tableBuilder.build().serialize() +
             "\n\n" +
-            unindentYamlLines(UnorderedList<Any?>(items).toString(), "^  "))
+            unindentYamlLines(UnorderedList<Any?>(items).toString()))
     }
 
     private fun generateYamlExample(exampleRoot: String?, clazz: Class<*>): String {
@@ -77,7 +75,7 @@ class MarkdownSchemaGenerator {
             return yamlContent
         }
 
-        return String.format("%s:\n%s", exampleRoot, indentYamlLines(yamlContent, "  "))
+        return String.format("%s:\n%s", exampleRoot, indentYamlLines(yamlContent))
     }
 
     companion object {
@@ -128,16 +126,22 @@ class MarkdownSchemaGenerator {
             }
         }
 
-        private fun indentYamlLines(yamlContent: String, indentation: String?): String =
-            Arrays.stream(
-                    yamlContent.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-                .map { str: String? -> indentation + str }
-                .collect(Collectors.joining("\n"))
+        private fun indentYamlLines(yamlContent: String, indentation: String = "  "): String =
+            yamlContent
+                .split("\n".toRegex())
+                .dropLastWhile { it.isEmpty() }
+                .stream()
+                .map { indentation + it }
+                .toList()
+                .joinToString("\n")
 
-        private fun unindentYamlLines(yamlContent: String, indentation: String): String =
-            Arrays.stream(
-                    yamlContent.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-                .map { str: String? -> str!!.replaceFirst(indentation.toRegex(), "") }
-                .collect(Collectors.joining("\n"))
+        private fun unindentYamlLines(yamlContent: String, indentation: String = "^  "): String =
+            yamlContent
+                .split("\n".toRegex())
+                .dropLastWhile { it.isEmpty() }
+                .stream()
+                .map { it.replaceFirst(indentation.toRegex(), "") }
+                .toList()
+                .joinToString("\n")
     }
 }

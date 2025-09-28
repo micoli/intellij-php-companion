@@ -2,7 +2,6 @@ package org.micoli.php.utils
 
 import java.io.IOException
 import java.util.Arrays
-import java.util.stream.Collectors
 import org.yaml.snakeyaml.Yaml
 
 object YamlAssertUtils {
@@ -30,10 +29,11 @@ object YamlAssertUtils {
     private fun filterYamlString(yamlString: String): String =
         Arrays.stream(
                 yamlString.split("\\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
-            .filter { line: String? -> !line!!.startsWith("!!") }
-            .filter { line: String? -> !line!!.endsWith(": []") }
-            .filter { line: String? -> !line!!.endsWith(": null") }
-            .collect(Collectors.joining("\n"))
+            .filter { !it.startsWith("!!") }
+            .filter { !it.endsWith(": []") }
+            .filter { !it.endsWith(": null") }
+            .toList()
+            .joinToString("\n")
 
     @Throws(IOException::class)
     fun compareFilesWithDiff(yamlA: String?, yamlB: String?): MutableList<String?> {
@@ -186,14 +186,8 @@ object YamlAssertUtils {
                     path,
                     list1.size,
                     list2.size,
-                    list1
-                        .stream()
-                        .map { obj: Any? -> obj.toString() }
-                        .collect(Collectors.joining(",")),
-                    list2
-                        .stream()
-                        .map { obj: Any? -> obj.toString() }
-                        .collect(Collectors.joining(",")),
+                    list1.stream().map { it.toString() }.toList().joinToString(","),
+                    list2.stream().map { it.toString() }.toList().joinToString(","),
                 ))
             return
         }

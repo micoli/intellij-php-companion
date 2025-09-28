@@ -6,14 +6,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.containers.stream
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import java.util.regex.Pattern
-import org.micoli.php.peerNavigation.configuration.Associate
-import org.micoli.php.peerNavigation.configuration.Peer
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration
 import org.micoli.php.service.intellij.psi.PhpUtil.getPhpClassByFQN
 
 @Service(Service.Level.PROJECT)
 class PeerNavigationService(private val project: Project) {
-    @JvmRecord private data class PeerSourceTarget(val source: Pattern?, val target: String?)
+    @JvmRecord private data class PeerSourceTarget(val source: Pattern, val target: String)
 
     private val peers: MutableList<PeerSourceTarget> = ArrayList<PeerSourceTarget>()
 
@@ -27,26 +25,27 @@ class PeerNavigationService(private val project: Project) {
         peers.addAll(
             peerNavigation.peers
                 .stream()
-                .map { peer: Peer -> PeerSourceTarget(Pattern.compile(peer!!.source), peer.target) }
+                .filter { it.isFullyInitialized() }
+                .map { PeerSourceTarget(Pattern.compile(it.source), it.target) }
                 .toList())
         peers.addAll(
             peerNavigation.associates
                 .stream()
-                .map { associate: Associate ->
+                .filter { it.isFullyInitialized() }
+                .map {
                     PeerSourceTarget(
-                        Pattern.compile(associate!!.classA),
-                        associate.classB?.replace(
-                            patternNamedGroup.toRegex(), namedGroupReplacement))
+                        Pattern.compile(it.classA),
+                        it.classB.replace(patternNamedGroup.toRegex(), namedGroupReplacement))
                 }
                 .toList())
         peers.addAll(
             peerNavigation.associates
                 .stream()
-                .map { associate: Associate ->
+                .filter { it.isFullyInitialized() }
+                .map {
                     PeerSourceTarget(
-                        Pattern.compile(associate!!.classB),
-                        associate.classA?.replace(
-                            patternNamedGroup.toRegex(), namedGroupReplacement))
+                        Pattern.compile(it.classB),
+                        it.classA.replace(patternNamedGroup.toRegex(), namedGroupReplacement))
                 }
                 .toList())
     }
@@ -59,11 +58,11 @@ class PeerNavigationService(private val project: Project) {
         val result = HashSet<PsiElement?>()
 
         for (peer in peers) {
-            val matcher = peer.source!!.matcher(sourceClassFQN)
+            val matcher = peer.source.matcher(sourceClassFQN)
             if (!matcher.find()) {
                 continue
             }
-            val target = getPhpClassByFQN(project, matcher.replaceFirst(peer!!.target))
+            val target = getPhpClassByFQN(project, matcher.replaceFirst(peer.target))
             if (target != null) {
                 result.add(target)
             }

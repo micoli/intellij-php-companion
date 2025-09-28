@@ -40,16 +40,16 @@ class FileObserverNode(
         get() =
             object : TaskNodeChangedEvents {
                 override fun setNodeChangedEventsTopic(
-                    taskIdParameter: String?,
-                    status: FileObserver.Status?,
-                    iconAndPrefix: IconAndPrefix?
+                    taskIdParameter: String,
+                    status: FileObserver.Status,
+                    iconAndPrefix: IconAndPrefix
                 ) {
                     if (taskIdParameter != this@FileObserverNode.taskId) {
                         return
                     }
                     SwingUtilities.invokeLater {
                         setIconAndLabel(
-                            iconAndPrefix!!.icon, iconAndPrefix.getPrefix() + initialLabel)
+                            iconAndPrefix.icon, iconAndPrefix.getPrefix() + initialLabel)
                     }
                 }
             }

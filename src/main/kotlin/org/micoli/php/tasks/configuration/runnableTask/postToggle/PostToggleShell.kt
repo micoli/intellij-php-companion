@@ -1,8 +1,9 @@
 package org.micoli.php.tasks.configuration.runnableTask.postToggle
 
 import io.swagger.v3.oas.annotations.media.Schema
+import org.micoli.php.tasks.configuration.runnableTask.TaskWithIcon
 
-class PostToggleShell : PostToggle() {
+class PostToggleShell : PostToggle(), TaskWithIcon {
     @Schema(
         description =
             "System command to execute in shell. Can include arguments and use environment variables",

@@ -1,7 +1,6 @@
 package org.micoli.php.ui.popup
 
 import com.intellij.pom.Navigatable
-import java.util.function.Consumer
 import kotlin.Boolean
 import kotlin.text.trimIndent
 import kotlinx.collections.immutable.ImmutableList
@@ -9,8 +8,7 @@ import kotlinx.collections.immutable.ImmutableList
 class NavigableOpenAllAction(private val navigables: ImmutableList<Navigatable?>) :
     NavigableListPopupItem {
     override fun navigate(requestFocus: Boolean) {
-        this.navigables.forEach(
-            Consumer { navigable: Navigatable? -> navigable!!.navigate(requestFocus) })
+        this.navigables.filter { it != null }.forEach { it!!.navigate(requestFocus) }
     }
 
     override fun canNavigate(): Boolean {

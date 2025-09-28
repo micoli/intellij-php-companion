@@ -16,7 +16,7 @@ import org.micoli.php.ui.components.tasks.helpers.FileObserver.IconAndPrefix
 
 class FileObserverToolbarButton(private val project: Project, observedFile: ObservedFile) :
     AnAction(observedFile.label), Disposable {
-    private val taskId: String = observedFile.id!!
+    private val taskId: String = observedFile.id
     private val label: String? = observedFile.label
 
     private val messageBusConnection: MessageBusConnection = project.messageBus.connect()
@@ -32,18 +32,17 @@ class FileObserverToolbarButton(private val project: Project, observedFile: Obse
         get() =
             object : TaskNodeChangedEvents {
                 override fun setNodeChangedEventsTopic(
-                    taskIdParameter: String?,
-                    status: FileObserver.Status?,
-                    iconAndPrefix: IconAndPrefix?
+                    taskIdParameter: String,
+                    status: FileObserver.Status,
+                    iconAndPrefix: IconAndPrefix
                 ) {
                     if (taskIdParameter != taskId) {
                         return
                     }
                     SwingUtilities.invokeLater {
-                        LOGGER.warn(
-                            "Received node changed event for " + taskId + "-" + status!!.name)
+                        LOGGER.warn("Received node changed event for " + taskId + "-" + status.name)
                         val presentation = templatePresentation
-                        presentation.setText(iconAndPrefix!!.getPrefix() + label)
+                        presentation.setText(iconAndPrefix.getPrefix() + label)
                         presentation.icon = iconAndPrefix.icon
                         PresentationFactory.updatePresentation(this@FileObserverToolbarButton)
                     }

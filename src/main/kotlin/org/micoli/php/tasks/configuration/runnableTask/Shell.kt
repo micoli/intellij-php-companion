@@ -2,7 +2,7 @@ package org.micoli.php.tasks.configuration.runnableTask
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-class Shell : RunnableTaskConfiguration() {
+class Shell : RunnableTaskConfiguration(), TaskWithIcon {
     @Schema(
         description =
             "System command to execute in shell. Can include arguments and use environment variables",

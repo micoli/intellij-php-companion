@@ -1,5 +1,6 @@
 package org.micoli.php.tasks.configuration.runnableTask
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.swagger.v3.oas.annotations.media.Schema
@@ -17,7 +18,7 @@ abstract class RunnableTaskConfiguration {
             "Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration",
         example = "aTaskId",
     )
-    var id: String? = null
+    lateinit var id: String
 
     @Schema(
         description =
@@ -26,5 +27,8 @@ abstract class RunnableTaskConfiguration {
     )
     var label: String? = null
 
-    abstract val icon: String?
+    @JsonIgnore
+    fun isFullyInitialized(): Boolean {
+        return ::id.isInitialized
+    }
 }

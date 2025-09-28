@@ -1,8 +1,9 @@
 package org.micoli.php.tasks.configuration.runnableTask.postToggle
 
 import io.swagger.v3.oas.annotations.media.Schema
+import org.micoli.php.tasks.configuration.runnableTask.TaskWithIcon
 
-class PostToggleScript : PostToggle() {
+class PostToggleScript : PostToggle(), TaskWithIcon {
     @Schema(
         description =
             "Source code of the script to execute. Content depends on the language specified by the extension")

@@ -4,7 +4,7 @@ import org.micoli.php.tasks.configuration.runnableTask.ObservedFile
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggle
 
 class ObservedFileBuilder() {
-    private val observedFile: ObservedFile = ObservedFile(null)
+    private val observedFile: ObservedFile = ObservedFile()
 
     fun withId(id: String): ObservedFileBuilder {
         observedFile.id = id

@@ -13,7 +13,6 @@ import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory
 import com.jetbrains.jsonSchema.ide.JsonSchemaService
 import com.jetbrains.jsonSchema.impl.inspections.JsonSchemaComplianceInspection
 import java.io.IOException
-import java.util.stream.Collectors
 import junit.framework.TestCase
 import org.jetbrains.yaml.schema.YamlJsonSchemaHighlightingInspection
 import org.micoli.php.configuration.schema.PhpCompanionJsonSchemaProviderFactory
@@ -123,7 +122,8 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
                 val lineContent = document.getText(TextRange(lineStart, lineEnd)).trim { it <= ' ' }
                 String.format("%s: %s [%s] %s", lineNumber, lineContent, i.text, i.description)
             }
-            .collect(Collectors.joining("\n"))
+            .toList()
+            .joinToString("\n")
 
     @Throws(IOException::class)
     fun testItGeneratesProperSchema() {

@@ -9,7 +9,6 @@ import java.io.IOException
 import java.nio.file.FileSystems
 import java.nio.file.PathMatcher
 import java.util.Map
-import java.util.stream.Collectors
 import junit.framework.TestCase
 import org.micoli.php.service.filesystem.FileListener
 
@@ -199,7 +198,8 @@ class FileListenerTest : BasePlatformTestCase() {
             testFiles
                 .stream()
                 .map { testFile: VirtualFile -> VFileContentChangeEvent(null, testFile, 0L, 0L) }
-                .collect(Collectors.toUnmodifiableList())
+                .toList()
+                .toMutableList()
 
         this.fileListener.vfsListener.after(events)
     }

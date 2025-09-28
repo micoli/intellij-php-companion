@@ -19,7 +19,7 @@ object SearchWithCompletionIndicator {
         findModel: FindModel,
         project: Project,
         maxTimeSearchWithoutResult: Int,
-        callback: Consumer<MutableList<UsageInfo>?>
+        callback: Consumer<MutableList<UsageInfo>>
     ) {
         ProgressManager.getInstance()
             .run(

@@ -28,7 +28,7 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
             normalizeStringList(
                 initialPathContent
                     .stream()
-                    .filter { s: String? -> !s!!.contains("/path1") }
+                    .filter { !it!!.contains("/path1") }
                     .toList()
                     .toImmutableList()),
             normalizeStringList(MyFixtureUtils.getPathContent(vf)),
@@ -68,7 +68,7 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
             normalizeStringList(
                 initialPathContent
                     .stream()
-                    .filter { s: String? -> !s!!.contains("/path1") }
+                    .filter { !it!!.contains("/path1") }
                     .toList()
                     .toImmutableList()),
             normalizeStringList(MyFixtureUtils.getPathContent(vf)),
@@ -86,7 +86,7 @@ class ScriptingFileSystemTest : BasePlatformTestCase() {
             normalizeStringList(
                 initialPathContent
                     .stream()
-                    .filter { s: String? -> !s!!.contains("/path1") }
+                    .filter { !it!!.contains("/path1") }
                     .toList()
                     .toImmutableList()),
             normalizeStringList(MyFixtureUtils.getPathContent(vf)),

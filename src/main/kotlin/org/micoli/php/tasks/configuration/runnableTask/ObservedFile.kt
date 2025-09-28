@@ -3,7 +3,7 @@ package org.micoli.php.tasks.configuration.runnableTask
 import io.swagger.v3.oas.annotations.media.Schema
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggle
 
-class ObservedFile(override val icon: String? = null) : RunnableTaskConfiguration() {
+class ObservedFile : RunnableTaskConfiguration() {
     @Schema(
         description =
             "Prefix used to identify comments in the observed file. Default '#', can be adapted according to file type (e.g. '//' for Java)")

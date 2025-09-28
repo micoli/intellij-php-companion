@@ -6,9 +6,9 @@ import java.util.*
 
 class ConcurrentSearchManager(private val searchTimeout: Duration) {
     @JvmRecord
-    private data class SearchEntry(val query: String, val creationTime: Instant?) {
+    private data class SearchEntry(val query: String, val creationTime: Instant) {
         fun isExpired(timeout: Duration): Boolean {
-            return creationTime!!.plus(timeout).isBefore(Instant.now())
+            return creationTime.plus(timeout).isBefore(Instant.now())
         }
     }
 
@@ -21,14 +21,12 @@ class ConcurrentSearchManager(private val searchTimeout: Duration) {
     }
 
     fun removeSearch(query: String) {
-        searchInProgressList.removeIf { entry: SearchEntry? -> entry!!.query == query }
+        searchInProgressList.removeIf { it.query == query }
     }
 
     fun isSearchInProgress(query: String): Boolean {
         cleanExpiredSearches()
-        return searchInProgressList.stream().anyMatch { entry: SearchEntry? ->
-            entry!!.query == query
-        }
+        return searchInProgressList.stream().anyMatch { it.query == query }
     }
 
     fun isEmpty(): Boolean {

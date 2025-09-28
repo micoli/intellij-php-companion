@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.tabs.JBTabs
 import com.intellij.ui.tabs.JBTabsFactory
+import java.util.function.Function
 import javax.swing.JPanel
 import org.micoli.php.PhpCompanionProjectService
 import org.micoli.php.configuration.models.Configuration
@@ -17,7 +18,7 @@ import org.micoli.php.ui.panels.*
 internal class ToolWindowContent(project: com.intellij.openapi.project.Project) {
     private class PanelRefresher(
         val aPanel: Class<*>,
-        val configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?,
+        val configurationRefresher: Function<Configuration, DisactivableConfiguration?>,
     )
 
     val contentPanel: JPanel = JPanel()
@@ -48,13 +49,11 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
                     }
                 }
             })
-        addTab(ActionTreePanel(project), "Actions") { configuration!!.tasksConfiguration }
-        addTab(RoutesPanel(project), "Routes") { configuration!!.routesConfiguration }
-        addTab(CommandsPanel(project), "CLI") { configuration!!.commandsConfiguration }
-        addTab(DoctrineEntitiesPanel(project), "Entities") {
-            configuration!!.doctrineEntitiesConfiguration
-        }
-        addTab(OpenAPIPathPanel(project), "OAS") { configuration!!.openAPIConfiguration }
+        addTab(ActionTreePanel(project), "Actions") { it.tasksConfiguration }
+        addTab(RoutesPanel(project), "Routes") { it.routesConfiguration }
+        addTab(CommandsPanel(project), "CLI") { it.commandsConfiguration }
+        addTab(DoctrineEntitiesPanel(project), "Entities") { it.doctrineEntitiesConfiguration }
+        addTab(OpenAPIPathPanel(project), "OAS") { it.openAPIConfiguration }
 
         mainPanel.add(tabs.component, java.awt.BorderLayout.CENTER)
         project.messageBus
@@ -62,7 +61,7 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
             .subscribe(
                 ConfigurationEvents.CONFIGURATION_UPDATED,
                 object : ConfigurationEvents {
-                    override fun configurationLoaded(loadedConfiguration: Configuration?) {
+                    override fun configurationLoaded(loadedConfiguration: Configuration) {
                         configuration = loadedConfiguration
                         refreshTabs()
                     }
@@ -103,10 +102,10 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
             refresherList
                 .reversed()
                 .forEach(
-                    java.util.function.Consumer { panelRefresher: PanelRefresher? ->
+                    java.util.function.Consumer { panelRefresher: PanelRefresher ->
                         manageTabVisibilityAndRefresh(
-                            panelRefresher!!.aPanel,
-                            panelRefresher.configurationRefresher!!.get(),
+                            panelRefresher.aPanel,
+                            panelRefresher.configurationRefresher.apply(configuration!!),
                         )
                     })
         }
@@ -115,7 +114,7 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
     private fun addTab(
         panel: JPanel,
         tabName: String,
-        configurationRefresher: java.util.function.Supplier<DisactivableConfiguration?>?,
+        configurationRefresher: Function<Configuration, DisactivableConfiguration?>,
     ) {
         val tabInfo = com.intellij.ui.tabs.TabInfo(panel)
         tabInfo.setText(tabName)

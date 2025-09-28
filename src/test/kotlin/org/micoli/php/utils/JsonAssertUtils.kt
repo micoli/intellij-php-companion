@@ -27,31 +27,23 @@ object JsonAssertUtils {
         }
     }
 
-    fun assertJsonEquals(message: String?, expected: String, actual: String) {
-        try {
-            assertJsonEquals(expected, actual)
-        } catch (e: AssertionError) {
-            throw AssertionError(message + "\n" + e.message)
-        }
-    }
-
     private fun jsonEquals(expected: JsonElement?, actual: JsonElement?): Boolean {
         if (expected == null && actual == null) return true
         if (expected == null || actual == null) return false
 
-        if (expected.isJsonNull() && actual.isJsonNull()) return true
-        if (expected.isJsonNull() || actual.isJsonNull()) return false
+        if (expected.isJsonNull && actual.isJsonNull) return true
+        if (expected.isJsonNull || actual.isJsonNull) return false
 
-        if (expected.isJsonPrimitive() && actual.isJsonPrimitive()) {
-            return expected.getAsJsonPrimitive() == actual.getAsJsonPrimitive()
+        if (expected.isJsonPrimitive && actual.isJsonPrimitive) {
+            return expected.asJsonPrimitive == actual.asJsonPrimitive
         }
 
-        if (expected.isJsonObject() && actual.isJsonObject()) {
-            return jsonObjectEquals(expected.getAsJsonObject(), actual.getAsJsonObject())
+        if (expected.isJsonObject && actual.isJsonObject) {
+            return jsonObjectEquals(expected.asJsonObject, actual.asJsonObject)
         }
 
-        if (expected.isJsonArray() && actual.isJsonArray()) {
-            return jsonArrayEquals(expected.getAsJsonArray(), actual.getAsJsonArray())
+        if (expected.isJsonArray && actual.isJsonArray) {
+            return jsonArrayEquals(expected.asJsonArray, actual.asJsonArray)
         }
 
         return false
@@ -76,8 +68,8 @@ object JsonAssertUtils {
     private fun jsonArrayEquals(expected: JsonArray, actual: JsonArray): Boolean {
         if (expected.size() != actual.size()) return false
 
-        val expectedList: MutableList<JsonElement?> = ArrayList<JsonElement?>()
-        val actualList: MutableList<JsonElement?> = ArrayList<JsonElement?>()
+        val expectedList: MutableList<JsonElement?> = ArrayList()
+        val actualList: MutableList<JsonElement?> = ArrayList()
 
         for (element in expected) {
             expectedList.add(element)
@@ -90,7 +82,7 @@ object JsonAssertUtils {
         for (expectedElement in expectedList) {
             var found = false
             for (i in actualList.indices) {
-                if (jsonEquals(expectedElement, actualList.get(i))) {
+                if (jsonEquals(expectedElement, actualList[i])) {
                     actualList.removeAt(i)
                     found = true
                     break
@@ -102,38 +94,23 @@ object JsonAssertUtils {
         return actualList.isEmpty()
     }
 
-    fun assertJsonEqualsOrdered(expected: String, actual: String) {
-        val expectedElement = JsonParser.parseString(expected)
-        val actualElement = JsonParser.parseString(actual)
-
-        if (!jsonEqualsOrdered(expectedElement, actualElement)) {
-            val message =
-                String.format(
-                    "JSON strings are not equal (ordered):\nExpected:\n%s\n\nActual:\n%s",
-                    gson.toJson(expectedElement),
-                    gson.toJson(actualElement),
-                )
-            throw AssertionError(message)
-        }
-    }
-
     private fun jsonEqualsOrdered(expected: JsonElement?, actual: JsonElement?): Boolean {
         if (expected == null && actual == null) return true
         if (expected == null || actual == null) return false
 
-        if (expected.isJsonNull() && actual.isJsonNull()) return true
-        if (expected.isJsonNull() || actual.isJsonNull()) return false
+        if (expected.isJsonNull && actual.isJsonNull) return true
+        if (expected.isJsonNull || actual.isJsonNull) return false
 
-        if (expected.isJsonPrimitive() && actual.isJsonPrimitive()) {
-            return expected.getAsJsonPrimitive() == actual.getAsJsonPrimitive()
+        if (expected.isJsonPrimitive && actual.isJsonPrimitive) {
+            return expected.asJsonPrimitive == actual.asJsonPrimitive
         }
 
-        if (expected.isJsonObject() && actual.isJsonObject()) {
-            return jsonObjectEquals(expected.getAsJsonObject(), actual.getAsJsonObject())
+        if (expected.isJsonObject && actual.isJsonObject) {
+            return jsonObjectEquals(expected.asJsonObject, actual.asJsonObject)
         }
 
-        if (expected.isJsonArray() && actual.isJsonArray()) {
-            return jsonArrayEqualsOrdered(expected.getAsJsonArray(), actual.getAsJsonArray())
+        if (expected.isJsonArray && actual.isJsonArray) {
+            return jsonArrayEqualsOrdered(expected.asJsonArray, actual.asJsonArray)
         }
 
         return false
@@ -149,20 +126,5 @@ object JsonAssertUtils {
         }
 
         return true
-    }
-
-    fun normalizeJson(json: String): String? {
-        val element = JsonParser.parseString(json)
-        return gson.toJson(element)
-    }
-
-    fun isJsonEqual(json1: String, json2: String): Boolean {
-        try {
-            val element1 = JsonParser.parseString(json1)
-            val element2 = JsonParser.parseString(json2)
-            return jsonEquals(element1, element2)
-        } catch (_: Exception) {
-            return false
-        }
     }
 }

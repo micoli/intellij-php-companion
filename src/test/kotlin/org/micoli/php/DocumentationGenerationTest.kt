@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.Arrays
-import java.util.stream.Collectors
 import junit.framework.TestCase
 import org.micoli.php.configuration.documentation.InstanceGenerator
 import org.micoli.php.configuration.documentation.MarkdownProcessor
@@ -235,12 +233,12 @@ class DocumentationGenerationTest : TestCase() {
 
     companion object {
         private fun trimLines(existingReadMeContent: String): String =
-            Arrays.stream(
-                    existingReadMeContent
-                        .split("\\n".toRegex())
-                        .dropLastWhile { it.isEmpty() }
-                        .toTypedArray())
+            existingReadMeContent
+                .split("\\n".toRegex())
+                .dropLastWhile { it.isEmpty() }
+                .toTypedArray()
                 .map { obj: String? -> obj!!.trimEnd() }
-                .collect(Collectors.joining("\n"))
+                .toList()
+                .joinToString("\n")
     }
 }

@@ -18,8 +18,8 @@ import org.micoli.php.tasks.runnables.FileObserverTask
 import org.micoli.php.utils.MyFixtureUtils
 
 class TasksServiceTest : BasePlatformTestCase() {
-    private var tasksService: TasksService? = null
-    private var runnableLogs: ArrayList<String?>? = null
+    private lateinit var tasksService: TasksService
+    private var runnableLogs: ArrayList<String?> = ArrayList()
 
     @Throws(Exception::class)
     override fun setUp() {
@@ -29,11 +29,9 @@ class TasksServiceTest : BasePlatformTestCase() {
             object : TasksService(project) {
                 override fun runTask(taskId: String?) {
                     super.runTask(taskId)
-                    runnableLogs!!.add(
+                    runnableLogs.add(
                         String.format(
-                            "%s:%s",
-                            taskId,
-                            runnableActions?.get(taskId)!!.javaClass.getSimpleName()))
+                            "%s:%s", taskId, runnableActions[taskId]!!.javaClass.getSimpleName()))
                 }
 
                 override fun updateFileObserver(
@@ -41,7 +39,7 @@ class TasksServiceTest : BasePlatformTestCase() {
                     force: Boolean
                 ) {
                     super.updateFileObserver(fileObserverTask, force)
-                    runnableLogs!!.add(
+                    runnableLogs.add(
                         String.format(
                             "%s:%s",
                             fileObserverTask.taskId,
@@ -61,7 +59,7 @@ class TasksServiceTest : BasePlatformTestCase() {
                     callback: Runnable?,
                 ): DebouncedRunnable? {
                     task.run()
-                    runnableLogs!!.add(String.format("%s:%s", name, task.javaClass.getSimpleName()))
+                    runnableLogs.add(String.format("%s:%s", name, task.javaClass.getSimpleName()))
                     return null
                 }
             },
@@ -69,25 +67,27 @@ class TasksServiceTest : BasePlatformTestCase() {
     }
 
     fun testWatcherEnabled() {
-        assertTrue(tasksService!!.isWatcherEnabled)
-        tasksService!!.toggleWatcherEnabled()
-        assertFalse(tasksService!!.isWatcherEnabled)
-        tasksService!!.toggleWatcherEnabled()
-        assertTrue(tasksService!!.isWatcherEnabled)
+
+        assertNotNull(tasksService.isWatcherEnabled)
+        assertTrue(tasksService.isWatcherEnabled)
+        tasksService.toggleWatcherEnabled()
+        assertFalse(tasksService.isWatcherEnabled)
+        tasksService.toggleWatcherEnabled()
+        assertTrue(tasksService.isWatcherEnabled)
     }
 
     fun testLoadNullConfiguration() {
-        tasksService!!.loadConfiguration(null)
+        tasksService.loadConfiguration(null)
     }
 
     fun testLoadEmptyConfiguration() {
         // When
-        tasksService!!.loadConfiguration(TasksConfiguration())
+        tasksService.loadConfiguration(TasksConfiguration())
     }
 
     fun testLoadConfigurationWithTasks() {
         // When
-        tasksService!!.loadConfiguration(
+        tasksService.loadConfiguration(
             TasksConfigurationBuilder.create()
                 .withAddedRunnableTaskConfiguration(
                     ObservedFileBuilder.create()
@@ -112,7 +112,7 @@ class TasksServiceTest : BasePlatformTestCase() {
 
     fun testLoadConfigurationWithWatchers() {
         // When
-        tasksService!!.loadConfiguration(
+        tasksService.loadConfiguration(
             TasksConfigurationBuilder.create()
                 .withAddedWatcher(
                     WatcherBuilder.create()
@@ -128,7 +128,7 @@ class TasksServiceTest : BasePlatformTestCase() {
         val filePath = "config.env"
         myFixture.addFileToProject(filePath, fileContent)
 
-        tasksService!!.loadConfiguration(
+        tasksService.loadConfiguration(
             TasksConfigurationBuilder.create()
                 .withEnabled(true)
                 .withAddedRunnableTaskConfiguration(
@@ -144,10 +144,10 @@ class TasksServiceTest : BasePlatformTestCase() {
                 .build())
 
         // When
-        tasksService!!.runTask("file1")
+        tasksService.runTask("file1")
 
         // Then
-        assertTrue(runnableLogs!!.stream().anyMatch { s: String? -> s == "file1:FileObserverTask" })
+        assertTrue(runnableLogs.stream().anyMatch { it == "file1:FileObserverTask" })
     }
 
     fun testVfsHandleWithObservedFile() {
@@ -170,15 +170,15 @@ class TasksServiceTest : BasePlatformTestCase() {
                         .withUnknownIcon("/icons/unknown.svg")
                         .build())
                 .build()
-        tasksService!!.loadConfiguration(config)
+        tasksService.loadConfiguration(config)
 
         val taskIdentifier = TaskIdentifier("file1", config.tasks[0])
 
         // When
-        tasksService!!.vfsHandle(taskIdentifier, myFixture.findFileInTempDir(filePath))
+        tasksService.vfsHandle(taskIdentifier, myFixture.findFileInTempDir(filePath))
 
         // Then
-        assertTrue(runnableLogs!!.stream().anyMatch { s: String? -> s == "file1:FileObserverTask" })
+        assertTrue(runnableLogs.stream().anyMatch { it == "file1:FileObserverTask" })
     }
 
     fun testVfsHandleShouldBeTriggeredWithWatcher() {
@@ -205,19 +205,19 @@ class TasksServiceTest : BasePlatformTestCase() {
                         .withNotify(true)
                         .build())
                 .build()
-        tasksService!!.loadConfiguration(config)
+        tasksService.loadConfiguration(config)
 
         val taskIdentifier = TaskIdentifier("task1", config.watchers[0])
         TestCase.assertEquals(
             1, MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
 
         // When
-        tasksService!!.vfsHandle(taskIdentifier, myFixture.findFileInTempDir(filePath))
+        tasksService.vfsHandle(taskIdentifier, myFixture.findFileInTempDir(filePath))
 
         // Then
         TestCase.assertEquals(
             0, MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
-        assertTrue(runnableLogs!!.stream().anyMatch { s: String? -> s == "task1:RunnableTask" })
+        assertTrue(runnableLogs.stream().anyMatch { it == "task1:RunnableTask" })
     }
 
     fun testIfActionAreWellRegistered() {
@@ -232,8 +232,8 @@ class TasksServiceTest : BasePlatformTestCase() {
                         .withIcon("test.svg")
                         .build())
                 .build()
-        tasksService!!.loadConfiguration(tasksConfiguration)
-        tasksService!!.loadConfiguration(tasksConfiguration)
+        tasksService.loadConfiguration(tasksConfiguration)
+        tasksService.loadConfiguration(tasksConfiguration)
         val actionManager = ActionManager.getInstance()
         val registeredActions = actionManager.getActionIdList("phpcompanion.tasks.")
         TestCase.assertEquals(1, registeredActions.size)

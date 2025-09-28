@@ -9,7 +9,6 @@ import com.knuddels.jtokkit.api.EncodingType
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.Set
-import java.util.function.Function
 import org.micoli.php.attributeNavigation.service.FileData
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration
 import org.micoli.php.service.filesystem.FileListProcessor
@@ -21,7 +20,7 @@ import org.thymeleaf.templateresolver.StringTemplateResolver
 
 @Service(Service.Level.PROJECT)
 class ExportSourceToMarkdownService(private val project: Project) {
-    private var configuration: ExportSourceToMarkdownConfiguration? =
+    private var configuration: ExportSourceToMarkdownConfiguration =
         ExportSourceToMarkdownConfiguration()
 
     fun loadConfiguration(
@@ -39,7 +38,7 @@ class ExportSourceToMarkdownService(private val project: Project) {
             return null
         }
 
-        val contextualAmender = ContextualAmender(project, configuration ?: return null)
+        val contextualAmender = ContextualAmender(project, configuration)
 
         val filesInContext =
             if (this.useContextualNamespaces)
@@ -51,7 +50,7 @@ class ExportSourceToMarkdownService(private val project: Project) {
         val context = Context()
         context.setVariable("files", getFileData(sortFiles(filteredFiles)))
 
-        val exportContent = this.templateEngine.process(configuration!!.template, context)
+        val exportContent = this.templateEngine.process(configuration.template, context)
 
         return ExportedSource(exportContent, getNumberOfTokens(exportContent))
     }
@@ -68,12 +67,11 @@ class ExportSourceToMarkdownService(private val project: Project) {
         }
 
     private fun sortFiles(filesInContext: MutableList<VirtualFile>): MutableList<VirtualFile> {
-        return ArrayList<VirtualFile>(Set.copyOf<VirtualFile>(filesInContext))
+        return Set.copyOf<VirtualFile>(filesInContext)
             .stream()
             .sorted(
-                Comparator.comparing<VirtualFile?, String>(
-                        Function { obj: VirtualFile? -> obj!!.path })
-                    .thenComparing<String>(Function { obj: VirtualFile? -> obj!!.name }))
+                Comparator.comparing<VirtualFile, String> { it.path }
+                    .thenComparing<String> { it.name })
             .toList()
     }
 
@@ -86,7 +84,7 @@ class ExportSourceToMarkdownService(private val project: Project) {
                 val extension = file.extension ?: "plain"
                 files.add(FileData(file.path.replace(baseDir, ""), content, extension))
             } catch (e: IOException) {
-                Notification.getInstance(project).error(e.message!!)
+                Notification.getInstance(project).error(e.localizedMessage)
             }
         }
         return files
@@ -109,17 +107,17 @@ class ExportSourceToMarkdownService(private val project: Project) {
     }
 
     fun toggleUseContextualNamespaces() {
-        configuration!!.useContextualNamespaces = !configuration!!.useContextualNamespaces
+        configuration.useContextualNamespaces = !configuration.useContextualNamespaces
     }
 
     val useContextualNamespaces: Boolean
-        get() = configuration!!.useContextualNamespaces
+        get() = configuration.useContextualNamespaces
 
     val useIgnoreFile: Boolean
-        get() = configuration!!.useIgnoreFile
+        get() = configuration.useIgnoreFile
 
     fun toggleUseIgnoreFile() {
-        configuration!!.useIgnoreFile = !configuration!!.useIgnoreFile
+        configuration.useIgnoreFile = !configuration.useIgnoreFile
     }
 
     companion object {

@@ -10,7 +10,6 @@ import io.swagger.v3.parser.core.models.ParseOptions
 import io.swagger.v3.parser.exception.EncodingNotSupportedException
 import io.swagger.v3.parser.exception.ReadContentException
 import java.util.*
-import java.util.stream.Collectors
 import java.util.stream.Stream
 import org.micoli.php.symfony.list.AbstractAttributeService
 import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration
@@ -18,16 +17,6 @@ import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration
 @Service(Service.Level.PROJECT)
 class OpenAPIService(project: Project) :
     AbstractAttributeService<OpenAPIPathElementDTO, OpenAPIConfiguration>(project) {
-    //    private val mapping: AttributeMapping =
-    //            AttributeMapping(
-    //                object :
-    //                    LinkedHashMap<String, java.util.function.Function<PhpAttributeArgument,
-    // String>>() {
-    //                    init {
-    //                        put("uri") { getStringableValue(it) }
-    //                        put("description") { getStringableValue(it) }
-    //                    }
-    //                })
 
     override fun createElementDTO(
         className: String,
@@ -37,12 +26,10 @@ class OpenAPIService(project: Project) :
         return null
     }
 
-    override fun getElements(): MutableList<OpenAPIPathElementDTO?>? {
-        if (this.configuration == null) {
-            return null
-        }
+    override fun getElements(): MutableList<OpenAPIPathElementDTO> {
         val elements = ArrayList<OpenAPIPathElementDTO>()
-        for (root in this.configuration!!.specificationRoots) {
+        val openAPIConfiguration = this.configuration ?: return elements
+        for (root in openAPIConfiguration.specificationRoots) {
             addElementsFromOpenAPIRoot(root, elements)
         }
         return elements.toMutableList()
@@ -80,8 +67,8 @@ class OpenAPIService(project: Project) :
         } catch (_: ReadContentException) {} catch (_: EncodingNotSupportedException) {}
     }
 
-    override fun getNamespaces(): Array<String>? {
-        return null
+    override fun getNamespaces(): Array<String> {
+        return emptyArray()
     }
 
     override fun getAttributeFQCN(): String? {
@@ -95,8 +82,10 @@ class OpenAPIService(project: Project) :
             val operationDescription = operationEntryValue.description ?: ""
 
             return Stream.of(pathDescription, operationDescription)
-                .filter { desc: String? -> !desc!!.isEmpty() }
-                .collect(Collectors.joining(" "))
+                .filter { it != null }
+                .filter { !it.isEmpty() }
+                .toList()
+                .joinToString(" ")
                 .trim { it <= ' ' }
         }
 

@@ -11,7 +11,7 @@ class ExportSourceToMarkdownConfiguration {
             ("List of namespaces, if an import detected in an exported classes belong to one of those" +
                 " namespace, than the class is added in the context"),
         examples = ["App\\Core\\Models"])
-    var contextualNamespaces: Array<String?>? = null
+    var contextualNamespaces: Array<String> = arrayOf()
 
     @Schema(
         description =

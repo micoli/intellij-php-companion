@@ -16,11 +16,9 @@ import com.intellij.openapi.util.IconLoader.getIcon
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
 import com.intellij.usages.UsageInfo2UsageAdapter
-import com.intellij.util.Function
 import com.jetbrains.php.lang.psi.elements.PhpAttribute
 import java.awt.event.MouseEvent
 import java.time.Duration
-import java.util.*
 import javax.swing.Icon
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService
 import org.micoli.php.service.intellij.psi.PhpUtil.normalizeNonRootFQN
@@ -51,8 +49,9 @@ class AttributeNavigationLineMarkerProvider : LineMarkerProvider {
         if (elements.isEmpty()) {
             return
         }
+        val firstElement = elements.first() ?: return
         val attributeNavigationService: AttributeNavigationService =
-            AttributeNavigationService.getInstance(elements.first()!!.project)
+            AttributeNavigationService.getInstance(firstElement.project)
         if (attributeNavigationService.configurationIsEmpty()) {
             return
         }
@@ -87,8 +86,8 @@ class AttributeNavigationLineMarkerProvider : LineMarkerProvider {
                         leafElement,
                         leafElement.textRange,
                         navigateIcon,
-                        Function { element: PsiElement? -> "Search for [$value]" },
-                        { mouseEvent: MouseEvent?, psiElement: PsiElement? ->
+                        { "Search for [$value]" },
+                        { mouseEvent: MouseEvent?, _: PsiElement? ->
                             when (rule.actionType) {
                                 "find_in_file" ->
                                     openGlobalSearchWithRouteExpression(
@@ -130,9 +129,9 @@ class AttributeNavigationLineMarkerProvider : LineMarkerProvider {
             val findModel: FindModel = getFindModel(searchText, fileMask)
             concurrentSearchManager.addSearch(searchText)
             SearchWithCompletionIndicator.findUsagesWithProgress(findModel, project, 1500) {
-                results: MutableList<UsageInfo>? ->
+                results: MutableList<UsageInfo> ->
                 concurrentSearchManager.removeSearch(searchText)
-                if (results == null || results.isEmpty()) {
+                if (results.isEmpty()) {
                     getInstance(project).messageWithTimeout("No Usage found", 1500)
                     return@findUsagesWithProgress
                 }
@@ -140,31 +139,27 @@ class AttributeNavigationLineMarkerProvider : LineMarkerProvider {
                     mouseEvent,
                     results
                         .stream()
-                        .map { usageInfo: UsageInfo? ->
+                        .map {
                             ApplicationManager.getApplication()
                                 .runReadAction<NavigableItem?>(
                                     Computable {
-                                        usageInfo!!.file ?: return@Computable null
+                                        it.file ?: return@Computable null
 
-                                        val fileExtract =
-                                            PsiElementUtil.getFileExtract(usageInfo, 1)
+                                        val fileExtract = PsiElementUtil.getFileExtract(it, 1)
                                         NavigableItem(
-                                            fileExtract,
-                                            UsageInfo2UsageAdapter(usageInfo),
-                                            usageInfo.icon)
+                                            fileExtract, UsageInfo2UsageAdapter(it), it.icon)
                                     })
                         }
-                        .map<NavigableListPopupItem?> { item: NavigableItem? ->
-                            item as NavigableListPopupItem?
-                        }
-                        .filter { obj: NavigableListPopupItem? -> Objects.nonNull(obj) }
-                        .toList())
+                        .map { it as NavigableListPopupItem }
+                        .filter { it != null }
+                        .toList()
+                        .toMutableList())
             }
         }
     }
 
     private fun openSearchEveryWhereWithRouteExpression(
-        project: Project?,
+        project: Project,
         mouseEvent: MouseEvent,
         searchText: String?
     ) {

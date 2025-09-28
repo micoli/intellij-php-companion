@@ -2,7 +2,7 @@ package org.micoli.php.tasks.configuration.runnableTask
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-class Script : RunnableTaskConfiguration() {
+class Script : RunnableTaskConfiguration(), TaskWithIcon {
     @Schema(
         description =
             "Source code of the script to execute. Content depends on the language specified by the extension")

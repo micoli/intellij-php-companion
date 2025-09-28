@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.stream.Collectors
+import kotlin.streams.toList
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -37,7 +37,7 @@ class JsonToPhpArrayConverterTest(private val filename: String?) {
                     .filter { path: Path? -> path != null }
                     .filter { path: Path -> path.toString().endsWith(".json") }
                     .map { path: Path -> arrayOf(path.fileName.toString().replace(".json", "")) }
-                    .collect(Collectors.toList())
+                    .toList()
             }
         }
     }

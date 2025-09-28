@@ -70,8 +70,8 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
 
     fun getStatus(): Status {
         val relPath = observedFile.filePath ?: return Status.Unknown
-        val file = projectRoot!!.findFileByRelativePath(relPath)
-        if (file == null || !file.exists()) {
+        val file = projectRoot?.findFileByRelativePath(relPath) ?: return Status.Unknown
+        if (!file.exists()) {
             return Status.Unknown
         }
         var result = Status.Unknown
@@ -96,8 +96,8 @@ class FileObserver(private val project: Project, val observedFile: ObservedFile)
 
     fun replaceInFile(toActive: Boolean) {
         val relPath = observedFile.filePath ?: return
-        val file = projectRoot!!.findFileByRelativePath(relPath)
-        if (file == null || !file.exists()) {
+        val file = projectRoot?.findFileByRelativePath(relPath) ?: return
+        if (!file.exists()) {
             return
         }
 

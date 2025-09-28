@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Assertions
 import org.micoli.php.service.DebouncedRunnable
 
 class DebouncedRunnableTest {
-    private var debouncedRunnable: DebouncedRunnable? = null
-    private var counter: AtomicInteger? = null
-    private var callbackCounter: AtomicInteger? = null
+    private lateinit var debouncedRunnable: DebouncedRunnable
+    private var counter: AtomicInteger = AtomicInteger(0)
+    private var callbackCounter: AtomicInteger = AtomicInteger(0)
 
     @Before
     fun setUp() {
@@ -22,9 +22,7 @@ class DebouncedRunnableTest {
 
     @After
     fun tearDown() {
-        if (debouncedRunnable != null) {
-            debouncedRunnable!!.close()
-        }
+        debouncedRunnable.close()
     }
 
     @Test
@@ -36,19 +34,19 @@ class DebouncedRunnableTest {
         debouncedRunnable =
             DebouncedRunnable(
                 {
-                    counter!!.incrementAndGet()
+                    counter.incrementAndGet()
                     latch.countDown()
                 },
                 delay,
                 null,
             )
 
-        Assertions.assertEquals(0, counter!!.get())
-        debouncedRunnable!!.run()
-        Assertions.assertEquals(0, counter!!.get())
+        Assertions.assertEquals(0, counter.get())
+        debouncedRunnable.run()
+        Assertions.assertEquals(0, counter.get())
 
         Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertEquals(1, counter!!.get())
+        Assertions.assertEquals(1, counter.get())
     }
 
     @Test
@@ -60,34 +58,34 @@ class DebouncedRunnableTest {
         debouncedRunnable =
             DebouncedRunnable(
                 {
-                    counter!!.incrementAndGet()
+                    counter.incrementAndGet()
                     latch.countDown()
                 },
                 delay,
                 null,
             )
 
-        debouncedRunnable!!.run()
+        debouncedRunnable.run()
         Thread.sleep(100)
-        debouncedRunnable!!.run()
+        debouncedRunnable.run()
         Thread.sleep(100)
-        debouncedRunnable!!.run()
+        debouncedRunnable.run()
 
         Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertEquals(1, counter!!.get())
+        Assertions.assertEquals(1, counter.get())
     }
 
     @Test
     fun testExecuteNow() {
         val delay: Long = 500
 
-        debouncedRunnable = DebouncedRunnable({ counter!!.incrementAndGet() }, delay, null)
+        debouncedRunnable = DebouncedRunnable({ counter.incrementAndGet() }, delay, null)
 
-        debouncedRunnable!!.run()
-        Assertions.assertEquals(0, counter!!.get())
+        debouncedRunnable.run()
+        Assertions.assertEquals(0, counter.get())
 
-        debouncedRunnable!!.executeNow()
-        Assertions.assertEquals(1, counter!!.get())
+        debouncedRunnable.executeNow()
+        Assertions.assertEquals(1, counter.get())
     }
 
     @Test
@@ -98,19 +96,19 @@ class DebouncedRunnableTest {
 
         debouncedRunnable =
             DebouncedRunnable(
-                { counter!!.incrementAndGet() },
+                { counter.incrementAndGet() },
                 delay,
                 {
-                    callbackCounter!!.incrementAndGet()
+                    callbackCounter.incrementAndGet()
                     latch.countDown()
                 },
             )
 
-        debouncedRunnable!!.run()
+        debouncedRunnable.run()
         Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
 
-        Assertions.assertEquals(1, counter!!.get())
-        Assertions.assertEquals(1, callbackCounter!!.get())
+        Assertions.assertEquals(1, counter.get())
+        Assertions.assertEquals(1, callbackCounter.get())
     }
 
     @Test
@@ -118,6 +116,6 @@ class DebouncedRunnableTest {
         val delay: Long = 500
         debouncedRunnable = DebouncedRunnable({}, delay, null)
 
-        Assertions.assertEquals(delay, debouncedRunnable!!.delayMillis)
+        Assertions.assertEquals(delay, debouncedRunnable.delayMillis)
     }
 }

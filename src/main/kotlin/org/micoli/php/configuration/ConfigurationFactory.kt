@@ -11,7 +11,6 @@ import java.io.FileNotFoundException
 import java.io.FileReader
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import java.util.stream.Collectors
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Exception
@@ -38,7 +37,7 @@ class ConfigurationFactory {
             ".php-companion.local.yaml",
         )
 
-    data class LoadedConfiguration(val configuration: Configuration?, val timestamp: Long?) {
+    data class LoadedConfiguration(val configuration: Configuration?, val timestamp: Long) {
         var ignoredProperties: MutableList<String> = ArrayList()
     }
 
@@ -49,12 +48,7 @@ class ConfigurationFactory {
         force: Boolean,
     ): LoadedConfiguration? {
         val files =
-            acceptableConfigurationFiles
-                .stream()
-                .filter { configurationFile: String ->
-                    File(projectPath, configurationFile).exists()
-                }
-                .toList()
+            acceptableConfigurationFiles.stream().filter { File(projectPath, it).exists() }.toList()
         if (files.isEmpty()) {
             throw NoConfigurationFileException(
                 "No .php-companion(.local).(json|yaml) configuration file(s) found.", 0L)
@@ -84,7 +78,7 @@ class ConfigurationFactory {
             return loadedConfiguration
         } catch (configurationException: ConfigurationException) {
             throw ConfigurationException(
-                configurationException.message,
+                configurationException.localizedMessage,
                 latestFileUpdateTimestamp,
                 configurationException.descriptorString,
                 configurationException.originalContent,
@@ -95,12 +89,12 @@ class ConfigurationFactory {
                     ": " +
                     getReadablePathReference(mappingException)),
                 latestFileUpdateTimestamp,
-                mappingException.message,
+                mappingException.localizedMessage,
                 stringContent,
             )
         } catch (exception: Exception) {
             throw ConfigurationException(
-                exception.message,
+                exception.localizedMessage,
                 latestFileUpdateTimestamp,
                 exception.javaClass.descriptorString(),
                 stringContent,
@@ -111,16 +105,18 @@ class ConfigurationFactory {
     private fun getReadablePathReference(mappingException: JsonMappingException): String {
         return mappingException.path
             .stream()
-            .map { pathReference: JsonMappingException.Reference? ->
-                if (pathReference!!.index == -1) {
-                    return@map pathReference.fieldName
+            .filter { it != null }
+            .map {
+                if (it.index == -1) {
+                    return@map it.fieldName
                 }
-                if (pathReference.fieldName == null) {
-                    return@map "[" + pathReference.index + "]"
+                if (it.fieldName == null) {
+                    return@map "[" + it.index + "]"
                 }
-                pathReference.fieldName + "[" + pathReference.index + "]"
+                it.fieldName + "[" + it.index + "]"
             }
-            .collect(Collectors.joining("."))
+            .toList()
+            .joinToString(".")
     }
 
     @Throws(
@@ -157,9 +153,9 @@ class ConfigurationFactory {
                 .toJson(load, LinkedHashMap::class.java)
         } catch (e: ScannerException) {
             throw ConfigurationException(
-                e.problem + "\n" + e.problemMark.toString(), null, e.message, file)
+                e.problem + "\n" + e.problemMark.toString(), 0L, e.localizedMessage, file)
         } catch (e: FileNotFoundException) {
-            throw ConfigurationException(e.message, null, e.message, file)
+            throw ConfigurationException(e.localizedMessage, 0L, e.localizedMessage, file)
         }
     }
 

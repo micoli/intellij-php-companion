@@ -68,7 +68,7 @@ class IconValueGenerator : PropertyValueGenerator {
 
         return resources
             .stream()
-            .filter { obj: String? -> Objects.nonNull(obj) }
+            .filter { it != null }
             .distinct()
             .sorted()
             .toList()

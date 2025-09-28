@@ -8,12 +8,12 @@ import javax.swing.ListSelectionModel
 
 object NavigableListPopup {
     @JvmStatic
-    fun showNavigablePopup(mouseEvent: MouseEvent, elements: MutableList<NavigableListPopupItem?>) {
-        val list = JBList<NavigableListPopupItem?>(elements)
+    fun showNavigablePopup(mouseEvent: MouseEvent, elements: MutableList<NavigableListPopupItem>) {
+        val list = JBList(elements)
         list.cellRenderer = NavigableListCellRenderer()
         list.selectionMode = ListSelectionModel.SINGLE_SELECTION
 
-        PopupChooserBuilder<NavigableListPopupItem?>(list)
+        PopupChooserBuilder(list)
             .setItemChosenCallback(
                 Runnable {
                     val selected = list.getSelectedValue()

@@ -1,7 +1,6 @@
 package org.micoli.php
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import java.util.stream.Collectors
 import junit.framework.TestCase
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
@@ -15,15 +14,13 @@ class DoctrineEntityListTest : BasePlatformTestCase() {
         myFixture.copyDirectoryToProject("src", "/src")
         val doctrineEntityListService = loadPluginConfiguration(testDataPath)
         val lists = doctrineEntityListService.getElements()
-        if (lists == null) {
-            fail("list is empty")
-        }
-        val formattedList = lists!!.map { it?.name.toString() }.sorted().joinToString(",")
+        val formattedList = lists.map { it.name }.sorted().joinToString(",")
         val expectedList =
             ArrayList(mutableListOf<String?>("article__article", "article__feed"))
                 .stream()
                 .sorted()
-                .collect(Collectors.joining(","))
+                .toList()
+                .joinToString(",")
         TestCase.assertEquals(expectedList, formattedList)
     }
 

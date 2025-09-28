@@ -28,8 +28,8 @@ class PhpUnitConsoleFilterProvider : ConsoleDependentInputFilterProvider() {
             .subscribe(
                 ConfigurationEvents.CONFIGURATION_UPDATED,
                 object : ConfigurationEvents {
-                    override fun configurationLoaded(loadedConfiguration: Configuration?) {
-                        loadConfiguration(loadedConfiguration!!.consoleCleaner)
+                    override fun configurationLoaded(loadedConfiguration: Configuration) {
+                        loadConfiguration(loadedConfiguration.consoleCleaner)
                     }
                 })
         return mutableListOf(cleanup())
@@ -43,9 +43,7 @@ class PhpUnitConsoleFilterProvider : ConsoleDependentInputFilterProvider() {
         patterns =
             configuration.patterns
                 .stream()
-                .map { p: String ->
-                    PatternMatcher(p.startsWith("^") && p.endsWith("$"), Pattern.compile(p))
-                }
+                .map { PatternMatcher(it.startsWith("^") && it.endsWith("$"), Pattern.compile(it)) }
                 .toList()
     }
 

@@ -6,16 +6,12 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.IconLoader.getIcon
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.Method
 import com.jetbrains.php.lang.psi.elements.MethodReference
 import java.awt.event.MouseEvent
-import java.util.Objects
-import java.util.function.Supplier
-import java.util.stream.Collectors
 import javax.swing.Icon
 import kotlinx.collections.immutable.toImmutableList
 import org.micoli.php.service.intellij.psi.PhpUtil.findClassByFQN
@@ -128,8 +124,8 @@ class MessengerLineMarkerProvider : LineMarkerProvider {
         messengerService.findDispatchCallsForMessageAsync(messageClassName) { dispatchCalls ->
             val elements = ArrayList<PsiElement?>()
             ApplicationManager.getApplication().runReadAction {
-                for (dispatchCall in dispatchCalls!!) {
-                    if (dispatchCall?.isValid == false) {
+                for (dispatchCall in dispatchCalls) {
+                    if (!dispatchCall.isValid) {
                         continue
                     }
                     elements.add(dispatchCall)
@@ -146,36 +142,31 @@ class MessengerLineMarkerProvider : LineMarkerProvider {
                     }
                     return@invokeLater
                 }
-                val navigableItemList: MutableList<NavigableItem?> =
+                val navigableItemList: MutableList<NavigableItem> =
                     elements
                         .stream()
-                        .map { psiElement: PsiElement? ->
-                            ApplicationManager.getApplication()
-                                .runReadAction<NavigableItem?>(
-                                    Computable {
-                                        psiElement!!.containingFile ?: return@Computable null
-                                        if (!(psiElement as Navigatable).canNavigate()) {
-                                            return@Computable null
-                                        }
+                        .filter { it != null }
+                        .map {
+                            ApplicationManager.getApplication().runReadAction<NavigableItem> {
+                                it?.containingFile ?: return@runReadAction null
+                                if (!(it as Navigatable).canNavigate()) {
+                                    return@runReadAction null
+                                }
 
-                                        val fileExtract = getFileExtract(psiElement, 0)
-                                        NavigableItem(
-                                            fileExtract,
-                                            psiElement as Navigatable,
-                                            psiElement.getIcon(0))
-                                    })
+                                val fileExtract = getFileExtract(it, 0)
+                                NavigableItem(fileExtract, it as Navigatable, it.getIcon(0))
+                            }
                         }
-                        .filter { obj: NavigableItem? -> Objects.nonNull(obj) }
-                        .collect(Collectors.toCollection(Supplier { ArrayList() }))
+                        .filter { it != null }
+                        .toList()
 
                 if (!hasMultipleFilesReferenced(navigableItemList)) {
                     showNavigablePopup(
                         mouseEvent,
                         navigableItemList
                             .stream()
-                            .map<NavigableListPopupItem?> { item: NavigableItem? ->
-                                item as NavigableListPopupItem?
-                            }
+                            .filter { it != null }
+                            .map { it as NavigableListPopupItem }
                             .toList())
                     return@invokeLater
                 }
@@ -188,11 +179,16 @@ class MessengerLineMarkerProvider : LineMarkerProvider {
     private fun addActionsToItems(
         project: Project,
         messageClassName: String?,
-        navigableItemList: MutableList<NavigableItem?>
-    ): MutableList<NavigableListPopupItem?> {
+        navigableItemList: MutableList<NavigableItem>
+    ): MutableList<NavigableListPopupItem> {
         val navigatableList =
-            navigableItemList.stream().map { it!!.navigable }.toList().toImmutableList()
-        val finalList = ArrayList<NavigableListPopupItem?>(navigableItemList)
+            navigableItemList
+                .stream()
+                .filter { it != null }
+                .map { it.navigable }
+                .toList()
+                .toImmutableList()
+        val finalList = ArrayList<NavigableListPopupItem>(navigableItemList)
         finalList.add(NavigableOpenAllAction(navigatableList))
         finalList.add(
             NavigableOpenSearchAction(
@@ -203,13 +199,7 @@ class MessengerLineMarkerProvider : LineMarkerProvider {
         return finalList
     }
 
-    private fun hasMultipleFilesReferenced(
-        navigableItemList: MutableList<NavigableItem?>
-    ): Boolean {
-        return (navigableItemList
-            .stream()
-            .map<String?> { navigableItem: NavigableItem? -> navigableItem!!.fileExtract.file }
-            .distinct()
-            .count() > 1)
+    private fun hasMultipleFilesReferenced(navigableItemList: MutableList<NavigableItem>): Boolean {
+        return navigableItemList.stream().map { it.fileExtract.file }.distinct().count() > 1
     }
 }

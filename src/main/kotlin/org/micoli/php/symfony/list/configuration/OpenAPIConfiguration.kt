@@ -13,5 +13,5 @@ class OpenAPIConfiguration : DisactivableConfiguration {
     @Schema(
         description = "List of root files of swagger/openapi yaml/json files",
         examples = ["public/openapi.yaml", "private/openapi.yaml"])
-    var specificationRoots: Array<String?> = arrayOf()
+    var specificationRoots: Array<String> = arrayOf()
 }

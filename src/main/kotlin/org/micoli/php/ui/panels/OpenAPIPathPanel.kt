@@ -11,7 +11,6 @@ import java.lang.Short
 import java.lang.String
 import java.time.Duration
 import java.util.function.Consumer
-import java.util.function.Function
 import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.DefaultTableModel
@@ -37,35 +36,35 @@ class OpenAPIPathPanel(project: Project) :
     var concurrentSearchManager: ConcurrentSearchManager =
         ConcurrentSearchManager(Duration.ofSeconds(20))
 
-    override fun getSorter(): TableRowSorter<DefaultTableModel>? {
+    override fun getSorter(): TableRowSorter<DefaultTableModel> {
         innerSorter = TableRowSorter<DefaultTableModel>(model)
-        innerSorter?.setSortKeys(
+        innerSorter.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.ASCENDING),
                 RowSorter.SortKey(1, SortOrder.ASCENDING),
             ))
-        innerSorter?.setComparator(
+        innerSorter.setComparator(
             0,
             Comparator { o1: OpenAPIPathElementDTO?, o2: OpenAPIPathElementDTO? ->
                 String.CASE_INSENSITIVE_ORDER.compare(o1!!.uri, o2!!.uri)
             },
         )
-        innerSorter?.setComparator(1, String.CASE_INSENSITIVE_ORDER)
-        innerSorter?.setComparator(2, Comparator { _: Any?, _: Any? -> 0 })
+        innerSorter.setComparator(1, String.CASE_INSENSITIVE_ORDER)
+        innerSorter.setComparator(2, Comparator { _: Any?, _: Any? -> 0 })
         return innerSorter
     }
 
     override fun configureTableColumns() {
-        table?.getColumnModel()?.getColumn(0)?.setMaxWidth(1600)
-        table?.getColumnModel()?.getColumn(1)?.setMaxWidth(90)
-        table?.getColumnModel()?.getColumn(2)?.setCellRenderer(ActionIconRenderer())
-        table?.getColumnModel()?.getColumn(2)?.setMinWidth(50)
-        table?.getColumnModel()?.getColumn(2)?.setMaxWidth(50)
-        table?.setRowHeight(table?.getRowHeight()?.times(2) ?: 20)
+        table.getColumnModel()?.getColumn(0)?.setMaxWidth(1600)
+        table.getColumnModel()?.getColumn(1)?.setMaxWidth(90)
+        table.getColumnModel()?.getColumn(2)?.setCellRenderer(ActionIconRenderer())
+        table.getColumnModel()?.getColumn(2)?.setMinWidth(50)
+        table.getColumnModel()?.getColumn(2)?.setMaxWidth(50)
+        table.setRowHeight(table.getRowHeight().times(2))
         table
-            ?.getColumnModel()
-            ?.getColumn(0)
-            ?.setCellRenderer(
+            .getColumnModel()
+            .getColumn(0)
+            .setCellRenderer(
                 object : DefaultTableCellRenderer() {
                     private val jLabel = JLabel()
 
@@ -115,7 +114,7 @@ class OpenAPIPathPanel(project: Project) :
     override fun handleActionClick(row: Int) {
         ApplicationManager.getApplication().invokeLater {
             val elementDTO =
-                table?.getValueAt(row, getColumnCount() - 1) as OpenAPIPathElementDTO?
+                table.getValueAt(row, getColumnCount() - 1) as OpenAPIPathElementDTO?
                     ?: return@invokeLater
             searchOperationIdDeclaration("operationId: " + elementDTO.operationId)
         }
@@ -124,7 +123,7 @@ class OpenAPIPathPanel(project: Project) :
     override fun refresh() {
         synchronized(lock) {
             try {
-                table?.emptyText?.text = "Loading OpenAPIPaths, please wait..."
+                table.emptyText.text = "Loading OpenAPIPaths, please wait..."
                 clearItems()
 
                 val worker: SwingWorker<Void?, OpenAPIPathElementDTO> =
@@ -133,7 +132,6 @@ class OpenAPIPathPanel(project: Project) :
                             ApplicationManager.getApplication().runReadAction {
                                 val items =
                                     OpenAPIService.getInstance(project).getElements()
-                                        ?: return@runReadAction
                                 for (item in items) {
                                     publish(item)
                                 }
@@ -151,7 +149,7 @@ class OpenAPIPathPanel(project: Project) :
 
                         override fun done() {
                             SwingUtilities.invokeLater {
-                                table?.emptyText?.text = "Nothing to show"
+                                table.emptyText.text = "Nothing to show"
                                 model.fireTableDataChanged()
                             }
                         }
@@ -193,21 +191,17 @@ class OpenAPIPathPanel(project: Project) :
                     }
                     results
                         .stream()
-                        .map(
-                            Function { usageInfo: UsageInfo? ->
-                                ApplicationManager.getApplication()
-                                    .runReadAction<NavigableItem?>(
-                                        Computable {
-                                            usageInfo!!.file ?: return@Computable null
+                        .map {
+                            ApplicationManager.getApplication()
+                                .runReadAction<NavigableItem?>(
+                                    Computable {
+                                        it!!.file ?: return@Computable null
 
-                                            val fileExtract =
-                                                PsiElementUtil.getFileExtract(usageInfo, 1)
-                                            NavigableItem(
-                                                fileExtract,
-                                                UsageInfo2UsageAdapter(usageInfo),
-                                                usageInfo.icon)
-                                        })
-                            })
+                                        val fileExtract = PsiElementUtil.getFileExtract(it, 1)
+                                        NavigableItem(
+                                            fileExtract, UsageInfo2UsageAdapter(it), it.icon)
+                                    })
+                        }
                         .toList()
                         .forEach(Consumer { c: NavigableItem? -> c!!.navigate(true) })
                 },
@@ -220,6 +214,6 @@ class OpenAPIPathPanel(project: Project) :
     }
 
     companion object {
-        private val COLUMN_NAMES = arrayOf<kotlin.String?>("Uri", "Method", "Actions")
+        private val COLUMN_NAMES = arrayOf("Uri", "Method", "Actions")
     }
 }

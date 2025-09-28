@@ -88,15 +88,15 @@ class FileListProcessorTest : BasePlatformTestCase() {
 
     private fun assertContains(processedFiles: MutableList<VirtualFile>, anObject: String) {
         assertTrue(
-            processedFiles.stream().anyMatch { file ->
-                ((file as VirtualFile).canonicalPath)?.endsWith(anObject) == true
+            processedFiles.stream().anyMatch {
+                ((it as VirtualFile).canonicalPath)?.endsWith(anObject) == true
             })
     }
 
     private fun assertNotContains(processedFiles: MutableList<VirtualFile>, anObject: String) {
         assertTrue(
-            processedFiles.stream().noneMatch { file ->
-                ((file as VirtualFile).canonicalPath)?.endsWith(anObject) == true
+            processedFiles.stream().noneMatch {
+                ((it as VirtualFile).canonicalPath)?.endsWith(anObject) == true
             })
     }
 }

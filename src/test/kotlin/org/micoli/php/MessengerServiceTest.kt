@@ -1,8 +1,6 @@
 package org.micoli.php
 
-import com.intellij.codeInsight.daemon.GutterMark
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.jetbrains.php.lang.psi.elements.Method
 import junit.framework.TestCase
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
@@ -59,7 +57,7 @@ class MessengerServiceTest : BasePlatformTestCase() {
         val handledMessages =
             messengerService.findHandlersByMessageName("App\\Core\\Event\\ArticleCreatedEvent")
         assertContainsElements(
-            handledMessages.stream().map { obj: Method? -> obj!!.fqn }.toList(),
+            handledMessages.stream().map { it!!.fqn }.toList(),
             "\\App\\Core\\EventListener\\OnArticleCreated.__invoke",
         )
     }
@@ -74,11 +72,8 @@ class MessengerServiceTest : BasePlatformTestCase() {
         val specificMarkers =
             lineMarkers
                 .stream()
-                .filter { it: GutterMark? ->
-                    val tooltipText = it!!.tooltipText
-                    if (tooltipText == null) {
-                        return@filter false
-                    }
+                .filter {
+                    val tooltipText = it!!.tooltipText ?: return@filter false
                     tooltipText.contains("Search for usages") ||
                         tooltipText.contains("Navigate to message handlers")
                 }

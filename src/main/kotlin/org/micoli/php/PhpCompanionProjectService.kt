@@ -42,7 +42,7 @@ import org.micoli.php.ui.Notification
 class PhpCompanionProjectService(private val project: Project) :
     Disposable, DumbModeListener, VfsHandler<String> {
     private val messageBus: MessageBus
-    private var configurationTimestamp: Long? = 0L
+    private var configurationTimestamp: Long = 0L
     private val scheduledTask: ScheduledFuture<*>?
 
     init {
@@ -82,7 +82,7 @@ class PhpCompanionProjectService(private val project: Project) :
         try {
             val loadedConfiguration =
                 ConfigurationFactory()
-                    .loadConfiguration(project.basePath, this.configurationTimestamp!!, force)
+                    .loadConfiguration(project.basePath, this.configurationTimestamp, force)
             if (loadedConfiguration == null) {
                 return
             }
@@ -90,9 +90,11 @@ class PhpCompanionProjectService(private val project: Project) :
 
             updateServicesConfigurations(loadedConfiguration.configuration)
 
-            messageBus
-                .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)
-                .configurationLoaded(loadedConfiguration.configuration)
+            if (loadedConfiguration.configuration != null) {
+                messageBus
+                    .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)
+                    .configurationLoaded(loadedConfiguration.configuration)
+            }
 
             DaemonCodeAnalyzer.getInstance(project).restart()
             loadedConfiguration.ignoredProperties
@@ -108,13 +110,13 @@ class PhpCompanionProjectService(private val project: Project) :
                 .messageWithTimeout("PHP Companion Configuration loaded", 900)
         } catch (e: NoConfigurationFileException) {
             if (this.configurationTimestamp != e.serial) {
-                Notification.getInstance(project).error(e.message!!)
+                Notification.getInstance(project).error(e.localizedMessage)
                 this.configurationTimestamp = e.serial
             }
         } catch (e: ConfigurationException) {
             if (this.configurationTimestamp != e.serial) {
                 Notification.getInstance(project)
-                    .error("Configuration error while loading:", e.message!!)
+                    .error("Configuration error while loading:", e.localizedMessage)
                 this.configurationTimestamp = e.serial
             }
         }

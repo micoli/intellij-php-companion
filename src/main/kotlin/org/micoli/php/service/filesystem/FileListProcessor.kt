@@ -31,9 +31,9 @@ object FileListProcessor {
 
         return filesSet
             .stream()
-            .filter { file: VirtualFile? ->
-                (ignoreNode.isIgnored(
-                    VfsUtil.getRelativePath(file!!, ignoreFile!!.parent), false) !=
+            .filter { it != null }
+            .filter {
+                (ignoreNode.isIgnored(VfsUtil.getRelativePath(it, ignoreFile!!.parent), false) !=
                     IgnoreNode.MatchResult.IGNORED)
             }
             .toList()
