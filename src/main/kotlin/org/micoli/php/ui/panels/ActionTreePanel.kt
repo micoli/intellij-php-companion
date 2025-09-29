@@ -20,6 +20,7 @@ import org.micoli.php.service.TaskScheduler
 import org.micoli.php.tasks.TasksService
 import org.micoli.php.tasks.configuration.TasksConfiguration
 import org.micoli.php.tasks.configuration.runnableTask.Builtin
+import org.micoli.php.tasks.configuration.runnableTask.Link
 import org.micoli.php.tasks.configuration.runnableTask.ObservedFile
 import org.micoli.php.tasks.configuration.runnableTask.Script
 import org.micoli.php.tasks.configuration.runnableTask.Shell
@@ -99,6 +100,7 @@ class ActionTreePanel(project: Project) : JPanel(), Disposable {
                     is Builtin -> TaskToolbarButton(project, task)
                     is Shell -> TaskToolbarButton(project, task)
                     is Script -> TaskToolbarButton(project, task)
+                    is Link -> TaskToolbarButton(project, task)
                     is ObservedFile -> FileObserverToolbarButton(project, task)
                     else -> throw IllegalStateException("Unexpected value: $task")
                 }

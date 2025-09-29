@@ -1,5 +1,6 @@
 package org.micoli.php.tasks.runnables
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.ide.script.IdeScriptEngine
 import com.intellij.ide.script.IdeScriptEngineManager
 import com.intellij.openapi.actionSystem.ActionManager
@@ -24,6 +25,7 @@ import org.micoli.php.scripting.Core
 import org.micoli.php.scripting.FileSystem
 import org.micoli.php.scripting.UI
 import org.micoli.php.tasks.configuration.runnableTask.Builtin
+import org.micoli.php.tasks.configuration.runnableTask.Link
 import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 import org.micoli.php.tasks.configuration.runnableTask.Script
 import org.micoli.php.tasks.configuration.runnableTask.Shell
@@ -49,6 +51,7 @@ open class RunnableTask(
             is PostToggleShell ->
                 runShellAction(configuration.label, configuration.command!!, configuration.cwd)
             is PostToggleScript -> runScript(configuration.extension, configuration.source!!)
+            is Link -> runLink(configuration.url)
             else -> throw IllegalStateException("Unexpected value: $configuration")
         }
     }
@@ -112,6 +115,10 @@ open class RunnableTask(
         ApplicationManager.getApplication().invokeLater {
             terminalWidget.sendCommandToExecute(command)
         }
+    }
+
+    private fun runLink(url: String?) {
+        BrowserUtil.browse(url ?: "")
     }
 
     companion object {

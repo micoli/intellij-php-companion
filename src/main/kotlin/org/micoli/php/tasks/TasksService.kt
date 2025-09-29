@@ -25,6 +25,7 @@ import org.micoli.php.service.filesystem.Watchee
 import org.micoli.php.tasks.configuration.TasksConfiguration
 import org.micoli.php.tasks.configuration.Watcher
 import org.micoli.php.tasks.configuration.runnableTask.Builtin
+import org.micoli.php.tasks.configuration.runnableTask.Link
 import org.micoli.php.tasks.configuration.runnableTask.ObservedFile
 import org.micoli.php.tasks.configuration.runnableTask.Script
 import org.micoli.php.tasks.configuration.runnableTask.Shell
@@ -162,6 +163,7 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
                             is PostToggleBuiltin -> RunnableTask(project, it)
                             is PostToggleShell -> RunnableTask(project, it)
                             is PostToggleScript -> RunnableTask(project, it)
+                            is Link -> RunnableTask(project, it)
                             else -> throw IllegalStateException("Unexpected value: $it")
                         }
                 }

@@ -659,6 +659,11 @@ tasksConfiguration:
       label: null
       actionId: null
       icon: debugger/threadRunning.svg
+  - type: link
+    id: aTaskId
+    label: null
+    url: http://www.github.com
+    icon: expui/gutter/web.svg
   toolbar:
   - type: task
     taskId: aTaskId

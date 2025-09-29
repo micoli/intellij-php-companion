@@ -16,6 +16,7 @@ import javax.swing.tree.TreePath
 import org.micoli.php.tasks.configuration.AbstractNode
 import org.micoli.php.tasks.configuration.Path
 import org.micoli.php.tasks.configuration.Task
+import org.micoli.php.tasks.configuration.runnableTask.Link
 import org.micoli.php.tasks.configuration.runnableTask.ObservedFile
 import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 import org.micoli.php.tasks.configuration.runnableTask.Script
@@ -95,25 +96,33 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
         task: Task,
         runnable: RunnableTaskConfiguration
     ): DefaultMutableTreeNode {
-        val label = task.label ?: runnable.label ?: runnable.id ?: "N/A"
+        val label = task.label ?: runnable.label ?: runnable.id
 
         return when (runnable) {
-            is Shell -> {
+            is Shell ->
                 DynamicTreeNode(
                     project,
                     tree,
-                    runnable.id!!,
+                    runnable.id,
                     getIcon(runnable.icon, PhpCompanionIcon::class.java),
                     label,
                     runnable,
                 )
-            }
+            is Link ->
+                DynamicTreeNode(
+                    project,
+                    tree,
+                    runnable.id,
+                    getIcon(runnable.icon, PhpCompanionIcon::class.java),
+                    label,
+                    runnable,
+                )
 
             is Script ->
                 DynamicTreeNode(
                     project,
                     tree,
-                    runnable.id!!,
+                    runnable.id,
                     getIcon(runnable.icon, PhpCompanionIcon::class.java),
                     label,
                     runnable,
