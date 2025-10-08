@@ -11,5 +11,6 @@ internal class ToolWindowFactory : ToolWindowFactory, DumbAware {
         val toolWindowContent = ToolWindowContent(project)
         toolWindow.contentManager.addContent(
             ContentFactory.getInstance().createContent(toolWindowContent.contentPanel, "", false))
+        toolWindow.setTitleActions(toolWindowContent.titleActions)
     }
 }

@@ -3,11 +3,19 @@ package org.micoli.php.ui
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.tabs.JBTabs
 import com.intellij.ui.tabs.JBTabsFactory
+import com.intellij.ui.tabs.TabInfo
+import java.awt.BorderLayout
+import java.util.function.Consumer
 import java.util.function.Function
+import javax.swing.BorderFactory
+import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.SwingConstants
+import javax.swing.SwingUtilities
 import org.micoli.php.PhpCompanionProjectService
 import org.micoli.php.configuration.models.Configuration
 import org.micoli.php.configuration.models.DisactivableConfiguration
@@ -15,7 +23,7 @@ import org.micoli.php.events.ConfigurationEvents
 import org.micoli.php.events.IndexingEvents
 import org.micoli.php.ui.panels.*
 
-internal class ToolWindowContent(project: com.intellij.openapi.project.Project) {
+internal class ToolWindowContent(project: Project) {
     private class PanelRefresher(
         val aPanel: Class<*>,
         val configurationRefresher: Function<Configuration, DisactivableConfiguration?>,
@@ -23,28 +31,27 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
 
     val contentPanel: JPanel = JPanel()
     private val tabActions: DefaultActionGroup = DefaultActionGroup()
-    private val tabs: JBTabs
-    private val tabMap: MutableMap<Class<*>, com.intellij.ui.tabs.TabInfo> =
-        java.util.HashMap<Class<*>, com.intellij.ui.tabs.TabInfo>()
-    private val panelMap: MutableMap<Class<*>, JPanel> = java.util.HashMap<Class<*>, JPanel>()
+    val titleActions: MutableList<AnAction?> = ArrayList()
+    private val tabs: JBTabs = JBTabsFactory.createTabs(project)
+    private val tabMap: MutableMap<Class<*>, TabInfo> = HashMap<Class<*>, TabInfo>()
+    private val panelMap: MutableMap<Class<*>, JPanel> = HashMap<Class<*>, JPanel>()
     private var configuration: Configuration? = null
-    private val refresherList: MutableList<PanelRefresher?> = java.util.ArrayList<PanelRefresher?>()
+    private val refresherList: MutableList<PanelRefresher?> = ArrayList<PanelRefresher?>()
 
     init {
-        val mainPanel: javax.swing.JComponent = JPanel()
-        this.contentPanel.setLayout(java.awt.BorderLayout(2, 2))
-        this.contentPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0))
-        this.contentPanel.add(mainPanel, java.awt.BorderLayout.CENTER)
-        mainPanel.setLayout(java.awt.BorderLayout())
+        val mainPanel: JComponent = JPanel()
+        this.contentPanel.setLayout(BorderLayout(2, 2))
+        this.contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0))
+        this.contentPanel.add(mainPanel, BorderLayout.CENTER)
+        mainPanel.setLayout(BorderLayout())
 
-        val tabbedPane = JBTabbedPane(javax.swing.SwingConstants.TOP, JBTabbedPane.WRAP_TAB_LAYOUT)
-        tabbedPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0))
+        val tabbedPane = JBTabbedPane(SwingConstants.TOP, JBTabbedPane.WRAP_TAB_LAYOUT)
+        tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0))
 
-        tabs = JBTabsFactory.createTabs(project)
-        tabActions.add(
+        titleActions.add(
             object : AnAction("Refresh", "Refresh", PhpCompanionIcon.Refresh) {
                 override fun actionPerformed(e: AnActionEvent) {
-                    javax.swing.SwingUtilities.invokeLater {
+                    SwingUtilities.invokeLater {
                         PhpCompanionProjectService.getInstance(project).loadConfiguration(true)
                     }
                 }
@@ -55,7 +62,7 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
         addTab(DoctrineEntitiesPanel(project), "Entities") { it.doctrineEntitiesConfiguration }
         addTab(OpenAPIPathPanel(project), "OAS") { it.openAPIConfiguration }
 
-        mainPanel.add(tabs.component, java.awt.BorderLayout.CENTER)
+        mainPanel.add(tabs.component, BorderLayout.CENTER)
         project.messageBus
             .connect()
             .subscribe(
@@ -95,14 +102,14 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
     }
 
     private fun refreshTabs() {
-        javax.swing.SwingUtilities.invokeLater {
+        SwingUtilities.invokeLater {
             if (configuration == null) {
                 return@invokeLater
             }
             refresherList
                 .reversed()
                 .forEach(
-                    java.util.function.Consumer { panelRefresher: PanelRefresher ->
+                    Consumer { panelRefresher: PanelRefresher ->
                         manageTabVisibilityAndRefresh(
                             panelRefresher.aPanel,
                             panelRefresher.configurationRefresher.apply(configuration!!),
@@ -116,7 +123,7 @@ internal class ToolWindowContent(project: com.intellij.openapi.project.Project) 
         tabName: String,
         configurationRefresher: Function<Configuration, DisactivableConfiguration?>,
     ) {
-        val tabInfo = com.intellij.ui.tabs.TabInfo(panel)
+        val tabInfo = TabInfo(panel)
         tabInfo.setText(tabName)
         tabInfo.setActions(tabActions, "TabActions")
         tabs.addTab(tabInfo)
