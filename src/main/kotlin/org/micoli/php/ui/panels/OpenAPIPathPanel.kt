@@ -111,7 +111,7 @@ class OpenAPIPathPanel(project: Project) :
                 })
     }
 
-    override fun handleActionClick(row: Int) {
+    override fun handleActionDoubleClick(row: Int) {
         ApplicationManager.getApplication().invokeLater {
             val elementDTO =
                 table.getValueAt(row, getColumnCount() - 1) as OpenAPIPathElementDTO?
@@ -130,8 +130,7 @@ class OpenAPIPathPanel(project: Project) :
                     object : SwingWorker<Void?, OpenAPIPathElementDTO>() {
                         override fun doInBackground(): Void? {
                             ApplicationManager.getApplication().runReadAction {
-                                val items =
-                                    OpenAPIService.getInstance(project).getElements()
+                                val items = OpenAPIService.getInstance(project).getElements()
                                 for (item in items) {
                                     publish(item)
                                 }

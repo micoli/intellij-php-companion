@@ -44,7 +44,7 @@ class DoctrineEntitiesPanel(project: Project) :
         table.getColumnModel()?.getColumn(3)?.setMaxWidth(50)
     }
 
-    override fun handleActionClick(row: Int) {
+    override fun handleActionDoubleClick(row: Int) {
         ApplicationManager.getApplication().invokeLater {
             val elementDTO =
                 table.getValueAt(row, getColumnCount() - 1) as DoctrineEntityElementDTO?

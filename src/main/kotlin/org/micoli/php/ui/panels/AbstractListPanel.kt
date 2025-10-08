@@ -19,6 +19,8 @@ import javax.swing.JPanel
 import javax.swing.UIManager
 import javax.swing.border.Border
 import javax.swing.event.DocumentEvent
+import javax.swing.event.ListSelectionEvent
+import javax.swing.event.ListSelectionListener
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableRowSorter
 import org.micoli.php.ui.PhpCompanionIcon
@@ -122,14 +124,34 @@ protected constructor(
                     val row = table.rowAtPoint(e.getPoint())
                     val col = table.columnAtPoint(e.getPoint())
                     if (e.getClickCount() == 2) {
-                        handleActionClick(row)
+                        handleActionDoubleClick(row)
+                        return
+                    }
+                    if (e.getClickCount() == 1) {
+                        handleActionSingleClick(row)
                         return
                     }
                     if (col == getColumnCount() - 1) {
-                        handleActionClick(row)
+                        handleActionDoubleClick(row)
                     }
                 }
             })
+
+        table
+            .getSelectionModel()
+            .addListSelectionListener(
+                object : ListSelectionListener {
+                    override fun valueChanged(e: ListSelectionEvent) {
+                        if (e.valueIsAdjusting) {
+                            return
+                        }
+
+                        val selectedRow = table.selectedRow
+                        if (selectedRow >= 0) {
+                            handleActionLineSelected(selectedRow)
+                        }
+                    }
+                })
 
         setupKeyListeners()
         setFocusable(true)
@@ -140,7 +162,7 @@ protected constructor(
             object : KeyAdapter() {
                 override fun keyPressed(e: KeyEvent) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                        handleActionClick(table.selectedRow)
+                        handleActionDoubleClick(table.selectedRow)
                     }
                 }
             })
@@ -156,7 +178,11 @@ protected constructor(
             })
     }
 
-    protected abstract fun handleActionClick(row: Int)
+    protected abstract fun handleActionDoubleClick(row: Int)
+
+    protected open fun handleActionSingleClick(row: Int) {}
+
+    protected open fun handleActionLineSelected(row: Int) {}
 
     fun clearItems() {
         while (model.rowCount > 0) {

@@ -98,7 +98,7 @@ class RoutesPanel(project: Project) :
                 })
     }
 
-    override fun handleActionClick(row: Int) {
+    override fun handleActionDoubleClick(row: Int) {
         ApplicationManager.getApplication().invokeLater {
             val elementDTO = table.getValueAt(row, getColumnCount() - 1) as RouteElementDTO
             (elementDTO.element as? Navigatable)?.navigate(true)
