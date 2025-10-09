@@ -1,4 +1,4 @@
-package org.micoli.php.ui.panels
+package org.micoli.php.ui.table
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
@@ -21,46 +21,33 @@ import javax.swing.border.Border
 import javax.swing.event.DocumentEvent
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
-import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableRowSorter
 import org.micoli.php.ui.PhpCompanionIcon
 
-abstract class AbstractListPanel<T>
-protected constructor(
+abstract class AbstractListPanel<T>(
     protected val project: Project,
     panelName: String?,
-    columnNames: Array<String>
+    val columnNames: Array<String>
 ) : JPanel() {
-    protected val model: DefaultTableModel
-    protected lateinit var innerSorter: TableRowSorter<DefaultTableModel>
-    protected lateinit var table: JBTable
-    protected lateinit var searchFieldPanel: JPanel
+    protected val model = ObjectTableModel<T>(columnNames)
+    protected lateinit var innerSorter: TableRowSorter<ObjectTableModel<T>>
+    protected var table: JBTable = JBTable()
+    protected var searchFieldPanel: JPanel = JPanel()
     protected lateinit var searchField: SearchTextField
     protected val lock: Any = Any()
     protected var isRegexMode: Boolean = false
     private val rightActionGroup = DefaultActionGroup()
-    private val rowFilter = ListRowFilter<DefaultTableModel?, Any?>()
+    private val rowFilter = ListRowFilter<ObjectTableModel<T>, Any?>()
     private val border: Border? = UIManager.getBorder("TextField.border")
 
-    protected abstract fun getColumnCount(): Int
-
     init {
-        this.model =
-            object : DefaultTableModel(columnNames, 0) {
-                override fun isCellEditable(row: Int, column: Int): Boolean {
-                    return false
-                }
-            }
-
         initializeComponents(panelName)
         setupLayout()
         setupListeners()
     }
 
     private fun initializeComponents(panelName: String?) {
-        searchFieldPanel = JPanel()
         searchFieldPanel.setLayout(BorderLayout())
-        table = JBTable()
         table.model = model
         table.setShowGrid(false)
         table.isStriped = true
@@ -95,8 +82,6 @@ protected constructor(
         table.setRowSorter(innerSorter)
     }
 
-    protected abstract fun getSorter(): TableRowSorter<DefaultTableModel>
-
     private fun setupLayout() {
         val scrollPane = JBScrollPane(table)
         scrollPane.setBorder(JBUI.Borders.empty())
@@ -107,8 +92,6 @@ protected constructor(
 
         configureTableColumns()
     }
-
-    protected abstract fun configureTableColumns()
 
     private fun setupListeners() {
         searchField.addDocumentListener(
@@ -123,16 +106,13 @@ protected constructor(
                 override fun mouseClicked(e: MouseEvent) {
                     val row = table.rowAtPoint(e.getPoint())
                     val col = table.columnAtPoint(e.getPoint())
-                    if (e.getClickCount() == 2) {
-                        handleActionDoubleClick(row)
-                        return
-                    }
-                    if (e.getClickCount() == 1) {
-                        handleActionSingleClick(row)
-                        return
-                    }
-                    if (col == getColumnCount() - 1) {
-                        handleActionDoubleClick(row)
+                    when {
+                        col == columnNames.size - 1 ->
+                            handleActionDoubleClick(getObjectAt(row) ?: return)
+                        e.getClickCount() == 2 ->
+                            handleActionDoubleClick(getObjectAt(row) ?: return)
+                        e.getClickCount() == 1 ->
+                            handleActionSingleClick(getObjectAt(row) ?: return)
                     }
                 }
             })
@@ -148,7 +128,7 @@ protected constructor(
 
                         val selectedRow = table.selectedRow
                         if (selectedRow >= 0) {
-                            handleActionLineSelected(selectedRow)
+                            handleActionLineSelected(getObjectAt(selectedRow) ?: return)
                         }
                     }
                 })
@@ -162,7 +142,7 @@ protected constructor(
             object : KeyAdapter() {
                 override fun keyPressed(e: KeyEvent) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                        handleActionDoubleClick(table.selectedRow)
+                        handleActionDoubleClick(getObjectAt(table.selectedRow) ?: return)
                     }
                 }
             })
@@ -178,16 +158,8 @@ protected constructor(
             })
     }
 
-    protected abstract fun handleActionDoubleClick(row: Int)
-
-    protected open fun handleActionSingleClick(row: Int) {}
-
-    protected open fun handleActionLineSelected(row: Int) {}
-
     fun clearItems() {
-        while (model.rowCount > 0) {
-            model.removeRow(0)
-        }
+        model.clearRows()
     }
 
     fun updateFilter(text: String) {
@@ -210,10 +182,21 @@ protected constructor(
             }
         }
 
+    private fun getObjectAt(row: Int): T? = model.getObjectAt(table.convertRowIndexToModel(row))
+
+    protected abstract fun getSorter(): TableRowSorter<ObjectTableModel<T>>
+
+    protected abstract fun configureTableColumns()
+
     abstract fun refresh()
 
+    protected open fun handleActionSingleClick(elementDTO: T) {}
+
+    protected open fun handleActionDoubleClick(elementDTO: T) {}
+
+    protected open fun handleActionLineSelected(elementDTO: T) {}
+
     companion object {
-        protected val LOGGER: Logger =
-            Logger.getInstance(AbstractListPanel::class.java.getSimpleName())
+        val logger: Logger = Logger.getInstance(AbstractListPanel::class.java.getSimpleName())
     }
 }

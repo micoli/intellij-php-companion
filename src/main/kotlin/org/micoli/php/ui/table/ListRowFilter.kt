@@ -1,13 +1,11 @@
-package org.micoli.php.ui.panels
+package org.micoli.php.ui.table
 
 import javax.swing.RowFilter
-import kotlin.Boolean
-import kotlin.text.isEmpty
 import org.micoli.php.symfony.list.SearchableRecord
-import org.micoli.php.ui.panels.rowMatchers.EmptyMatcher
-import org.micoli.php.ui.panels.rowMatchers.PlainMatcher
-import org.micoli.php.ui.panels.rowMatchers.RegexMatcher
-import org.micoli.php.ui.panels.rowMatchers.RowMatcher
+import org.micoli.php.ui.table.rowMatchers.EmptyMatcher
+import org.micoli.php.ui.table.rowMatchers.PlainMatcher
+import org.micoli.php.ui.table.rowMatchers.RegexMatcher
+import org.micoli.php.ui.table.rowMatchers.RowMatcher
 
 class ListRowFilter<M, I> : RowFilter<M?, I?>() {
     var searcher: RowMatcher = EmptyMatcher()
@@ -23,7 +21,9 @@ class ListRowFilter<M, I> : RowFilter<M?, I?>() {
     }
 
     override fun include(entry: Entry<out M?, out I?>): Boolean {
-        val value = entry.getValue(entry.valueCount - 1)
+        val value =
+            (entry.model as ObjectTableModel<*>).getObjectAt(entry.identifier as Int)
+                ?: return false
         if (value !is SearchableRecord) {
             return false
         }

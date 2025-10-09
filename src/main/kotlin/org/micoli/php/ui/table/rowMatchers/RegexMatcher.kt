@@ -1,7 +1,7 @@
-package org.micoli.php.ui.panels.rowMatchers
+package org.micoli.php.ui.table.rowMatchers
 
 import com.intellij.util.containers.stream
-import java.util.Locale
+import java.util.regex.Pattern
 import kotlin.Boolean
 import kotlin.collections.dropLastWhile
 import kotlin.collections.toTypedArray
@@ -13,29 +13,27 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import org.micoli.php.symfony.list.SearchableRecord
 
-class PlainMatcher : RowMatcher {
-    private var searchParts: ImmutableList<String> = emptyList<String>().toImmutableList()
+class RegexMatcher : RowMatcher {
+    private var searchPatterns: ImmutableList<Pattern> = listOf<Pattern>().toImmutableList()
 
     constructor(searchText: String) {
-        searchParts =
+        searchPatterns =
             searchText
                 .split(" ".toRegex())
                 .dropLastWhile { it.isEmpty() }
                 .toTypedArray()
                 .stream()
-                .filter { it != null }
                 .map { it.trim { subIt -> subIt <= ' ' } }
+                .map { Pattern.compile("(?i)$it") }
                 .toList()
                 .toImmutableList()
     }
 
     override fun match(searchableRecord: SearchableRecord): Boolean {
-        return searchParts.stream().allMatch {
-            searchableRecord
-                .getSearchString()
-                .joinToString(" ")
-                .lowercase(Locale.getDefault())
-                .contains(it.lowercase(Locale.getDefault()))
+        return searchPatterns.stream().allMatch {
+            searchableRecord.getSearchString().stream().anyMatch { c: String? ->
+                it.matcher(c).find()
+            }
         }
     }
 }

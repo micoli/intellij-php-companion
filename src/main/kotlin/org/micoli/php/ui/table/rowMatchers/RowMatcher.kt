@@ -1,4 +1,4 @@
-package org.micoli.php.ui.panels.rowMatchers
+package org.micoli.php.ui.table.rowMatchers
 
 import org.micoli.php.symfony.list.SearchableRecord
 

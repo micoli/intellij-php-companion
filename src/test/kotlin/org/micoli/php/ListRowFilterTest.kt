@@ -4,7 +4,6 @@ import java.io.IOException
 import java.util.Arrays
 import java.util.function.IntFunction
 import javax.swing.JTable
-import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableModel
 import javax.swing.table.TableRowSorter
 import kotlinx.collections.immutable.ImmutableList
@@ -14,7 +13,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.micoli.php.symfony.list.SearchableRecord
-import org.micoli.php.ui.panels.ListRowFilter
+import org.micoli.php.ui.table.ListRowFilter
+import org.micoli.php.ui.table.ObjectTableModel
 
 @RunWith(Parameterized::class)
 class ListRowFilterTest(
@@ -29,19 +29,24 @@ class ListRowFilterTest(
 
     @Test
     fun testItFiltersTableRows() {
-        val columnNames = arrayOf<String?>("Name", "Element")
-        val model = DefaultTableModel(columnNames, 0)
+        val columnNames = arrayOf("Name", "Element")
+        val model = ObjectTableModel<TestElementDTO>(columnNames)
 
-        model.addRow(arrayOf("t1", TestElementDTO("/test/toto", "A good description")))
-        model.addRow(arrayOf("t2", TestElementDTO("/test/toto", "A bad description")))
-        model.addRow(arrayOf("t3", TestElementDTO("/test/tata/toto", "Without desc")))
-        model.addRow(arrayOf("t4", TestElementDTO("/test/tata/tutu", "Without desc")))
-        model.addRow(arrayOf("t5", TestElementDTO("/actor/{id}/add", "Add an actor")))
-        model.addRow(arrayOf("t6", TestElementDTO("/actor/{id}/update", "Update an actor")))
-        model.addRow(arrayOf("t7", TestElementDTO("/resource/{id}/delete", "Delete a resource")))
+        for (row in
+            arrayOf(
+                arrayOf("t1", TestElementDTO("/test/toto", "A good description")),
+                arrayOf("t2", TestElementDTO("/test/toto", "A bad description")),
+                arrayOf("t3", TestElementDTO("/test/tata/toto", "Without desc")),
+                arrayOf("t4", TestElementDTO("/test/tata/tutu", "Without desc")),
+                arrayOf("t5", TestElementDTO("/actor/{id}/add", "Add an actor")),
+                arrayOf("t6", TestElementDTO("/actor/{id}/update", "Update an actor")),
+                arrayOf("t7", TestElementDTO("/resource/{id}/delete", "Delete a resource")),
+            )) {
+            model.addRow(row[1] as TestElementDTO, row as Array<Any?>)
+        }
 
-        val listRowFilter = ListRowFilter<TableModel?, Any?>()
-        val defaultRowSorter = TableRowSorter<TableModel?>(model)
+        val listRowFilter = ListRowFilter<TableModel, Any?>()
+        val defaultRowSorter = TableRowSorter<TableModel>(model)
         defaultRowSorter.setRowFilter(listRowFilter)
         val table = JTable(model)
         table.setRowSorter(defaultRowSorter)
