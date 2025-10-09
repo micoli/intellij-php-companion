@@ -1,13 +1,11 @@
-package org.micoli.php.ui.panels.symfonyProfiler.db
+package org.micoli.php.ui.table
 
 import java.awt.Component
 import javax.swing.JLabel
 import javax.swing.JTable
 import javax.swing.table.DefaultTableCellRenderer
-import org.micoli.php.service.SqlUtils
 
-class MultiLineTableCellRenderer : DefaultTableCellRenderer() {
-    private val label = JLabel().apply { isOpaque = true }
+class MultiLineTableCellRenderer(val formatter: (String) -> String) : DefaultTableCellRenderer() {
 
     override fun getTableCellRendererComponent(
         table: JTable,
@@ -17,12 +15,13 @@ class MultiLineTableCellRenderer : DefaultTableCellRenderer() {
         row: Int,
         column: Int,
     ): Component {
-        val formattedSql = SqlUtils.Companion.formatSql(value?.toString() ?: "")
+        val formattedText = formatter(value?.toString() ?: "")
+        val label = JLabel().apply { isOpaque = true }
 
         label.text =
             """<html>
             <div style="padding: 4px;">
-                <pre style="margin: 0; font-family: monospace; font-size: 11px;">$formattedSql</pre>
+                <pre style="margin: 0; font-family: monospace; font-size: 11px;">$formattedText</pre>
             </div>
         </html>"""
                 .trimIndent()
@@ -30,7 +29,13 @@ class MultiLineTableCellRenderer : DefaultTableCellRenderer() {
         label.background = if (isSelected) table.selectionBackground else table.background
         label.foreground = if (isSelected) table.selectionForeground else table.foreground
 
-        val lines = formattedSql.lines()
+        setHeight(formattedText, table, row)
+
+        return label
+    }
+
+    private fun setHeight(formattedText: String, table: JTable, row: Int) {
+        val lines = formattedText.lines()
         val lineHeight = 16
         val padding = 12
         val preferredHeight = (lines.size * lineHeight) + padding
@@ -38,7 +43,5 @@ class MultiLineTableCellRenderer : DefaultTableCellRenderer() {
         if (table.getRowHeight(row) != preferredHeight) {
             table.setRowHeight(row, preferredHeight)
         }
-
-        return label
     }
 }

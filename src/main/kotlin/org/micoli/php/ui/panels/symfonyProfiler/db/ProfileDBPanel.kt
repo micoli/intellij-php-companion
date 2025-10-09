@@ -10,20 +10,28 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JTable
 import kotlin.arrayOf
-import org.micoli.php.symfony.profiler.models.DBQueries
-import org.micoli.php.symfony.profiler.models.DBQuery
+import org.micoli.php.service.SqlUtils
+import org.micoli.php.symfony.profiler.SymfonyProfileService
+import org.micoli.php.symfony.profiler.parsers.DBData
+import org.micoli.php.symfony.profiler.parsers.DBQuery
+import org.micoli.php.ui.panels.symfonyProfiler.AbstractProfilePanel
+import org.micoli.php.ui.table.DoubleCellRenderer
+import org.micoli.php.ui.table.MultiLineTableCellRenderer
 import org.micoli.php.ui.table.ObjectTableModel
 
-class ProfileDBPanel(val project: Project) : JBPanel<ProfileDBPanel>(BorderLayout()) {
-    var model: ObjectTableModel<DBQuery>
-    private val cardLayout = CardLayout()
-    private val cardPanel = JBPanel<JBPanel<*>>(cardLayout)
+class ProfileDBPanel(val project: Project) : AbstractProfilePanel() {
+    lateinit var tableModel: ObjectTableModel<DBQuery>
+    lateinit var cardLayout: CardLayout
+    lateinit var cardPanel: JBPanel<JBPanel<*>>
 
-    init {
+    override fun getMainPanel(): JBPanel<*> {
+        cardLayout = CardLayout()
+        cardPanel = JBPanel<JBPanel<*>>(cardLayout)
+        val mainPanel = JBPanel<JBPanel<*>>(BorderLayout())
         val columnNames = arrayOf("Sequence", "Time", "Connection", "SQL")
-        model = object : ObjectTableModel<DBQuery>(columnNames) {}
+        tableModel = object : ObjectTableModel<DBQuery>(columnNames) {}
         val table =
-            JBTable(model).apply {
+            JBTable(tableModel).apply {
                 setShowColumns(true)
                 setShowGrid(true)
                 isStriped = true
@@ -44,7 +52,9 @@ class ProfileDBPanel(val project: Project) : JBPanel<ProfileDBPanel>(BorderLayou
                     maxWidth = 70
                     minWidth = 70
                 }
-                columnModel.getColumn(3).apply { cellRenderer = MultiLineTableCellRenderer() }
+                columnModel.getColumn(3).apply {
+                    cellRenderer = MultiLineTableCellRenderer { SqlUtils.Companion.formatSql(it) }
+                }
                 autoResizeMode = JTable.AUTO_RESIZE_LAST_COLUMN
             }
         table.addMouseListener(
@@ -52,9 +62,11 @@ class ProfileDBPanel(val project: Project) : JBPanel<ProfileDBPanel>(BorderLayou
                 override fun mouseClicked(e: MouseEvent) {
                     val row = table.rowAtPoint(e.getPoint())
                     val col = table.columnAtPoint(e.getPoint())
-                    if (e.clickCount == 2 && row >= 0 && col == 3) {
-                        showDetail(model.getObjectAt(row))
-                        return
+                    when {
+                        (e.clickCount == 1 && row >= 0 && col == 3) ->
+                            showDetail(tableModel.getObjectAt(row) ?: return)
+                        (e.clickCount == 2 && row >= 0) ->
+                            showDetail(tableModel.getObjectAt(row) ?: return)
                     }
                 }
             })
@@ -65,13 +77,23 @@ class ProfileDBPanel(val project: Project) : JBPanel<ProfileDBPanel>(BorderLayou
             }
 
         cardPanel.add(listPanel, LIST_VIEW)
-        add(cardPanel, BorderLayout.CENTER)
+        mainPanel.add(cardPanel, BorderLayout.CENTER)
+        return mainPanel
     }
 
-    private fun showDetail(dbQuery: DBQuery) {
+    override fun refresh() {
+        val symfonyProfileService = SymfonyProfileService.getInstance(project)
+        symfonyProfileService.loadProfilerDumpPage(DBData::class.java, symfonyProfileDTO.token) {
+            setQueries(it?.queries ?: return@loadProfilerDumpPage)
+        }
+    }
+
+    private fun showDetail(dbQuery: DBQuery?) {
+        if (dbQuery == null) {
+            return
+        }
         cardPanel.components.filterIsInstance<SqlDetailPanel>().forEach { cardPanel.remove(it) }
-        val detailPanel = SqlDetailPanel(project, dbQuery) { showList() }
-        cardPanel.add(detailPanel, DETAIL_VIEW)
+        cardPanel.add(SqlDetailPanel(project, dbQuery) { showList() }, DETAIL_VIEW)
         cardLayout.show(cardPanel, DETAIL_VIEW)
     }
 
@@ -80,21 +102,19 @@ class ProfileDBPanel(val project: Project) : JBPanel<ProfileDBPanel>(BorderLayou
     }
 
     private fun clearQueries() {
-        while (model.rowCount > 0) {
-            model.removeRow(0)
+        while (tableModel.rowCount > 0) {
+            tableModel.removeRow(0)
         }
     }
 
-    fun setQueries(queries: DBQueries?) {
+    fun setQueries(queries: List<DBQuery>?) {
         clearQueries()
         if (queries == null) {
             return
         }
         var index = 0
-        for (connection in queries.queries.entries) {
-            for (query in connection.value) {
-                model.addRow(query, arrayOf(index++, query.executionMS, connection.key, query.sql))
-            }
+        for (query in queries) {
+            tableModel.addRow(query, arrayOf(index++, query.executionMS, "", query.sql))
         }
         showList()
     }

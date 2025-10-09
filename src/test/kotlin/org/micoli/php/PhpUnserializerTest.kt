@@ -6,7 +6,7 @@ import junit.framework.TestCase
 import org.micoli.php.service.PhpGzDecoder
 import org.micoli.php.service.serialize.PhpUnserializer
 import org.micoli.php.symfony.profiler.SymfonyProfileService
-import org.micoli.php.symfony.profiler.models.ProfilerDump
+import org.micoli.php.symfony.profiler.models.PHPProfilerDump
 
 class PhpUnserializerTest : TestCase() {
     fun testItUnserializePhpProfileDump() {
@@ -28,7 +28,7 @@ class PhpUnserializerTest : TestCase() {
     }
 
     fun testItUnserializePhpProfileDumpInClass() {
-        val profilerDump: ProfilerDump =
+        val profilerDump: PHPProfilerDump =
             SymfonyProfileService.unserializeProfileDump(PhpGzDecoder.gzdecode(getGzcontent()))
 
         assertEquals("8af368", profilerDump.token)

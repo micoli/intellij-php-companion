@@ -18,15 +18,11 @@ class CustomCellRenderer<T>(val formatter: (T) -> String) : TableCellRenderer {
         val elementDTO =
             (table.model as ObjectTableModel<T>).getObjectAt(table.convertRowIndexToModel(row))
                 ?: return label
-        label.setText(formatter(elementDTO))
 
-        if (isSelected) {
-            label.setBackground(table.getSelectionBackground())
-            label.setForeground(table.getSelectionForeground())
-        } else {
-            label.setBackground(table.getBackground())
-            label.setForeground(table.getForeground())
-        }
+        label.text = formatter(elementDTO)
+
+        label.background = if (isSelected) table.selectionBackground else table.background
+        label.foreground = if (isSelected) table.selectionForeground else table.foreground
 
         label.setOpaque(true)
         return label

@@ -1,4 +1,4 @@
-package org.micoli.php.ui.panels.symfonyProfiler.db
+package org.micoli.php.ui.table
 
 import java.text.NumberFormat
 import java.util.Locale

@@ -45,6 +45,7 @@ dependencies {
     implementation("com.github.Steppschuh:Java-Markdown-Generator:master-SNAPSHOT")
     implementation("com.github.javaparser:javaparser-core:3.25.5")
     implementation("io.github.classgraph:classgraph:4.8.158")
+    implementation("com.opencsv:opencsv:5.7.1")
 
     intellijPlatform {
         create(

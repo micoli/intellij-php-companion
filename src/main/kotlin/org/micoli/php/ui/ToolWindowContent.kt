@@ -22,6 +22,7 @@ import org.micoli.php.configuration.models.DisactivableConfiguration
 import org.micoli.php.events.ConfigurationEvents
 import org.micoli.php.events.IndexingEvents
 import org.micoli.php.ui.panels.*
+import org.micoli.php.ui.table.AbstractListPanel
 
 internal class ToolWindowContent(project: Project) {
     private class PanelRefresher(

@@ -6,8 +6,6 @@ import com.intellij.openapi.project.Project
 import java.lang.String
 import javax.swing.RowSorter
 import javax.swing.SortOrder
-import javax.swing.SwingUtilities
-import javax.swing.SwingWorker
 import javax.swing.table.TableRowSorter
 import org.micoli.php.symfony.profiler.SymfonyProfileDTO
 import org.micoli.php.symfony.profiler.SymfonyProfileService
@@ -18,7 +16,8 @@ import org.micoli.php.ui.table.ObjectTableModel
 import org.micoli.php.ui.table.TimestampRenderer
 
 class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWindowContent) :
-    AbstractListPanel<SymfonyProfileDTO>(project, "symfonyProfiles", COLUMN_NAMES) {
+    AbstractListPanel<SymfonyProfileDTO>(
+        project, "symfonyProfiles", arrayOf("Timestamp", "Method", "Path", "Code", "Action")) {
     override fun getSorter(): TableRowSorter<ObjectTableModel<SymfonyProfileDTO>> {
         innerSorter = TableRowSorter<ObjectTableModel<SymfonyProfileDTO>>(model)
         innerSorter.setSortKeys(
@@ -46,7 +45,9 @@ class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWi
     }
 
     override fun handleActionDoubleClick(elementDTO: SymfonyProfileDTO) {
-        BrowserUtil.open(elementDTO.profileUrl)
+        ApplicationManager.getApplication().executeOnPooledThread {
+            BrowserUtil.open(elementDTO.profileUrl)
+        }
     }
 
     override fun handleActionLineSelected(elementDTO: SymfonyProfileDTO) {
@@ -54,61 +55,23 @@ class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWi
     }
 
     override fun refresh() {
-        synchronized(lock) {
-            try {
-                table.emptyText.text = "Loading profiles, please wait..."
-                clearItems()
+        ApplicationManager.getApplication().executeOnPooledThread {
+            synchronized(lock) {
+                try {
+                    table.emptyText.text = "Loading profiles, please wait..."
+                    clearItems()
 
-                val localTable = table
-                val localModel = model
-                val localProject = project
-
-                val worker: SwingWorker<Void?, SymfonyProfileDTO> =
-                    object : SwingWorker<Void?, SymfonyProfileDTO>() {
-                        override fun doInBackground(): Void? {
-                            ApplicationManager.getApplication().runReadAction {
-                                for (item in
-                                    SymfonyProfileService.getInstance(localProject).elements) {
-                                    publish(item)
-                                }
-                            }
-                            return null
-                        }
-
-                        override fun process(chunks: MutableList<SymfonyProfileDTO>) {
-                            SwingUtilities.invokeLater {
-                                for (item in chunks) {
-                                    localModel.addRow(
-                                        item,
-                                        arrayOf(
-                                            item.timestamp,
-                                            item.method,
-                                            item.url,
-                                            item.statusCode,
-                                            null))
-                                }
-                            }
-                        }
-
-                        override fun done() {
-                            SwingUtilities.invokeLater {
-                                localTable.emptyText.text = "Nothing to show"
-                                localModel.fireTableDataChanged()
-                            }
-                        }
+                    for (item in SymfonyProfileService.getInstance(project).elements) {
+                        model.addRow(
+                            item,
+                            arrayOf(item.timestamp, item.method, item.url, item.statusCode, null))
                     }
-                worker.execute()
-            } catch (e: Exception) {
-                logger.error("Error refreshing profilers " + e.localizedMessage, e)
+                    table.emptyText.text = "Nothing to show"
+                    model.fireTableDataChanged()
+                } catch (e: Exception) {
+                    logger.error("Error refreshing profilers " + e.localizedMessage, e)
+                }
             }
         }
-    }
-
-    override fun getColumnCount(): Int {
-        return COLUMN_NAMES.size
-    }
-
-    companion object {
-        private val COLUMN_NAMES = arrayOf("Timestamp", "Method", "Path", "Code", "Action")
     }
 }

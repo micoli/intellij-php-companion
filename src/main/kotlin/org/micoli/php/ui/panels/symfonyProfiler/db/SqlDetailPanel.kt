@@ -1,13 +1,16 @@
 package org.micoli.php.ui.panels.symfonyProfiler.db
 
+import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
-import javax.swing.JLabel
+import java.awt.datatransfer.StringSelection
 import org.micoli.php.service.SqlUtils
-import org.micoli.php.symfony.profiler.models.DBQuery
+import org.micoli.php.symfony.profiler.parsers.DBQuery
+import org.micoli.php.ui.Link
+import org.micoli.php.ui.Notification
 import org.micoli.php.ui.panels.symfonyProfiler.BackTraceTable
 
 class SqlDetailPanel(project: Project, private val dbQuery: DBQuery, onBack: () -> Unit) :
@@ -17,27 +20,22 @@ class SqlDetailPanel(project: Project, private val dbQuery: DBQuery, onBack: () 
         border = JBUI.Borders.empty(10)
         val headerPanel =
             JBPanel<JBPanel<*>>(BorderLayout()).apply { border = JBUI.Borders.emptyBottom(10) }
+        val infoPanel =
+            JBPanel<JBPanel<*>>(BorderLayout()).apply { border = JBUI.Borders.emptyBottom(10) }
+        val scrollPane = JBScrollPane(infoPanel).apply { border = JBUI.Borders.empty() }
 
         headerPanel.add(Link("back to list", onBack), BorderLayout.WEST)
 
-        val infoLabel =
-            JLabel().apply {
-                text =
-                    """<html>
-                <body style="font-family: sans-serif; padding: 10px;">
-                    <h3 style="margin: 0 0 10px 0;">Query</h3>
-                    <code>${SqlUtils.Companion.formatHtmlSql(dbQuery.sql)}</code>
-                </body>
-            </html>"""
-                        .trimIndent()
+        val sqlLabel =
+            Link("<code>${SqlUtils.Companion.formatHtmlSql(dbQuery.sql)}</code>") {
+                val stringSelection = StringSelection(SqlUtils.Companion.formatSql(dbQuery.sql))
+                CopyPasteManager.getInstance().setContents(stringSelection)
+                Notification.getInstance(project)
+                    .messageWithTimeout("Content copied to clipboard", 500)
             }
-        val infoPanel =
-            JBPanel<JBPanel<*>>(BorderLayout()).apply { border = JBUI.Borders.emptyBottom(10) }
-        infoPanel.add(infoLabel, BorderLayout.NORTH)
-        infoPanel.add(BackTraceTable(project, dbQuery.backtrace), BorderLayout.CENTER)
-        val scrollPane = JBScrollPane(infoPanel)
-        scrollPane.setBorder(JBUI.Borders.empty())
 
+        infoPanel.add(sqlLabel, BorderLayout.NORTH)
+        infoPanel.add(BackTraceTable(project, dbQuery.backtrace), BorderLayout.CENTER)
         add(headerPanel, BorderLayout.NORTH)
         add(scrollPane, BorderLayout.CENTER)
     }

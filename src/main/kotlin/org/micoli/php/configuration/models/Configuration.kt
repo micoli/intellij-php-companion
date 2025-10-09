@@ -10,6 +10,7 @@ import org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration
 import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration
 import org.micoli.php.symfony.list.configuration.RoutesConfiguration
 import org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration
+import org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration
 import org.micoli.php.tasks.configuration.TasksConfiguration
 
 class Configuration {
@@ -34,4 +35,6 @@ class Configuration {
     @JvmField var tasksConfiguration: TasksConfiguration? = null
 
     @JvmField var codeStylesSynchronization: CodeStylesSynchronizationConfiguration? = null
+
+    @JvmField var symfonyProfiler: SymfonyProfilerConfiguration? = null
 }

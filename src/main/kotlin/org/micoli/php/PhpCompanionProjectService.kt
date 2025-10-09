@@ -37,6 +37,7 @@ import org.micoli.php.symfony.list.CommandService
 import org.micoli.php.symfony.list.DoctrineEntityService
 import org.micoli.php.symfony.list.RouteService
 import org.micoli.php.symfony.messenger.service.MessengerService
+import org.micoli.php.symfony.profiler.SymfonyProfileService
 import org.micoli.php.tasks.TasksService
 import org.micoli.php.ui.Notification
 
@@ -145,6 +146,7 @@ class PhpCompanionProjectService(private val project: Project) :
         TasksService.getInstance(project).loadConfiguration(configuration.tasksConfiguration)
         CodeStylesService.getInstance(project)
             .loadConfiguration(configuration.codeStylesSynchronization)
+        SymfonyProfileService.getInstance(project).loadConfiguration(configuration.symfonyProfiler)
     }
 
     override fun dispose() {

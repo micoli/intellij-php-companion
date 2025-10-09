@@ -1,4 +1,4 @@
-package org.micoli.php.ui.panels.symfonyProfiler.db
+package org.micoli.php.ui
 
 import java.awt.Cursor
 import java.awt.event.MouseAdapter
@@ -7,15 +7,11 @@ import javax.swing.JLabel
 
 class Link(val labelText: String = "", onBack: () -> Unit) : JLabel() {
     fun labeledColor(color: String) =
-        """
-                <html>
-                    <body style="font-family: sans-serif;">
-                        <a href="#" style="color: ${color}; text-decoration: none; font-size: 12px;">
-                            $labelText
-                        </a>
-                    </body>
-                </html>
-            """
+        """<html>
+                <a href="#" style="font-family: sans-serif;color: ${color}; text-decoration: none; font-size: 10px;">
+                    $labelText
+                </a>
+            </html>"""
             .trimIndent()
 
     init {
