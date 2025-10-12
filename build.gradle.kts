@@ -13,6 +13,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("com.diffplug.spotless") version "7.2.1"
     id("org.owasp.dependencycheck") version "12.1.3"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.20"
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -46,6 +47,10 @@ dependencies {
     implementation("com.github.javaparser:javaparser-core:3.25.5")
     implementation("io.github.classgraph:classgraph:4.8.158")
     implementation("com.opencsv:opencsv:5.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jsoup:jsoup:1.17.2")
+    implementation("jaxen:jaxen:2.0.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
     intellijPlatform {
         create(
