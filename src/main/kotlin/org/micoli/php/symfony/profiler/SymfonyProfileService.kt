@@ -8,6 +8,7 @@ import com.opencsv.CSVReader
 import com.opencsv.exceptions.CsvException
 import java.io.IOException
 import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
@@ -110,8 +111,15 @@ class SymfonyProfileService(val project: Project) {
         return null
     }
 
-    fun <T> loadProfilerDumpPage(targetClass: Class<T>, token: String, callback: (T?) -> Unit) {
+    fun <T> loadProfilerDumpPage(
+        targetClass: Class<T>,
+        token: String,
+        logCallback: (log: String) -> Unit,
+        errorCallback: (String) -> Unit,
+        callback: (T?) -> Unit
+    ) {
         val page = ProfilerParser().parsers[targetClass]?.getPage() ?: return
+        logCallback("Start loading")
         val url =
             ((configuration?.profilerUrlRoot ?: return) + token)
                 .toHttpUrlOrNull()
@@ -120,18 +128,31 @@ class SymfonyProfileService(val project: Project) {
                 ?.build()
 
         val request = Request.Builder().url(url!!).build()
-
-        createHttpClient(disableSSLVerification = true).newCall(request).execute().use { response ->
-            if (response.isSuccessful) {
-                val body = response.body?.string() ?: return
-                callback(ProfilerParser().loadProfilerPage(targetClass, body))
-                return
+        try {
+            createHttpClient(true, errorCallback).newCall(request).execute().use {
+                if (it.isSuccessful) {
+                    val body = it.body?.string() ?: return
+                    logCallback("Parsing")
+                    try {
+                        val result = ProfilerParser().loadProfilerPage(targetClass, body)
+                        logCallback("Parsing done")
+                        callback(result)
+                    } catch (e: Exception) {
+                        errorCallback(e.localizedMessage)
+                    }
+                    return
+                }
+                errorCallback(it.message)
             }
-            callback(null)
+        } catch (e: Exception) {
+            errorCallback(e.localizedMessage)
         }
     }
 
-    fun createHttpClient(disableSSLVerification: Boolean = false): OkHttpClient {
+    fun createHttpClient(
+        disableSSLVerification: Boolean,
+        errorCallback: (String) -> Unit
+    ): OkHttpClient {
         val builder = OkHttpClient.Builder()
 
         if (disableSSLVerification) {
@@ -159,7 +180,18 @@ class SymfonyProfileService(val project: Project) {
                 .hostnameVerifier { _, _ -> true }
         }
 
-        return builder.build()
+        return builder
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
+            .addNetworkInterceptor {
+                val response = it.proceed(it.request())
+                if (!response.isSuccessful) {
+                    errorCallback("HTTP Error: ${response.code} - ${response.message}")
+                }
+                response
+            }
+            .build()
     }
 
     companion object {

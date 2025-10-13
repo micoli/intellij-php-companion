@@ -40,5 +40,6 @@ class ProfileDetailPanel(val project: Project) : AbstractProfilePanel() {
         code.text = symfonyProfileDTO.statusCode
         type.text = symfonyProfileDTO.type
         lastToken = symfonyProfileDTO.token
+        showMain()
     }
 }

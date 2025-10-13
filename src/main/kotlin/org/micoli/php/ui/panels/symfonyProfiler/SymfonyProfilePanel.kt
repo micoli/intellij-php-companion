@@ -17,7 +17,6 @@ class SymfonyProfilePanel(val project: Project) : JPanel(BorderLayout(0, 0)) {
     private val detailPanel = ProfileDetailPanel(project)
     private val databasePanel = ProfileDBPanel(project)
     private val messengerPanel = ProfileMessengerPanel(project)
-    private var symfonyProfileDTO: SymfonyProfileDTO? = null
 
     init {
         add(tabs.component, BorderLayout.CENTER)
@@ -39,10 +38,9 @@ class SymfonyProfilePanel(val project: Project) : JPanel(BorderLayout(0, 0)) {
     }
 
     fun setProfile(symfonyProfileDTO: SymfonyProfileDTO) {
-        this.symfonyProfileDTO = symfonyProfileDTO
         for (tab in tabs.tabs) {
             (tab.component as AbstractProfilePanel).updateSymfonyProfileDTO(symfonyProfileDTO)
         }
-        (tabs.getSelectedInfo()?.component as AbstractProfilePanel?)?.loadPanel()
+        (tabs.selectedInfo?.component as AbstractProfilePanel?)?.loadPanel()
     }
 }

@@ -7,34 +7,53 @@ import java.awt.CardLayout
 import javax.swing.JLabel
 import javax.swing.SwingConstants
 import org.micoli.php.symfony.profiler.SymfonyProfileDTO
+import org.micoli.php.ui.components.tasks.LoaderLabel
 
 abstract class AbstractProfilePanel() : JBPanel<AbstractProfilePanel>(BorderLayout()) {
     var symfonyProfileDTO: SymfonyProfileDTO = SymfonyProfileDTO.EMPTY
     var lastToken: String = ""
-    private val loaderCardLayout = CardLayout()
-    private val loaderCardPanel = JBPanel<JBPanel<*>>(loaderCardLayout)
+    private val mainCardLayout = CardLayout()
+    private val mainCardPanel = JBPanel<JBPanel<*>>(mainCardLayout)
+    protected val loaderLabel = LoaderLabel("Refreshing")
+    protected val errorLabel = JLabel("", SwingConstants.CENTER)
 
     companion object {
-        private const val REFRESH_VIEW = "refresh"
+        private const val LOADER_VIEW = "loader"
         private const val MAIN_VIEW = "main"
+        private const val ERROR_VIEW = "error"
     }
 
     init {
         val refreshPanel =
-            JBPanel<JBPanel<*>>(BorderLayout()).apply {
-                add(JLabel("Refreshing", SwingConstants.CENTER), BorderLayout.CENTER)
-            }
-        loaderCardPanel.add(refreshPanel, REFRESH_VIEW)
-        loaderCardPanel.add(getMainPanel(), MAIN_VIEW)
-        add(loaderCardPanel, BorderLayout.CENTER)
+            JBPanel<JBPanel<*>>(BorderLayout()).apply { add(loaderLabel, BorderLayout.CENTER) }
+        val errorPanel =
+            JBPanel<JBPanel<*>>(BorderLayout()).apply { add(errorLabel, BorderLayout.CENTER) }
+        mainCardPanel.add(errorPanel, ERROR_VIEW)
+        mainCardPanel.add(refreshPanel, LOADER_VIEW)
+        mainCardPanel.add(getMainPanel(), MAIN_VIEW)
+        add(mainCardPanel, BorderLayout.CENTER)
+    }
+
+    protected fun loaderLogCallback(startTime: Long): (String) -> Unit = {
+        loaderLabel.setLabel(
+            String.format(
+                "%s (%.02f)", it, ((System.nanoTime() - startTime) / 1_000_000.0) / 1_000))
     }
 
     fun showLoading() {
-        loaderCardLayout.show(loaderCardPanel, REFRESH_VIEW)
+        loaderLabel.setLabel("Loading...")
+        loaderLabel.startAnimation()
+        mainCardLayout.show(mainCardPanel, LOADER_VIEW)
+    }
+
+    fun showError(error: String) {
+        errorLabel.text = error
+        mainCardLayout.show(mainCardPanel, ERROR_VIEW)
     }
 
     fun showMain() {
-        loaderCardLayout.show(loaderCardPanel, MAIN_VIEW)
+        loaderLabel.setLabel("")
+        mainCardLayout.show(mainCardPanel, MAIN_VIEW)
     }
 
     fun updateSymfonyProfileDTO(symfonyProfileDTO: SymfonyProfileDTO) {
@@ -47,7 +66,6 @@ abstract class AbstractProfilePanel() : JBPanel<AbstractProfilePanel>(BorderLayo
         ApplicationManager.getApplication().executeOnPooledThread {
             lastToken = symfonyProfileDTO.token
             refresh()
-            showMain()
         }
     }
 

@@ -83,9 +83,16 @@ class ProfileDBPanel(val project: Project) : AbstractProfilePanel() {
 
     override fun refresh() {
         val symfonyProfileService = SymfonyProfileService.getInstance(project)
-        symfonyProfileService.loadProfilerDumpPage(DBData::class.java, symfonyProfileDTO.token) {
-            setQueries(it?.queries ?: return@loadProfilerDumpPage)
-        }
+        val startTime = System.nanoTime()
+        symfonyProfileService.loadProfilerDumpPage(
+            DBData::class.java,
+            symfonyProfileDTO.token,
+            loaderLogCallback(startTime),
+            { showError(it) },
+            {
+                setQueries(it?.queries ?: return@loadProfilerDumpPage)
+                showMain()
+            })
     }
 
     private fun showDetail(dbQuery: DBQuery?) {

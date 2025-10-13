@@ -59,8 +59,5 @@ class ProfileMessengerPanel(val project: Project) : AbstractProfilePanel() {
         return listPanel
     }
 
-    override fun refresh() {
-        if (lastToken == symfonyProfileDTO.token) return
-        lastToken = symfonyProfileDTO.token
-    }
+    override fun refresh() {}
 }
