@@ -26,7 +26,7 @@ import org.micoli.php.symfony.profiler.models.PHPProfilerDump
 
 @Service(Service.Level.PROJECT)
 class SymfonyProfileService(val project: Project) {
-    private var configuration: SymfonyProfilerConfiguration? = null
+    var configuration: SymfonyProfilerConfiguration? = null
 
     val elements: MutableList<SymfonyProfileDTO>
         get() {
@@ -41,12 +41,16 @@ class SymfonyProfileService(val project: Project) {
                         if (record.size != 8) {
                             continue
                         }
+                        var url = record[3]
+                        configuration?.urlRoots?.forEach { urlRoot ->
+                            url = url.replaceFirst(urlRoot, "")
+                        }
                         elements.add(
                             SymfonyProfileDTO(
                                 record[0] ?: "",
                                 record[1],
                                 record[2],
-                                record[3].replaceFirst(configuration?.urlRoot ?: "", ""),
+                                url,
                                 record[4],
                                 record[5],
                                 record[6],

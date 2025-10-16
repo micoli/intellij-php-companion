@@ -4,6 +4,7 @@ import java.awt.Component
 import javax.swing.JLabel
 import javax.swing.JTable
 import javax.swing.table.DefaultTableCellRenderer
+import org.micoli.php.service.HtmlStyle.Companion.getHtmlCss
 
 class MultiLineTableCellRenderer(val formatter: (String) -> String) : DefaultTableCellRenderer() {
 
@@ -17,9 +18,10 @@ class MultiLineTableCellRenderer(val formatter: (String) -> String) : DefaultTab
     ): Component {
         val formattedText = formatter(value?.toString() ?: "")
         val label = JLabel().apply { isOpaque = true }
-
+        val style = getHtmlCss()
         label.text =
             """<html>
+                $style
             <div style="padding: 4px;">
                 <pre style="margin: 0; font-family: monospace; font-size: 11px;">$formattedText</pre>
             </div>

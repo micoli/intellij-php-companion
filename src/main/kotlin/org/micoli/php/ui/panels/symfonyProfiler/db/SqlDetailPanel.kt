@@ -25,10 +25,10 @@ class SqlDetailPanel(project: Project, private val dbQuery: DBQuery, onBack: () 
         val scrollPane = JBScrollPane(infoPanel).apply { border = JBUI.Borders.empty() }
 
         headerPanel.add(Link("back to list", onBack), BorderLayout.WEST)
-
         val sqlLabel =
-            Link("<code>${SqlUtils.Companion.formatHtmlSql(dbQuery.sql)}</code>") {
-                val stringSelection = StringSelection(SqlUtils.Companion.formatSql(dbQuery.sql))
+            Link("<code>${SqlUtils.Companion.formatHtmlSql(dbQuery.runnableSql)}</code>") {
+                val stringSelection =
+                    StringSelection(SqlUtils.Companion.formatSql(dbQuery.runnableSql))
                 CopyPasteManager.getInstance().setContents(stringSelection)
                 Notification.getInstance(project)
                     .messageWithTimeout("Content copied to clipboard", 500)

@@ -1,8 +1,11 @@
 package org.micoli.php.symfony.profiler.parsers
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.jaxen.jdom.JDOMXPath
 import org.jdom.Document
 import org.jdom.Element
+import org.micoli.php.symfony.list.SearchableRecord
 
 class DBStats(
     val databaseQueriesCount: Int,
