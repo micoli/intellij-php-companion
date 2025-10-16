@@ -22,7 +22,7 @@ class CommandsPanel(project: Project) :
     AbstractListPanel<CommandElementDTO>(
         project, "commands", arrayOf("Command", "Description", "Action")) {
     override fun getSorter(): TableRowSorter<ObjectTableModel<CommandElementDTO>> {
-        innerSorter = TableRowSorter<ObjectTableModel<CommandElementDTO>>(model)
+        val innerSorter = TableRowSorter(model)
         innerSorter.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.ASCENDING),
@@ -35,17 +35,20 @@ class CommandsPanel(project: Project) :
     }
 
     override fun configureTableColumns() {
-        table.getColumnModel().getColumn(0).setMaxWidth(800)
-        table.getColumnModel().getColumn(1).setMaxWidth(200)
-        table.getColumnModel().getColumn(2).setCellRenderer(ActionIconRenderer())
-        table.getColumnModel().getColumn(2).setMinWidth(50)
-        table.getColumnModel().getColumn(2).setMaxWidth(50)
+        table.columnModel.apply {
+            getColumn(0).setMaxWidth(800)
+            getColumn(1).setMaxWidth(200)
+            getColumn(2).setCellRenderer(ActionIconRenderer())
+            getColumn(2).setMinWidth(50)
+            getColumn(2).setMaxWidth(50)
+        }
     }
 
-    override fun handleActionDoubleClick(elementDTO: CommandElementDTO) {
-        val navigatable = elementDTO.element as? Navigatable ?: return
+    override fun handleActionDoubleClick(elementDTO: CommandElementDTO): Boolean {
+        val navigatable = elementDTO.element as? Navigatable ?: return false
 
         ApplicationManager.getApplication().executeOnPooledThread { navigatable.navigate(true) }
+        return true
     }
 
     override fun refresh() {

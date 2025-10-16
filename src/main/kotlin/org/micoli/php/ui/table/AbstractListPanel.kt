@@ -30,12 +30,13 @@ abstract class AbstractListPanel<T>(
     val columnNames: Array<String>
 ) : JPanel() {
     protected val model = ObjectTableModel<T>(columnNames)
-    protected lateinit var innerSorter: TableRowSorter<ObjectTableModel<T>>
+    protected var innerSorter: TableRowSorter<ObjectTableModel<T>>? = null
+    protected lateinit var searchField: SearchTextField
     protected var table: JBTable = JBTable()
     protected var searchFieldPanel: JPanel = JPanel()
-    protected lateinit var searchField: SearchTextField
     protected val lock: Any = Any()
     protected var isRegexMode: Boolean = false
+    protected var lastColumnIsAction: Boolean = true
     private val rightActionGroup = DefaultActionGroup()
     private val rowFilter = ListRowFilter<ObjectTableModel<T>, Any?>()
     private val border: Border? = UIManager.getBorder("TextField.border")
@@ -78,7 +79,7 @@ abstract class AbstractListPanel<T>(
         searchFieldPanel.add(rightToolbar.component, BorderLayout.EAST)
 
         innerSorter = getSorter()
-        innerSorter.setRowFilter(rowFilter)
+        innerSorter?.setRowFilter(rowFilter)
         table.setRowSorter(innerSorter)
     }
 
@@ -106,13 +107,19 @@ abstract class AbstractListPanel<T>(
                 override fun mouseClicked(e: MouseEvent) {
                     val row = table.rowAtPoint(e.getPoint())
                     val col = table.columnAtPoint(e.getPoint())
+                    val elementDTO = getObjectAt(row) ?: return
+                    if (when {
+                        e.getClickCount() == 2 -> handleActionDoubleClick(col, elementDTO)
+                        e.getClickCount() == 1 -> handleActionSingleClick(col, elementDTO)
+                        else -> false
+                    }) {
+                        return
+                    }
                     when {
-                        col == columnNames.size - 1 ->
-                            handleActionDoubleClick(getObjectAt(row) ?: return)
-                        e.getClickCount() == 2 ->
-                            handleActionDoubleClick(getObjectAt(row) ?: return)
-                        e.getClickCount() == 1 ->
-                            handleActionSingleClick(getObjectAt(row) ?: return)
+                        col == columnNames.size - 1 && lastColumnIsAction ->
+                            handleActionDoubleClick(elementDTO)
+                        e.getClickCount() == 2 -> handleActionDoubleClick(elementDTO)
+                        e.getClickCount() == 1 -> handleActionSingleClick(elementDTO)
                     }
                 }
             })
@@ -166,7 +173,7 @@ abstract class AbstractListPanel<T>(
         val textEditor = searchField.textEditor
         try {
             rowFilter.updateFilter(text, isRegexMode)
-            innerSorter.sort()
+            innerSorter?.sort()
             textEditor.setBorder(border)
         } catch (_: Exception) {
             textEditor.setBorder(
@@ -182,7 +189,14 @@ abstract class AbstractListPanel<T>(
             }
         }
 
-    private fun getObjectAt(row: Int): T? = model.getObjectAt(table.convertRowIndexToModel(row))
+    private fun getObjectAt(row: Int): T? {
+        if (innerSorter == null) return null
+        return try {
+            model.getObjectAt(table.convertRowIndexToModel(row))
+        } catch (_: NullPointerException) {
+            null
+        }
+    }
 
     protected abstract fun getSorter(): TableRowSorter<ObjectTableModel<T>>
 
@@ -190,11 +204,25 @@ abstract class AbstractListPanel<T>(
 
     abstract fun refresh()
 
-    protected open fun handleActionSingleClick(elementDTO: T) {}
+    protected open fun handleActionSingleClick(elementDTO: T): Boolean {
+        return false
+    }
 
-    protected open fun handleActionDoubleClick(elementDTO: T) {}
+    protected open fun handleActionDoubleClick(elementDTO: T): Boolean {
+        return false
+    }
 
-    protected open fun handleActionLineSelected(elementDTO: T) {}
+    protected open fun handleActionLineSelected(elementDTO: T): Boolean {
+        return false
+    }
+
+    protected open fun handleActionSingleClick(col: Int, elementDTO: T): Boolean {
+        return false
+    }
+
+    protected open fun handleActionDoubleClick(col: Int, elementDTO: T): Boolean {
+        return false
+    }
 
     companion object {
         val logger: Logger = Logger.getInstance(AbstractListPanel::class.java.getSimpleName())

@@ -22,7 +22,7 @@ import org.micoli.php.ui.table.ObjectTableModel
 class RoutesPanel(project: Project) :
     AbstractListPanel<RouteElementDTO>(project, "routes", arrayOf("URI", "Method", "Action")) {
     override fun getSorter(): TableRowSorter<ObjectTableModel<RouteElementDTO>> {
-        innerSorter = TableRowSorter<ObjectTableModel<RouteElementDTO>>(model)
+        val innerSorter = TableRowSorter(model)
         innerSorter.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.ASCENDING),
@@ -40,19 +40,17 @@ class RoutesPanel(project: Project) :
     }
 
     override fun configureTableColumns() {
-        table.getColumnModel().getColumn(0).setMaxWidth(1600)
-        table.getColumnModel().getColumn(1).setMaxWidth(90)
-        table.getColumnModel().getColumn(2).setCellRenderer(ActionIconRenderer())
-        table.getColumnModel().getColumn(2).setMinWidth(50)
-        table.getColumnModel().getColumn(2).setMaxWidth(50)
-        table.setRowHeight(table.getRowHeight() * 2)
-        table
-            .getColumnModel()
-            .getColumn(0)
-            .setCellRenderer(
-                CustomCellRenderer<RouteElementDTO> {
-                    String.format(
-                        """
+        table.columnModel.apply {
+            getColumn(0).setMaxWidth(1600)
+            getColumn(1).setMaxWidth(90)
+            getColumn(2).setCellRenderer(ActionIconRenderer())
+            getColumn(2).setMinWidth(50)
+            getColumn(2).setMaxWidth(50)
+            getColumn(0)
+                .setCellRenderer(
+                    CustomCellRenderer<RouteElementDTO> {
+                        String.format(
+                            """
                     <html>
                         <div>
                             %s<br>
@@ -60,17 +58,20 @@ class RoutesPanel(project: Project) :
                         </div>
                     </html>
                     """
-                            .trimIndent(),
-                        it.uri,
-                        it.fqcn,
-                    )
-                })
+                                .trimIndent(),
+                            it.uri,
+                            it.fqcn,
+                        )
+                    })
+        }
+        table.setRowHeight(table.getRowHeight() * 2)
     }
 
-    override fun handleActionDoubleClick(elementDTO: RouteElementDTO) {
-        val navigatable = elementDTO.element as? Navigatable ?: return
+    override fun handleActionDoubleClick(elementDTO: RouteElementDTO): Boolean {
+        val navigatable = elementDTO.element as? Navigatable ?: return true
 
         ApplicationManager.getApplication().executeOnPooledThread { navigatable.navigate(true) }
+        return true
     }
 
     override fun refresh() {

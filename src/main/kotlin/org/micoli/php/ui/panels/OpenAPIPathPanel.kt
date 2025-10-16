@@ -34,7 +34,7 @@ class OpenAPIPathPanel(project: Project) :
         ConcurrentSearchManager(Duration.ofSeconds(20))
 
     override fun getSorter(): TableRowSorter<ObjectTableModel<OpenAPIPathElementDTO>> {
-        innerSorter = TableRowSorter<ObjectTableModel<OpenAPIPathElementDTO>>(model)
+        val innerSorter = TableRowSorter(model)
         innerSorter.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.ASCENDING),
@@ -47,19 +47,17 @@ class OpenAPIPathPanel(project: Project) :
     }
 
     override fun configureTableColumns() {
-        table.getColumnModel().getColumn(0).setMaxWidth(1600)
-        table.getColumnModel().getColumn(1).setMaxWidth(90)
-        table.getColumnModel().getColumn(2).setCellRenderer(ActionIconRenderer())
-        table.getColumnModel().getColumn(2).setMinWidth(50)
-        table.getColumnModel().getColumn(2).setMaxWidth(50)
-        table.setRowHeight(table.getRowHeight().times(2))
-        table
-            .getColumnModel()
-            .getColumn(0)
-            .setCellRenderer(
-                CustomCellRenderer<OpenAPIPathElementDTO> {
-                    String.format(
-                        """
+        table.columnModel.apply {
+            getColumn(0).setMaxWidth(1600)
+            getColumn(1).setMaxWidth(90)
+            getColumn(2).setCellRenderer(ActionIconRenderer())
+            getColumn(2).setMinWidth(50)
+            getColumn(2).setMaxWidth(50)
+            getColumn(0)
+                .setCellRenderer(
+                    CustomCellRenderer<OpenAPIPathElementDTO> {
+                        String.format(
+                            """
                         <html>
                             <div>
                                 %s<br>
@@ -68,18 +66,21 @@ class OpenAPIPathPanel(project: Project) :
                         </html>
                         
                         """
-                            .trimIndent(),
-                        it.uri,
-                        it.description,
-                        it.operationId,
-                    )
-                })
+                                .trimIndent(),
+                            it.uri,
+                            it.description,
+                            it.operationId,
+                        )
+                    })
+        }
+        table.setRowHeight(table.getRowHeight().times(2))
     }
 
-    override fun handleActionDoubleClick(elementDTO: OpenAPIPathElementDTO) {
+    override fun handleActionDoubleClick(elementDTO: OpenAPIPathElementDTO): Boolean {
         ApplicationManager.getApplication().executeOnPooledThread {
             searchOperationIdDeclaration("operationId: " + elementDTO.operationId)
         }
+        return true
     }
 
     override fun refresh() {

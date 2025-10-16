@@ -10,23 +10,22 @@ import javax.swing.JPanel
 import org.micoli.php.symfony.profiler.SymfonyProfileDTO
 import org.micoli.php.ui.panels.symfonyProfiler.db.ProfileDBPanel
 import org.micoli.php.ui.panels.symfonyProfiler.detail.ProfileDetailPanel
+import org.micoli.php.ui.panels.symfonyProfiler.logs.ProfileLogsPanel
 import org.micoli.php.ui.panels.symfonyProfiler.messenger.ProfileMessengerPanel
 
 class SymfonyProfilePanel(val project: Project) : JPanel(BorderLayout(0, 0)) {
     private val tabs: JBTabs = JBTabsFactory.createTabs(project)
-    private val detailPanel = ProfileDetailPanel(project)
-    private val databasePanel = ProfileDBPanel(project)
-    private val messengerPanel = ProfileMessengerPanel(project)
 
     init {
         add(tabs.component, BorderLayout.CENTER)
-        addTabPanel("Detail", detailPanel)
-        addTabPanel("Database", databasePanel)
-        addTabPanel("Messenger", messengerPanel)
+        addTabPanel("Detail", ProfileDetailPanel(project))
+        addTabPanel("Database", ProfileDBPanel(project))
+        addTabPanel("Messenger", ProfileMessengerPanel(project))
+        addTabPanel("Logs", ProfileLogsPanel(project))
         tabs.addListener(
             object : TabsListener {
                 override fun selectionChanged(oldSelection: TabInfo?, newSelection: TabInfo?) {
-                    (newSelection?.component as AbstractProfilePanel?)?.loadPanel()
+                    (newSelection?.component as AbstractProfilePanel?)?.refreshPanel()
                 }
             })
     }
@@ -41,6 +40,6 @@ class SymfonyProfilePanel(val project: Project) : JPanel(BorderLayout(0, 0)) {
         for (tab in tabs.tabs) {
             (tab.component as AbstractProfilePanel).updateSymfonyProfileDTO(symfonyProfileDTO)
         }
-        (tabs.selectedInfo?.component as AbstractProfilePanel?)?.loadPanel()
+        (tabs.selectedInfo?.component as AbstractProfilePanel?)?.refreshPanel()
     }
 }

@@ -1,9 +1,12 @@
 package org.micoli.php.symfony.profiler.parsers
 
 import java.time.OffsetDateTime
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.jaxen.jdom.JDOMXPath
 import org.jdom.Document
 import org.jdom.Element
+import org.micoli.php.symfony.list.SearchableRecord
 
 class Log(
     val time: OffsetDateTime,
@@ -11,7 +14,11 @@ class Log(
     val severity: String,
     val message: String,
     val context: String,
-)
+) : SearchableRecord {
+    override fun getSearchString(): ImmutableList<String> {
+        return persistentListOf(severity, channel, message, context)
+    }
+}
 
 class LoggerData(val logs: List<Log>)
 

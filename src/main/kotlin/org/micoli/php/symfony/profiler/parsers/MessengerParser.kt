@@ -1,8 +1,11 @@
 package org.micoli.php.symfony.profiler.parsers
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.jaxen.jdom.JDOMXPath
 import org.jdom.Document
 import org.jdom.Element
+import org.micoli.php.symfony.list.SearchableRecord
 
 class MessengerStats(
     val messageCount: Int,
@@ -16,7 +19,11 @@ class MessengerDispatch(
     val busName: String,
     val dispatch: FileLocation?,
     val message: String
-)
+) : SearchableRecord {
+    override fun getSearchString(): ImmutableList<String> {
+        return persistentListOf(messageName, messageLocation?.file ?: "", busName, message)
+    }
+}
 
 class MessengerParser : Parser() {
     override fun getPage(): String = "messenger"

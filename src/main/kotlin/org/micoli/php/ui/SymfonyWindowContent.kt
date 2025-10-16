@@ -12,7 +12,7 @@ import org.micoli.php.ui.panels.SymfonyProfilesPanel
 import org.micoli.php.ui.panels.symfonyProfiler.SymfonyProfilePanel
 
 class SymfonyWindowContent(project: Project) {
-    val contentPanel: JBSplitter = JBSplitter(false, 0.5f)
+    val contentPanel: JBSplitter = JBSplitter(false, 0.40f)
     private val symfonyProfilersPanel: SymfonyProfilesPanel = SymfonyProfilesPanel(project, this)
     private val symfonyProfilePanel: SymfonyProfilePanel = SymfonyProfilePanel(project)
     val titleActions: MutableList<AnAction?> = ArrayList()

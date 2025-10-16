@@ -17,9 +17,9 @@ import org.micoli.php.ui.table.TimestampRenderer
 
 class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWindowContent) :
     AbstractListPanel<SymfonyProfileDTO>(
-        project, "symfonyProfiles", arrayOf("Timestamp", "Method", "Path", "Code", "Action")) {
+        project, "symfonyProfiles", arrayOf("Timestamp", "Method", "URI", "Code", "Action")) {
     override fun getSorter(): TableRowSorter<ObjectTableModel<SymfonyProfileDTO>> {
-        innerSorter = TableRowSorter<ObjectTableModel<SymfonyProfileDTO>>(model)
+        val innerSorter = TableRowSorter(model)
         innerSorter.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.DESCENDING),
@@ -34,28 +34,33 @@ class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWi
     }
 
     override fun configureTableColumns() {
-        table.getColumnModel().getColumn(0).setCellRenderer(TimestampRenderer())
-        table.getColumnModel().getColumn(0).setMaxWidth(85)
-        table.getColumnModel().getColumn(1).setMaxWidth(60)
-        table.getColumnModel().getColumn(2).setMaxWidth(800)
-        table.getColumnModel().getColumn(3).setMaxWidth(60)
-        table.getColumnModel().getColumn(4).setCellRenderer(ActionIconRenderer())
-        table.getColumnModel().getColumn(4).setMinWidth(50)
-        table.getColumnModel().getColumn(4).setMaxWidth(50)
-    }
-
-    override fun handleActionDoubleClick(elementDTO: SymfonyProfileDTO) {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            BrowserUtil.open(elementDTO.profileUrl)
+        table.columnModel.apply {
+            getColumn(0).setCellRenderer(TimestampRenderer())
+            getColumn(0).setMaxWidth(85)
+            getColumn(1).setMaxWidth(60)
+            getColumn(2).setMaxWidth(800)
+            getColumn(3).setMaxWidth(60)
+            getColumn(4).setCellRenderer(ActionIconRenderer())
+            getColumn(4).setMinWidth(50)
+            getColumn(4).setMaxWidth(50)
         }
     }
 
-    override fun handleActionLineSelected(elementDTO: SymfonyProfileDTO) {
+    override fun handleActionDoubleClick(elementDTO: SymfonyProfileDTO): Boolean {
+        ApplicationManager.getApplication().executeOnPooledThread {
+            BrowserUtil.open(elementDTO.profileUrl)
+        }
+        return true
+    }
+
+    override fun handleActionLineSelected(elementDTO: SymfonyProfileDTO): Boolean {
         symfonyWindowContent.profileSelected(elementDTO)
+        return true
     }
 
     override fun refresh() {
         ApplicationManager.getApplication().executeOnPooledThread {
+            val urlRoots = SymfonyProfileService.getInstance(project).configuration?.urlRoots
             synchronized(lock) {
                 try {
                     table.emptyText.text = "Loading profiles, please wait..."
@@ -64,7 +69,13 @@ class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWi
                     for (item in SymfonyProfileService.getInstance(project).elements) {
                         model.addRow(
                             item,
-                            arrayOf(item.timestamp, item.method, item.url, item.statusCode, null))
+                            arrayOf(
+                                item.timestamp,
+                                item.method,
+                                urlRoots?.fold(item.url) { acc, root -> acc.replaceFirst(root, "") }
+                                    ?: item.url,
+                                item.statusCode,
+                                null))
                     }
                     table.emptyText.text = "Nothing to show"
                     model.fireTableDataChanged()

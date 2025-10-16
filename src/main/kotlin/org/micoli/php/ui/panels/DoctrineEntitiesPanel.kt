@@ -22,7 +22,7 @@ class DoctrineEntitiesPanel(project: Project) :
     AbstractListPanel<DoctrineEntityElementDTO>(
         project, "doctrineEntities", arrayOf("Entity", "Table", "Schema", "Action")) {
     override fun getSorter(): TableRowSorter<ObjectTableModel<DoctrineEntityElementDTO>> {
-        innerSorter = TableRowSorter<ObjectTableModel<DoctrineEntityElementDTO>>(model)
+        val innerSorter = TableRowSorter(model)
         innerSorter.setSortKeys(
             listOf<RowSorter.SortKey?>(
                 RowSorter.SortKey(0, SortOrder.ASCENDING),
@@ -36,18 +36,21 @@ class DoctrineEntitiesPanel(project: Project) :
     }
 
     override fun configureTableColumns() {
-        table.getColumnModel().getColumn(0).setMaxWidth(600)
-        table.getColumnModel().getColumn(1).setMaxWidth(200)
-        table.getColumnModel().getColumn(2).setMaxWidth(100)
-        table.getColumnModel().getColumn(3).setCellRenderer(ActionIconRenderer())
-        table.getColumnModel().getColumn(3).setMinWidth(50)
-        table.getColumnModel().getColumn(3).setMaxWidth(50)
+        table.columnModel.apply {
+            getColumn(0).setMaxWidth(600)
+            getColumn(1).setMaxWidth(200)
+            getColumn(2).setMaxWidth(100)
+            getColumn(3).setCellRenderer(ActionIconRenderer())
+            getColumn(3).setMinWidth(50)
+            getColumn(3).setMaxWidth(50)
+        }
     }
 
-    override fun handleActionDoubleClick(elementDTO: DoctrineEntityElementDTO) {
-        val navigatable = elementDTO.element as? Navigatable ?: return
+    override fun handleActionDoubleClick(elementDTO: DoctrineEntityElementDTO): Boolean {
+        val navigatable = elementDTO.element as? Navigatable ?: return false
 
         ApplicationManager.getApplication().executeOnPooledThread { navigatable.navigate(true) }
+        return true
     }
 
     override fun refresh() {

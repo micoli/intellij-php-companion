@@ -1,98 +1,117 @@
 package org.micoli.php.ui.panels.symfonyProfiler.db
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBPanel
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.table.JBTable
 import java.awt.BorderLayout
 import java.awt.CardLayout
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.JTable
+import javax.swing.RowSorter
+import javax.swing.SortOrder
+import javax.swing.table.TableRowSorter
+import kotlin.apply
 import kotlin.arrayOf
 import org.micoli.php.service.SqlUtils
 import org.micoli.php.symfony.profiler.SymfonyProfileService
 import org.micoli.php.symfony.profiler.parsers.DBData
 import org.micoli.php.symfony.profiler.parsers.DBQuery
 import org.micoli.php.ui.panels.symfonyProfiler.AbstractProfilePanel
+import org.micoli.php.ui.table.AbstractListPanel
 import org.micoli.php.ui.table.DoubleCellRenderer
 import org.micoli.php.ui.table.MultiLineTableCellRenderer
 import org.micoli.php.ui.table.ObjectTableModel
 
-class ProfileDBPanel(val project: Project) : AbstractProfilePanel() {
-    lateinit var tableModel: ObjectTableModel<DBQuery>
-    lateinit var cardLayout: CardLayout
-    lateinit var cardPanel: JBPanel<JBPanel<*>>
-
-    override fun getMainPanel(): JBPanel<*> {
-        cardLayout = CardLayout()
-        cardPanel = JBPanel<JBPanel<*>>(cardLayout)
-        val mainPanel = JBPanel<JBPanel<*>>(BorderLayout())
-        val columnNames = arrayOf("Sequence", "Time", "Connection", "SQL")
-        tableModel = object : ObjectTableModel<DBQuery>(columnNames) {}
-        val table =
-            JBTable(tableModel).apply {
-                setShowColumns(true)
-                setShowGrid(true)
-                isStriped = true
-
-                columnModel.getColumn(0).apply {
-                    preferredWidth = 20
-                    maxWidth = 20
-                    minWidth = 20
-                }
-                columnModel.getColumn(1).apply {
-                    preferredWidth = 70
-                    maxWidth = 70
-                    minWidth = 70
-                    cellRenderer = DoubleCellRenderer(decimals = 6)
-                }
-                columnModel.getColumn(2).apply {
-                    preferredWidth = 70
-                    maxWidth = 70
-                    minWidth = 70
-                }
-                columnModel.getColumn(3).apply {
-                    cellRenderer = MultiLineTableCellRenderer { SqlUtils.Companion.formatSql(it) }
-                }
-                autoResizeMode = JTable.AUTO_RESIZE_LAST_COLUMN
+class ProfileDBPanel(project: Project) : AbstractProfilePanel(project) {
+    val cardLayout: CardLayout = CardLayout()
+    val cardPanel: JBPanel<JBPanel<*>> = JBPanel<JBPanel<*>>(cardLayout)
+    val table =
+        object :
+            AbstractListPanel<DBQuery>(project, "dispatches", arrayOf("Sequence", "Time", "SQL")) {
+            override fun getSorter(): TableRowSorter<ObjectTableModel<DBQuery>> {
+                val innerSorter = TableRowSorter(model)
+                innerSorter.setSortKeys(
+                    listOf<RowSorter.SortKey?>(
+                        RowSorter.SortKey(0, SortOrder.ASCENDING),
+                    ))
+                innerSorter.setComparator(1, java.lang.String.CASE_INSENSITIVE_ORDER)
+                innerSorter.setComparator(2, java.lang.String.CASE_INSENSITIVE_ORDER)
+                return innerSorter
             }
-        table.addMouseListener(
-            object : MouseAdapter() {
-                override fun mouseClicked(e: MouseEvent) {
-                    val row = table.rowAtPoint(e.getPoint())
-                    val col = table.columnAtPoint(e.getPoint())
-                    when {
-                        (e.clickCount == 1 && row >= 0 && col == 3) ->
-                            showDetail(tableModel.getObjectAt(row) ?: return)
-                        (e.clickCount == 2 && row >= 0) ->
-                            showDetail(tableModel.getObjectAt(row) ?: return)
+
+            override fun configureTableColumns() {
+                table.apply {
+                    setShowColumns(true)
+                    setShowGrid(true)
+                    setShowColumns(true)
+                    setShowGrid(true)
+                    isStriped = true
+
+                    columnModel.getColumn(0).apply {
+                        preferredWidth = 20
+                        maxWidth = 20
+                        minWidth = 20
                     }
+                    columnModel.getColumn(1).apply {
+                        preferredWidth = 70
+                        maxWidth = 70
+                        minWidth = 70
+                        cellRenderer = DoubleCellRenderer(decimals = 6)
+                    }
+                    columnModel.getColumn(2).apply {
+                        cellRenderer = MultiLineTableCellRenderer {
+                            SqlUtils.Companion.formatHtmlSql(it)
+                        }
+                    }
+                    autoResizeMode = JTable.AUTO_RESIZE_LAST_COLUMN
                 }
-            })
-
-        val listPanel =
-            JBPanel<JBPanel<*>>(BorderLayout()).apply {
-                add(JBScrollPane(table), BorderLayout.CENTER)
             }
 
-        cardPanel.add(listPanel, LIST_VIEW)
+            override fun refresh() {
+                ApplicationManager.getApplication().executeOnPooledThread {
+                    SymfonyProfileService.getInstance(project)
+                        .loadProfilerDumpPage(
+                            DBData::class.java,
+                            symfonyProfileDTO.token,
+                            loaderLogCallback(System.nanoTime()),
+                            { showError(it) },
+                            {
+                                synchronized(lock) {
+                                    val model = table.model as ObjectTableModel<DBQuery>
+                                    while (model.rowCount > 0) {
+                                        model.removeRow(0)
+                                    }
+                                    var index = 0
+                                    for (query in it?.queries ?: return@loadProfilerDumpPage) {
+                                        model.addRow(
+                                            query,
+                                            arrayOf(index++, query.executionMS, query.htmlSql))
+                                    }
+                                    showMainPanel()
+                                    showList()
+                                }
+                            })
+                }
+            }
+
+            override fun handleActionDoubleClick(col: Int, elementDTO: DBQuery): Boolean {
+                if (col == 2) {
+                    showDetail(elementDTO)
+                    return true
+                }
+                return false
+            }
+        }
+
+    init {
+        cardPanel.add(
+            JBPanel<JBPanel<*>>(BorderLayout()).apply { add(table, BorderLayout.CENTER) },
+            LIST_VIEW)
         mainPanel.add(cardPanel, BorderLayout.CENTER)
-        return mainPanel
+        initialize()
     }
 
     override fun refresh() {
-        val symfonyProfileService = SymfonyProfileService.getInstance(project)
-        val startTime = System.nanoTime()
-        symfonyProfileService.loadProfilerDumpPage(
-            DBData::class.java,
-            symfonyProfileDTO.token,
-            loaderLogCallback(startTime),
-            { showError(it) },
-            {
-                setQueries(it?.queries ?: return@loadProfilerDumpPage)
-                showMain()
-            })
+        table.refresh()
     }
 
     private fun showDetail(dbQuery: DBQuery?) {
@@ -106,24 +125,6 @@ class ProfileDBPanel(val project: Project) : AbstractProfilePanel() {
 
     private fun showList() {
         cardLayout.show(cardPanel, LIST_VIEW)
-    }
-
-    private fun clearQueries() {
-        while (tableModel.rowCount > 0) {
-            tableModel.removeRow(0)
-        }
-    }
-
-    fun setQueries(queries: List<DBQuery>?) {
-        clearQueries()
-        if (queries == null) {
-            return
-        }
-        var index = 0
-        for (query in queries) {
-            tableModel.addRow(query, arrayOf(index++, query.executionMS, "", query.sql))
-        }
-        showList()
     }
 
     companion object {

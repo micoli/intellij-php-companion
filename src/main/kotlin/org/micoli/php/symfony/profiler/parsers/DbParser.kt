@@ -19,7 +19,11 @@ class DBQuery(
     val htmlSql: String,
     val executionMS: Double,
     val backtrace: List<FileLocation>,
-)
+) : SearchableRecord {
+    override fun getSearchString(): ImmutableList<String> {
+        return persistentListOf(sql)
+    }
+}
 
 class DbParser : Parser() {
     override fun getPage(): String = "db"
