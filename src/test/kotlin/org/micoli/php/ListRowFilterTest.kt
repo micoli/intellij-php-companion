@@ -23,7 +23,8 @@ class ListRowFilterTest(
     private val expectedResult: String,
 ) {
     @JvmRecord
-    data class TestElementDTO(val uri: String, val name: String) : SearchableRecord {
+    data class TestElementDTO(val id: String, val uri: String, val name: String) :
+        SearchableRecord {
         override fun getSearchString(): ImmutableList<String> = persistentListOf(uri, name)
     }
 
@@ -32,18 +33,17 @@ class ListRowFilterTest(
         val columnNames = arrayOf("Name", "Element")
         val model = ObjectTableModel<TestElementDTO>(columnNames)
 
-        for (row in
-            arrayOf(
-                arrayOf("t1", TestElementDTO("/test/toto", "A good description")),
-                arrayOf("t2", TestElementDTO("/test/toto", "A bad description")),
-                arrayOf("t3", TestElementDTO("/test/tata/toto", "Without desc")),
-                arrayOf("t4", TestElementDTO("/test/tata/tutu", "Without desc")),
-                arrayOf("t5", TestElementDTO("/actor/{id}/add", "Add an actor")),
-                arrayOf("t6", TestElementDTO("/actor/{id}/update", "Update an actor")),
-                arrayOf("t7", TestElementDTO("/resource/{id}/delete", "Delete a resource")),
-            )) {
-            model.addRow(row[1] as TestElementDTO, row as Array<Any?>)
-        }
+        model.setRows(
+            listOf(
+                TestElementDTO("t1", "/test/toto", "A good description"),
+                TestElementDTO("t2", "/test/toto", "A bad description"),
+                TestElementDTO("t3", "/test/tata/toto", "Without desc"),
+                TestElementDTO("t4", "/test/tata/tutu", "Without desc"),
+                TestElementDTO("t5", "/actor/{id}/add", "Add an actor"),
+                TestElementDTO("t6", "/actor/{id}/update", "Update an actor"),
+                TestElementDTO("t7", "/resource/{id}/delete", "Delete a resource"),
+            ),
+            { item -> arrayOf(item.id) })
 
         val listRowFilter = ListRowFilter<TableModel, Any?>()
         val defaultRowSorter = TableRowSorter<TableModel>(model)

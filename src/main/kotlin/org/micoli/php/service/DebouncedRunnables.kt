@@ -1,7 +1,7 @@
 package org.micoli.php.service
 
 open class DebouncedRunnables {
-    private val debouncedActions: MutableMap<String?, DebouncedRunnable> = HashMap()
+    private val debouncedActions: MutableMap<String, DebouncedRunnable> = HashMap()
 
     fun run(task: Runnable, name: String, delayMillis: Long): DebouncedRunnable? {
         return run(task, name, delayMillis, null)

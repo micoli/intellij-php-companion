@@ -40,7 +40,7 @@ class SymfonyWindowContent(project: Project) {
     }
 
     private fun refreshTabs() {
-        symfonyProfilersPanel.refresh()
+        synchronized(refreshLock) { symfonyProfilersPanel.refresh() }
     }
 
     fun profileSelected(symfonyProfileDTO: SymfonyProfileDTO) {

@@ -55,7 +55,7 @@ class DebouncedRunnablesTest {
         val callCounter = AtomicInteger(0)
 
         val runnable1 = getSameNameRunnable(callCounter, latch)
-        for (_i in 0..9) {
+        for (i in 0..9) {
             getSameNameRunnable(callCounter, latch)
         }
         Thread.sleep(100)

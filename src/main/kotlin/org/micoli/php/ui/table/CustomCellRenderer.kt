@@ -16,8 +16,12 @@ class CustomCellRenderer<T>(val formatter: (T) -> String) : TableCellRenderer {
     ): Component {
         val label = JLabel()
         val elementDTO =
-            (table.model as ObjectTableModel<T>).getObjectAt(table.convertRowIndexToModel(row))
-                ?: return label
+            try {
+                (table.model as ObjectTableModel<T>).getObjectAt(table.convertRowIndexToModel(row))
+                    ?: return label
+            } catch (_: NullPointerException) {
+                return label
+            }
 
         label.text = formatter(elementDTO)
 

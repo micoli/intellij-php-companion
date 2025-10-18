@@ -1,5 +1,6 @@
 package org.micoli.php.openAPI
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.lang.psi.elements.PhpAttribute
@@ -28,9 +29,11 @@ class OpenAPIService(project: Project) :
 
     override fun getElements(): MutableList<OpenAPIPathElementDTO> {
         val elements = ArrayList<OpenAPIPathElementDTO>()
-        val openAPIConfiguration = this.configuration ?: return elements
-        for (root in openAPIConfiguration.specificationRoots) {
-            addElementsFromOpenAPIRoot(root, elements)
+        ApplicationManager.getApplication().runReadAction {
+            val openAPIConfiguration = this.configuration ?: return@runReadAction
+            for (root in openAPIConfiguration.specificationRoots) {
+                addElementsFromOpenAPIRoot(root, elements)
+            }
         }
         return elements.toMutableList()
     }

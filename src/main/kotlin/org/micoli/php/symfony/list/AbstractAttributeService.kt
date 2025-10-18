@@ -1,6 +1,7 @@
 package org.micoli.php.symfony.list
 
 import com.intellij.codeInsight.completion.PlainPrefixMatcher
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.PhpAttribute
@@ -20,32 +21,35 @@ abstract class AbstractAttributeService<T, C : DisactivableConfiguration> {
 
     open fun getElements(): MutableList<T> {
         val elements = ArrayList<T>()
-        val currentConfiguration = this.configuration ?: return elements
-        if (currentConfiguration.isDisabled()) {
-            return elements
-        }
+        ApplicationManager.getApplication().runReadAction {
+            val currentConfiguration = this.configuration ?: return@runReadAction
+            if (currentConfiguration.isDisabled()) {
+                return@runReadAction
+            }
 
-        val phpIndex = PhpIndex.getInstance(project)
-        val attributeFQCN = PhpUtil.normalizeRootFQN(this.getAttributeFQCN()!!)
+            val phpIndex = PhpIndex.getInstance(project)
+            val attributeFQCN = PhpUtil.normalizeRootFQN(this.getAttributeFQCN()!!)
 
-        for (namespace in this.getNamespaces()) {
-            val allClasses = phpIndex.getAllClassFqns(PlainPrefixMatcher(namespace))
-            for (className in allClasses) {
-                val normalizeNonRootFQN = normalizeNonRootFQN(className)
-                val phpClass = PhpUtil.getPhpClassByFQN(project, normalizeNonRootFQN) ?: continue
-                elements.addAll(
-                    getElementsFromAttributes(
-                        phpIndex,
-                        normalizeNonRootFQN,
-                        phpClass.getAttributes(attributeFQCN),
-                        namespace))
-                for (method in phpClass.methods) {
+            for (namespace in this.getNamespaces()) {
+                val allClasses = phpIndex.getAllClassFqns(PlainPrefixMatcher(namespace))
+                for (className in allClasses) {
+                    val normalizeNonRootFQN = normalizeNonRootFQN(className)
+                    val phpClass =
+                        PhpUtil.getPhpClassByFQN(project, normalizeNonRootFQN) ?: continue
                     elements.addAll(
                         getElementsFromAttributes(
                             phpIndex,
                             normalizeNonRootFQN,
-                            method.getAttributes(attributeFQCN),
+                            phpClass.getAttributes(attributeFQCN),
                             namespace))
+                    for (method in phpClass.methods) {
+                        elements.addAll(
+                            getElementsFromAttributes(
+                                phpIndex,
+                                normalizeNonRootFQN,
+                                method.getAttributes(attributeFQCN),
+                                namespace))
+                    }
                 }
             }
         }

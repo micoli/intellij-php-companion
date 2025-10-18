@@ -1,6 +1,5 @@
 package org.micoli.php.ui.panels.symfonyProfiler.logs
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import java.awt.BorderLayout
 import javax.swing.JTable
@@ -64,34 +63,26 @@ class ProfileLogsPanel(project: Project) : AbstractProfilePanel(project) {
                 }
             }
 
-            override fun refresh() {
-                ApplicationManager.getApplication().executeOnPooledThread {
-                    SymfonyProfileService.getInstance(project)
-                        .loadProfilerDumpPage(
-                            LoggerData::class.java,
-                            symfonyProfileDTO.token,
-                            loaderLogCallback(System.nanoTime()),
-                            { showError(it) },
-                            {
-                                synchronized(lock) {
-                                    val model = table.model as ObjectTableModel<Log>
-                                    while (model.rowCount > 0) {
-                                        model.removeRow(0)
-                                    }
-                                    for (log in it?.logs ?: return@loadProfilerDumpPage) {
-                                        model.addRow(
-                                            log,
-                                            arrayOf(
-                                                log.time,
-                                                log.severity,
-                                                log.channel,
-                                                log.message,
-                                                log.context))
-                                    }
-                                    showMainPanel()
-                                }
-                            })
-                }
+            override fun setElements() {
+                SymfonyProfileService.getInstance(project)
+                    .loadProfilerDumpPage(
+                        LoggerData::class.java,
+                        symfonyProfileDTO.token,
+                        loaderLogCallback(System.nanoTime()),
+                        { showError(it) },
+                        { item ->
+                            model.setRows(item?.logs ?: return@loadProfilerDumpPage) {
+                                arrayOf(
+                                    it.time,
+                                    it.severity,
+                                    it.channel,
+                                    it.message,
+                                    it.context,
+                                )
+                            }
+
+                            showMainPanel()
+                        })
             }
         }
 

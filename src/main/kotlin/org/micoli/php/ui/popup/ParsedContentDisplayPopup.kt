@@ -8,6 +8,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import java.awt.datatransfer.StringSelection
@@ -41,7 +42,7 @@ class ParsedContentDisplayPopup(
         editor = createJsonEditor(popupType)
         val editorComponent = editor!!.component
 
-        val scrollPane = JScrollPane(editorComponent)
+        val scrollPane = JBScrollPane(editorComponent)
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED)
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
 
@@ -92,10 +93,6 @@ class ParsedContentDisplayPopup(
             Notification.getInstance(project).messageWithTimeout("Content copied to clipboard", 500)
             close(OK_EXIT_CODE)
         }
-    }
-
-    override fun doOKAction() {
-        super.doOKAction()
     }
 
     override fun dispose() {

@@ -2,6 +2,7 @@ package org.micoli.php.ui.panels
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.pom.Navigatable
 import java.lang.String
 import javax.swing.RowSorter
@@ -11,7 +12,6 @@ import kotlin.Any
 import kotlin.Comparator
 import kotlin.Exception
 import kotlin.arrayOf
-import kotlin.synchronized
 import org.micoli.php.symfony.list.CommandElementDTO
 import org.micoli.php.symfony.list.CommandService
 import org.micoli.php.ui.table.AbstractListPanel
@@ -46,28 +46,20 @@ class CommandsPanel(project: Project) :
 
     override fun handleActionDoubleClick(elementDTO: CommandElementDTO): Boolean {
         val navigatable = elementDTO.element as? Navigatable ?: return false
+        ApplicationManager.getApplication().runReadAction({ navigatable.navigate(true) })
 
-        ApplicationManager.getApplication().executeOnPooledThread { navigatable.navigate(true) }
         return true
     }
 
-    override fun refresh() {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            synchronized(lock) {
-                try {
-                    table.emptyText.text = "Loading CLI, please wait..."
-                    clearItems()
-                    ApplicationManager.getApplication().runReadAction {
-                        for (item in CommandService.getInstance(project).getElements()) {
-                            model.addRow(item, arrayOf(item.command, item.description, null))
-                        }
-                        table.emptyText.text = "Nothing to show"
-                        model.fireTableDataChanged()
-                    }
-                } catch (e: Exception) {
-                    logger.error("Error refreshing CLI table", e)
-                }
-            }
+    override fun setElements() {
+        try {
+            table.emptyText.text = "Loading CLI, please wait..."
+            val elements: MutableList<CommandElementDTO> =
+                ApplicationManager.getApplication()
+                    .runReadAction(Computable { CommandService.getInstance(project).getElements() })
+            model.setRows(elements) { arrayOf(it.command, it.description, null) }
+        } catch (e: Exception) {
+            logger.error("Error refreshing CLI table", e)
         }
     }
 }

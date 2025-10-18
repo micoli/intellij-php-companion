@@ -2,6 +2,7 @@ package org.micoli.php.ui.panels
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.pom.Navigatable
 import java.lang.String
 import javax.swing.RowSorter
@@ -11,7 +12,6 @@ import kotlin.Any
 import kotlin.Comparator
 import kotlin.Exception
 import kotlin.arrayOf
-import kotlin.synchronized
 import org.micoli.php.symfony.list.DoctrineEntityElementDTO
 import org.micoli.php.symfony.list.DoctrineEntityService
 import org.micoli.php.ui.table.AbstractListPanel
@@ -48,29 +48,20 @@ class DoctrineEntitiesPanel(project: Project) :
 
     override fun handleActionDoubleClick(elementDTO: DoctrineEntityElementDTO): Boolean {
         val navigatable = elementDTO.element as? Navigatable ?: return false
-
-        ApplicationManager.getApplication().executeOnPooledThread { navigatable.navigate(true) }
+        ApplicationManager.getApplication().runReadAction({ navigatable.navigate(true) })
         return true
     }
 
-    override fun refresh() {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            synchronized(lock) {
-                try {
-                    table.emptyText.text = "Loading Entities, please wait..."
-                    clearItems()
-                    ApplicationManager.getApplication().runReadAction {
-                        for (item in DoctrineEntityService.getInstance(project).getElements()) {
-                            model.addRow(
-                                item, arrayOf(item.className, item.name, item.schema, null))
-                        }
-                        table.emptyText.text = "Nothing to show"
-                        model.fireTableDataChanged()
-                    }
-                } catch (e: Exception) {
-                    logger.error("Error refreshing Entities table", e)
-                }
-            }
+    override fun setElements() {
+        try {
+            table.emptyText.text = "Loading Entities, please wait..."
+            val elements: MutableList<DoctrineEntityElementDTO> =
+                ApplicationManager.getApplication()
+                    .runReadAction(
+                        Computable { DoctrineEntityService.getInstance(project).getElements() })
+            model.setRows(elements) { arrayOf(it.className, it.name, it.schema, null) }
+        } catch (e: Exception) {
+            logger.error("Error refreshing Entities table", e)
         }
     }
 }

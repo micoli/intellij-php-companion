@@ -3,6 +3,7 @@ package org.micoli.php.ui.panels
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import java.lang.String
 import javax.swing.RowSorter
 import javax.swing.SortOrder
@@ -18,6 +19,16 @@ import org.micoli.php.ui.table.TimestampRenderer
 class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWindowContent) :
     AbstractListPanel<SymfonyProfileDTO>(
         project, "symfonyProfiles", arrayOf("Timestamp", "Method", "URI", "Code", "Action")) {
+    val symfonyProfileService: SymfonyProfileService = SymfonyProfileService.getInstance(project)
+    var isAutoRefresh: Boolean = false
+        set(value) {
+            symfonyProfileService.setAutoRefresh(value)
+        }
+
+    init {
+        symfonyProfileService.setAutoRefresh(isAutoRefresh)
+    }
+
     override fun getSorter(): TableRowSorter<ObjectTableModel<SymfonyProfileDTO>> {
         val innerSorter = TableRowSorter(model)
         innerSorter.setSortKeys(
@@ -58,31 +69,24 @@ class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWi
         return true
     }
 
-    override fun refresh() {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            val urlRoots = SymfonyProfileService.getInstance(project).configuration?.urlRoots
-            synchronized(lock) {
-                try {
-                    table.emptyText.text = "Loading profiles, please wait..."
-                    clearItems()
-
-                    for (item in SymfonyProfileService.getInstance(project).elements) {
-                        model.addRow(
-                            item,
-                            arrayOf(
-                                item.timestamp,
-                                item.method,
-                                urlRoots?.fold(item.url) { acc, root -> acc.replaceFirst(root, "") }
-                                    ?: item.url,
-                                item.statusCode,
-                                null))
-                    }
-                    table.emptyText.text = "Nothing to show"
-                    model.fireTableDataChanged()
-                } catch (e: Exception) {
-                    logger.error("Error refreshing profilers " + e.localizedMessage, e)
-                }
+    override fun setElements() {
+        val urlRoots = SymfonyProfileService.getInstance(project).configuration?.urlRoots
+        try {
+            table.emptyText.text = "Loading profiles, please wait..."
+            val elements: MutableList<SymfonyProfileDTO> =
+                ApplicationManager.getApplication()
+                    .runReadAction(
+                        Computable { SymfonyProfileService.getInstance(project).elements })
+            model.setRows(elements) {
+                arrayOf(
+                    it.timestamp,
+                    it.method,
+                    urlRoots?.fold(it.url) { acc, root -> acc.replaceFirst(root, "") } ?: it.url,
+                    it.statusCode,
+                    null)
             }
+        } catch (e: Exception) {
+            logger.error("Error refreshing profilers " + e.localizedMessage, e)
         }
     }
 }

@@ -16,12 +16,17 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.border.Border
 import javax.swing.event.DocumentEvent
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 import javax.swing.table.TableRowSorter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.micoli.php.ui.PhpCompanionIcon
 
 abstract class AbstractListPanel<T>(
@@ -32,9 +37,8 @@ abstract class AbstractListPanel<T>(
     protected val model = ObjectTableModel<T>(columnNames)
     protected var innerSorter: TableRowSorter<ObjectTableModel<T>>? = null
     protected lateinit var searchField: SearchTextField
-    protected var table: JBTable = JBTable()
+    protected val table: JBTable = JBTable()
     protected var searchFieldPanel: JPanel = JPanel()
-    protected val lock: Any = Any()
     protected var isRegexMode: Boolean = false
     protected var lastColumnIsAction: Boolean = true
     private val rightActionGroup = DefaultActionGroup()
@@ -48,39 +52,41 @@ abstract class AbstractListPanel<T>(
     }
 
     private fun initializeComponents(panelName: String?) {
-        searchFieldPanel.setLayout(BorderLayout())
-        table.model = model
-        table.setShowGrid(false)
-        table.isStriped = true
-        searchField = SearchTextField(true, true, panelName)
-        rightActionGroup.add(
-            object : ToggleAction("Regex", "Toggle regex mode", PhpCompanionIcon.Regexp) {
-                var isRegex: Boolean = isRegexMode
+        synchronized(model.lock) {
+            searchFieldPanel.setLayout(BorderLayout())
+            table.model = model
+            table.setShowGrid(false)
+            table.isStriped = true
+            searchField = SearchTextField(true, true, panelName)
+            rightActionGroup.add(
+                object : ToggleAction("Regex", "Toggle regex mode", PhpCompanionIcon.Regexp) {
+                    var isRegex: Boolean = isRegexMode
 
-                override fun getActionUpdateThread(): ActionUpdateThread {
-                    return ActionUpdateThread.BGT
-                }
+                    override fun getActionUpdateThread(): ActionUpdateThread {
+                        return ActionUpdateThread.BGT
+                    }
 
-                override fun isSelected(anActionEvent: AnActionEvent): Boolean {
-                    return isRegex
-                }
+                    override fun isSelected(anActionEvent: AnActionEvent): Boolean {
+                        return isRegex
+                    }
 
-                override fun setSelected(anActionEvent: AnActionEvent, b: Boolean) {
-                    isRegex = !isRegex
-                    isRegexMode = isRegex
-                    updateFilter(searchField.text)
-                }
-            })
-        val rightToolbar =
-            ActionManager.getInstance()
-                .createActionToolbar(
-                    "PhpCompanion" + panelName + "RightToolbar", rightActionGroup, true)
-        rightToolbar.targetComponent = this
-        searchFieldPanel.add(rightToolbar.component, BorderLayout.EAST)
+                    override fun setSelected(anActionEvent: AnActionEvent, b: Boolean) {
+                        isRegex = !isRegex
+                        isRegexMode = isRegex
+                        updateFilter(searchField.text)
+                    }
+                })
+            val rightToolbar =
+                ActionManager.getInstance()
+                    .createActionToolbar(
+                        "PhpCompanion" + panelName + "RightToolbar", rightActionGroup, true)
+            rightToolbar.targetComponent = this
+            searchFieldPanel.add(rightToolbar.component, BorderLayout.EAST)
 
-        innerSorter = getSorter()
-        innerSorter?.setRowFilter(rowFilter)
-        table.setRowSorter(innerSorter)
+            innerSorter = getSorter()
+            innerSorter?.setRowFilter(rowFilter)
+            table.setRowSorter(innerSorter)
+        }
     }
 
     private fun setupLayout() {
@@ -118,6 +124,7 @@ abstract class AbstractListPanel<T>(
                     when {
                         col == columnNames.size - 1 && lastColumnIsAction ->
                             handleActionDoubleClick(elementDTO)
+
                         e.getClickCount() == 2 -> handleActionDoubleClick(elementDTO)
                         e.getClickCount() == 1 -> handleActionSingleClick(elementDTO)
                     }
@@ -165,10 +172,6 @@ abstract class AbstractListPanel<T>(
             })
     }
 
-    fun clearItems() {
-        model.clearRows()
-    }
-
     fun updateFilter(text: String) {
         val textEditor = searchField.textEditor
         try {
@@ -184,7 +187,7 @@ abstract class AbstractListPanel<T>(
 
     val isEmpty: Boolean
         get() {
-            synchronized(lock) {
+            synchronized(model.lock) {
                 return table.getRowCount() == 0
             }
         }
@@ -202,7 +205,19 @@ abstract class AbstractListPanel<T>(
 
     protected abstract fun configureTableColumns()
 
-    abstract fun refresh()
+    fun refresh() {
+        SwingUtilities.invokeLater {
+            synchronized(model.lock) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    setElements()
+                    withContext(Dispatchers.Main) { model.fireTableDataChanged() }
+                }
+                table.emptyText.text = "Nothing to show"
+            }
+        }
+    }
+
+    protected abstract fun setElements()
 
     protected open fun handleActionSingleClick(elementDTO: T): Boolean {
         return false

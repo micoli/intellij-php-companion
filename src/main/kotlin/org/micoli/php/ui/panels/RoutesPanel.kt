@@ -2,6 +2,7 @@ package org.micoli.php.ui.panels
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.pom.Navigatable
 import java.lang.String
 import javax.swing.*
@@ -10,7 +11,6 @@ import kotlin.Any
 import kotlin.Comparator
 import kotlin.Exception
 import kotlin.arrayOf
-import kotlin.synchronized
 import kotlin.text.trimIndent
 import org.micoli.php.symfony.list.RouteElementDTO
 import org.micoli.php.symfony.list.RouteService
@@ -69,28 +69,20 @@ class RoutesPanel(project: Project) :
 
     override fun handleActionDoubleClick(elementDTO: RouteElementDTO): Boolean {
         val navigatable = elementDTO.element as? Navigatable ?: return true
+        ApplicationManager.getApplication().runReadAction({ navigatable.navigate(true) })
 
-        ApplicationManager.getApplication().executeOnPooledThread { navigatable.navigate(true) }
         return true
     }
 
-    override fun refresh() {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            synchronized(lock) {
-                try {
-                    table.emptyText.text = "Loading routes, please wait..."
-                    clearItems()
-                    ApplicationManager.getApplication().runReadAction {
-                        for (item in RouteService.getInstance(project).getElements()) {
-                            model.addRow(item, arrayOf(null, item.methods, null))
-                        }
-                        table.emptyText.text = "Nothing to show"
-                        model.fireTableDataChanged()
-                    }
-                } catch (e: Exception) {
-                    logger.error("Error refreshing routes table", e)
-                }
-            }
+    override fun setElements() {
+        try {
+            table.emptyText.text = "Loading routes, please wait..."
+            val elements: MutableList<RouteElementDTO> =
+                ApplicationManager.getApplication()
+                    .runReadAction(Computable { RouteService.getInstance(project).getElements() })
+            model.setRows(elements) { arrayOf(null, it.methods, null) }
+        } catch (e: Exception) {
+            logger.error("Error refreshing routes table", e)
         }
     }
 }

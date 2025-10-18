@@ -3,6 +3,7 @@ package org.micoli.php.ui.panels
 import com.intellij.find.FindModel
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.usageView.UsageInfo
 import com.intellij.usages.UsageInfo2UsageAdapter
 import java.lang.String
@@ -13,7 +14,6 @@ import kotlin.Any
 import kotlin.Comparator
 import kotlin.Exception
 import kotlin.arrayOf
-import kotlin.synchronized
 import kotlin.text.trimIndent
 import org.micoli.php.openAPI.OpenAPIPathElementDTO
 import org.micoli.php.openAPI.OpenAPIService
@@ -77,29 +77,22 @@ class OpenAPIPathPanel(project: Project) :
     }
 
     override fun handleActionDoubleClick(elementDTO: OpenAPIPathElementDTO): Boolean {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            searchOperationIdDeclaration("operationId: " + elementDTO.operationId)
-        }
+        ApplicationManager.getApplication()
+            .runReadAction({
+                searchOperationIdDeclaration("operationId: " + elementDTO.operationId)
+            })
         return true
     }
 
-    override fun refresh() {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            synchronized(lock) {
-                try {
-                    table.emptyText.text = "Loading OpenAPIPaths, please wait..."
-                    clearItems()
-                    ApplicationManager.getApplication().runReadAction {
-                        for (item in OpenAPIService.getInstance(project).getElements()) {
-                            model.addRow(item, arrayOf(item.uri, item.method, null))
-                        }
-                        table.emptyText.text = "Nothing to show"
-                        model.fireTableDataChanged()
-                    }
-                } catch (e: Exception) {
-                    logger.error("Error refreshing OpenAPIPaths table", e)
-                }
-            }
+    override fun setElements() {
+        try {
+            table.emptyText.text = "Loading OpenAPIPaths, please wait..."
+            val elements: MutableList<OpenAPIPathElementDTO> =
+                ApplicationManager.getApplication()
+                    .runReadAction(Computable { OpenAPIService.getInstance(project).getElements() })
+            model.setRows(elements) { arrayOf(it.uri, it.method, null) }
+        } catch (e: Exception) {
+            logger.error("Error refreshing OpenAPIPaths table", e)
         }
     }
 

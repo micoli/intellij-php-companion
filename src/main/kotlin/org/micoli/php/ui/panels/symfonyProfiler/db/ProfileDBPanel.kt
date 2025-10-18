@@ -1,6 +1,5 @@
 package org.micoli.php.ui.panels.symfonyProfiler.db
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBPanel
 import java.awt.BorderLayout
@@ -66,31 +65,22 @@ class ProfileDBPanel(project: Project) : AbstractProfilePanel(project) {
                 }
             }
 
-            override fun refresh() {
-                ApplicationManager.getApplication().executeOnPooledThread {
-                    SymfonyProfileService.getInstance(project)
-                        .loadProfilerDumpPage(
-                            DBData::class.java,
-                            symfonyProfileDTO.token,
-                            loaderLogCallback(System.nanoTime()),
-                            { showError(it) },
-                            {
-                                synchronized(lock) {
-                                    val model = table.model as ObjectTableModel<DBQuery>
-                                    while (model.rowCount > 0) {
-                                        model.removeRow(0)
-                                    }
-                                    var index = 0
-                                    for (query in it?.queries ?: return@loadProfilerDumpPage) {
-                                        model.addRow(
-                                            query,
-                                            arrayOf(index++, query.executionMS, query.htmlSql))
-                                    }
-                                    showMainPanel()
-                                    showList()
-                                }
-                            })
-                }
+            override fun setElements() {
+                SymfonyProfileService.getInstance(project)
+                    .loadProfilerDumpPage(
+                        DBData::class.java,
+                        symfonyProfileDTO.token,
+                        loaderLogCallback(System.nanoTime()),
+                        { showError(it) },
+                        { item ->
+                            val model = table.model as ObjectTableModel<DBQuery>
+                            var index = 0
+                            model.setRows(item?.queries ?: return@loadProfilerDumpPage) {
+                                arrayOf(index++, it.executionMS, it.htmlSql)
+                            }
+                            showMainPanel()
+                            showList()
+                        })
             }
 
             override fun handleActionDoubleClick(col: Int, elementDTO: DBQuery): Boolean {

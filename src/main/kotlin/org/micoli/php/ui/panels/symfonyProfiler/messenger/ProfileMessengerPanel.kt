@@ -1,6 +1,5 @@
 package org.micoli.php.ui.panels.symfonyProfiler.messenger
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import java.awt.BorderLayout
@@ -70,32 +69,19 @@ class ProfileMessengerPanel(project: Project) : AbstractProfilePanel(project) {
                 }
             }
 
-            override fun refresh() {
-                ApplicationManager.getApplication().executeOnPooledThread {
-                    SymfonyProfileService.getInstance(project)
-                        .loadProfilerDumpPage(
-                            MessengerData::class.java,
-                            symfonyProfileDTO.token,
-                            loaderLogCallback(System.nanoTime()),
-                            { showError(it) },
-                            {
-                                synchronized(lock) {
-                                    while (model.rowCount > 0) {
-                                        model.removeRow(0)
-                                    }
-                                    for (dispatch in
-                                        it?.dispatches ?: return@loadProfilerDumpPage) {
-                                        model.addRow(
-                                            dispatch,
-                                            arrayOf(
-                                                dispatch.busName,
-                                                dispatch.messageName,
-                                                dispatch.dispatch))
-                                    }
-                                    showMainPanel()
-                                }
-                            })
-                }
+            override fun setElements() {
+                SymfonyProfileService.getInstance(project)
+                    .loadProfilerDumpPage(
+                        MessengerData::class.java,
+                        symfonyProfileDTO.token,
+                        loaderLogCallback(System.nanoTime()),
+                        { showError(it) },
+                        { item ->
+                            model.setRows(item?.dispatches ?: return@loadProfilerDumpPage) {
+                                arrayOf(it.busName, it.messageName, it.dispatch)
+                            }
+                            showMainPanel()
+                        })
             }
 
             override fun handleActionDoubleClick(col: Int, elementDTO: MessengerDispatch): Boolean {
