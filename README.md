@@ -664,6 +664,11 @@ tasksConfiguration:
     label: null
     url: http://www.github.com
     icon: expui/gutter/web.svg
+  - type: bookmark
+    id: aTaskId
+    label: null
+    path: http://www.github.com
+    icon: expui/gutter/web.svg
   toolbar:
   - type: task
     taskId: aTaskId

@@ -16,6 +16,7 @@ import javax.swing.tree.TreePath
 import org.micoli.php.tasks.configuration.AbstractNode
 import org.micoli.php.tasks.configuration.Path
 import org.micoli.php.tasks.configuration.Task
+import org.micoli.php.tasks.configuration.runnableTask.Bookmark
 import org.micoli.php.tasks.configuration.runnableTask.Link
 import org.micoli.php.tasks.configuration.runnableTask.ObservedFile
 import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
@@ -117,7 +118,15 @@ class ActionTreeNodeConfigurator(private val project: Project, private val tree:
                     label,
                     runnable,
                 )
-
+            is Bookmark ->
+                DynamicTreeNode(
+                    project,
+                    tree,
+                    runnable.id,
+                    getIcon(runnable.icon, PhpCompanionIcon::class.java),
+                    label,
+                    runnable,
+                )
             is Script ->
                 DynamicTreeNode(
                     project,

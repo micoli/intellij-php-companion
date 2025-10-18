@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema
     JsonSubTypes.Type(name = "script", value = Script::class),
     JsonSubTypes.Type(name = "observedFile", value = ObservedFile::class),
     JsonSubTypes.Type(name = "link", value = Link::class),
+    JsonSubTypes.Type(name = "bookmark", value = Bookmark::class),
 )
 abstract class RunnableTaskConfiguration {
     @Schema(

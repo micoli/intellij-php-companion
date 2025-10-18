@@ -1,35 +1,26 @@
 package org.micoli.php.tasks.runnables
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.script.IdeScriptEngine
 import com.intellij.ide.script.IdeScriptEngineManager
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.Presentation
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.terminal.ui.TerminalWidget
-import kotlin.Boolean
-import kotlin.Exception
-import kotlin.IllegalStateException
 import org.jetbrains.plugins.terminal.TerminalToolWindowFactory
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager
 import org.micoli.php.scripting.Core
 import org.micoli.php.scripting.FileSystem
 import org.micoli.php.scripting.UI
-import org.micoli.php.tasks.configuration.runnableTask.Builtin
-import org.micoli.php.tasks.configuration.runnableTask.Link
-import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
-import org.micoli.php.tasks.configuration.runnableTask.Script
-import org.micoli.php.tasks.configuration.runnableTask.Shell
-import org.micoli.php.tasks.configuration.runnableTask.TaskWithIcon
+import org.micoli.php.service.filesystem.PathUtil
+import org.micoli.php.tasks.configuration.runnableTask.*
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleBuiltin
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleScript
 import org.micoli.php.tasks.configuration.runnableTask.postToggle.PostToggleShell
@@ -52,6 +43,7 @@ open class RunnableTask(
                 runShellAction(configuration.label, configuration.command!!, configuration.cwd)
             is PostToggleScript -> runScript(configuration.extension, configuration.source!!)
             is Link -> runLink(configuration.url)
+            is Bookmark -> runBookmark(configuration.path)
             else -> throw IllegalStateException("Unexpected value: $configuration")
         }
     }
@@ -119,6 +111,14 @@ open class RunnableTask(
 
     private fun runLink(url: String?) {
         BrowserUtil.browse(url ?: "")
+    }
+
+    private fun runBookmark(path: String?) {
+        val file =
+            PathUtil.getBaseDir(project)?.findFileByRelativePath(path ?: return)
+                ?: LocalFileSystem.getInstance().findFileByPath(path ?: return)
+                ?: return
+        ProjectView.getInstance(project).select(null, file, true)
     }
 
     companion object {

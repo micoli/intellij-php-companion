@@ -3,6 +3,7 @@ package org.micoli.php.tasks.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.swagger.v3.oas.annotations.media.Schema
 import org.micoli.php.configuration.models.DisactivableConfiguration
+import org.micoli.php.tasks.configuration.runnableTask.Bookmark
 import org.micoli.php.tasks.configuration.runnableTask.Link
 import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 
@@ -71,6 +72,7 @@ class TasksConfiguration : DisactivableConfiguration {
                 is Task -> tasksMap[node.taskId]
                 is Path -> assertTreeNodesIsValid(tasksMap, node.tasks)
                 is Link -> node.url != null && node.label != null
+                is Bookmark -> node.path != null && node.label != null
                 else -> throw IllegalStateException("Unexpected value: " + node.javaClass.name)
             }
         }
