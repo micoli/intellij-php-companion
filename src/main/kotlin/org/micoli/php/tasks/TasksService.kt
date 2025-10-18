@@ -48,8 +48,7 @@ open class TasksService(private val project: Project) : VfsHandler<TaskIdentifie
     init {
         project.messageBus
             .connect()
-            .subscribe<BulkFileListener>(
-                VirtualFileManager.VFS_CHANGES, this.fileListener.vfsListener)
+            .subscribe<BulkFileListener>(VirtualFileManager.VFS_CHANGES, fileListener.vfsListener)
     }
 
     fun loadConfiguration(tasksConfiguration: TasksConfiguration?) {

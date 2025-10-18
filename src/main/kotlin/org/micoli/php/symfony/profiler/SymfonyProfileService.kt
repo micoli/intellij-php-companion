@@ -1,13 +1,20 @@
 package org.micoli.php.symfony.profiler
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.util.messages.MessageBus
+import com.jetbrains.rd.util.string.printToString
 import com.opencsv.CSVReader
 import com.opencsv.exceptions.CsvException
 import java.io.IOException
+import java.nio.file.FileSystems
 import java.security.cert.X509Certificate
+import java.util.Map
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
@@ -15,8 +22,12 @@ import javax.net.ssl.X509TrustManager
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.micoli.php.service.DebouncedRunnables
 import org.micoli.php.service.PhpGzDecoder
+import org.micoli.php.service.filesystem.FileListener
 import org.micoli.php.service.filesystem.PathUtil
+import org.micoli.php.service.filesystem.WatchEvent
+import org.micoli.php.service.filesystem.Watchee
 import org.micoli.php.service.serialize.JsonTransformer
 import org.micoli.php.service.serialize.PhpUnserializer
 import org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration
@@ -25,8 +36,19 @@ import org.micoli.php.symfony.profiler.models.PHPProfilerDump
 // TODO add a purge button
 
 @Service(Service.Level.PROJECT)
-class SymfonyProfileService(val project: Project) {
+class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<String> {
+    private val messageBus: MessageBus = project.messageBus
+    private var debouncedRunnables: DebouncedRunnables = DebouncedRunnables()
+
     var configuration: SymfonyProfilerConfiguration? = null
+    val profilerIndexListener = FileListener<String>(this)
+
+    init {
+        this.messageBus
+            .connect()
+            .subscribe<BulkFileListener>(
+                VirtualFileManager.VFS_CHANGES, profilerIndexListener.vfsListener)
+    }
 
     val elements: MutableList<SymfonyProfileDTO>
         get() {
@@ -100,6 +122,14 @@ class SymfonyProfileService(val project: Project) {
             return
         }
         this.configuration = configuration
+        profilerIndexListener.setPatterns(
+            Map.of(
+                "profilerIndex",
+                Watchee(
+                    listOf(
+                        FileSystems.getDefault()
+                            .getPathMatcher("glob:**" + configuration.profilerPath + "index.csv")),
+                    WatchEvent.all())))
     }
 
     fun loadProfilerDump(token: String): PHPProfilerDump? {
@@ -113,6 +143,23 @@ class SymfonyProfileService(val project: Project) {
             return unserializeProfileDump(PhpGzDecoder.gzdecode(pathname.contentsToByteArray()))
         }
         return null
+    }
+
+    fun setAutoRefresh(autoRefresh: Boolean) {
+        profilerIndexListener.isEnabled = autoRefresh
+        if (autoRefresh) {
+            dispatchIndexUpdated()
+        }
+        println(
+            "!! " +
+                profilerIndexListener
+                    .getPatterns()
+                    .map {
+                        it.value.events.joinToString("/") { s -> s.name } +
+                            "::" +
+                            it.value.pathMatchers.map { s -> s.printToString() }
+                    }
+                    .joinToString(","))
     }
 
     fun <T> loadProfilerDumpPage(
@@ -196,6 +243,23 @@ class SymfonyProfileService(val project: Project) {
                 response
             }
             .build()
+    }
+
+    override fun vfsHandle(id: String, file: VirtualFile) {
+        dispatchIndexUpdated()
+    }
+
+    private fun dispatchIndexUpdated() {
+        debouncedRunnables.run(
+            { messageBus.syncPublisher(ProfilerEvents.INDEX_UPDATED).indexUpdated() },
+            "refreshProfilerIndex",
+            400)
+    }
+
+    fun cleanProfiles() {
+        val path = profilerPath ?: return
+        WriteAction.run<IOException?> { path.delete(this) }
+        dispatchIndexUpdated()
     }
 
     companion object {
