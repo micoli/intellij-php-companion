@@ -15,8 +15,7 @@ class PhpUnserializerTest : TestCase() {
         assertEquals("8af368", (kotlinResult["token"] as JsonNode).textValue())
         assertEquals(
             "Symfony\\Component\\HttpKernel\\DataCollector\\RequestDataCollector",
-            (((kotlinResult["data"] as Map<*, *>)["request"] as Map<*, *>).get("__class")
-                    as JsonNode)
+            (((kotlinResult["data"] as Map<*, *>)["request"] as Map<*, *>)["__class"] as JsonNode)
                 .textValue())
     }
 

@@ -2,7 +2,6 @@ package org.micoli.php
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import kotlin.streams.toList
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException

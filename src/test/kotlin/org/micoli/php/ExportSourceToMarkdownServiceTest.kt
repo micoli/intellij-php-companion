@@ -135,6 +135,6 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
 
         exportSourceToMarkdownService.loadConfiguration(ExportSourceToMarkdownConfiguration())
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
-        TestCase.assertEquals(18, exportedSource?.numberOfTokens)
+        assertEquals(18, exportedSource?.numberOfTokens)
     }
 }

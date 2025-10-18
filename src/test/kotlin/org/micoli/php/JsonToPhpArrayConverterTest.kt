@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.streams.toList
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
