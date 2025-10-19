@@ -6,8 +6,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.swagger.v3.oas.annotations.media.Schema
 import java.util.TreeMap
-import net.steppschuh.markdowngenerator.list.UnorderedList
-import net.steppschuh.markdowngenerator.table.Table
+import org.micoli.php.configuration.documentation.markdown.Bold
+import org.micoli.php.configuration.documentation.markdown.BulletListBuilder
+import org.micoli.php.configuration.documentation.markdown.MarkdownBuilder
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 
@@ -29,8 +30,7 @@ class MarkdownSchemaGenerator {
 
     private fun getYamlProperties(clazz: Class<*>): String {
         val example: Any? = (InstanceGenerator()).get(clazz, false)
-        val tableBuilder = Table.Builder().addRow("Property", "Description")
-
+        val tableRows: MutableList<List<String>> = ArrayList()
         val classPropertyTraverser = ClassPropertiesDocumentationGenerator()
         val fields =
             classPropertyTraverser
@@ -40,22 +40,27 @@ class MarkdownSchemaGenerator {
                     Comparator.comparing(
                         ClassPropertiesDocumentationGenerator.PropertyInfo::dotNotationPath))
                 .toList()
-        val items: MutableList<Any?> = ArrayList()
+        val propertiesListBuilder = BulletListBuilder()
         for (property in fields) {
-            tableBuilder.addRow(
-                property.dotNotationPath,
-                if (property.description == null || property.description.isEmpty()) {
-                    ""
-                } else {
-                    property.description
-                },
-            )
-            items.add(UnorderedList(getProperties(property)))
+            tableRows.add(
+                listOf(
+                    property.dotNotationPath,
+                    if (property.description == null || property.description.isEmpty()) {
+                        ""
+                    } else {
+                        property.description
+                    },
+                ))
+            addYamlProperties(propertiesListBuilder, property)
         }
-
-        return (tableBuilder.build().serialize() +
-            "\n\n" +
-            unindentYamlLines(UnorderedList<Any?>(items).toString()))
+        return MarkdownBuilder()
+            .add {
+                table {
+                    headers("Property", "Description")
+                    rows(tableRows)
+                }
+            }
+            .build() + "\n\n" + propertiesListBuilder.build()
     }
 
     private fun generateYamlExample(exampleRoot: String?, clazz: Class<*>): String {
@@ -79,30 +84,32 @@ class MarkdownSchemaGenerator {
     }
 
     companion object {
-        private fun getProperties(
+        private fun addYamlProperties(
+            propertiesListBuilder: BulletListBuilder,
             property: ClassPropertiesDocumentationGenerator.PropertyInfo
-        ): List<Any> {
-            val detailList: MutableList<String?> = ArrayList()
+        ): BulletListBuilder {
+            val detailListBuilder = BulletListBuilder()
+            propertiesListBuilder.item(Bold(property.dotNotationPath))
             if (property.description != null && !property.description.isEmpty()) {
-                detailList.add(property.description)
+                detailListBuilder.item(property.description)
             }
             if (property.example != null && !property.example.isEmpty()) {
-                detailList.add(
+                detailListBuilder.item(
                     String.format(
                         "**Example**: ``` %s ```",
                         property.example.replace("```".toRegex(), "````")))
             }
 
             if (property.defaultValue != null && !property.defaultValue.isEmpty()) {
-                detailList.add(
+                detailListBuilder.item(
                     String.format(
                         "**Default Value**: ``` %s ```",
                         property.defaultValue.replace("```".toRegex(), "````")))
             }
-            if (detailList.isEmpty()) {
-                return listOf("**" + property.dotNotationPath + "**")
+            if (!detailListBuilder.items.isEmpty()) {
+                return propertiesListBuilder.addSubList(detailListBuilder)
             }
-            return listOf("**" + property.dotNotationPath + "**", UnorderedList<String>(detailList))
+            return propertiesListBuilder
         }
 
         private fun dumpYaml(example: Any?): String {
@@ -132,15 +139,6 @@ class MarkdownSchemaGenerator {
                 .dropLastWhile { it.isEmpty() }
                 .stream()
                 .map { indentation + it }
-                .toList()
-                .joinToString("\n")
-
-        private fun unindentYamlLines(yamlContent: String, indentation: String = "^  "): String =
-            yamlContent
-                .split("\n".toRegex())
-                .dropLastWhile { it.isEmpty() }
-                .stream()
-                .map { it.replaceFirst(indentation.toRegex(), "") }
                 .toList()
                 .joinToString("\n")
     }

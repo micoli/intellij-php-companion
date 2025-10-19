@@ -1,26 +1,9 @@
-package org.micoli.php.configuration.documentation
+package org.micoli.php.configuration.documentation.markdown
 
 sealed class MarkdownElement {
     abstract fun render(): String
 
-    open fun render(indent: Int): String = render()
-
     override fun toString() = render()
-}
-
-class MarkdownBuilder {
-    private val elements = mutableListOf<MarkdownElement>()
-
-    fun add(element: MarkdownElement) = apply { elements.add(element) }
-
-    fun add(elements: List<MarkdownElement>) = apply { this.elements.addAll(elements) }
-
-    fun add(builder: MarkdownElementBuilder.() -> Unit) = apply {
-        val builtElements = MarkdownElementBuilder().apply(builder).build()
-        this.elements.addAll(builtElements)
-    }
-
-    fun build() = elements.joinToString("\n\n") { it.render() }
 }
 
 class MarkdownElementBuilder {
@@ -99,10 +82,29 @@ class MarkdownElementBuilder {
     fun build() = elements
 }
 
+class MarkdownBuilder {
+
+    private val elements = mutableListOf<MarkdownElement>()
+
+    fun add(element: MarkdownElement) = apply { elements.add(element) }
+
+    fun add(elements: List<MarkdownElement>) = apply { this.elements.addAll(elements) }
+
+    fun add(builder: MarkdownElementBuilder.() -> Unit) = apply {
+        val builtElements = MarkdownElementBuilder().apply(builder).build()
+        this.elements.addAll(builtElements)
+        return this
+    }
+
+    fun build() = elements.joinToString("\n\n") { it.render() }
+}
+
 class BulletListBuilder {
-    private val items = mutableListOf<Any>()
+    val items = mutableListOf<Any>()
 
     fun item(content: String) = apply { items.add(content) }
+
+    fun items(content: List<Any>) = apply { items.addAll(content) }
 
     fun item(element: MarkdownElement) = apply { items.add(element) }
 
@@ -114,9 +116,13 @@ class BulletListBuilder {
         items.add(BulletListBuilder().apply(builder).build())
     }
 
+    fun addSubList(builder: BulletListBuilder) = apply { items.add(builder.build()) }
+
     fun orderedSubList(builder: OrderedListBuilder.() -> Unit) = apply {
         items.add(OrderedListBuilder().apply(builder).build())
     }
+
+    fun addOrderedSubList(builder: OrderedListBuilder) = apply { items.add(builder.build()) }
 
     fun build() = BulletList(items.toList())
 }
@@ -140,6 +146,10 @@ class OrderedListBuilder {
         items.add(OrderedListBuilder().apply(builder).build())
     }
 
+    fun addOrderedSubList(builder: OrderedListBuilder) = apply { items.add(builder.build()) }
+
+    fun addSubList(builder: BulletListBuilder) = apply { items.add(builder.build()) }
+
     fun build() = OrderedList(items.toList())
 }
 
@@ -161,6 +171,8 @@ class TableBuilder {
     fun headers(vararg headers: String) = apply { this.headers = headers.toList() }
 
     fun row(vararg cells: String) = apply { rows.add(cells.toList()) }
+
+    fun rows(rows: List<List<String>>) = apply { this.rows.addAll(rows) }
 
     fun alignment(vararg align: TableAlignment) = apply { this.alignment = align.toList() }
 
@@ -245,39 +257,56 @@ class Image(val alt: String, val url: String, val title: String? = null) : Markd
 }
 
 class BulletList(val items: List<Any>) : MarkdownElement() {
-    override fun render(indent: Int): String {
+    override fun render(): String = renderWithIndent(0)
+
+    fun renderWithIndent(indent: Int): String {
         val prefix = " ".repeat(indent)
         return items
             .flatMap { item ->
                 when (item) {
-                    is BulletList -> item.render(indent + 2).split("\n")
-                    is OrderedList -> item.render(indent + 2).split("\n")
-                    is MarkdownElement -> listOf("$prefix- ${item.render()}")
+                    is BulletList -> item.renderWithIndent(indent + 2).split("\n")
+                    is OrderedList -> item.renderWithIndent(indent + 2).split("\n")
+                    is MarkdownElement -> {
+                        val rendered = item.render()
+                        if (rendered.contains("\n")) {
+                            val lines = rendered.split("\n")
+                            listOf("$prefix- ${lines[0]}") + lines.drop(1).map { "$prefix  $it" }
+                        } else {
+                            listOf("$prefix- $rendered")
+                        }
+                    }
                     else -> listOf("$prefix- $item")
                 }
             }
             .joinToString("\n")
     }
-
-    override fun render() = render(0)
 }
 
 class OrderedList(val items: List<Any>) : MarkdownElement() {
-    override fun render(indent: Int): String {
+    override fun render(): String = renderWithIndent(0)
+
+    fun renderWithIndent(indent: Int): String {
         val prefix = " ".repeat(indent)
         return items
             .flatMapIndexed { i, item ->
                 when (item) {
-                    is BulletList -> item.render(indent + 2).split("\n")
-                    is OrderedList -> item.render(indent + 2).split("\n")
-                    is MarkdownElement -> listOf("$prefix${i + 1}. ${item.render()}")
+                    is BulletList -> item.renderWithIndent(indent + 2).split("\n")
+                    is OrderedList -> item.renderWithIndent(indent + 2).split("\n")
+                    is MarkdownElement -> {
+                        val rendered = item.render()
+                        if (rendered.contains("\n")) {
+                            val lines = rendered.split("\n")
+                            listOf("$prefix${i + 1}. ${lines[0]}") +
+                                lines.drop(1).map { "$prefix   $it" }
+                        } else {
+                            listOf("$prefix${i + 1}. $rendered")
+                        }
+                    }
                     else -> listOf("$prefix${i + 1}. $item")
                 }
             }
             .joinToString("\n")
     }
-
-    override fun render() = render(0)
 }
 
 class Checklist(val items: List<Pair<Boolean, String>>) : MarkdownElement() {

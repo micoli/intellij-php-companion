@@ -323,8 +323,8 @@ peerNavigation:
 - **rules[].formatterScript**
   - A groovy script to reformat raw attribute value
   - **Example**: ```
-      return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
-       ```
+        return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
+         ```
 - **rules[].isDefault**
   - **Default Value**: ``` true ```
 - **rules[].propertyName**

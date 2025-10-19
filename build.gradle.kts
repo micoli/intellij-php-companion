@@ -24,10 +24,7 @@ kotlin { jvmToolchain(21) }
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://repo1.maven.org/maven2/")
-        url = uri("https://jitpack.io") // used for Java-Markdown-Generator
-    }
+    maven { url = uri("https://repo1.maven.org/maven2/") }
 
     intellijPlatform { defaultRepositories() }
 }
@@ -43,7 +40,6 @@ dependencies {
     implementation("com.github.victools:jsonschema-generator:[4.21.0,5.0.0)")
     implementation("com.github.victools:jsonschema-module-jackson:[4.21.0,5.0.0)")
     implementation("io.swagger.parser.v3:swagger-parser-v3:2.1.33")
-    implementation("com.github.Steppschuh:Java-Markdown-Generator:master-SNAPSHOT")
     implementation("com.github.javaparser:javaparser-core:3.25.5")
     implementation("io.github.classgraph:classgraph:4.8.158")
     implementation("com.opencsv:opencsv:5.7.1")
@@ -51,6 +47,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("jaxen:jaxen:2.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    testImplementation("org.assertj:assertj-core:3.11.1")
 
     intellijPlatform {
         create(
