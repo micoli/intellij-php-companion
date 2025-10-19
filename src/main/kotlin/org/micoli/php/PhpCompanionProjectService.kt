@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.Boolean
 import kotlin.Long
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService
+import org.micoli.php.classStyles.ClassStylesService
 import org.micoli.php.codeStyle.CodeStylesService
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
@@ -147,6 +148,7 @@ class PhpCompanionProjectService(private val project: Project) :
         CodeStylesService.getInstance(project)
             .loadConfiguration(configuration.codeStylesSynchronization)
         SymfonyProfileService.getInstance(project).loadConfiguration(configuration.symfonyProfiler)
+        ClassStylesService.getInstance(project).loadConfiguration(configuration.classStyles)
     }
 
     override fun dispose() {

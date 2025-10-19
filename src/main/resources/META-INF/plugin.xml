@@ -61,6 +61,8 @@
         <consoleInputFilterProvider
                 implementation="org.micoli.php.consoleCleaner.PhpUnitConsoleFilterProvider"/>
 
+        <annotator language="PHP"
+                   implementationClass="org.micoli.php.classStyles.ClassStylesAnnotator"/>
     </extensions>
     <actions>
         <group id="org.micoli.php.exportSourceToMarkdown" text="Php Companion" popup="true">

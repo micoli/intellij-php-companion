@@ -1,6 +1,7 @@
 package org.micoli.php.configuration.models
 
 import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration
+import org.micoli.php.classStyles.configuration.ClassStylesConfiguration
 import org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration
 import org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration
@@ -37,4 +38,6 @@ class Configuration {
     @JvmField var codeStylesSynchronization: CodeStylesSynchronizationConfiguration? = null
 
     @JvmField var symfonyProfiler: SymfonyProfilerConfiguration? = null
+
+    @JvmField var classStyles: ClassStylesConfiguration? = null
 }

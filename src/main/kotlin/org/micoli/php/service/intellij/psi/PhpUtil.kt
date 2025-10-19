@@ -7,6 +7,7 @@ import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.NewExpression
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.Variable
+import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import org.micoli.php.service.intellij.PhpIndexUtil
 
 object PhpUtil {
@@ -57,6 +58,25 @@ object PhpUtil {
                 .map { it.fqn }
                 .toList()
                 .contains(phpClass.fqn)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    @JvmStatic
+    fun implementsInterfaces(
+        project: Project,
+        phpType: PhpType,
+        interfaceFQNs: Array<String>
+    ): Boolean {
+        val phpIndex = PhpIndex.getInstance(project)
+        for (interfaceFQN in interfaceFQNs) {
+            if (PhpIndexUtil.getAllSubclasses(phpIndex, normalizeRootFQN(interfaceFQN))
+                .stream()
+                .map { it.fqn }
+                .toList()
+                .contains(phpType.toString())) {
                 return true
             }
         }

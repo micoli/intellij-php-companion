@@ -739,6 +739,53 @@ symfonyProfiler:
 <!-- generateDocumentationEnd -->
 
 
+### `Class Style`:
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.classStyles.configuration.ClassStylesConfiguration","styles") -->
+| Property                      | Description                                         |
+| ----------------------------- | --------------------------------------------------- |
+| enabled                       | Enabler for Php Class style configuration           |
+| rules[]                       |                                                     |
+| rules[].fqcns[]               | Fully Qualified class name or interface             |
+| rules[].style                 | Style to apply if class implements one of the FQCNs |
+| rules[].style.backgroundColor | Background color of the class                       |
+| rules[].style.fontStyles      | Font style/variant                                  |
+| rules[].style.foregroundColor | Foreground color of the class                       |
+
+- **enabled**
+  - Enabler for Php Class style configuration
+  - **Example**: ``` true ```
+  - **Default Value**: ``` false ```
+- **rules[]**
+- **rules[].fqcns[]**
+  - Fully Qualified class name or interface
+- **rules[].style**
+  - Style to apply if class implements one of the FQCNs
+- **rules[].style.backgroundColor**
+  - Background color of the class
+- **rules[].style.fontStyles**
+  - Font style/variant
+- **rules[].style.foregroundColor**
+  - Foreground color of the class
+<!-- generateDocumentationEnd -->
+
+#### Example
+<!-- generateDocumentationExample("org.micoli.php.classStyles.configuration.ClassStylesConfiguration","styles") -->
+```yaml
+styles:
+  enabled: false
+  rules:
+  - fqcns:
+    - ''
+    style:
+      foregroundColor: null
+      backgroundColor: null
+      fontStyles: []
+```
+<!-- generateDocumentationEnd -->
+
+
 ### `CodeStylesSynchronization`:
 
 #### Properties
