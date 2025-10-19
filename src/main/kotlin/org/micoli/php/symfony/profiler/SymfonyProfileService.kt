@@ -33,10 +33,9 @@ import org.micoli.php.service.serialize.PhpUnserializer
 import org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration
 import org.micoli.php.symfony.profiler.models.PHPProfilerDump
 
-// TODO add a purge button
-
 @Service(Service.Level.PROJECT)
 class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<String> {
+    private lateinit var exclusionFilters: List<Regex>
     private val messageBus: MessageBus = project.messageBus
     private var debouncedRunnables: DebouncedRunnables = DebouncedRunnables()
 
@@ -64,6 +63,9 @@ class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<Stri
                             continue
                         }
                         var url = record[3]
+                        if (isExcluded(url)) {
+                            continue
+                        }
                         configuration?.urlRoots?.forEach { urlRoot ->
                             url = url.replaceFirst(urlRoot, "")
                         }
@@ -88,6 +90,15 @@ class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<Stri
             }
             return elements
         }
+
+    private fun isExcluded(url: String): Boolean {
+        for (exclusionFiler in exclusionFilters) {
+            if (exclusionFiler.containsMatchIn(url)) {
+                return true
+            }
+        }
+        return false
+    }
 
     private val csvProfiler: VirtualFile?
         get() {
@@ -122,6 +133,7 @@ class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<Stri
             return
         }
         this.configuration = configuration
+        this.exclusionFilters = configuration.excludeFilter.map { Regex(it) }
         profilerIndexListener.setPatterns(
             Map.of(
                 "profilerIndex",

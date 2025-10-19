@@ -697,7 +697,49 @@ tasksConfiguration:
 <!-- generateDocumentationEnd -->
 
 
-#### `CodeStylesSynchronization`:
+### `Symfony Profiler`:
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration","symfonyProfiler") -->
+| Property        | Description                                                |
+| --------------- | ---------------------------------------------------------- |
+| enabled         | Enabler for panel of SymfonyProfilers                      |
+| excludeFilter[] | List of regular expression used to filter URI in profilers |
+| profilerPath    | Local path to Symfony Profiler dumps                       |
+| profilerUrlRoot | Profiler URL root                                          |
+| urlRoots[]      | List of URL roots of symfony profiles                      |
+
+- **enabled**
+  - Enabler for panel of SymfonyProfilers
+  - **Default Value**: ``` false ```
+- **excludeFilter[]**
+  - List of regular expression used to filter URI in profilers
+- **profilerPath**
+  - Local path to Symfony Profiler dumps
+  - **Default Value**: ``` var/cache/dev/profiler ```
+- **profilerUrlRoot**
+  - Profiler URL root
+  - **Default Value**: ``` https://127.0.0.1:8000/_profiler/ ```
+- **urlRoots[]**
+  - List of URL roots of symfony profiles
+<!-- generateDocumentationEnd -->
+
+#### Example
+<!-- generateDocumentationExample("org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration","symfonyProfiler") -->
+```yaml
+symfonyProfiler:
+  enabled: false
+  excludeFilter:
+  - ''
+  profilerPath: var/cache/dev/profiler
+  profilerUrlRoot: https://127.0.0.1:8000/_profiler/
+  urlRoots:
+  - https://127.0.0.1:8000
+```
+<!-- generateDocumentationEnd -->
+
+
+### `CodeStylesSynchronization`:
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration","codeStyleSynchronization") -->
