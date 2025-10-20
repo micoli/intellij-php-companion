@@ -33,10 +33,7 @@ class RouteListTest : BasePlatformTestCase() {
     private fun loadPluginConfiguration(path: String?): RouteService {
         try {
             val routeListConfiguration =
-                ConfigurationFactory()
-                    .loadConfiguration(path, 0L, true)
-                    ?.configuration
-                    ?.routesConfiguration
+                ConfigurationFactory().loadConfiguration(path, 0L, true)?.configuration?.routes
             val instance = RouteService.getInstance(project)
             instance.loadConfiguration(routeListConfiguration)
 

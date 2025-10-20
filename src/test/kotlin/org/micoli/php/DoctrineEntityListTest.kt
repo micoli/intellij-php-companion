@@ -30,7 +30,7 @@ class DoctrineEntityListTest : BasePlatformTestCase() {
                 ConfigurationFactory()
                     .loadConfiguration(path, 0L, true)
                     ?.configuration
-                    ?.doctrineEntitiesConfiguration
+                    ?.doctrineEntities
             val instance = DoctrineEntityService.getInstance(project)
             instance.loadConfiguration(doctrineEntityListConfiguration)
 

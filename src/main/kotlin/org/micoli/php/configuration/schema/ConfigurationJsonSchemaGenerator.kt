@@ -1,5 +1,6 @@
 package org.micoli.php.configuration.schema
 
+import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -31,9 +32,25 @@ class ConfigurationJsonSchemaGenerator {
                         .generateSchema(clazz))
             schemaNode.put("additionalProperties", false)
 
+            enrichShemaWithAliases(schemaNode, clazz)
+
             return mapper.writeValueAsString(schemaNode)
         } catch (e: Exception) {
             throw RuntimeException("Erreur lors de la génération du schéma: " + e.message, e)
+        }
+    }
+
+    private fun enrichShemaWithAliases(schemaNode: ObjectNode, clazz: Class<*>?) {
+        val properties = schemaNode.get("properties") as? ObjectNode ?: return
+
+        clazz?.declaredFields?.forEach { field ->
+            val jsonAlias = field.getAnnotation(JsonAlias::class.java) ?: return@forEach
+            val propDef = properties.get(field.name)
+            if (propDef != null) {
+                jsonAlias.value.forEach { alias ->
+                    properties.set<ObjectNode>(alias, propDef.deepCopy())
+                }
+            }
         }
     }
 }

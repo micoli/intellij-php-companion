@@ -1,5 +1,6 @@
 package org.micoli.php.configuration.models
 
+import com.fasterxml.jackson.annotation.JsonAlias
 import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration
 import org.micoli.php.classStyles.configuration.ClassStylesConfiguration
 import org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration
@@ -23,17 +24,19 @@ class Configuration {
 
     @JvmField var exportSourceToMarkdown: ExportSourceToMarkdownConfiguration? = null
 
-    @JvmField var routesConfiguration: RoutesConfiguration? = null
+    @JsonAlias("routesConfiguration") @JvmField var routes: RoutesConfiguration? = null
 
-    @JvmField var commandsConfiguration: CommandsConfiguration? = null
+    @JsonAlias("commandsConfiguration") @JvmField var commands: CommandsConfiguration? = null
 
-    @JvmField var doctrineEntitiesConfiguration: DoctrineEntitiesConfiguration? = null
+    @JsonAlias("doctrineEntitiesConfiguration")
+    @JvmField
+    var doctrineEntities: DoctrineEntitiesConfiguration? = null
 
     @JvmField var consoleCleaner: ConsoleCleanerConfiguration? = null
 
-    @JvmField var openAPIConfiguration: OpenAPIConfiguration? = null
+    @JsonAlias("openAPIConfiguration") @JvmField var openAPI: OpenAPIConfiguration? = null
 
-    @JvmField var tasksConfiguration: TasksConfiguration? = null
+    @JsonAlias("tasksConfiguration") @JvmField var tasks: TasksConfiguration? = null
 
     @JvmField var codeStylesSynchronization: CodeStylesSynchronizationConfiguration? = null
 

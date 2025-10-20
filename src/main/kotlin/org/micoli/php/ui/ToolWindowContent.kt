@@ -57,11 +57,11 @@ internal class ToolWindowContent(project: Project) {
                     }
                 }
             })
-        addTab(ActionTreePanel(project), "Actions") { it.tasksConfiguration }
-        addTab(RoutesPanel(project), "Routes") { it.routesConfiguration }
-        addTab(CommandsPanel(project), "CLI") { it.commandsConfiguration }
-        addTab(DoctrineEntitiesPanel(project), "Entities") { it.doctrineEntitiesConfiguration }
-        addTab(OpenAPIPathPanel(project), "OAS") { it.openAPIConfiguration }
+        addTab(ActionTreePanel(project), "Actions") { it.tasks }
+        addTab(RoutesPanel(project), "Routes") { it.routes }
+        addTab(CommandsPanel(project), "CLI") { it.commands }
+        addTab(DoctrineEntitiesPanel(project), "Entities") { it.doctrineEntities }
+        addTab(OpenAPIPathPanel(project), "OAS") { it.openAPI }
 
         mainPanel.add(tabs.component, BorderLayout.CENTER)
         project.messageBus

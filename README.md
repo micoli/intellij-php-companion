@@ -80,7 +80,7 @@ attributeNavigation:
         return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
       isDefault: true
       propertyName: path
-commandsConfiguration:
+commands:
   attributeFQCN: \Symfony\Component\Console\Attribute\AsCommand
   enabled: true
   namespaces:
@@ -89,7 +89,7 @@ commandsConfiguration:
 consoleCleaner:
   patterns:
     - ''
-doctrineEntitiesConfiguration:
+doctrineEntities:
   attributeFQCN: \Doctrine\ORM\Mapping\Table
   enabled: true
   namespaces:
@@ -109,7 +109,7 @@ exportSourceToMarkdown:
     [/]
   useContextualNamespaces: true
   useIgnoreFile: true
-openAPIConfiguration:
+openAPI:
   enabled: true
   specificationRoots:
     - ''
@@ -120,7 +120,7 @@ peerNavigation:
   peers:
     - source: ''
       target: ''
-routesConfiguration:
+routes:
   attributeFQCN: \Symfony\Component\Routing\Attribute\Route
   enabled: true
   namespaces:
@@ -421,7 +421,7 @@ consoleCleaner:
 
 ### Tool windows Configuration
 
-#### `routesConfiguration:`
+#### `routes:`
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.RoutesConfiguration","") -->
@@ -442,9 +442,9 @@ consoleCleaner:
 <!-- generateDocumentationEnd -->
 
 #### Example
-<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.RoutesConfiguration","routesConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.RoutesConfiguration","routes") -->
 ```yaml
-routesConfiguration:
+routes:
   attributeFQCN: \Symfony\Component\Routing\Attribute\Route
   enabled: true
   namespaces:
@@ -454,7 +454,7 @@ routesConfiguration:
 <!-- generateDocumentationEnd -->
 
 
-#### `commandsConfiguration:`
+#### `commands:`
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.CommandsConfiguration","") -->
@@ -476,9 +476,9 @@ routesConfiguration:
 
 #### Example
 
-<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.CommandsConfiguration","commandsConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.CommandsConfiguration","commands") -->
 ```yaml
-commandsConfiguration:
+commands:
   attributeFQCN: \Symfony\Component\Console\Attribute\AsCommand
   enabled: true
   namespaces:
@@ -488,7 +488,7 @@ commandsConfiguration:
 <!-- generateDocumentationEnd -->
 
 
-#### `doctrineEntitiesConfiguration:`
+#### `doctrineEntities:`
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","") -->
@@ -509,9 +509,9 @@ commandsConfiguration:
 <!-- generateDocumentationEnd -->
 
 #### Example
-<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","doctrineEntitiesConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","doctrineEntities") -->
 ```yaml
-doctrineEntitiesConfiguration:
+doctrineEntities:
   attributeFQCN: \Doctrine\ORM\Mapping\Table
   enabled: true
   namespaces:
@@ -523,7 +523,7 @@ doctrineEntitiesConfiguration:
 #### `openAPIConfiguration`:
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPIConfiguration") -->
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPI") -->
 | Property             | Description                                           |
 | -------------------- | ----------------------------------------------------- |
 | enabled              | Enabler for panel of OAS routes                       |
@@ -537,9 +537,9 @@ doctrineEntitiesConfiguration:
 <!-- generateDocumentationEnd -->
 
 #### Example
-<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPIConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPI") -->
 ```yaml
-openAPIConfiguration:
+openAPI:
   enabled: true
   specificationRoots:
   - public/openapi.yaml
@@ -551,7 +551,7 @@ openAPIConfiguration:
 #### `TasksConfiguration`:
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.tasks.configuration.TasksConfiguration","tasksConfiguration") -->
+<!-- generateDocumentationProperties("org.micoli.php.tasks.configuration.TasksConfiguration","tasks") -->
 | Property             | Description                                                                                                                                                                                   |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | enabled              | Enabler for panel of Task and actions                                                                                                                                                         |
@@ -622,9 +622,9 @@ openAPIConfiguration:
 <!-- generateDocumentationEnd -->
 
 #### Example
-<!-- generateDocumentationExample("org.micoli.php.tasks.configuration.TasksConfiguration","tasksConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.tasks.configuration.TasksConfiguration","tasks") -->
 ```yaml
-tasksConfiguration:
+tasks:
   enabled: false
   tasks:
   - type: builtin
