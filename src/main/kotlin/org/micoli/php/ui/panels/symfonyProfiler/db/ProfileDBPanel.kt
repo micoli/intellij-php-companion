@@ -73,6 +73,7 @@ class ProfileDBPanel(project: Project) : AbstractProfilePanel(project) {
                         loaderLogCallback(System.nanoTime()),
                         { showError(it) },
                         { item ->
+                            @Suppress("UNCHECKED_CAST")
                             val model = table.model as ObjectTableModel<DBQuery>
                             var index = 0
                             model.setRows(item?.queries ?: return@loadProfilerDumpPage) {

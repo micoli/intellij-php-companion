@@ -17,6 +17,7 @@ class CustomCellRenderer<T>(val formatter: (T) -> String) : TableCellRenderer {
         val label = JLabel()
         val elementDTO =
             try {
+                @Suppress("UNCHECKED_CAST")
                 (table.model as ObjectTableModel<T>).getObjectAt(table.convertRowIndexToModel(row))
                     ?: return label
             } catch (_: NullPointerException) {

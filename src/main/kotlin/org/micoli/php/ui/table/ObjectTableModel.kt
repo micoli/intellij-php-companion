@@ -42,10 +42,6 @@ open class ObjectTableModel<T>(columnNames: Array<String>) : DefaultTableModel(c
         dataVector = columnsVector
     }
 
-    fun addRow(associatedObject: T, rowData: Array<Any?>) {
-        throw UnsupportedOperationException("Not supported yet.")
-    }
-
     override fun removeRow(row: Int) {
         throw UnsupportedOperationException("Not supported yet.")
     }

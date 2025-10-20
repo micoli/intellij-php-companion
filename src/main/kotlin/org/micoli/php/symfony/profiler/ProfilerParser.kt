@@ -31,6 +31,7 @@ class ProfilerParser {
             prettyPrint(true)
             syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
         }
+        @Suppress("UNCHECKED_CAST")
         try {
             return parsers[targetClass]?.parse(
                 saxBuilder.build(doc.outerHtml().trimIndent().trimStart().byteInputStream())) as T
