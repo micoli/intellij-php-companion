@@ -750,6 +750,8 @@ symfonyProfiler:
 | rules[].fqcns[]               | Fully Qualified class name or interface             |
 | rules[].style                 | Style to apply if class implements one of the FQCNs |
 | rules[].style.backgroundColor | Background color of the class                       |
+| rules[].style.effect          | Font effect                                         |
+| rules[].style.effectColor     | Font effect color                                   |
 | rules[].style.fontStyles      | Font style/variant                                  |
 | rules[].style.foregroundColor | Foreground color of the class                       |
 
@@ -764,10 +766,19 @@ symfonyProfiler:
   - Style to apply if class implements one of the FQCNs
 - **rules[].style.backgroundColor**
   - Background color of the class
+  - **Example**: ``` BLACK ```
+- **rules[].style.effect**
+  - Font effect
+  - **Example**: ``` LINE_UNDERSCORE ```
+- **rules[].style.effectColor**
+  - Font effect color
+  - **Example**: ``` RED ```
 - **rules[].style.fontStyles**
   - Font style/variant
+  - **Example**: ``` [BOLD] ```
 - **rules[].style.foregroundColor**
   - Foreground color of the class
+  - **Example**: ``` BLUE ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -782,6 +793,8 @@ styles:
       foregroundColor: null
       backgroundColor: null
       fontStyles: []
+      effect: null
+      effectColor: null
 ```
 <!-- generateDocumentationEnd -->
 

@@ -48,12 +48,14 @@ class ClassStylesService {
                             else it.style.foregroundColor?.color?.darkVariant,
                             if (isBrightTheme) it.style.backgroundColor?.color
                             else it.style.backgroundColor?.color?.darkVariant,
-                            null,
-                            null,
+                            if (isBrightTheme) it.style.effectColor?.color
+                            else it.style.effectColor?.color?.darkVariant,
+                            it.style.effect,
                             it.style.fontStyles.sumOf { style ->
                                 when (style) {
                                     FontStyle.BOLD -> Font.BOLD
                                     FontStyle.ITALIC -> Font.ITALIC
+                                    else -> 0
                                 }
                             }))
                 })
