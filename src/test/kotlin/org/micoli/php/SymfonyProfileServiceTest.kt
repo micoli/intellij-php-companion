@@ -1,6 +1,7 @@
 package org.micoli.php
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.builders.SymfonyProfilerConfigurationBuilder
 import org.micoli.php.symfony.profiler.SymfonyProfileService
 
@@ -25,6 +26,6 @@ class SymfonyProfileServiceTest : BasePlatformTestCase() {
     fun testItLoadProfileDump() {
         val symfonyProfileDTO = symfonyProfileService.elements.first()
         val profileDump = symfonyProfileService.loadProfilerDump(symfonyProfileDTO.token)
-        assertEquals("8af368", profileDump?.token)
+        assertThat(profileDump?.token).isEqualTo("8af368")
     }
 }

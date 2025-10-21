@@ -10,6 +10,7 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.Objects
 import java.util.TreeMap
+import org.assertj.core.api.Assertions.*
 import org.junit.Assert
 import org.junit.Test
 import org.micoli.php.configuration.ConfigurationException
@@ -26,8 +27,8 @@ class ConfigurationFactoryTest {
             Assert.assertThrows(NoConfigurationFileException::class.java) {
                 getLoadedConfiguration(getConfigurationPath("empty"))
             }
-        Assert.assertSame(
-            "No .php-companion(.local).(json|yaml) configuration file(s) found.", exception.message)
+        assertThat(exception.message)
+            .isEqualTo("No .php-companion(.local).(json|yaml) configuration file(s) found.")
     }
 
     @Test
@@ -115,8 +116,8 @@ class ConfigurationFactoryTest {
             Assert.assertThrows(ConfigurationException::class.java) {
                 getLoadedConfiguration(getConfigurationPath(configurationPath))
             }
-        Assert.assertEquals(
-            expectedMessage.trim { it <= ' ' }, exception.message!!.trim { it <= ' ' })
+        assertThat(exception.message!!.trim { it <= ' ' })
+            .isEqualTo(expectedMessage.trim { it <= ' ' })
     }
 
     @Throws(ConfigurationException::class, IOException::class, NoConfigurationFileException::class)
@@ -144,10 +145,12 @@ class ConfigurationFactoryTest {
                 )
                 .read()
         assertYamlEquals(expectedConfiguration, loadedConfiguration)
-        Assert.assertEquals(
-            expectedIgnoredProperties.joinToString(","),
-            createdConfiguration.ignoredProperties.joinToString(","),
-        )
+        assertThat(
+                createdConfiguration.ignoredProperties.joinToString(","),
+            )
+            .isEqualTo(
+                expectedIgnoredProperties.joinToString(","),
+            )
     }
 
     private fun dumpYaml(example: Any?): String {

@@ -28,7 +28,7 @@ class FileListenerTest : BasePlatformTestCase() {
             })
     private var patterns: MutableMap<String, Watchee>? = null
 
-    override fun getTestDataPath(): String = "src/test/resources/testData"
+    override fun getTestDataPath(): String = "src/test/resources/symfony-demo"
 
     fun testFileListenerInitialization() {
         assertFalse("FileListener should be disabled by default", fileListener.isEnabled)

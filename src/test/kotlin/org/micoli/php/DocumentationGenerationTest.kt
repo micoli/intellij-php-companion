@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import java.nio.file.Files
 import java.nio.file.Path
 import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.configuration.documentation.InstanceGenerator
 import org.micoli.php.configuration.documentation.MarkdownProcessor
 import org.micoli.php.configuration.documentation.MarkdownSchemaGenerator
@@ -153,11 +154,11 @@ class DocumentationGenerationTest : TestCase() {
         val result = processor.processContent(String.format(initial, "Description", ""))
 
         // Then it should change
-        assertEquals(expected, result)
+        assertThat(result).isEqualTo(expected)
 
         // Then it should not change twice
         val result2 = processor.processContent(result)
-        assertEquals(result, result2)
+        assertThat(result2).isEqualTo(result)
     }
 
     @Throws(JsonProcessingException::class)
@@ -183,13 +184,13 @@ class DocumentationGenerationTest : TestCase() {
         val readmeMdPath = "./README.md"
         val existingReadMeContent = Files.readString(Path.of(readmeMdPath))
         val newContent = processor.processFile(readmeMdPath)
-        assertEquals(trimLines(existingReadMeContent), trimLines(newContent))
+        assertThat(trimLines(newContent)).isEqualTo(trimLines(existingReadMeContent))
     }
 
     fun testItGenerateJavadocDocumentation() {
         val newContent =
             SourceDocumentationGenerator.generateMarkdownDocumentation("org.micoli.php.scripting")
-        assertTrue(newContent.contains("#### `Core`"))
+        assertThat(newContent.contains("#### `Core`")).isTrue
     }
 
     fun testItGeneratesSourceDocumentation() {
@@ -224,11 +225,11 @@ class DocumentationGenerationTest : TestCase() {
                     .trim())
 
         // Then it should change
-        assertEquals(expected, result)
+        assertThat(result).isEqualTo(expected)
 
         // Then it should not change twice
         val result2 = processor.processContent(result)
-        assertEquals(result, result2)
+        assertThat(result2).isEqualTo(result)
     }
 
     companion object {

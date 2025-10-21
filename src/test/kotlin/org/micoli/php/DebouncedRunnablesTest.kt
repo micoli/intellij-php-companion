@@ -3,10 +3,10 @@ package org.micoli.php
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import org.assertj.core.api.Assertions.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Assertions
 import org.micoli.php.service.DebouncedRunnable
 import org.micoli.php.service.DebouncedRunnables
 
@@ -41,11 +41,11 @@ class DebouncedRunnablesTest {
                 delay,
             )
 
-        Assertions.assertNotNull(runnable)
-        Assertions.assertEquals(0, counter.get())
+        assertThat(runnable).isNotNull()
+        assertThat(counter.get()).isEqualTo(0)
 
-        Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertEquals(1, counter.get())
+        assertThat(latch.await(delay + 200, TimeUnit.MILLISECONDS)).isTrue()
+        assertThat(counter.get()).isEqualTo(1)
     }
 
     @Test
@@ -61,10 +61,10 @@ class DebouncedRunnablesTest {
         Thread.sleep(100)
         val runnable2 = getSameNameRunnable(callCounter, latch)
 
-        Assertions.assertSame(runnable1, runnable2)
+        assertThat(runnable2).isEqualTo(runnable1)
 
-        Assertions.assertTrue(latch.await(600 + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertEquals(1, callCounter.get())
+        assertThat(latch.await(600 + 200, TimeUnit.MILLISECONDS)).isTrue
+        assertThat(callCounter.get()).isEqualTo(1)
     }
 
     private fun getSameNameRunnable(
@@ -103,11 +103,11 @@ class DebouncedRunnablesTest {
             },
         )
 
-        Assertions.assertTrue(taskLatch.await(delay + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertTrue(callbackLatch.await(100, TimeUnit.MILLISECONDS))
+        assertThat(taskLatch.await(delay + 200, TimeUnit.MILLISECONDS)).isTrue
+        assertThat(callbackLatch.await(100, TimeUnit.MILLISECONDS)).isTrue
 
-        Assertions.assertEquals(1, counter.get())
-        Assertions.assertEquals(1, callbackCounter.get())
+        assertThat(counter.get()).isEqualTo(1)
+        assertThat(callbackCounter.get()).isEqualTo(1)
     }
 
     @Test
@@ -139,13 +139,13 @@ class DebouncedRunnablesTest {
                 delay,
             )
 
-        Assertions.assertNotSame(runnable1, runnable2)
+        assertThat(runnable2).isNotEqualTo(runnable1)
 
-        Assertions.assertTrue(latch1.await(delay + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertTrue(latch2.await(100, TimeUnit.MILLISECONDS))
+        assertThat(latch1.await(delay + 200, TimeUnit.MILLISECONDS)).isTrue
+        assertThat(latch2.await(100, TimeUnit.MILLISECONDS)).isTrue
 
-        Assertions.assertEquals(1, counter1.get())
-        Assertions.assertEquals(1, counter2.get())
+        assertThat(counter1.get()).isEqualTo(1)
+        assertThat(counter2.get()).isEqualTo(1)
     }
 
     @Test
@@ -160,6 +160,6 @@ class DebouncedRunnablesTest {
 
         Thread.sleep(delay + 1700)
 
-        Assertions.assertEquals(0, counter.get())
+        assertThat(counter.get()).isEqualTo(0)
     }
 }

@@ -37,7 +37,7 @@ class PhpCompanionJsonSchemaProviderTest : BasePlatformTestCase() {
       """
             .trimIndent()
 
-    override fun getTestDataPath(): String = "src/test/resources/testData"
+    override fun getTestDataPath(): String = "src/test/resources/symfony-demo"
 
     @Throws(Exception::class)
     override fun setUp() {

@@ -3,7 +3,7 @@ package org.micoli.php
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.io.IOException
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.builders.ObservedFileBuilder
 import org.micoli.php.builders.PostToggleScriptBuilder
 import org.micoli.php.tasks.runnables.FileObserverTask
@@ -43,7 +43,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Inactive, fileObserverTask.status)
-        TestCase.assertEquals("# ", fileObserverTask.iconAndPrefix.getPrefix())
+        assertThat(fileObserverTask.iconAndPrefix.getPrefix()).isEqualTo("# ")
         assertFileContentEquals(filePath, "#variable1=value\n#variable2=value")
     }
 
@@ -74,7 +74,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Inactive, fileObserverTask.status)
-        TestCase.assertEquals("# ", fileObserverTask.iconAndPrefix.getPrefix())
+        assertThat(fileObserverTask.iconAndPrefix.getPrefix()).isEqualTo("# ")
         assertFileContentEquals(specificFilePath, ";variable1=value")
     }
 
@@ -101,11 +101,11 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Inactive, fileObserverTask.status)
-        TestCase.assertEquals(1, exposedVariable)
+        assertThat(exposedVariable).isEqualTo(1)
 
         // And when
         fileObserverTask.run()
-        TestCase.assertEquals(2, exposedVariable)
+        assertThat(exposedVariable).isEqualTo(2)
     }
 
     fun testItDoesNotLaunchPostActionIfActionFailed() {
@@ -130,7 +130,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
         fileObserverTask.run()
 
         // Then
-        TestCase.assertEquals(0, exposedVariable)
+        assertThat(exposedVariable).isEqualTo(0)
     }
 
     fun testStatusToggleOnKnownInactiveVariable() {
@@ -151,7 +151,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Active, fileObserverTask.status)
-        TestCase.assertEquals("", fileObserverTask.iconAndPrefix.getPrefix())
+        assertThat(fileObserverTask.iconAndPrefix.getPrefix()).isEqualTo("")
         assertFileContentEquals(filePath, "variable1=value\nvariable2=value")
     }
 
@@ -173,7 +173,7 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Unknown, fileObserverTask.status)
-        TestCase.assertEquals("? ", fileObserverTask.iconAndPrefix.getPrefix())
+        assertThat(fileObserverTask.iconAndPrefix.getPrefix()).isEqualTo("? ")
     }
 
     fun testStatusToggleOnUnknownFile() {
@@ -194,15 +194,17 @@ class FileObserverTaskTest : BasePlatformTestCase() {
 
         // Then
         assertEquals(FileObserver.Status.Unknown, fileObserverTask.status)
-        TestCase.assertEquals("? ", fileObserverTask.iconAndPrefix.getPrefix())
+        assertThat(fileObserverTask.iconAndPrefix.getPrefix()).isEqualTo("? ")
     }
 
     private fun assertFileContentEquals(filepathPrm: String, content: String?) {
         try {
-            TestCase.assertEquals(
-                content,
-                VfsUtilCore.loadText(myFixture.findFileInTempDir(filepathPrm)).trim { it <= ' ' },
-            )
+            assertThat(
+                    VfsUtilCore.loadText(myFixture.findFileInTempDir(filepathPrm)).trim {
+                        it <= ' '
+                    },
+                )
+                .isEqualTo(content)
         } catch (_: IOException) {
             fail("File not found: $filepathPrm")
         }

@@ -3,10 +3,10 @@ package org.micoli.php
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import org.assertj.core.api.Assertions.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Assertions
 import org.micoli.php.service.DebouncedRunnable
 
 class DebouncedRunnableTest {
@@ -41,12 +41,12 @@ class DebouncedRunnableTest {
                 null,
             )
 
-        Assertions.assertEquals(0, counter.get())
+        assertThat(counter.get()).isEqualTo(0)
         debouncedRunnable.run()
-        Assertions.assertEquals(0, counter.get())
+        assertThat(counter.get()).isEqualTo(0)
 
-        Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertEquals(1, counter.get())
+        assertThat(latch.await(delay + 200, TimeUnit.MILLISECONDS)).isTrue
+        assertThat(counter.get()).isEqualTo(1)
     }
 
     @Test
@@ -71,8 +71,8 @@ class DebouncedRunnableTest {
         Thread.sleep(100)
         debouncedRunnable.run()
 
-        Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
-        Assertions.assertEquals(1, counter.get())
+        assertThat(latch.await(delay + 200, TimeUnit.MILLISECONDS)).isTrue
+        assertThat(counter.get()).isEqualTo(1)
     }
 
     @Test
@@ -82,10 +82,10 @@ class DebouncedRunnableTest {
         debouncedRunnable = DebouncedRunnable({ counter.incrementAndGet() }, delay, null)
 
         debouncedRunnable.run()
-        Assertions.assertEquals(0, counter.get())
+        assertThat(counter.get()).isEqualTo(0)
 
         debouncedRunnable.executeNow()
-        Assertions.assertEquals(1, counter.get())
+        assertThat(counter.get()).isEqualTo(1)
     }
 
     @Test
@@ -105,10 +105,10 @@ class DebouncedRunnableTest {
             )
 
         debouncedRunnable.run()
-        Assertions.assertTrue(latch.await(delay + 200, TimeUnit.MILLISECONDS))
+        assertThat(latch.await(delay + 200, TimeUnit.MILLISECONDS)).isTrue
 
-        Assertions.assertEquals(1, counter.get())
-        Assertions.assertEquals(1, callbackCounter.get())
+        assertThat(counter.get()).isEqualTo(1)
+        assertThat(callbackCounter.get()).isEqualTo(1)
     }
 
     @Test
@@ -116,6 +116,6 @@ class DebouncedRunnableTest {
         val delay: Long = 500
         debouncedRunnable = DebouncedRunnable({}, delay, null)
 
-        Assertions.assertEquals(delay, debouncedRunnable.delayMillis)
+        assertThat(debouncedRunnable.delayMillis).isEqualTo(delay)
     }
 }

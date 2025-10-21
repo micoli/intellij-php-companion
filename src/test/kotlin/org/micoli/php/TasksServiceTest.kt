@@ -2,7 +2,7 @@ package org.micoli.php
 
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.builders.ObservedFileBuilder
 import org.micoli.php.builders.ScriptBuilder
 import org.micoli.php.builders.ShellBuilder
@@ -68,12 +68,12 @@ class TasksServiceTest : BasePlatformTestCase() {
 
     fun testWatcherEnabled() {
 
-        assertNotNull(tasksService.isWatcherEnabled)
-        assertTrue(tasksService.isWatcherEnabled)
+        assertThat(tasksService.isWatcherEnabled).isNotNull()
+        assertThat(tasksService.isWatcherEnabled).isTrue
         tasksService.toggleWatcherEnabled()
         assertFalse(tasksService.isWatcherEnabled)
         tasksService.toggleWatcherEnabled()
-        assertTrue(tasksService.isWatcherEnabled)
+        assertThat(tasksService.isWatcherEnabled).isTrue
     }
 
     fun testLoadNullConfiguration() {
@@ -147,7 +147,7 @@ class TasksServiceTest : BasePlatformTestCase() {
         tasksService.runTask("file1")
 
         // Then
-        assertTrue(runnableLogs.stream().anyMatch { it == "file1:FileObserverTask" })
+        assertThat(runnableLogs.stream().anyMatch { it == "file1:FileObserverTask" }).isTrue
     }
 
     fun testVfsHandleWithObservedFile() {
@@ -178,7 +178,7 @@ class TasksServiceTest : BasePlatformTestCase() {
         tasksService.vfsHandle(taskIdentifier, myFixture.findFileInTempDir(filePath))
 
         // Then
-        assertTrue(runnableLogs.stream().anyMatch { it == "file1:FileObserverTask" })
+        assertThat(runnableLogs.stream().anyMatch { it == "file1:FileObserverTask" }).isTrue
     }
 
     fun testVfsHandleShouldBeTriggeredWithWatcher() {
@@ -208,16 +208,16 @@ class TasksServiceTest : BasePlatformTestCase() {
         tasksService.loadConfiguration(config)
 
         val taskIdentifier = TaskIdentifier("task1", config.watchers[0])
-        TestCase.assertEquals(
-            1, MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
+        assertThat(MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
+            .isEqualTo(1)
 
         // When
         tasksService.vfsHandle(taskIdentifier, myFixture.findFileInTempDir(filePath))
 
         // Then
-        TestCase.assertEquals(
-            0, MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
-        assertTrue(runnableLogs.stream().anyMatch { it == "task1:RunnableTask" })
+        assertThat(MyFixtureUtils.filesMatchingContains(myFixture, "cache/test.log").size)
+            .isEqualTo(0)
+        assertThat(runnableLogs.stream().anyMatch { it == "task1:RunnableTask" }).isTrue
     }
 
     fun testIfActionAreWellRegistered() {
@@ -236,9 +236,9 @@ class TasksServiceTest : BasePlatformTestCase() {
         tasksService.loadConfiguration(tasksConfiguration)
         val actionManager = ActionManager.getInstance()
         val registeredActions = actionManager.getActionIdList("phpcompanion.tasks.")
-        TestCase.assertEquals(1, registeredActions.size)
-        TestCase.assertEquals("phpcompanion.tasks.shell1", registeredActions[0])
+        assertThat(registeredActions.size).isEqualTo(1)
+        assertThat(registeredActions[0]).isEqualTo("phpcompanion.tasks.shell1")
         val action = actionManager.getAction("phpcompanion.tasks.shell1")
-        TestCase.assertEquals("shell1", action.templateText)
+        assertThat(action.templateText).isEqualTo("shell1")
     }
 }

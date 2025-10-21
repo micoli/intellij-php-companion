@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import org.assertj.core.api.Assertions.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -16,7 +17,8 @@ class JsonToPhpArrayConverterTest(private val filename: String?) {
     @Test
     @Throws(IOException::class)
     fun testItConvertJsonToPhp() {
-        assert(readFile(".php") == JsonToPhpArrayConverter.convertJsonToPhp(readFile(".json")))
+        assertThat(JsonToPhpArrayConverter.convertJsonToPhp(readFile(".json")))
+            .isEqualTo(readFile(".php"))
     }
 
     @Throws(IOException::class)

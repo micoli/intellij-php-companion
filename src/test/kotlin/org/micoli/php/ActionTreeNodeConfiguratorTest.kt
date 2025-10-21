@@ -4,6 +4,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.ui.treeStructure.Tree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.builders.PathBuilder
 import org.micoli.php.builders.ScriptBuilder
 import org.micoli.php.builders.ShellBuilder
@@ -56,15 +57,16 @@ class ActionTreeNodeConfiguratorTest : BasePlatformTestCase() {
             arrayOf(task1, task2, path1, path2),
         )
 
-        assertFalse(tree.isRootVisible)
-        assertTrue(tree.showsRootHandles)
+        assertThat(tree.isRootVisible).isFalse
+        assertThat(tree.showsRootHandles).isTrue
 
         assertTreeEquals()
     }
 
     private fun assertTreeEquals() {
-        assertEquals(
-            """
+        assertThat(dumpTree())
+            .isEqualTo(
+                """
         00-(1)=>Root
         01--(2)=>Shell Task
         02--(2)=>Custom Script Label
@@ -73,9 +75,8 @@ class ActionTreeNodeConfiguratorTest : BasePlatformTestCase() {
         05---(3)=>Custom Script Label
         06--(2)=>an emptyPath
         """
-                .trimIndent(),
-            dumpTree(),
-        )
+                    .trimIndent(),
+            )
     }
 
     private fun dumpTree(): String {

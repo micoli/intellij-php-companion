@@ -1,7 +1,7 @@
 package org.micoli.php
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException
@@ -9,32 +9,27 @@ import org.micoli.php.peerNavigation.service.PeerNavigationService
 import org.micoli.php.service.intellij.psi.PhpUtil
 
 class PeerNavigationServiceTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String = "src/test/resources/testData"
+    override fun getTestDataPath(): String = "src/test/resources/symfony-demo"
 
     fun testItFindsPeerElement() {
         myFixture.copyDirectoryToProject("src", "src")
         myFixture.copyDirectoryToProject("tests", "tests")
         val peerNavigationService = loadPluginConfiguration(testDataPath)
-        val fqn1 =
-            PhpUtil.getPhpClassByFQN(
-                project, "\\App\\UserInterface\\Web\\Api\\Article\\Get\\Controller")
-        val fqn2 =
-            PhpUtil.getPhpClassByFQN(
-                project,
-                "\\App\\Tests\\Func\\UserInterface\\Web\\Api\\Article\\Get\\ControllerTest")
-        assertNotNull(fqn1)
-        assertNotNull(fqn2)
-        assertEquals(fqn2, peerNavigationService.getPeersElement(fqn1!!)?.first())
-        assertEquals(fqn1, peerNavigationService.getPeersElement(fqn2!!)?.first())
+        val fqn1 = PhpUtil.getPhpClassByFQN(project, "\\App\\Controller\\BlogController")
+        val fqn2 = PhpUtil.getPhpClassByFQN(project, "\\App\\Tests\\Controller\\BlogControllerTest")
+        assertThat(fqn1).isNotNull
+        assertThat(fqn2).isNotNull
+        assertThat(peerNavigationService.getPeersElement(fqn1!!)?.first()).isEqualTo(fqn2)
+        assertThat(peerNavigationService.getPeersElement(fqn2!!)?.first()).isEqualTo(fqn1)
     }
 
     fun testItCanFindLineMarkersFor() {
         myFixture.copyDirectoryToProject("src", "src")
         myFixture.copyDirectoryToProject("tests", "tests")
-        myFixture.configureByFiles("src/UserInterface/Web/Api/Article/Get/Controller.php")
+        myFixture.configureByFiles("src/Controller/BlogController.php")
         loadPluginConfiguration(testDataPath)
         val lineMarkers = myFixture.findAllGutters()
-        assertNotEmpty(lineMarkers)
+        assertThat(lineMarkers).isNotEmpty
 
         val specificMarkers =
             lineMarkers
@@ -45,7 +40,7 @@ class PeerNavigationServiceTest : BasePlatformTestCase() {
                 }
                 .toList()
 
-        TestCase.assertEquals(1, specificMarkers.size)
+        assertThat(specificMarkers.size).isEqualTo(1)
     }
 
     private fun loadPluginConfiguration(path: String?): PeerNavigationService {

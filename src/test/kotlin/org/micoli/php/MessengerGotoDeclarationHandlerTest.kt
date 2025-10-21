@@ -3,17 +3,14 @@ package org.micoli.php
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
-import org.micoli.php.configuration.ConfigurationException
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.configuration.ConfigurationFactory
-import org.micoli.php.configuration.exceptions.NoConfigurationFileException
 import org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandler
 import org.micoli.php.symfony.messenger.service.MessengerService
 
 class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String = "src/test/resources/testData/"
+    override fun getTestDataPath(): String = "src/test/resources/symfony-demo/"
 
-    @Throws(NoConfigurationFileException::class, ConfigurationException::class)
     fun testItDetectDispatchMethods() {
         myFixture.copyDirectoryToProject("src", "/src")
         MessengerService.getInstance(project)
@@ -22,29 +19,27 @@ class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
                     .loadConfiguration(testDataPath, 0L, true)
                     ?.configuration
                     ?.symfonyMessenger)
-        val files =
-            myFixture.configureByFiles("src/UserInterface/Web/Api/Article/List/Controller.php")
-        assertGotoEquals(files[0], "->query(", "src/Core/Query/Article/Handler.php")
-        assertGotoEquals(files[0], "->notify(", "src/Core/Query/Article/Handler.php")
-        assertGotoEquals(
-            files[0],
-            "->query(new ArticleDetails\\Query())",
-            "src/Core/Query/ArticleDetails/Handler.php",
-        )
-        assertGotoIsNull(files[0], "->handle(")
-        assertGotoIsNull(files[0], "->dispatch")
-        assertGotoIsNull(files[0], "->queryBus")
+        val file = myFixture.configureByFiles("src/Controller/BlogController.php")[0]
+        assertGotoIsFound(file, "->query(", "src/UseCase/ListArticles/Handler.php")
+        assertGotoIsFound(
+            file,
+            "->dispatch(new ArticleViewed\\Event(\$id))",
+            "src/UseCase/ArticleViewed/Handler.php")
+        assertGotoIsNull(file, "->handle(")
+        assertGotoIsNull(file, "->queryBus")
     }
 
     private fun assertGotoIsNull(file: PsiFile, elementMatch: String) {
         val pos = file.text.indexOf(elementMatch)
         val element = file.findElementAt(pos + 2)
         val messengerGotoDeclarationHandler = MessengerGotoDeclarationHandler()
-        assertNull(
-            messengerGotoDeclarationHandler.getGotoDeclarationTargets(element, 0, myFixture.editor))
+        assertThat(
+                messengerGotoDeclarationHandler.getGotoDeclarationTargets(
+                    element, 0, myFixture.editor))
+            .isNull()
     }
 
-    private fun assertGotoEquals(
+    private fun assertGotoIsFound(
         file: PsiFile,
         elementMatch: String,
         targetFileEnd: String,
@@ -56,10 +51,10 @@ class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
         val foundElements: Array<PsiElement?> =
             messengerGotoDeclarationHandler.getGotoDeclarationTargets(element, 0, myFixture.editor)
                 ?: emptyArray()
-        assertNotNull(foundElements)
-        TestCase.assertEquals(1, foundElements.size)
-        assertTrue(
-            foundElements[0]!!.containingFile.virtualFile.canonicalPath!!.endsWith(targetFileEnd))
-        assertTrue(foundElements[0]!!.text.startsWith(targetMethodStart))
+        assertThat(foundElements).isNotNull
+        assertThat(foundElements.size).isEqualTo(1)
+        assertThat(foundElements[0]!!.containingFile.virtualFile.canonicalPath!!)
+            .endsWith(targetFileEnd)
+        assertThat(foundElements[0]!!.text).startsWith(targetMethodStart)
     }
 }

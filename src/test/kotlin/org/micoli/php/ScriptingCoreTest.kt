@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.replaceService
 import java.awt.datatransfer.DataFlavor
 import java.util.concurrent.atomic.AtomicReference
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.builders.ScriptBuilder
 import org.micoli.php.tasks.runnables.RunnableTask
 import org.micoli.php.ui.Notification
@@ -36,9 +36,9 @@ class ScriptingCoreTest : BasePlatformTestCase() {
 
         // Then
         val contents = CopyPasteManager.getInstance().contents
-        assertNotNull(contents)
-        assertEquals("ABC", contents!!.getTransferData(DataFlavor.stringFlavor))
-        TestCase.assertEquals(1, exposedVariable)
+        assertThat(contents).isNotNull()
+        assertThat(contents!!.getTransferData(DataFlavor.stringFlavor)).isEqualTo("ABC")
+        assertThat(exposedVariable).isEqualTo(1)
     }
 
     fun testItReportsError() {
@@ -67,11 +67,11 @@ class ScriptingCoreTest : BasePlatformTestCase() {
             .run()
 
         // Then
-        TestCase.assertEquals(
-            "groovy.lang.MissingPropertyException: No such property: unUnknownExposedVariable for class:" +
-                " org.micoli.php.ScriptingCoreTest",
-            lastError.get(),
-        )
+        assertThat(lastError.get())
+            .isEqualTo(
+                "groovy.lang.MissingPropertyException: No such property: unUnknownExposedVariable for class:" +
+                    " org.micoli.php.ScriptingCoreTest",
+            )
     }
 
     companion object {

@@ -3,6 +3,7 @@ package org.micoli.php
 import com.fasterxml.jackson.databind.JsonNode
 import java.io.*
 import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.service.PhpGzDecoder
 import org.micoli.php.service.serialize.PhpUnserializer
 import org.micoli.php.symfony.profiler.SymfonyProfileService
@@ -12,25 +13,26 @@ class PhpUnserializerTest : TestCase() {
     fun testItUnserializePhpProfileDump() {
         val kotlinResult =
             PhpUnserializer.unserialize(PhpGzDecoder.gzdecode(getGzcontent())) as Map<*, *>
-        assertEquals("8af368", (kotlinResult["token"] as JsonNode).textValue())
-        assertEquals(
-            "Symfony\\Component\\HttpKernel\\DataCollector\\RequestDataCollector",
-            (((kotlinResult["data"] as Map<*, *>)["request"] as Map<*, *>)["__class"] as JsonNode)
-                .textValue())
+        assertThat((kotlinResult["token"] as JsonNode).textValue()).isEqualTo("8af368")
+        assertThat(
+                (((kotlinResult["data"] as Map<*, *>)["request"] as Map<*, *>)["__class"]
+                        as JsonNode)
+                    .textValue())
+            .isEqualTo("Symfony\\Component\\HttpKernel\\DataCollector\\RequestDataCollector")
     }
 
     fun testItUnserializePhpProfileDumpInProperObject() {
         val jsonNode =
             PhpUnserializer.unserializeToJsonNode(PhpGzDecoder.gzdecode(getGzcontent())) as JsonNode
 
-        assertEquals("8af368", jsonNode.get("token").textValue())
+        assertThat(jsonNode.get("token").textValue()).isEqualTo("8af368")
     }
 
     fun testItUnserializePhpProfileDumpInClass() {
         val profilerDump: PHPProfilerDump =
             SymfonyProfileService.unserializeProfileDump(PhpGzDecoder.gzdecode(getGzcontent()))
 
-        assertEquals("8af368", profilerDump.token)
+        assertThat(profilerDump.token).isEqualTo("8af368")
     }
 
     private fun getGzcontent(): ByteArray =
@@ -39,12 +41,12 @@ class PhpUnserializerTest : TestCase() {
 
     fun testItUnserializeNullByteArray() {
         val value: ByteArray? = null
-        assertNull(PhpUnserializer.unserialize(value))
+        assertThat(PhpUnserializer.unserialize(value)).isNull()
     }
 
     fun testItUnserializeNullString() {
         val value: String? = null
-        assertNull(PhpUnserializer.unserialize(value?.toByteArray()))
+        assertThat(PhpUnserializer.unserialize(value?.toByteArray())).isNull()
     }
 
     fun testItUnserializeCommonDumps() {
@@ -77,9 +79,8 @@ class PhpUnserializerTest : TestCase() {
                     "{\"__class\":\"App\\\\Tests\\\\Misc\\\\AClassWithCustomSerializer\"}",
                 ),
             )) {
-            assertEquals(
-                pair.second,
-                PhpUnserializer.unserializeToJsonNode(pair.first.toByteArray()).toString())
+            assertThat(PhpUnserializer.unserializeToJsonNode(pair.first.toByteArray()).toString())
+                .isEqualTo(pair.second)
         }
     }
 }

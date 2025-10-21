@@ -2,7 +2,7 @@ package org.micoli.php
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration
 
@@ -20,8 +20,9 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
         exportSourceToMarkdownService.loadConfiguration(ExportSourceToMarkdownConfiguration())
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
-        TestCase.assertEquals(
-            """
+        assertThat(exportedSource?.content?.trim { it <= ' ' })
+            .isEqualTo(
+                """
         ## /src/path1/path1_1/path1_1_file1.txt
 
         ```txt
@@ -47,21 +48,21 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         ```
 
         """
-                .trimIndent()
-                .trim { it <= ' ' },
-            exportedSource?.content?.trim { it <= ' ' },
-        )
+                    .trimIndent()
+                    .trim { it <= ' ' },
+            )
     }
 
     fun testItGeneratesMarkdownExportForSelectedFilesWithContextualNamespaces() {
-        myFixture.copyDirectoryToProject("testData/src", ".")
+        myFixture.copyDirectoryToProject("symfony-demo/src", ".")
         val filesToSelect =
             arrayOf<VirtualFile>(
-                myFixture.findFileInTempDir("Core/Query/Article/Query.php"),
-                myFixture.findFileInTempDir("Core/Query/ArticleDetails"),
+                myFixture.findFileInTempDir("UseCase/ArticleViewed/Handler.php"),
+                myFixture.findFileInTempDir("UseCase/ListArticles/Handler.php"),
             )
         val configuration = ExportSourceToMarkdownConfiguration()
-        configuration.contextualNamespaces = arrayOf("App\\Core\\Models", "App\\Core\\Id")
+        configuration.contextualNamespaces =
+            arrayOf("App\\Entity", "App\\Repository\\PostRepository")
         configuration.template =
             """
         [(${'$'}{#strings.isEmpty(files) ? '' : ''})]
@@ -75,21 +76,19 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
 
         exportSourceToMarkdownService.loadConfiguration(configuration)
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
-        TestCase.assertEquals(
+        assertThat(exportedSource?.content?.trim { it <= ' ' })
+            .isEqualTo(
+                """
+            - /src/Entity/Post.php
+            - /src/Entity/Tag.php
+            - /src/Repository/PostRepository.php
+            - /src/UseCase/ArticleViewed/Handler.php
+            - /src/UseCase/ListArticles/Handler.php
+    
             """
-        - /src/Core/Id/ArticleId.php
-        - /src/Core/Models/Article.php
-        - /src/Core/Models/Feed.php
-        - /src/Core/Query/Article/Query.php
-        - /src/Core/Query/ArticleDetails/Handler.php
-        - /src/Core/Query/ArticleDetails/Query.php
-        - /src/Core/Query/ArticleDetails/Result.php
-
-        """
-                .trimIndent()
-                .trim { it <= ' ' },
-            exportedSource?.content?.trim { it <= ' ' },
-        )
+                    .trimIndent()
+                    .trim { it <= ' ' },
+            )
     }
 
     fun testItGeneratesExportStringForSelectedFilesWithCustomTemplate() {
@@ -114,18 +113,18 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
         val exportSourceToMarkdownService = ExportSourceToMarkdownService.getInstance(project)
         exportSourceToMarkdownService.loadConfiguration(configuration)
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
-        TestCase.assertEquals(
-            """
+        assertThat(exportedSource?.content?.trim { it <= ' ' })
+            .isEqualTo(
+                """
         - /src/path1/path1_1/path1_1_file1.txt
         - /src/path1/path1_2/path1_2_file1.txt
         - /src/path1/path1_file1.txt
         - /src/root_file1.txt
 
         """
-                .trimIndent()
-                .trim { it <= ' ' },
-            exportedSource?.content?.trim { it <= ' ' },
-        )
+                    .trimIndent()
+                    .trim { it <= ' ' },
+            )
     }
 
     fun testItCountTokens() {
@@ -135,6 +134,6 @@ class ExportSourceToMarkdownServiceTest : BasePlatformTestCase() {
 
         exportSourceToMarkdownService.loadConfiguration(ExportSourceToMarkdownConfiguration())
         val exportedSource = exportSourceToMarkdownService.generateMarkdownExport(filesToSelect)
-        assertEquals(18, exportedSource?.numberOfTokens)
+        assertThat(exportedSource?.numberOfTokens).isEqualTo(18)
     }
 }

@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.UnsupportedFlavorException
 import java.io.IOException
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.junit.Assert
 import org.micoli.php.builders.BuiltinBuilder
 import org.micoli.php.builders.ScriptBuilder
@@ -28,7 +28,7 @@ class RunnableTaskTest : BasePlatformTestCase() {
             .run()
 
         // Then
-        TestCase.assertEquals(1, exposedVariable)
+        assertThat(exposedVariable).isEqualTo(1)
     }
 
     fun testRunnableShellSucceed() {
@@ -40,7 +40,7 @@ class RunnableTaskTest : BasePlatformTestCase() {
         // Then
         val exception = Assert.assertThrows(NullPointerException::class.java) { runnableTask.run() }
         // At least we ensure that createShellWidget is well called
-        TestCase.assertEquals("getOrInitToolWindow", exception.stackTrace[1].methodName)
+        assertThat(exception.stackTrace[1].methodName).isEqualTo("getOrInitToolWindow")
     }
 
     @Throws(IOException::class, UnsupportedFlavorException::class)
@@ -57,8 +57,8 @@ class RunnableTaskTest : BasePlatformTestCase() {
 
         // Then
         val contents = CopyPasteManager.getInstance().contents
-        assertNotNull(contents)
-        assertEquals("ABC", contents!!.getTransferData(DataFlavor.stringFlavor))
+        assertThat(contents).isNotNull()
+        assertThat(contents!!.getTransferData(DataFlavor.stringFlavor)).isEqualTo("ABC")
     }
 
     companion object {

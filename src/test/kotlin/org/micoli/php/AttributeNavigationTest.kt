@@ -1,7 +1,7 @@
 package org.micoli.php
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration
 import org.micoli.php.attributeNavigation.configuration.NavigationByAttributeRule
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService
@@ -10,31 +10,33 @@ import org.micoli.php.configuration.ConfigurationFactory
 import org.micoli.php.configuration.exceptions.NoConfigurationFileException
 
 class AttributeNavigationTest : BasePlatformTestCase() {
-    override fun getTestDataPath(): String = "src/test/resources/testData"
+    override fun getTestDataPath(): String = "src/test/resources/symfony-demo"
 
     fun testItFormatValueUsingInlineFormatter() {
         val formattedValue =
             AttributeNavigationService.getInstance(project)
                 .getFormattedValue("cde", "return ('ab-'+value+'-fg').toLowerCase()")
-        TestCase.assertEquals("ab-cde-fg", formattedValue)
+        assertThat(formattedValue).isEqualTo("ab-cde-fg")
     }
 
     fun testItCanFindLineMarkersForAttributes() {
-        myFixture.configureByFiles("src/UserInterface/Web/Api/Article/Get/Controller.php")
+        myFixture.configureByFiles("src/Controller/BlogController.php")
         loadPluginConfiguration(testDataPath)
         val lineMarkers = myFixture.findAllGutters()
-        assertNotEmpty(lineMarkers)
+        assertThat(lineMarkers).isNotEmpty
 
         val specificMarkers =
             lineMarkers
                 .stream()
-                .filter {
-                    val tooltipText = it?.tooltipText ?: return@filter false
-                    tooltipText.contains("Search for [")
-                }
+                .map { it?.tooltipText?.replace("Search for ", "") }
                 .toList()
+                .filterNotNull()
+                .sorted()
+                .joinToString(",")
 
-        TestCase.assertEquals(1, specificMarkers.size)
+        assertThat(specificMarkers)
+            .isEqualTo(
+                "[/],[/blog],[/comment/{postSlug}/new],[/page/{page}],[/posts/{slug:post}],[/rss.xml],[/search]")
     }
 
     fun testItFormatValueUsingScriptInConfiguration() {

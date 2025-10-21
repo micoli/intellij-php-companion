@@ -1,0 +1,138 @@
+symfonyProfiler:
+    enabled: true
+    profilerPath: var/cache/dev/profiler/
+    profilerUrlRoot: http://127.0.0.1:8000/_profiler/
+    urlRoots:
+        - https://v3-api.dev.yousign.io
+        - https://127.0.0.1:8000
+        - http://127.0.0.1:8000
+    excludeFilter:
+        - "fragment"
+        - "_components.*search"
+
+consoleCleaner:
+    patterns: [ ]
+
+tasks:
+    enabled: true
+    tasks:
+        - id: testBuiltInCut
+          type: builtin
+          actionId: $Cut
+          label: cut
+        - type: bookmark
+          path: src/Command
+          id: selectCommand
+        - type: bookmark
+          path: templates/components
+          id: selectTemplate
+
+        - id: testbuiltIn1
+          type: builtin
+          actionId: $Cut
+          label: dsds
+          icon: expui/actions/undeploy.svg
+
+        - id: clearTestCache
+          type: script
+          icon: expui/nodes/test.svg
+          source: |
+              fs.clearPath("api/var/cache/test",false);
+
+        - id: clearCache
+          type: shell
+          label: clear:cache
+          command: rm -rf api/var/cache/{dev,test,prod};exit
+          icon: expui/actions/clearCash.svg
+
+        - id: envTestLocal
+          type: observedFile
+          label: env local KEEP_SYMFONY_TEST_CACHE
+          filePath: api/.env.test.local
+          variableName: KEEP_SYMFONY_TEST_CACHE
+
+    #    - id: web1
+    #      type: link
+    #      label: aaa
+    #      url: https://www.google.com
+    tree:
+        - taskId: envTestLocal
+        - type: path
+          label: Bookmarks
+          tasks:
+            - taskId: selectCommand
+            - taskId: selectTemplate
+
+    toolbar:
+        - taskId: clearCache
+        - taskId: clearTestCache
+        - taskId: testbuiltIn1
+        - taskId: envTestLocal
+        - taskId: web1
+
+classStyles:
+    enabled: true
+    rules:
+        - style:
+              foregroundColor: RED
+              fontStyles: [BOLD]
+          fqcns:
+              - "\\App\\Infrastructure\\Bus\\Message\\Query\\SyncDomainQuery"
+        - style:
+              foregroundColor: YELLOW
+              fontStyles: [BOLD]
+          fqcns:
+              - "\\App\\Infrastructure\\Bus\\Message\\Event\\SyncDomainEvent"
+
+attributeNavigation:
+    rules:
+        - attributeFQCN: Symfony\Component\Routing\Attribute\Route
+          propertyName: path
+          formatterScript: |
+              return (value
+                .replaceAll("(\\{.*?\\})", "[^/]*")
+                + ":"
+              );
+
+peerNavigation:
+    associates:
+        - classA: \\App\\Tests\\Controller\\(?<path>.*)ControllerTest
+          classB: \\App\\Controller\\(?<path>.*)Controller
+#  peers:
+#    - source: ^\\App\\Tests\\Func\\(.*)\\ControllerTest$
+#      target: \\App\\$1\\Controller
+#    - source: ^\\App\\(.*)\\Controller$
+#      target: \\App\\Tests\\Func\\$1\\ControllerTest
+
+symfonyMessenger:
+    messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
+    messageInterfaces:
+        - \App\Infrastructure\Bus\Message\MessageInterface
+
+    messageHandlerInterfaces:
+        - \\App\Infrastructure\Bus\Handler\DomainCommandHandler
+        - \\App\Infrastructure\Bus\Handler\DomainEventHandler
+        - \\App\Infrastructure\Bus\Handler\DomainQueryHandler
+
+    dispatchMethods:
+        - dispatch
+        - query
+        - command
+        - notify
+
+    handlerMethods:
+        - __invoke
+        - handle
+
+exportSourceToMarkdown:
+    contextualNamespaces:
+        - App\Entities
+
+routes:
+    attributeFQCN: Symfony\Component\Routing\Attribute\Route
+    namespaces:
+        - App\Controller
+
+doctrineEntities:
+    namespaces:
+        - App\Entity

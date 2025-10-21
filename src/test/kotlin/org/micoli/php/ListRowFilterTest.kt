@@ -8,8 +8,8 @@ import javax.swing.table.TableModel
 import javax.swing.table.TableRowSorter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import org.assertj.core.api.Assertions.*
 import org.junit.Test
-import org.junit.jupiter.api.Assertions
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.micoli.php.symfony.list.SearchableRecord
@@ -54,13 +54,14 @@ class ListRowFilterTest(
         listRowFilter.updateFilter(searchText, isRegexMode)
         defaultRowSorter.sort()
         table.selectAll()
-        Assertions.assertEquals(
-            expectedResult,
-            Arrays.stream(table.getSelectionModel().getSelectedIndices())
-                .mapToObj(IntFunction { index: Int -> table.model.getValueAt(index, 0).toString() })
-                .toList()
-                .joinToString(","),
-        )
+        assertThat(
+                Arrays.stream(table.getSelectionModel().getSelectedIndices())
+                    .mapToObj(
+                        IntFunction { index: Int -> table.model.getValueAt(index, 0).toString() })
+                    .toList()
+                    .joinToString(","),
+            )
+            .isEqualTo(expectedResult)
     }
 
     companion object {

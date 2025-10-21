@@ -3,7 +3,7 @@ package org.micoli.php
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.replaceService
 import java.util.concurrent.atomic.AtomicReference
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.builders.CodeStyleBuilder
 import org.micoli.php.builders.CodeStylesSynchronizationConfigurationBuilder
 import org.micoli.php.codeStyle.CodeStylesService
@@ -45,14 +45,14 @@ class CodeStylesSynchronizationTest : BasePlatformTestCase() {
                 .build())
 
         // Then
-        TestCase.assertEquals(
-            "<html><ul><li>Unknown attribute UNKNOWN_STYLE_ATTRIBUTE</li></ul></html>",
-            lastError.get(),
-        )
-        TestCase.assertEquals(
-            "<html><ul><li>ALIGN_MULTILINE_PARAMETERS_IN_CALLS: true</li></ul></html>",
-            lastMessage.get(),
-        )
+        assertThat(lastError.get())
+            .isEqualTo(
+                "<html><ul><li>Unknown attribute UNKNOWN_STYLE_ATTRIBUTE</li></ul></html>",
+            )
+        assertThat(lastMessage.get())
+            .isEqualTo(
+                "<html><ul><li>ALIGN_MULTILINE_PARAMETERS_IN_CALLS: true</li></ul></html>",
+            )
 
         // And rollback
         loadPluginConfiguration(
@@ -98,8 +98,8 @@ class CodeStylesSynchronizationTest : BasePlatformTestCase() {
                 .build())
 
         // Then
-        assertNull(lastMessage.get())
-        assertNull(lastError.get())
+        assertThat(lastMessage.get()).isNull()
+        assertThat(lastError.get()).isNull()
     }
 
     private fun loadPluginConfiguration(configuration: CodeStylesSynchronizationConfiguration?) {

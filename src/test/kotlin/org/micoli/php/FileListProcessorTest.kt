@@ -2,7 +2,7 @@ package org.micoli.php
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
+import org.assertj.core.api.Assertions.*
 import org.micoli.php.service.filesystem.FileListProcessor
 
 class FileListProcessorTest : BasePlatformTestCase() {
@@ -35,7 +35,7 @@ class FileListProcessorTest : BasePlatformTestCase() {
 
         val processedFiles = FileListProcessor.findFilesFromSelectedFiles(filesToSelect)
 
-        TestCase.assertEquals(4, processedFiles.size)
+        assertThat(processedFiles.size).isEqualTo(4)
     }
 
     fun testFileListProcessorWithExclusionRules() {
@@ -87,16 +87,18 @@ class FileListProcessorTest : BasePlatformTestCase() {
     }
 
     private fun assertContains(processedFiles: MutableList<VirtualFile>, anObject: String) {
-        assertTrue(
-            processedFiles.stream().anyMatch {
-                ((it as VirtualFile).canonicalPath)?.endsWith(anObject) == true
-            })
+        assertThat(
+                processedFiles.stream().anyMatch {
+                    ((it as VirtualFile).canonicalPath)?.endsWith(anObject) == true
+                })
+            .isTrue
     }
 
     private fun assertNotContains(processedFiles: MutableList<VirtualFile>, anObject: String) {
-        assertTrue(
-            processedFiles.stream().noneMatch {
-                ((it as VirtualFile).canonicalPath)?.endsWith(anObject) == true
-            })
+        assertThat(
+                processedFiles.stream().noneMatch {
+                    ((it as VirtualFile).canonicalPath)?.endsWith(anObject) == true
+                })
+            .isTrue
     }
 }
