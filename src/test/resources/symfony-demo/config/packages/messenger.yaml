@@ -1,0 +1,63 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            async: doctrine://default
+            failed: 'doctrine://default?queue_name=failed'
+            sync: 'sync://'
+
+        default_bus: command.bus
+
+        routing:
+            App\Infrastructure\Bus\Message\Command\AsyncDomainCommand : async
+            App\Infrastructure\Bus\Message\Command\SyncDomainCommand : sync
+
+            App\Infrastructure\Bus\Message\Event\AsyncDomainEvent : async
+            App\Infrastructure\Bus\Message\Event\SyncDomainEvent : sync
+            App\Infrastructure\Bus\Message\Event\DomainEvent : sync
+
+            App\Infrastructure\Bus\Message\Query\SyncDomainQuery : sync
+
+        buses:
+            command.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: false
+                middleware:
+                    - doctrine_transaction
+                    - doctrine_ping_connection
+                    - doctrine_close_connection
+
+            query.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: true
+                middleware:
+                    - doctrine_ping_connection
+
+            event.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: true
+                    allow_no_senders: true
+                middleware:
+                    - doctrine_transaction
+                    - doctrine_ping_connection
+                    - doctrine_close_connection
+
+when@dev:
+    framework:
+        messenger:
+            transports:
+                async: 'sync://'
+                failed: 'doctrine://default?queue_name=failed'
+                sync: 'sync://'
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: 'sync://'
+                failed: 'doctrine://default?queue_name=failed'
+                sync: 'sync://'

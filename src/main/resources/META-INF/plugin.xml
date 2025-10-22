@@ -31,53 +31,38 @@
             bundle="messages.MyBundle"
             key="notification.group.php.companion"
         />
-        <projectService
-                serviceImplementation="org.micoli.php.peerNavigation.service.PeerNavigationService"/>
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.peerNavigation.markers.PeerNavigationLineMarkerProvider"/>
-
         <projectService
-                serviceImplementation="org.micoli.php.codeStyle.CodeStylesService"/>
-        <projectService
-                serviceImplementation="org.micoli.php.symfony.messenger.service.MessengerService"/>
+                serviceImplementation="org.micoli.php.ui.Notification"/>
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.symfony.messenger.markers.MessengerLineMarkerProvider"/>
-        <projectService
-                serviceImplementation="org.micoli.php.attributeNavigation.service.AttributeNavigationService"/>
         <codeInsight.lineMarkerProvider
                 language="PHP"
                 implementationClass="org.micoli.php.attributeNavigation.markers.AttributeNavigationLineMarkerProvider"/>
-
         <findUsagesHandlerFactory
             implementation="org.micoli.php.symfony.messenger.usage.MessengerFindUsagesHandlerFactory"
         />
-
         <gotoDeclarationHandler
             implementation="org.micoli.php.symfony.messenger.navigation.MessengerGotoDeclarationHandler"
         />
-        <projectService
-                serviceImplementation="org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService"/>
         <statusBarWidgetFactory id="org.micoli.php.exportSourceToMarkdown"
                                 implementation="org.micoli.php.ui.PhpCompanionStatusBarWidget$Factory"
                                 order="before CodeStyleStatusBarWidget"/>
         <postStartupActivity implementation="org.micoli.php.PhpCompanionProjectStartup"/>
         <toolWindow id="PHP Companion" secondary="true" icon="AllIcons.Language.Php" anchor="left"
                     factoryClass="org.micoli.php.ui.ToolWindowFactory"/>
-        <projectService
-                serviceImplementation="org.micoli.php.symfony.list.RouteService"/>
-        <projectService
-                serviceImplementation="org.micoli.php.symfony.list.CommandService"/>
-        <projectService
-                serviceImplementation="org.micoli.php.symfony.list.DoctrineEntityService"/>
-        <projectService
-                serviceImplementation="org.micoli.php.openAPI.OpenAPIService"/>
+        <toolWindow id="Symfony Profiler" secondary="true" icon="AllIcons.Language.Php" anchor="bottom"
+                    factoryClass="org.micoli.php.ui.SymfonyWindowFactory"/>
         <projectService
                 serviceImplementation="org.micoli.php.tasks.TasksService"/>
         <consoleInputFilterProvider
                 implementation="org.micoli.php.consoleCleaner.PhpUnitConsoleFilterProvider"/>
 
+        <annotator language="PHP"
+                   implementationClass="org.micoli.php.classStyles.ClassStylesAnnotator"/>
     </extensions>
     <actions>
         <group id="org.micoli.php.exportSourceToMarkdown" text="Php Companion" popup="true">

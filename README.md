@@ -80,7 +80,7 @@ attributeNavigation:
         return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
       isDefault: true
       propertyName: path
-commandsConfiguration:
+commands:
   attributeFQCN: \Symfony\Component\Console\Attribute\AsCommand
   enabled: true
   namespaces:
@@ -89,7 +89,7 @@ commandsConfiguration:
 consoleCleaner:
   patterns:
     - ''
-doctrineEntitiesConfiguration:
+doctrineEntities:
   attributeFQCN: \Doctrine\ORM\Mapping\Table
   enabled: true
   namespaces:
@@ -109,7 +109,7 @@ exportSourceToMarkdown:
     [/]
   useContextualNamespaces: true
   useIgnoreFile: true
-openAPIConfiguration:
+openAPI:
   enabled: true
   specificationRoots:
     - ''
@@ -120,7 +120,7 @@ peerNavigation:
   peers:
     - source: ''
       target: ''
-routesConfiguration:
+routes:
   attributeFQCN: \Symfony\Component\Routing\Attribute\Route
   enabled: true
   namespaces:
@@ -154,34 +154,34 @@ symfonyMessenger:
 <!-- generateDocumentationProperties("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration","") -->
 | Property                   | Description                                 |
 | -------------------------- | ------------------------------------------- |
-| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service |
-| projectRootNamespace       | Root namespace for scanning classes         |
-| messageClassNamePatterns   | Regex pattern to identify message classes   |
-| messageInterfaces[]        | Interfaces that message classes implement   |
-| messageHandlerInterfaces[] | Interfaces that handler classes implement   |
+| asMessageHandlerAttribute  |                                             |
 | dispatchMethods[]          | Method names used to dispatch messages      |
 | handlerMethods[]           | Method names in handler classes             |
-| asMessageHandlerAttribute  |                                             |
+| messageClassNamePatterns   | Regex pattern to identify message classes   |
+| messageHandlerInterfaces[] | Interfaces that handler classes implement   |
+| messageInterfaces[]        | Interfaces that message classes implement   |
+| projectRootNamespace       | Root namespace for scanning classes         |
+| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service |
 
-- **useNativeGoToDeclaration**
-  - Disable ctrl+click to go to handler service
-  - **Default Value**: ``` false ```
-- **projectRootNamespace**
-  - Root namespace for scanning classes
-  - **Default Value**: ``` \App ```
-- **messageClassNamePatterns**
-  - Regex pattern to identify message classes
-  - **Default Value**: ``` .*(Message|Command|Query|Event|Input)$ ```
-- **messageInterfaces[]**
-  - Interfaces that message classes implement
-- **messageHandlerInterfaces[]**
-  - Interfaces that handler classes implement
+- **asMessageHandlerAttribute**
+  - **Default Value**: ``` Symfony\Component\Messenger\Attribute\AsMessageHandler ```
 - **dispatchMethods[]**
   - Method names used to dispatch messages
 - **handlerMethods[]**
   - Method names in handler classes
-- **asMessageHandlerAttribute**
-  - **Default Value**: ``` Symfony\Component\Messenger\Attribute\AsMessageHandler ```
+- **messageClassNamePatterns**
+  - Regex pattern to identify message classes
+  - **Default Value**: ``` .*(Message|Command|Query|Event|Input)$ ```
+- **messageHandlerInterfaces[]**
+  - Interfaces that handler classes implement
+- **messageInterfaces[]**
+  - Interfaces that message classes implement
+- **projectRootNamespace**
+  - Root namespace for scanning classes
+  - **Default Value**: ``` \App ```
+- **useNativeGoToDeclaration**
+  - Disable ctrl+click to go to handler service
+  - **Default Value**: ``` false ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -213,19 +213,13 @@ symfonyMessenger:
 <!-- generateDocumentationProperties("org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration","") -->
 | Property            | Description                                                                          |
 | ------------------- | ------------------------------------------------------------------------------------ |
-| peers[]             | Array of one-way navigation rules                                                    |
-| peers[].source      | Regex pattern with named groups matching source class FQN                            |
-| peers[].target      | Target class FQN pattern using `(?<groupName>.+)` substitution from named groups     |
 | associates[]        | Array of bidirectional navigation rules                                              |
 | associates[].classA | Regex pattern with named groups matching first class FQN                             |
 | associates[].classB | Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups |
+| peers[]             | Array of one-way navigation rules                                                    |
+| peers[].source      | Regex pattern with named groups matching source class FQN                            |
+| peers[].target      | Target class FQN pattern using `(?<groupName>.+)` substitution from named groups     |
 
-- **peers[]**
-  - Array of one-way navigation rules
-- **peers[].source**
-  - Regex pattern with named groups matching source class FQN
-- **peers[].target**
-  - Target class FQN pattern using `(?<groupName>.+)` substitution from named groups
 - **associates[]**
   - Array of bidirectional navigation rules
 - **associates[].classA**
@@ -234,6 +228,12 @@ symfonyMessenger:
 - **associates[].classB**
   - Pattern for second class FQN using `(?<groupName>.+)` substitution from named groups
   - **Example**: ``` \\App\\(?<type>.*)\\Web\\(?<path>.*)\\Controller ```
+- **peers[]**
+  - Array of one-way navigation rules
+- **peers[].source**
+  - Regex pattern with named groups matching source class FQN
+- **peers[].target**
+  - Target class FQN pattern using `(?<groupName>.+)` substitution from named groups
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -305,29 +305,30 @@ peerNavigation:
 | Property                | Description                                     |
 | ----------------------- | ----------------------------------------------- |
 | rules[]                 |                                                 |
-| rules[].attributeFQCN   |                                                 |
-| rules[].propertyName    |                                                 |
-| rules[].isDefault       |                                                 |
-| rules[].fileMask        |                                                 |
 | rules[].actionType      | How search is triggered                         |
+| rules[].attributeFQCN   |                                                 |
+| rules[].fileMask        |                                                 |
 | rules[].formatterScript | A groovy script to reformat raw attribute value |
+| rules[].isDefault       |                                                 |
+| rules[].propertyName    |                                                 |
 
 - **rules[]**
-- **rules[].attributeFQCN**
-  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
-- **rules[].propertyName**
-  - **Default Value**: ``` path ```
-- **rules[].isDefault**
-  - **Default Value**: ``` true ```
-- **rules[].fileMask**
-  - **Default Value**: ``` *.yaml,*.yml,*.php ```
 - **rules[].actionType**
   - How search is triggered
   - **Default Value**: ``` find_in_file ```
+- **rules[].attributeFQCN**
+  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
+- **rules[].fileMask**
+  - **Default Value**: ``` *.yaml,*.yml,*.php ```
 - **rules[].formatterScript**
   - A groovy script to reformat raw attribute value
-  - **Example**: ``` return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
- ```
+  - **Example**: ```
+        return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
+         ```
+- **rules[].isDefault**
+  - **Default Value**: ``` true ```
+- **rules[].propertyName**
+  - **Default Value**: ``` path ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -340,8 +341,8 @@ attributeNavigation:
     isDefault: true
     fileMask: '*.yaml,*.yml,*.php'
     actionType: find_in_file
-    formatterScript: |
-      return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
+    formatterScript: "\n        return (value.replaceAll(\"(\\\\{.*?\\\\})\", \"[^/]*\"\
+      )+ \":\");\n        "
 ```
 <!-- generateDocumentationEnd -->
 
@@ -352,15 +353,11 @@ attributeNavigation:
 <!-- generateDocumentationProperties("org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration","") -->
 | Property                | Description                                                                                                                                                                                                                              |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| useContextualNamespaces |                                                                                                                                                                                                                                          |
-| useIgnoreFile           |                                                                                                                                                                                                                                          |
 | contextualNamespaces[]  | List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context                                                                                                |
 | template                | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |
+| useContextualNamespaces |                                                                                                                                                                                                                                          |
+| useIgnoreFile           |                                                                                                                                                                                                                                          |
 
-- **useContextualNamespaces**
-  - **Default Value**: ``` true ```
-- **useIgnoreFile**
-  - **Default Value**: ``` true ```
 - **contextualNamespaces[]**
   - List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context
 - **template**
@@ -374,6 +371,10 @@ attributeNavigation:
 
 [/]
  ```
+- **useContextualNamespaces**
+  - **Default Value**: ``` true ```
+- **useIgnoreFile**
+  - **Default Value**: ``` true ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -420,30 +421,30 @@ consoleCleaner:
 
 ### Tool windows Configuration
 
-#### `routesConfiguration:`
+#### `routes:`
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.RoutesConfiguration","") -->
 | Property      | Description                                  |
 | ------------- | -------------------------------------------- |
+| attributeFQCN | Attribute used to detect routes              |
 | enabled       | Enabler for panel of routes                  |
 | namespaces[]  | List of namespaces where routes are searched |
-| attributeFQCN | Attribute used to detect routes              |
 
+- **attributeFQCN**
+  - Attribute used to detect routes
+  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
 - **enabled**
   - Enabler for panel of routes
   - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where routes are searched
-- **attributeFQCN**
-  - Attribute used to detect routes
-  - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
 <!-- generateDocumentationEnd -->
 
 #### Example
-<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.RoutesConfiguration","routesConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.RoutesConfiguration","routes") -->
 ```yaml
-routesConfiguration:
+routes:
   attributeFQCN: \Symfony\Component\Routing\Attribute\Route
   enabled: true
   namespaces:
@@ -453,31 +454,31 @@ routesConfiguration:
 <!-- generateDocumentationEnd -->
 
 
-#### `commandsConfiguration:`
+#### `commands:`
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.CommandsConfiguration","") -->
 | Property      | Description                                            |
 | ------------- | ------------------------------------------------------ |
+| attributeFQCN | Attribute used to detect console commands              |
 | enabled       | Enabler for panel of console commands                  |
 | namespaces[]  | List of namespaces where console commands are searched |
-| attributeFQCN | Attribute used to detect console commands              |
 
+- **attributeFQCN**
+  - Attribute used to detect console commands
+  - **Default Value**: ``` \Symfony\Component\Console\Attribute\AsCommand ```
 - **enabled**
   - Enabler for panel of console commands
   - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where console commands are searched
-- **attributeFQCN**
-  - Attribute used to detect console commands
-  - **Default Value**: ``` \Symfony\Component\Console\Attribute\AsCommand ```
 <!-- generateDocumentationEnd -->
 
 #### Example
 
-<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.CommandsConfiguration","commandsConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.CommandsConfiguration","commands") -->
 ```yaml
-commandsConfiguration:
+commands:
   attributeFQCN: \Symfony\Component\Console\Attribute\AsCommand
   enabled: true
   namespaces:
@@ -487,30 +488,30 @@ commandsConfiguration:
 <!-- generateDocumentationEnd -->
 
 
-#### `doctrineEntitiesConfiguration:`
+#### `doctrineEntities:`
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","") -->
 | Property      | Description                                             |
 | ------------- | ------------------------------------------------------- |
+| attributeFQCN | Attribute used to detect Entities                       |
 | enabled       | Enabler for panel of doctrine entities                  |
 | namespaces[]  | List of namespaces where doctrine entities are searched |
-| attributeFQCN | Attribute used to detect Entities                       |
 
+- **attributeFQCN**
+  - Attribute used to detect Entities
+  - **Default Value**: ``` \Doctrine\ORM\Mapping\Table ```
 - **enabled**
   - Enabler for panel of doctrine entities
   - **Default Value**: ``` true ```
 - **namespaces[]**
   - List of namespaces where doctrine entities are searched
-- **attributeFQCN**
-  - Attribute used to detect Entities
-  - **Default Value**: ``` \Doctrine\ORM\Mapping\Table ```
 <!-- generateDocumentationEnd -->
 
 #### Example
-<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","doctrineEntitiesConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration","doctrineEntities") -->
 ```yaml
-doctrineEntitiesConfiguration:
+doctrineEntities:
   attributeFQCN: \Doctrine\ORM\Mapping\Table
   enabled: true
   namespaces:
@@ -522,7 +523,7 @@ doctrineEntitiesConfiguration:
 #### `openAPIConfiguration`:
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPIConfiguration") -->
+<!-- generateDocumentationProperties("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPI") -->
 | Property             | Description                                           |
 | -------------------- | ----------------------------------------------------- |
 | enabled              | Enabler for panel of OAS routes                       |
@@ -536,9 +537,9 @@ doctrineEntitiesConfiguration:
 <!-- generateDocumentationEnd -->
 
 #### Example
-<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPIConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.symfony.list.configuration.OpenAPIConfiguration","openAPI") -->
 ```yaml
-openAPIConfiguration:
+openAPI:
   enabled: true
   specificationRoots:
   - public/openapi.yaml
@@ -550,7 +551,7 @@ openAPIConfiguration:
 #### `TasksConfiguration`:
 
 #### Properties
-<!-- generateDocumentationProperties("org.micoli.php.tasks.configuration.TasksConfiguration","tasksConfiguration") -->
+<!-- generateDocumentationProperties("org.micoli.php.tasks.configuration.TasksConfiguration","tasks") -->
 | Property             | Description                                                                                                                                                                                   |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | enabled              | Enabler for panel of Task and actions                                                                                                                                                         |
@@ -559,14 +560,17 @@ openAPIConfiguration:
 | tasks[].icon         | Path to the icon to display for this builtin task. Uses standard IntelliJ Platform icons                                                                                                      |
 | tasks[].id           | Unique task identifier used for references in tree and toolbar. Must be unique among all tasks in the configuration                                                                           |
 | tasks[].label        | Label displayed to user in the interface. User-friendly name describing the task function                                                                                                     |
+| toolbar[]            | Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId                                                                        |
+| toolbar[].label      | If set, it will overide task label in tree                                                                                                                                                    |
+| toolbar[].taskId     | Identifier of the referenced task. Must match the ID of an existing task in the TasksConfiguration tasks array                                                                                |
 | tree[]               | Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes) |
 | tree[].label         | Label displayed for this folder in the hierarchical tree. User-friendly name for organizing tasks into logical groups                                                                         |
 | tree[].tasks[]       | Array of child nodes contained in this folder. Can contain other folders (Path) or task references (Task)                                                                                     |
-| toolbar[]            | Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId                                                                        |
 | watchers[]           | File watchers configuration that automatically trigger tasks when specified files are modified                                                                                                |
-| watchers[].taskId    | Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration                                                                 |
 | watchers[].debounce  | Delay in milliseconds before task triggering after change detection. Prevents multiple executions during rapid successive modifications                                                       |
+| watchers[].events    | List all events triggering the watcher, by default, all events                                                                                                                                |
 | watchers[].notify    | Indicates if a notification should be displayed to the user upon triggering. False by default to avoid too frequent notifications                                                             |
+| watchers[].taskId    | Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration                                                                 |
 | watchers[].watches[] | Array of file patterns to watch. Supports wildcards and regular expressions to match file paths                                                                                               |
 
 - **enabled**
@@ -587,53 +591,61 @@ openAPIConfiguration:
 - **tasks[].label**
   - Label displayed to user in the interface. User-friendly name describing the task function
   - **Example**: ``` First task ```
+- **toolbar[]**
+  - Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId
+- **toolbar[].label**
+  - If set, it will overide task label in tree
+  - **Example**: ``` aLabel ```
+- **toolbar[].taskId**
+  - Identifier of the referenced task. Must match the ID of an existing task in the TasksConfiguration tasks array
+  - **Example**: ``` aTaskId ```
 - **tree[]**
   - Hierarchical tree structure of tasks and folders for organization in the user interface. Can contain Task objects (referencing tasks by ID) and Path objects (folders containing other nodes)
 - **tree[].label**
   - Label displayed for this folder in the hierarchical tree. User-friendly name for organizing tasks into logical groups
 - **tree[].tasks[]**
   - Array of child nodes contained in this folder. Can contain other folders (Path) or task references (Task)
-- **toolbar[]**
-  - Array of tasks to display in the toolbar for quick access. Each element must reference an existing task via its taskId
 - **watchers[]**
   - File watchers configuration that automatically trigger tasks when specified files are modified
-- **watchers[].taskId**
-  - Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration
 - **watchers[].debounce**
   - Delay in milliseconds before task triggering after change detection. Prevents multiple executions during rapid successive modifications
   - **Default Value**: ``` 1000 ```
+- **watchers[].events**
+  - List all events triggering the watcher, by default, all events
 - **watchers[].notify**
   - Indicates if a notification should be displayed to the user upon triggering. False by default to avoid too frequent notifications
   - **Default Value**: ``` false ```
+- **watchers[].taskId**
+  - Identifier of the task to execute when watched files are modified. Must match the ID of an existing task in the configuration
 - **watchers[].watches[]**
   - Array of file patterns to watch. Supports wildcards and regular expressions to match file paths
 <!-- generateDocumentationEnd -->
 
 #### Example
-<!-- generateDocumentationExample("org.micoli.php.tasks.configuration.TasksConfiguration","tasksConfiguration") -->
+<!-- generateDocumentationExample("org.micoli.php.tasks.configuration.TasksConfiguration","tasks") -->
 ```yaml
-tasksConfiguration:
+tasks:
   enabled: false
   tasks:
   - type: builtin
-    id: null
+    id: aTaskId
     label: null
     actionId: $Copy
     icon: debugger/threadRunning.svg
   - type: shell
-    id: null
+    id: aTaskId
     label: null
     command: make clear-cache
     cwd: ''
     icon: debugger/threadRunning.svg
   - type: script
-    id: null
+    id: aTaskId
     label: null
     source: ''
     extension: groovy
     icon: debugger/threadRunning.svg
   - type: observedFile
-    id: null
+    id: aTaskId
     label: null
     commentPrefix: '#'
     filePath: ''
@@ -643,21 +655,30 @@ tasksConfiguration:
     unknownIcon: expui/fileTypes/unknown.svg
     postToggle:
       type: builtin
-      id: null
+      id: aTaskId
       label: null
       actionId: null
       icon: debugger/threadRunning.svg
-    icon: actions/inlayRenameInComments.svg
+  - type: link
+    id: aTaskId
+    label: null
+    url: http://www.github.com
+    icon: expui/gutter/web.svg
+  - type: bookmark
+    id: aTaskId
+    label: null
+    path: http://www.github.com
+    icon: expui/gutter/web.svg
   toolbar:
-  - null
+  - type: task
+    taskId: aTaskId
+    label: aLabel
   tree:
   - type: path
     label: ''
     tasks:
     - null
-    - type: task
-      taskId: aTaskId
-      label: aLabel
+    - null
   - null
   watchers:
   - taskId: ''
@@ -665,11 +686,120 @@ tasksConfiguration:
     notify: false
     watches:
     - ''
+    events:
+    - CREATE
+    - CONTENT_CHANGED
+    - COPY
+    - DELETE
+    - MOVE
+    - PROPERTY_CHANGED
 ```
 <!-- generateDocumentationEnd -->
 
 
-#### `CodeStylesSynchronization`:
+### `Symfony Profiler`:
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration","symfonyProfiler") -->
+| Property        | Description                                                |
+| --------------- | ---------------------------------------------------------- |
+| enabled         | Enabler for panel of SymfonyProfilers                      |
+| excludeFilter[] | List of regular expression used to filter URI in profilers |
+| profilerPath    | Local path to Symfony Profiler dumps                       |
+| profilerUrlRoot | Profiler URL root                                          |
+| urlRoots[]      | List of URL roots of symfony profiles                      |
+
+- **enabled**
+  - Enabler for panel of SymfonyProfilers
+  - **Default Value**: ``` false ```
+- **excludeFilter[]**
+  - List of regular expression used to filter URI in profilers
+- **profilerPath**
+  - Local path to Symfony Profiler dumps
+  - **Default Value**: ``` var/cache/dev/profiler ```
+- **profilerUrlRoot**
+  - Profiler URL root
+  - **Default Value**: ``` https://127.0.0.1:8000/_profiler/ ```
+- **urlRoots[]**
+  - List of URL roots of symfony profiles
+<!-- generateDocumentationEnd -->
+
+#### Example
+<!-- generateDocumentationExample("org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration","symfonyProfiler") -->
+```yaml
+symfonyProfiler:
+  enabled: false
+  excludeFilter:
+  - ''
+  profilerPath: var/cache/dev/profiler
+  profilerUrlRoot: https://127.0.0.1:8000/_profiler/
+  urlRoots:
+  - https://127.0.0.1:8000
+```
+<!-- generateDocumentationEnd -->
+
+
+### `Class Style`:
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.classStyles.configuration.ClassStylesConfiguration","styles") -->
+| Property                      | Description                                         |
+| ----------------------------- | --------------------------------------------------- |
+| enabled                       | Enabler for Php Class style configuration           |
+| rules[]                       |                                                     |
+| rules[].fqcns[]               | Fully Qualified class name or interface             |
+| rules[].style                 | Style to apply if class implements one of the FQCNs |
+| rules[].style.backgroundColor | Background color of the class                       |
+| rules[].style.effect          | Font effect                                         |
+| rules[].style.effectColor     | Font effect color                                   |
+| rules[].style.fontStyles      | Font style/variant                                  |
+| rules[].style.foregroundColor | Foreground color of the class                       |
+
+- **enabled**
+  - Enabler for Php Class style configuration
+  - **Example**: ``` true ```
+  - **Default Value**: ``` false ```
+- **rules[]**
+- **rules[].fqcns[]**
+  - Fully Qualified class name or interface
+- **rules[].style**
+  - Style to apply if class implements one of the FQCNs
+- **rules[].style.backgroundColor**
+  - Background color of the class
+  - **Example**: ``` BLACK ```
+- **rules[].style.effect**
+  - Font effect
+  - **Example**: ``` LINE_UNDERSCORE ```
+- **rules[].style.effectColor**
+  - Font effect color
+  - **Example**: ``` RED ```
+- **rules[].style.fontStyles**
+  - Font style/variant
+  - **Example**: ``` [BOLD] ```
+- **rules[].style.foregroundColor**
+  - Foreground color of the class
+  - **Example**: ``` BLUE ```
+<!-- generateDocumentationEnd -->
+
+#### Example
+<!-- generateDocumentationExample("org.micoli.php.classStyles.configuration.ClassStylesConfiguration","styles") -->
+```yaml
+styles:
+  enabled: false
+  rules:
+  - fqcns:
+    - ''
+    style:
+      foregroundColor: null
+      backgroundColor: null
+      fontStyles: []
+      effect: null
+      effectColor: null
+```
+<!-- generateDocumentationEnd -->
+
+
+### `CodeStylesSynchronization`:
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration","codeStyleSynchronization") -->
@@ -707,44 +837,32 @@ codeStyleSynchronization:
 
 ### Scripting Classes
 
-<!-- generateDocumentationSource("src/main/java/org/micoli/php/scripting","%s") -->
-#### `UI`
+<!-- generateDocumentationSource("org.micoli.php.scripting","%s") -->
+#### `Core`
 
-known as `ui` in scripting engine
+- **runAction****
+   - `actionId`: String
 
-- `void alert(String message)`
-  Displays a closable popup
-   - `message`: the message to display.
-
-- `void alert(String message, int delayInMs)`
-  Displays a closable popup and automatically close it after a given delay
-   - `message`: the message to display.
-   - `delayInMs`: the delay in milliseconds before the popup is closed.
+- **runActionInEditor****
+   - `actionId`: String
 
 #### `FileSystem`
 
-known as `fs` in scripting engine
+- **clearPath****
+   - `path`: String
 
-- `void clearPath(String path)`
-  Removes a path and it's sub content. Path must be ignored by GIT.
-   - `path`: the relative filepath
+- **clearPath****
+   - `path`: String
+   - `mustBeGitIgnored`: Boolean
 
-- `void clearPath(String path, boolean mustBeGitIgnored)`
-  Removes a path and it's sub content.
-   - `path`: the relative filepath
-   - `mustBeGitIgnored`: if false, the path will be removed even if it's not ignored by GIT.
+#### `UI`
 
-#### `Core`
+- **alert****
+   - `message`: String
 
-known as `core` in scripting engine
-
-- `void runAction(String actionId)`
-  Runs a registered action.
-   - `actionId`: the ID of the action to run
-
-- `void runActionInEditor(String actionId)`
-  Activates the currently opened editor and runs a registered action.
-   - `actionId`: the ID of the action to run
+- **alert****
+   - `message`: String
+   - `delayInMs`: Int
 
 
 <!-- generateDocumentationEnd -->

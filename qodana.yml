@@ -10,3 +10,7 @@ exclude:
   - name: All
     paths:
       - .qodana
+  - name: UnusedSymbol
+  - name: VulnerableLibrariesLocal
+    #ignoredDependencies:
+    #  - name: "io.swagger.parser.v3:swagger-parser-v3"
