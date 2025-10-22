@@ -1,6 +1,51 @@
 # Changelog
 
 
+## [0.9.0] - 2025-10-22
+- test(symfony-demo): Add a proper symfony-demo project to ease tests
+- feat(Styles): Add effect to ClassStyles
+- refactor(Configuration): Uniformize root properties naming in php-companion.yaml
+- refactor(UncheckCast): Add checked UNCHECKED_CAST
+- feat(Styles): Add a service to colorize php entities
+- feat(SymfonyProfiler): Add exclusion filter on profiler dumps
+- docs(Markdown): Add a MarkdownBuilder to be independent of Steppschuh:Java-Markdown-Generator
+- style: Fix codeStyles
+- chore(SymfonyProfiler): Let SymfonyProfiler be auto refreshed
+- feat(Tasks): Add a bookmark task node
+- refactor(AbstractListPanel): Rationalize list refresh method
+- feat(SymfonyProfiler): Add a tab on symfonyProfiler to display logs
+- refactor(AbstractListPanel): Rework on AbstractListPanel
+- chore(Profiler): Add error handling when loading profile dump
+- chore(Profiler): Add a parser to handle symfony profiles pages
+- feat(SymfonyProfiler): Add a panel to list dump profiles and view them in plugin
+- refactor(kotlin-migration): Refacto on AbstractListPanel
+- chore(Tables): Handle selectionChzanged, click and dblClick
+- refactor(mainToolWindow): Cleanup toolwindow build and mode refresh button to title bar
+- chore(PHP): Add a package to unserialize PHP
+- chore(gz): Add an util to read gsCompressed data
+- feat(Tasks): Add link tasks
+- chore(Watcher): Allow to specify file event that triggers watcher handler
+- refactor(kotlin): Remove some Mutable(List|Map)s
+- refactor(kotlin): Minimize usage of !!
+- refactor(kotlin): Finalize kotlin migration
+- refactor(symfony): Migrate symfony services to kotlin
+- refactor(exportSourceToMarkdown): Migrate exportSourceToMarkdown to kotlin
+- refactor(PeerNavigation): Migrate PeerNavigation to kotlin
+- refactor(ConsoleCleaner): Migrate ConsoleCleaner to kotlin
+- refactor(CodeStyle): Migrate CodeStyle to kotlin
+- refactor: Inverse isEnabled to be more expressif
+- refactor(PeerNavigation): Migrate PeerNavigation to kotlin
+- refactor(Services): Migrate Services to kotlin
+- refactor(OpenAPI): Migrate OpenAPI to kotlin
+- refactor(Tasks): Migrate Tasks to kotlin
+- style(kotlin): Apply kotlin style
+- refactor(UI): Migrate UI to kotlin
+- refactor(configuration): Migrate configuration and documentation generation to kotlin
+- test: Migrate tests to kotlin
+- chore(Documentation): Make documentation generator compatible with kotlin properties
+- chore(Notification): Convert Notification static to service
+- style(kotlin): Add spotless kotlin configuration
+
 ## [0.8.2] - 2025-09-19
 - chore(configuration): Add a scheduled refresh on configuration
 - feat(CodeStyleSynchronization): Add a service to synchronize PHP CodeStyles

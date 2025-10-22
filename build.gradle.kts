@@ -48,7 +48,6 @@ dependencies {
     implementation("jaxen:jaxen:2.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("jakarta.validation:jakarta.validation-api:3.1.1")
-    testImplementation("org.assertj:assertj-core:3.11.1")
 
     intellijPlatform {
         create(
@@ -62,8 +61,14 @@ dependencies {
         testFramework(TestFrameworkType.Plugin.Java)
     }
 
+    testImplementation("org.assertj:assertj-core:3.25.1") {
+        exclude(group = "org.jetbrains", module = "annotations")
+    }
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.1")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.2")
 }
 
