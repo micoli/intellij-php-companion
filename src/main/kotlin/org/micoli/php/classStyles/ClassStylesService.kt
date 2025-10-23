@@ -6,7 +6,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.ui.JBColor
 import com.jetbrains.php.lang.psi.elements.MethodReference
 import com.jetbrains.php.lang.psi.elements.NewExpression
 import com.jetbrains.php.lang.psi.elements.PhpClass
@@ -28,7 +27,6 @@ class ClassStylesService {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     fun loadConfiguration(stylesConfiguration: ClassStylesConfiguration?) {
         if (stylesConfiguration == null) {
             enabled = false
@@ -37,19 +35,15 @@ class ClassStylesService {
         enabled = true
         configuration = stylesConfiguration
         synchronized(this) {
-            val isBrightTheme = !JBColor.isBright()
             rules.clear()
             rules.addAll(
                 configuration.rules.map {
                     ClassStyleRule(
                         it.fqcns,
                         TextAttributes(
-                            if (isBrightTheme) it.style.foregroundColor?.color
-                            else it.style.foregroundColor?.color?.darkVariant,
-                            if (isBrightTheme) it.style.backgroundColor?.color
-                            else it.style.backgroundColor?.color?.darkVariant,
-                            if (isBrightTheme) it.style.effectColor?.color
-                            else it.style.effectColor?.color?.darkVariant,
+                            it.style.foregroundColor?.color,
+                            it.style.backgroundColor?.color,
+                            it.style.effectColor?.color,
                             it.style.effect,
                             it.style.fontStyles.sumOf { style ->
                                 when (style) {
