@@ -2,12 +2,15 @@ package org.micoli.php
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.DumbService.DumbModeListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.messages.MessageBus
@@ -103,7 +106,7 @@ class PhpCompanionProjectService(private val project: Project) :
                     .configurationLoaded(loadedConfiguration.configuration)
             }
 
-            DaemonCodeAnalyzer.getInstance(project).restart()
+            refreshHints()
             loadedConfiguration.ignoredProperties
             if (!loadedConfiguration.ignoredProperties.isEmpty()) {
                 Notification.getInstance(project)
@@ -125,6 +128,16 @@ class PhpCompanionProjectService(private val project: Project) :
                 Notification.getInstance(project)
                     .error("Configuration error while loading:", e.localizedMessage)
                 this.configurationTimestamp = e.serial
+            }
+        }
+    }
+
+    private fun refreshHints() {
+        ApplicationManager.getApplication().runWriteAction {
+            for (virtualFile in FileEditorManager.getInstance(project).openFiles) {
+                virtualFile.findPsiFile(project)?.let { psiFile ->
+                    DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
+                }
             }
         }
     }
