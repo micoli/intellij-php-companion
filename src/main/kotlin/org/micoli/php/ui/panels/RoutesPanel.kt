@@ -69,7 +69,7 @@ class RoutesPanel(project: Project) :
 
     override fun handleActionDoubleClick(elementDTO: RouteElementDTO): Boolean {
         val navigatable = elementDTO.element as? Navigatable ?: return true
-        ApplicationManager.getApplication().runReadAction({ navigatable.navigate(true) })
+        ApplicationManager.getApplication().runReadAction { navigatable.navigate(true) }
 
         return true
     }

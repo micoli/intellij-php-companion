@@ -48,7 +48,7 @@ class DoctrineEntitiesPanel(project: Project) :
 
     override fun handleActionDoubleClick(elementDTO: DoctrineEntityElementDTO): Boolean {
         val navigatable = elementDTO.element as? Navigatable ?: return false
-        ApplicationManager.getApplication().runReadAction({ navigatable.navigate(true) })
+        ApplicationManager.getApplication().runReadAction { navigatable.navigate(true) }
         return true
     }
 

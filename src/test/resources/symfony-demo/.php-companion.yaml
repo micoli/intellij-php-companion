@@ -136,3 +136,9 @@ routes:
 doctrineEntities:
     namespaces:
         - App\Entity
+
+commands:
+    enabled: true
+
+openAPI:
+    enabled: true
