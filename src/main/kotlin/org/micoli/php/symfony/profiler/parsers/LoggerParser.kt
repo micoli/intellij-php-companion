@@ -3,9 +3,8 @@ package org.micoli.php.symfony.profiler.parsers
 import java.time.OffsetDateTime
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import org.jaxen.jdom.JDOMXPath
-import org.jdom.Document
-import org.jdom.Element
+import org.jdom2.Document
+import org.jdom2.Element
 import org.micoli.php.symfony.list.SearchableRecord
 
 class Log(
@@ -29,16 +28,16 @@ class LoggerParser : Parser() {
         val logs = mutableListOf<Log>()
 
         val xpathRows =
-            JDOMXPath("//table[@class='logs']//tbody/tr[starts-with(@class,'log-status-')]")
-        val xpathTime = JDOMXPath(".//time")
-        val xpathSeverity = JDOMXPath(".//span[contains(@class,'log-type-badge')]")
-        val xpathMessage = JDOMXPath(".//span[contains(@class,'dump-inline')]")
-        val xpathChannel = JDOMXPath(".//div/span[@class='badge']")
-        val xpathContext = JDOMXPath(".//div/div[contains(@class,'context')]")
+            compileXPath("//table[@class='logs']//tbody/tr[starts-with(@class,'log-status-')]")
+        val xpathTime = compileXPath(".//time")
+        val xpathSeverity = compileXPath(".//span[contains(@class,'log-type-badge')]")
+        val xpathMessage = compileXPath(".//span[contains(@class,'dump-inline')]")
+        val xpathChannel = compileXPath(".//div/span[@class='badge']")
+        val xpathContext = compileXPath(".//div/div[contains(@class,'context')]")
 
-        for (logRow in xpathRows.selectNodes(document.rootElement)) {
+        for (logRow in xPathElements(xpathRows, document)) {
             val datetime =
-                xpathTime.selectNodes(logRow).firstOrNull()?.let {
+                xPathFirstElement(xpathTime, logRow)?.let {
                     (it as Element).getAttributeValue("datetime")
                 } ?: ""
             if (datetime.isEmpty()) {

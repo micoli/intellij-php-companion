@@ -1,7 +1,6 @@
 package org.micoli.php.symfony.profiler.parsers
 
-import org.jaxen.jdom.JDOMXPath
-import org.jdom.Document
+import org.jdom2.Document
 
 class RequestData(val controller: String, val route: String)
 
@@ -10,10 +9,10 @@ class RequestParser : Parser() {
 
     override fun parse(document: Document): RequestData {
         val xpathController =
-            JDOMXPath(
+            compileXPath(
                 "//h3[text()='Request Attributes']/following-sibling::div[1]/table/tbody/tr/th[text()='_controller']/following-sibling::td")
         val xpathRoute =
-            JDOMXPath(
+            compileXPath(
                 "//h3[text()='Request Attributes']/following-sibling::div[1]/table/tbody/tr/th[text()='_route']/following-sibling::td")
 
         return RequestData(

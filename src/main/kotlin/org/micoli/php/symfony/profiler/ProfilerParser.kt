@@ -1,6 +1,6 @@
 package org.micoli.php.symfony.profiler
 
-import org.jdom.input.SAXBuilder
+import org.jdom2.input.SAXBuilder
 import org.jsoup.Jsoup
 import org.micoli.php.symfony.profiler.parsers.DBData
 import org.micoli.php.symfony.profiler.parsers.DbParser
@@ -35,8 +35,8 @@ class ProfilerParser {
         try {
             return parsers[targetClass]?.parse(
                 saxBuilder.build(doc.outerHtml().trimIndent().trimStart().byteInputStream())) as T
-        } catch (_: Exception) {
-            throw Exception("Failed to parse profiler page.")
+        } catch (e: Exception) {
+            throw Exception("Failed to parse profiler page. ${e.localizedMessage}", e)
         }
     }
 }

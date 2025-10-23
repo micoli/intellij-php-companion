@@ -45,9 +45,9 @@ dependencies {
     implementation("com.opencsv:opencsv:5.7.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("org.jsoup:jsoup:1.17.2")
-    implementation("jaxen:jaxen:2.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+    implementation("org.jdom:jdom2:2.0.6")
 
     intellijPlatform {
         create(

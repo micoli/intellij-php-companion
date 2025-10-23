@@ -5,10 +5,13 @@ import java.net.URLDecoder
 import java.text.ParseException
 import java.util.regex.Pattern
 import org.jaxen.jdom.JDOMXPath
-import org.jdom.Document
-import org.jdom.Element
-import org.jdom.Parent
-import org.jdom.output.XMLOutputter
+import org.jdom2.Document
+import org.jdom2.Element
+import org.jdom2.Parent
+import org.jdom2.filter.Filters
+import org.jdom2.output.XMLOutputter
+import org.jdom2.xpath.XPathExpression
+import org.jdom2.xpath.XPathFactory
 import org.jsoup.Jsoup
 
 class FileLocation(
@@ -18,6 +21,7 @@ class FileLocation(
 
 abstract class Parser {
     val outputter = XMLOutputter()
+    private val xpathFactory = XPathFactory.instance()
 
     abstract fun parse(document: Document): Any
 
@@ -85,6 +89,28 @@ abstract class Parser {
         }
     }
 
+    protected fun compileXPath(expression: String): XPathExpression<Element> {
+        return xpathFactory.compile(expression, Filters.element())
+    }
+
+    protected fun xPathHTMLText(xpath: XPathExpression<Element>, context: Any?): String {
+        val element = xpath.evaluateFirst(context) ?: return ""
+        return Jsoup.parse(outputter.outputString(element) ?: "").text()
+    }
+
+    protected fun xPathHTML(xpath: XPathExpression<Element>, context: Any?): String {
+        val element = xpath.evaluateFirst(context)
+        return if (element == null) "" else outputter.outputString(element)
+    }
+
+    protected fun xPathElements(xpath: XPathExpression<Element>, context: Any): List<Element> {
+        return xpath.evaluate(context)
+    }
+
+    protected fun xPathFirstElement(xpath: XPathExpression<Element>, context: Any): Element? {
+        return xpath.evaluateFirst(context)
+    }
+
     protected fun <T> measureTime(label: String, block: () -> T): T {
         val startTime = System.nanoTime()
         val result = block()
@@ -109,7 +135,7 @@ abstract class Parser {
     }
 
     protected fun xPathFirstElements(xpath: JDOMXPath, queryRow: Element): Element? {
-        return xpath.selectNodes(queryRow).firstOrNull() as? Element
+        return xpath.selectNodes(queryRow).filterIsInstance<Element>().firstOrNull()
     }
 
     companion object {

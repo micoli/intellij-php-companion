@@ -2,9 +2,7 @@ package org.micoli.php.symfony.profiler.parsers
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import org.jaxen.jdom.JDOMXPath
-import org.jdom.Document
-import org.jdom.Element
+import org.jdom2.Document
 import org.micoli.php.symfony.list.SearchableRecord
 
 class DBStats(
@@ -36,16 +34,16 @@ class DbParser : Parser() {
         val entities = mutableListOf<String>()
 
         val xpathQueryRows =
-            JDOMXPath(
+            compileXPath(
                 "//table[contains(@class,'queries-table')]//tbody/tr[starts-with(@id,'query')]")
-        val xpathQuerySql = JDOMXPath(".//pre[contains(@class,'highlight highlight-sql')]")
+        val xpathQuerySql = compileXPath(".//pre[contains(@class,'highlight highlight-sql')]")
         val xpathQueryRunnable =
-            JDOMXPath(
+            compileXPath(
                 ".//div[starts-with(@id,'original-query') and contains(@class,'sql-runnable')]/pre[contains(@class,'highlight highlight-sql')]")
-        val xpathBacktraceRows = JDOMXPath(".//div[starts-with(@id,'backtrace')]/table/tbody/tr")
-        val xpathBacktraceLink = JDOMXPath(".//a")
+        val xpathBacktraceRows = compileXPath(".//div[starts-with(@id,'backtrace')]/table/tbody/tr")
+        val xpathBacktraceLink = compileXPath(".//a")
 
-        val queryRows = xpathQueryRows.selectNodes(document).filterIsInstance<Element>()
+        val queryRows = xPathElements(xpathQueryRows, document)
 
         for (queryRow in queryRows) {
             val cells = queryRow.getChildren("td")
@@ -57,7 +55,7 @@ class DbParser : Parser() {
                 val backtraceCells = backtrace.getChildren("td")
                 if (backtraceCells.size > 1) {
                     val uri =
-                        xPathFirstElements(xpathBacktraceLink, backtraceCells[1])
+                        xPathFirstElement(xpathBacktraceLink, backtraceCells[1])
                             ?.getAttributeValue("href") ?: ""
                     val backTrace = parseFileUri(uri)
                     if (backTrace != null) {
@@ -76,21 +74,21 @@ class DbParser : Parser() {
                     backtracesList))
         }
 
-        val xpathEntities = JDOMXPath("//div[h3='Entities Mapping']//tbody//tr")
-        val xpathEntityCell = JDOMXPath(".//td[1]")
+        val xpathEntities = compileXPath("//div[h3='Entities Mapping']//tbody//tr")
+        val xpathEntityCell = compileXPath(".//td[1]")
 
         for (row in xPathElements(xpathEntities, document)) {
             entities.add(xPathHTMLText(xpathEntityCell, row))
         }
 
         val xpathQueryCount =
-            JDOMXPath(
+            compileXPath(
                 "//div[@class='metrics']/div/div[@class='metric' and span='Database Queries']/span[@class='value']")
         val xpathStatements =
-            JDOMXPath(
+            compileXPath(
                 "//div[@class='metrics']/div/div[@class='metric' and span='Different statements']/span[@class='value']")
         val xpathQueryTime =
-            JDOMXPath(
+            compileXPath(
                 "//div[@class='metrics']/div/div[@class='metric' and span='Query time']/span[@class='value']")
 
         return DBData(

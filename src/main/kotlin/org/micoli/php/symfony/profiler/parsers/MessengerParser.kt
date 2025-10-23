@@ -2,9 +2,7 @@ package org.micoli.php.symfony.profiler.parsers
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import org.jaxen.jdom.JDOMXPath
-import org.jdom.Document
-import org.jdom.Element
+import org.jdom2.Document
 import org.micoli.php.symfony.list.SearchableRecord
 
 class MessengerStats(
@@ -29,17 +27,17 @@ class MessengerParser : Parser() {
     override fun getPage(): String = "messenger"
 
     override fun parse(document: Document): MessengerData {
-        val xpathMessageTables = JDOMXPath("//table[@class = 'message-item']")
-        val xpathMessageBus = JDOMXPath(".//tbody/tr/th[text()='Bus']/following-sibling::td[1]")
-        val xpathMessageName = JDOMXPath(".//thead//a")
+        val xpathMessageTables = compileXPath("//table[@class = 'message-item']")
+        val xpathMessageBus = compileXPath(".//tbody/tr/th[text()='Bus']/following-sibling::td[1]")
+        val xpathMessageName = compileXPath(".//thead//a")
         val xpathMessageCaller =
-            JDOMXPath(".//tbody/tr/th[text()='Caller']/following-sibling::td[1]/a")
+            compileXPath(".//tbody/tr/th[text()='Caller']/following-sibling::td[1]/a")
         val xpathMessageContent =
-            JDOMXPath(".//tbody/tr/th[text()='Message']/following-sibling::td[1]")
+            compileXPath(".//tbody/tr/th[text()='Message']/following-sibling::td[1]")
 
         val dispatches = mutableListOf<MessengerDispatch>()
 
-        val messageTables = xpathMessageTables.selectNodes(document).filterIsInstance<Element>()
+        val messageTables = xPathElements(xpathMessageTables, document)
 
         for (table in messageTables) {
             val eventBus = xPathHTMLText(xpathMessageBus, table)
@@ -48,11 +46,11 @@ class MessengerParser : Parser() {
             dispatches.add(
                 MessengerDispatch(
                     xPathHTMLText(xpathMessageName, table),
-                    xPathFirstElements(xpathMessageName, table)?.let {
+                    xPathFirstElement(xpathMessageName, table)?.let {
                         parseFileUri(it.getAttributeValue("href"))
                     },
                     eventBus,
-                    xPathFirstElements(xpathMessageCaller, table)?.let {
+                    xPathFirstElement(xpathMessageCaller, table)?.let {
                         parseFileUri(it.getAttributeValue("href"))
                     },
                     xPathHTMLText(xpathMessageContent, table)))
