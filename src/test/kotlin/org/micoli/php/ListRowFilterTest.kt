@@ -42,8 +42,9 @@ class ListRowFilterTest(
                 TestElementDTO("t5", "/actor/{id}/add", "Add an actor"),
                 TestElementDTO("t6", "/actor/{id}/update", "Update an actor"),
                 TestElementDTO("t7", "/resource/{id}/delete", "Delete a resource"),
-            ),
-            { item -> arrayOf(item.id) })
+            )) { item ->
+                arrayOf(item.id)
+            }
 
         val listRowFilter = ListRowFilter<TableModel, Any?>()
         val defaultRowSorter = TableRowSorter<TableModel>(model)

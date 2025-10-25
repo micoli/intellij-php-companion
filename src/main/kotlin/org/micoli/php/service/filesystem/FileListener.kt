@@ -2,11 +2,13 @@ package org.micoli.php.service.filesystem
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.util.messages.MessageBus
 import java.nio.file.Paths
 
-class FileListener<Id>(handler: VfsHandler<Id>) {
+class FileListener<Id>(handler: VfsHandler<Id>, messageBus: MessageBus?) {
     var isEnabled: Boolean = false
 
     interface VfsHandler<T> {
@@ -34,6 +36,14 @@ class FileListener<Id>(handler: VfsHandler<Id>) {
                     }
                 }
             }
+        subscribe(messageBus)
+    }
+
+    private fun subscribe(messageBus: MessageBus?) {
+        if (messageBus == null) return
+        messageBus
+            .connect()
+            .subscribe<BulkFileListener>(VirtualFileManager.VFS_CHANGES, vfsListener)
     }
 
     fun setPatterns(patterns: MutableMap<Id, Watchee>) {

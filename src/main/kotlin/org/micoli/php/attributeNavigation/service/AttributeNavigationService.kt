@@ -15,11 +15,11 @@ import org.micoli.php.ui.Notification
 class AttributeNavigationService(private val project: Project) {
     var rules: ImmutableList<NavigationByAttributeRule> = persistentListOf()
 
-    fun loadConfiguration(openApiConfiguration: AttributeNavigationConfiguration?) {
-        if (openApiConfiguration == null) {
+    fun loadConfiguration(configuration: AttributeNavigationConfiguration?) {
+        if (configuration == null) {
             return
         }
-        rules = persistentListOf(*openApiConfiguration.rules)
+        rules = persistentListOf(*configuration.rules)
     }
 
     fun configurationIsEmpty(): Boolean {

@@ -3,8 +3,6 @@ package org.micoli.php.tasks
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.util.containers.stream
 import io.ktor.util.reflect.instanceOf
 import java.nio.file.FileSystems
@@ -39,17 +37,11 @@ import org.micoli.php.tasks.runnables.RunnableTask
 import org.micoli.php.ui.Notification
 
 open class TasksService(private val project: Project) : VfsHandler<TaskIdentifier> {
-    private val fileListener: FileListener<TaskIdentifier> = FileListener(this)
+    private val fileListener: FileListener<TaskIdentifier> = FileListener(this, project.messageBus)
     protected var runnableActions: ImmutableMap<String, RunnableTask> = persistentMapOf()
     protected var debouncedRunnables: DebouncedRunnables = DebouncedRunnables()
     var isWatcherEnabled: Boolean = true
         private set
-
-    init {
-        project.messageBus
-            .connect()
-            .subscribe<BulkFileListener>(VirtualFileManager.VFS_CHANGES, fileListener.vfsListener)
-    }
 
     fun loadConfiguration(tasksConfiguration: TasksConfiguration?) {
         fileListener.reset()

@@ -9,11 +9,8 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.DumbService.DumbModeListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.findPsiFile
-import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.util.concurrency.AppExecutorUtil
-import com.intellij.util.messages.MessageBus
 import java.nio.file.FileSystems
 import java.nio.file.PathMatcher
 import java.util.Map
@@ -46,7 +43,6 @@ import org.micoli.php.ui.Notification
 @Service(Service.Level.PROJECT)
 class PhpCompanionProjectService(private val project: Project) :
     Disposable, DumbModeListener, VfsHandler<String> {
-    private val messageBus: MessageBus
     private var configurationTimestamp: Long = 0L
     private val scheduledTask: ScheduledFuture<*>?
 
@@ -54,7 +50,7 @@ class PhpCompanionProjectService(private val project: Project) :
         scheduledTask =
             AppExecutorUtil.getAppScheduledExecutorService()
                 .scheduleWithFixedDelay({ loadConfiguration(false) }, 0, 10, TimeUnit.SECONDS)
-        val fileListener = FileListener<String>(this)
+        val fileListener = FileListener<String>(this, project.messageBus)
         fileListener.setPatterns(
             Map.of(
                 "configFile",
@@ -65,22 +61,18 @@ class PhpCompanionProjectService(private val project: Project) :
                                     ConfigurationFactory().acceptableConfigurationFilesGlob))
                         .toMutableList(),
                     WatchEvent.all())))
-        this.messageBus = project.messageBus
-        this.messageBus
-            .connect()
-            .subscribe<BulkFileListener>(VirtualFileManager.VFS_CHANGES, fileListener.vfsListener)
-        this.messageBus.connect().subscribe<DumbModeListener>(DumbService.DUMB_MODE, this)
+        project.messageBus.connect().subscribe<DumbModeListener>(DumbService.DUMB_MODE, this)
         loadConfiguration(true)
     }
 
     override fun exitDumbMode() {
-        messageBus
+        project.messageBus
             .syncPublisher<IndexingEvents>(IndexingEvents.INDEXING_EVENTS)
             .indexingStatusChanged(false)
     }
 
     override fun enteredDumbMode() {
-        messageBus
+        project.messageBus
             .syncPublisher<IndexingEvents>(IndexingEvents.INDEXING_EVENTS)
             .indexingStatusChanged(true)
     }
@@ -99,7 +91,7 @@ class PhpCompanionProjectService(private val project: Project) :
             updateServicesConfigurations(loadedConfiguration.configuration)
 
             if (loadedConfiguration.configuration != null) {
-                messageBus
+                project.messageBus
                     .syncPublisher(ConfigurationEvents.CONFIGURATION_UPDATED)
                     .configurationLoaded(loadedConfiguration.configuration)
             }

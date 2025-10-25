@@ -25,7 +25,8 @@ class FileListenerTest : BasePlatformTestCase() {
                     handledIds.add(id)
                     handledFiles.add(file)
                 }
-            })
+            },
+            null)
     private var patterns: MutableMap<String, Watchee>? = null
 
     override fun getTestDataPath(): String = "src/test/resources/symfony-demo"

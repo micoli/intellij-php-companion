@@ -5,8 +5,6 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.util.messages.MessageBus
 import com.jetbrains.rd.util.string.printToString
 import com.opencsv.CSVReader
@@ -40,14 +38,7 @@ class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<Stri
     private var debouncedRunnables: DebouncedRunnables = DebouncedRunnables()
 
     var configuration: SymfonyProfilerConfiguration? = null
-    val profilerIndexListener = FileListener<String>(this)
-
-    init {
-        this.messageBus
-            .connect()
-            .subscribe<BulkFileListener>(
-                VirtualFileManager.VFS_CHANGES, profilerIndexListener.vfsListener)
-    }
+    val profilerIndexListener = FileListener<String>(this, project.messageBus)
 
     val elements: MutableList<SymfonyProfileDTO>
         get() {
