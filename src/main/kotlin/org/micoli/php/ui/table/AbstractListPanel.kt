@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.micoli.php.service.easterEgg.EditorProvider
 import org.micoli.php.ui.PhpCompanionIcon
 
 abstract class AbstractListPanel<T>(
@@ -174,6 +175,10 @@ abstract class AbstractListPanel<T>(
 
     fun updateFilter(text: String) {
         val textEditor = searchField.textEditor
+        if (text.equals("5n4k3")) {
+            EditorProvider.createGameEditorPanel(project)
+            return
+        }
         try {
             rowFilter.updateFilter(text, isRegexMode)
             innerSorter?.sort()
