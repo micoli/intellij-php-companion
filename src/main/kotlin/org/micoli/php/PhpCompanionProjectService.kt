@@ -2,7 +2,7 @@ package org.micoli.php
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbService
@@ -19,8 +19,6 @@ import java.nio.file.PathMatcher
 import java.util.Map
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import kotlin.Boolean
-import kotlin.Long
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService
 import org.micoli.php.classStyles.ClassStylesService
 import org.micoli.php.codeStyle.CodeStylesService
@@ -133,7 +131,7 @@ class PhpCompanionProjectService(private val project: Project) :
     }
 
     private fun refreshHints() {
-        ApplicationManager.getApplication().runWriteAction {
+        WriteCommandAction.runWriteCommandAction(project) {
             for (virtualFile in FileEditorManager.getInstance(project).openFiles) {
                 virtualFile.findPsiFile(project)?.let { psiFile ->
                     DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
