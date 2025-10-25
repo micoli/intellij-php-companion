@@ -4,15 +4,18 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import com.intellij.ui.JBColor
 import java.lang.String
 import javax.swing.RowSorter
 import javax.swing.SortOrder
+import javax.swing.SwingUtilities
 import javax.swing.table.TableRowSorter
 import org.micoli.php.symfony.profiler.SymfonyProfileDTO
 import org.micoli.php.symfony.profiler.SymfonyProfileService
 import org.micoli.php.ui.SymfonyWindowContent
 import org.micoli.php.ui.table.AbstractListPanel
 import org.micoli.php.ui.table.ActionIconRenderer
+import org.micoli.php.ui.table.ColoredCellRenderer
 import org.micoli.php.ui.table.ObjectTableModel
 import org.micoli.php.ui.table.TimestampRenderer
 
@@ -51,6 +54,17 @@ class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWi
             getColumn(1).setMaxWidth(60)
             getColumn(2).setMaxWidth(800)
             getColumn(3).setMaxWidth(60)
+            getColumn(3)
+                .setCellRenderer(
+                    ColoredCellRenderer {
+                        when (it.toIntOrNull()) {
+                            in 200..299 -> JBColor.GREEN
+                            in 300..399 -> JBColor.YELLOW
+                            in 400..499 -> JBColor.ORANGE
+                            in 500..999 -> JBColor.RED
+                            else -> null
+                        }
+                    })
             getColumn(4).setCellRenderer(ActionIconRenderer())
             getColumn(4).setMinWidth(50)
             getColumn(4).setMaxWidth(50)
@@ -58,8 +72,10 @@ class SymfonyProfilesPanel(project: Project, val symfonyWindowContent: SymfonyWi
     }
 
     override fun handleActionDoubleClick(elementDTO: SymfonyProfileDTO): Boolean {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            BrowserUtil.open(elementDTO.profileUrl)
+        SwingUtilities.invokeLater {
+            ApplicationManager.getApplication().executeOnPooledThread {
+                BrowserUtil.open(elementDTO.profileUrl)
+            }
         }
         return true
     }

@@ -184,29 +184,31 @@ class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<Stri
         val page = ProfilerParser().parsers[targetClass]?.getPage() ?: return
         logCallback("Start loading")
         val url =
-            ((configuration?.profilerUrlRoot ?: return) + token)
-                .toHttpUrlOrNull()
-                ?.newBuilder()
-                ?.addQueryParameter("panel", page)
-                ?.build()
-
-        val request = Request.Builder().url(url!!).build()
+            (((configuration?.profilerUrlRoot ?: return) + token).toHttpUrlOrNull() ?: return)
+                .newBuilder()
+                .addQueryParameter("panel", page)
+                .addQueryParameter("type", "request")
+                .build()
         try {
-            createHttpClient(true, errorCallback).newCall(request).execute().use {
-                if (it.isSuccessful) {
-                    val body = it.body?.string() ?: return
-                    logCallback("Parsing")
-                    try {
-                        val result = ProfilerParser().loadProfilerPage(targetClass, body)
-                        logCallback("Parsing done")
-                        callback(result)
-                    } catch (e: Exception) {
-                        errorCallback(e.localizedMessage)
+            createHttpClient(true, errorCallback)
+                .newCall(Request.Builder().url(url).build())
+                .execute()
+                .use {
+                    if (it.isSuccessful) {
+                        logCallback("Parsing")
+                        try {
+                            val result =
+                                ProfilerParser()
+                                    .loadProfilerPage(targetClass, it.body?.string() ?: return)
+                            logCallback("Parsing done")
+                            callback(result)
+                        } catch (e: Exception) {
+                            errorCallback(e.localizedMessage)
+                        }
+                        return
                     }
-                    return
+                    errorCallback(it.message)
                 }
-                errorCallback(it.message)
-            }
         } catch (e: Exception) {
             errorCallback(e.localizedMessage)
         }

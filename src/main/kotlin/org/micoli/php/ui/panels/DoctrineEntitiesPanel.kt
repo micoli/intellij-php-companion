@@ -7,6 +7,7 @@ import com.intellij.pom.Navigatable
 import java.lang.String
 import javax.swing.RowSorter
 import javax.swing.SortOrder
+import javax.swing.SwingUtilities
 import javax.swing.table.TableRowSorter
 import kotlin.Any
 import kotlin.Comparator
@@ -48,7 +49,9 @@ class DoctrineEntitiesPanel(project: Project) :
 
     override fun handleActionDoubleClick(elementDTO: DoctrineEntityElementDTO): Boolean {
         val navigatable = elementDTO.element as? Navigatable ?: return false
-        ApplicationManager.getApplication().runReadAction { navigatable.navigate(true) }
+        SwingUtilities.invokeLater {
+            ApplicationManager.getApplication().runReadAction { navigatable.navigate(true) }
+        }
         return true
     }
 

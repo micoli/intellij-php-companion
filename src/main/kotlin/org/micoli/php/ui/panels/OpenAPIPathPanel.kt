@@ -77,8 +77,10 @@ class OpenAPIPathPanel(project: Project) :
     }
 
     override fun handleActionDoubleClick(elementDTO: OpenAPIPathElementDTO): Boolean {
-        ApplicationManager.getApplication().runReadAction {
-            searchOperationIdDeclaration("operationId: " + elementDTO.operationId)
+        SwingUtilities.invokeLater {
+            ApplicationManager.getApplication().runReadAction {
+                searchOperationIdDeclaration("operationId: " + elementDTO.operationId)
+            }
         }
         return true
     }

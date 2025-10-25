@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.ui.TreeUIHelper
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.treeStructure.Tree
 import com.intellij.util.ui.JBUI
@@ -45,6 +46,8 @@ class ActionTreePanel(project: Project) : JPanel(), Disposable {
         mainPanel.setLayout(BorderLayout())
         val tree = Tree(DefaultTreeModel(PathNode(Any(), "Actions")))
         tree.setCellRenderer(TreeCellRenderer())
+        TreeUIHelper.getInstance().installTreeSpeedSearch(tree)
+
         val comp = JBScrollPane(tree)
         comp.setBorder(JBUI.Borders.empty())
         mainPanel.add(comp, BorderLayout.CENTER)

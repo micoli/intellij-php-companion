@@ -32,7 +32,6 @@ class ProfileDBPanel(project: Project) : AbstractProfilePanel(project) {
                     listOf<RowSorter.SortKey?>(
                         RowSorter.SortKey(0, SortOrder.ASCENDING),
                     ))
-                innerSorter.setComparator(1, java.lang.String.CASE_INSENSITIVE_ORDER)
                 innerSorter.setComparator(2, java.lang.String.CASE_INSENSITIVE_ORDER)
                 return innerSorter
             }
