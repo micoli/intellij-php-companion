@@ -51,7 +51,7 @@ class DbParser : Parser() {
 
             val backtracesList = mutableListOf<FileLocation>()
 
-            for (backtrace in xPathElements(xpathBacktraceRows, queryRow)) {
+            for (backtrace in xPathElements(xpathBacktraceRows, cells[2])) {
                 val backtraceCells = backtrace.getChildren("td")
                 if (backtraceCells.size > 1) {
                     val uri =

@@ -38,7 +38,7 @@ class MultiLineTableCellRenderer(val formatter: (String) -> String) : DefaultTab
 
     private fun setHeight(formattedText: String, table: JTable, row: Int) {
         val lines = formattedText.lines()
-        val lineHeight = 16
+        val lineHeight = 17
         val padding = 12
         val preferredHeight = (lines.size * lineHeight) + padding
 

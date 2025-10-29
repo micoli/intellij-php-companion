@@ -54,7 +54,7 @@
         <postStartupActivity implementation="org.micoli.php.PhpCompanionProjectStartup"/>
         <toolWindow id="PHP Companion" secondary="true" icon="AllIcons.Language.Php" anchor="left"
                     factoryClass="org.micoli.php.ui.ToolWindowFactory"/>
-        <toolWindow id="Symfony Profiler" secondary="true" icon="AllIcons.Language.Php" anchor="bottom"
+        <toolWindow id="Symfony Profiler" secondary="true" icon="/icons/symfony.svg" anchor="bottom"
                     factoryClass="org.micoli.php.ui.SymfonyWindowFactory"/>
         <projectService
                 serviceImplementation="org.micoli.php.tasks.TasksService"/>

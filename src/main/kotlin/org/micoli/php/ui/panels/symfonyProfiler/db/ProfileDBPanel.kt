@@ -1,5 +1,6 @@
 package org.micoli.php.ui.panels.symfonyProfiler.db
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBPanel
 import java.awt.BorderLayout
@@ -25,7 +26,7 @@ class ProfileDBPanel(project: Project) : AbstractProfilePanel(project) {
     val cardPanel: JBPanel<JBPanel<*>> = JBPanel<JBPanel<*>>(cardLayout)
     val table =
         object :
-            AbstractListPanel<DBQuery>(project, "dispatches", arrayOf("Sequence", "Time", "SQL")) {
+            AbstractListPanel<DBQuery>(project, "queries", arrayOf("Sequence", "Time", "SQL")) {
             override fun getSorter(): TableRowSorter<ObjectTableModel<DBQuery>> {
                 val innerSorter = TableRowSorter(model)
                 innerSorter.setSortKeys(
@@ -101,7 +102,10 @@ class ProfileDBPanel(project: Project) : AbstractProfilePanel(project) {
     }
 
     override fun refresh() {
-        table.refresh()
+        ApplicationManager.getApplication().invokeLater {
+            showList()
+            table.refresh()
+        }
     }
 
     private fun showDetail(dbQuery: DBQuery?) {

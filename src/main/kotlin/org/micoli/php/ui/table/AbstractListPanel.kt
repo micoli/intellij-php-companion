@@ -1,6 +1,7 @@
 package org.micoli.php.ui.table
 
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.DocumentAdapter
@@ -23,10 +24,6 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.ListSelectionEvent
 import javax.swing.event.ListSelectionListener
 import javax.swing.table.TableRowSorter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.micoli.php.service.easterEgg.EditorProvider
 import org.micoli.php.ui.PhpCompanionIcon
 
@@ -212,12 +209,12 @@ abstract class AbstractListPanel<T>(
 
     fun refresh() {
         SwingUtilities.invokeLater {
-            synchronized(model.lock) {
-                GlobalScope.launch(Dispatchers.IO) {
+            ApplicationManager.getApplication().runWriteAction {
+                synchronized(model.lock) {
                     setElements()
-                    withContext(Dispatchers.Main) { model.fireTableDataChanged() }
+                    model.fireTableDataChanged()
+                    table.emptyText.text = "Nothing to show"
                 }
-                table.emptyText.text = "Nothing to show"
             }
         }
     }
