@@ -1,6 +1,17 @@
 # Changelog
 
 
+## [0.9.1] - 2025-10-31
+- chore(Profiler): Improve layouts of profiler tabs
+- Suprise
+- chore(FileListeners): Centralize connect when instantiating FileListener
+- chore(Profiler): Improve UI
+- fix(Startup): Fix runWriteCommandAction
+- fix(ClassStyles): Remove internal usage of DarkVariant
+- fix(GutterIcons): Remove deprecated dependency to DaemonCodeAnalyzer.restart
+- refactor(ProfilerParser): Remove dependencies to org.jdom.xxx
+- style(AbstractTable): Apply kotlin standards
+
 ## [0.9.0] - 2025-10-22
 - test(symfony-demo): Add a proper symfony-demo project to ease tests
 - feat(Styles): Add effect to ClassStyles
