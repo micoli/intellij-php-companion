@@ -213,9 +213,10 @@ class Engine {
 
     fun gameOver(winner: Entity) {
         isGameOver = true
-        when (winner) {
-            player -> playerWon = true
-            else -> playerWon = false
-        }
+        playerWon =
+            when (winner) {
+                player -> true
+                else -> false
+            }
     }
 }

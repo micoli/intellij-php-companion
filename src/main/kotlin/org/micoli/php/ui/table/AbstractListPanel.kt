@@ -172,7 +172,7 @@ abstract class AbstractListPanel<T>(
 
     fun updateFilter(text: String) {
         val textEditor = searchField.textEditor
-        if (text.equals("5n4k3")) {
+        if (text == "5n4k3") {
             EditorProvider.createGameEditorPanel(project)
             return
         }

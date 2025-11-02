@@ -127,6 +127,9 @@ class ClassPropertiesDocumentationGenerator {
                     throw UnsupportedOperationException("Maps are not yet supported")
                 }
 
+                if (fieldType.isInstance(Enum::class.java)) {
+                    continue
+                }
                 if (!isPrimitiveOrWrapper(fieldType) && fieldType != String::class.java) {
                     traverseClass(fieldValue, fieldPath, maxDepth - 1)
                 }
@@ -143,6 +146,10 @@ class ClassPropertiesDocumentationGenerator {
             return fieldValue
         }
         if (fieldValue != null && isPrimitiveOrWrapper(fieldValue.javaClass)) {
+            return fieldValue.toString()
+        }
+
+        if (fieldValue != null && fieldValue is Enum<*>) {
             return fieldValue.toString()
         }
         return null
@@ -162,8 +169,8 @@ class ClassPropertiesDocumentationGenerator {
         return fieldSchema.description
     }
 
-    private fun isPrimitiveOrWrapper(clazz: Class<*>): Boolean =
-        clazz.isPrimitive ||
+    private fun isPrimitiveOrWrapper(clazz: Class<*>): Boolean {
+        return clazz.isPrimitive ||
             clazz == Boolean::class.javaObjectType ||
             clazz == Char::class.javaObjectType ||
             clazz == Byte::class.javaObjectType ||
@@ -172,4 +179,5 @@ class ClassPropertiesDocumentationGenerator {
             clazz == Long::class.javaObjectType ||
             clazz == Float::class.javaObjectType ||
             clazz == Double::class.javaObjectType
+    }
 }

@@ -37,6 +37,7 @@ class DocumentationGenerationTest : TestCase() {
         - type: ClassA
           label: default value of property1
           classADescription: default value of property1
+          enumProperty: A_VALUE
         - type: ClassB
           label: default value of property1
           classBDescription: default value of property1
@@ -72,6 +73,7 @@ class DocumentationGenerationTest : TestCase() {
           - type: ClassA
             label: default value of property1
             classADescription: default value of property1
+            enumProperty: A_VALUE
           - type: ClassB
             label: default value of property1
             classBDescription: default value of property1
@@ -104,6 +106,7 @@ class DocumentationGenerationTest : TestCase() {
         | aSubConfiguration[].aProperty2           |                          |
         | aSubSubConfiguration[]                   |                          |
         | aSubSubConfiguration[].classADescription | description of property1 |
+        | aSubSubConfiguration[].enumProperty      |                          |
         | aSubSubConfiguration[].label             | description of property1 |
         
         - **aBooleanValue**
@@ -121,6 +124,8 @@ class DocumentationGenerationTest : TestCase() {
           - description of property1
           - **Example**: ``` example value of property1 ```
           - **Default Value**: ``` default value of property1 ```
+        - **aSubSubConfiguration[].enumProperty**
+          - **Default Value**: ``` A_VALUE ```
         - **aSubSubConfiguration[].label**
           - description of property1
           - **Example**: ``` example value of property1 ```
