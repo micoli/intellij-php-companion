@@ -3,8 +3,9 @@ package org.micoli.php.exportSourceToMarkdown.configuration
 import io.swagger.v3.oas.annotations.media.Schema
 
 class ExportSourceToMarkdownConfiguration {
+    @Schema(description = "Are contextual namespaces used?")
     var useContextualNamespaces: Boolean = true
-    var useIgnoreFile: Boolean = true
+    @Schema(description = "Are ignored files used?") var useIgnoreFile: Boolean = true
 
     @Schema(
         description =

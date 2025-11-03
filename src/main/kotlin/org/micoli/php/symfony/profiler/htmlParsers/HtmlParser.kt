@@ -1,4 +1,4 @@
-package org.micoli.php.symfony.profiler.parsers
+package org.micoli.php.symfony.profiler.htmlParsers
 
 import com.intellij.openapi.diagnostic.Logger
 import java.net.URLDecoder
@@ -19,13 +19,13 @@ class FileLocation(
     val line: Int?,
 )
 
-abstract class Parser {
+abstract class HtmlParser {
     val outputter = XMLOutputter()
     private val xpathFactory = XPathFactory.instance()
 
-    abstract fun parse(document: Document): Any
+    abstract fun getTargetClass(): Any
 
-    abstract fun getPage(): String
+    abstract fun parse(document: Document): Any
 
     protected fun cleanupDump(dump: String): String {
         return dump.replace(Regex("#\\d+$", RegexOption.MULTILINE), "")
@@ -139,6 +139,6 @@ abstract class Parser {
     }
 
     companion object {
-        private val LOGGER = Logger.getInstance(Parser::class.java.getSimpleName())
+        private val LOGGER = Logger.getInstance(HtmlParser::class.java.getSimpleName())
     }
 }

@@ -8,7 +8,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import org.micoli.php.service.filesystem.PathUtil
 import org.micoli.php.service.intellij.Editors
-import org.micoli.php.symfony.profiler.parsers.FileLocation
+import org.micoli.php.symfony.profiler.htmlParsers.FileLocation
 import org.micoli.php.ui.table.ColoredCellRenderer
 import org.micoli.php.ui.table.ObjectTableModel
 

@@ -13,8 +13,8 @@ import org.micoli.php.service.intellij.Editors
 import org.micoli.php.service.intellij.psi.PhpUtil.findClassByFQN
 import org.micoli.php.service.intellij.psi.PhpUtil.normalizeNonRootFQN
 import org.micoli.php.symfony.profiler.SymfonyProfileService
-import org.micoli.php.symfony.profiler.parsers.MessengerData
-import org.micoli.php.symfony.profiler.parsers.MessengerDispatch
+import org.micoli.php.symfony.profiler.models.MessengerData
+import org.micoli.php.symfony.profiler.models.MessengerDispatch
 import org.micoli.php.ui.panels.symfonyProfiler.AbstractProfilePanel
 import org.micoli.php.ui.table.AbstractListPanel
 import org.micoli.php.ui.table.CustomCellRenderer
@@ -59,8 +59,8 @@ class ProfileMessengerPanel(project: Project) : AbstractProfilePanel(project) {
                             CustomCellRenderer<MessengerDispatch> {
                                 String.format(
                                     "%s:%s",
-                                    it.messageLocation?.file?.replaceFirst(baseDir, ""),
-                                    it.messageLocation?.line,
+                                    it.dispatch?.file?.replaceFirst(baseDir, ""),
+                                    it.dispatch?.line,
                                 )
                             }
                     }

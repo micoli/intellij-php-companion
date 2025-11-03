@@ -1,11 +1,12 @@
-package org.micoli.php.symfony.profiler.parsers
+package org.micoli.php.symfony.profiler.htmlParsers
 
 import org.jdom2.Document
+import org.micoli.php.symfony.profiler.models.RequestData
 
-class RequestData(val controller: String, val route: String)
-
-class RequestParser : Parser() {
-    override fun getPage(): String = "request"
+class RequestHtmlParser : HtmlParser() {
+    override fun getTargetClass(): Any {
+        return RequestData::class.java
+    }
 
     override fun parse(document: Document): RequestData {
         val xpathController =

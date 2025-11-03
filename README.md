@@ -152,18 +152,19 @@ symfonyMessenger:
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration","") -->
-| Property                   | Description                                 |
-| -------------------------- | ------------------------------------------- |
-| asMessageHandlerAttribute  |                                             |
-| dispatchMethods[]          | Method names used to dispatch messages      |
-| handlerMethods[]           | Method names in handler classes             |
-| messageClassNamePatterns   | Regex pattern to identify message classes   |
-| messageHandlerInterfaces[] | Interfaces that handler classes implement   |
-| messageInterfaces[]        | Interfaces that message classes implement   |
-| projectRootNamespace       | Root namespace for scanning classes         |
-| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service |
+| Property                   | Description                                        |
+| -------------------------- | -------------------------------------------------- |
+| asMessageHandlerAttribute  | FQCN of the attribute used to mark handler classes |
+| dispatchMethods[]          | Method names used to dispatch messages             |
+| handlerMethods[]           | Method names in handler classes                    |
+| messageClassNamePatterns   | Regex pattern to identify message classes          |
+| messageHandlerInterfaces[] | Interfaces that handler classes implement          |
+| messageInterfaces[]        | Interfaces that message classes implement          |
+| projectRootNamespace       | Root namespace for scanning classes                |
+| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service        |
 
 - **asMessageHandlerAttribute**
+  - FQCN of the attribute used to mark handler classes
   - **Default Value**: ``` Symfony\Component\Messenger\Attribute\AsMessageHandler ```
 - **dispatchMethods[]**
   - Method names used to dispatch messages
@@ -302,23 +303,26 @@ peerNavigation:
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration","") -->
-| Property                | Description                                     |
-| ----------------------- | ----------------------------------------------- |
-| rules[]                 |                                                 |
-| rules[].actionType      | How search is triggered                         |
-| rules[].attributeFQCN   |                                                 |
-| rules[].fileMask        |                                                 |
-| rules[].formatterScript | A groovy script to reformat raw attribute value |
-| rules[].isDefault       |                                                 |
-| rules[].propertyName    |                                                 |
+| Property                | Description                                                  |
+| ----------------------- | ------------------------------------------------------------ |
+| rules[]                 | Array of navigation rules                                    |
+| rules[].actionType      | How search is triggered                                      |
+| rules[].attributeFQCN   | FQCN of the attribute searched                               |
+| rules[].fileMask        | File mask to search for attribute usages, separated by comma |
+| rules[].formatterScript | A groovy script to reformat raw attribute value              |
+| rules[].isDefault       | Is this rule the default one?                                |
+| rules[].propertyName    | Property of the attribute used                               |
 
 - **rules[]**
+  - Array of navigation rules
 - **rules[].actionType**
   - How search is triggered
   - **Default Value**: ``` find_in_file ```
 - **rules[].attributeFQCN**
+  - FQCN of the attribute searched
   - **Default Value**: ``` \Symfony\Component\Routing\Attribute\Route ```
 - **rules[].fileMask**
+  - File mask to search for attribute usages, separated by comma
   - **Default Value**: ``` *.yaml,*.yml,*.php ```
 - **rules[].formatterScript**
   - A groovy script to reformat raw attribute value
@@ -326,8 +330,10 @@ peerNavigation:
         return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
          ```
 - **rules[].isDefault**
+  - Is this rule the default one?
   - **Default Value**: ``` true ```
 - **rules[].propertyName**
+  - Property of the attribute used
   - **Default Value**: ``` path ```
 <!-- generateDocumentationEnd -->
 
@@ -355,8 +361,8 @@ attributeNavigation:
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | contextualNamespaces[]  | List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context                                                                                                |
 | template                | [Template Thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf.html#standard-expression-syntax) used to generate markdown export. Accès aux variables : `files` (FileData properties `path`, `content`, et `extension`) |
-| useContextualNamespaces |                                                                                                                                                                                                                                          |
-| useIgnoreFile           |                                                                                                                                                                                                                                          |
+| useContextualNamespaces | Are contextual namespaces used?                                                                                                                                                                                                          |
+| useIgnoreFile           | Are ignored files used?                                                                                                                                                                                                                  |
 
 - **contextualNamespaces[]**
   - List of namespaces, if an import detected in an exported classes belong to one of those namespace, than the class is added in the context
@@ -372,8 +378,10 @@ attributeNavigation:
 [/]
  ```
 - **useContextualNamespaces**
+  - Are contextual namespaces used?
   - **Default Value**: ``` true ```
 - **useIgnoreFile**
+  - Are ignored files used?
   - **Default Value**: ``` true ```
 <!-- generateDocumentationEnd -->
 
@@ -701,22 +709,29 @@ tasks:
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration","symfonyProfiler") -->
-| Property        | Description                                                |
-| --------------- | ---------------------------------------------------------- |
-| enabled         | Enabler for panel of SymfonyProfilers                      |
-| excludeFilter[] | List of regular expression used to filter URI in profilers |
-| profilerPath    | Local path to Symfony Profiler dumps                       |
-| profilerUrlRoot | Profiler URL root                                          |
-| urlRoots[]      | List of URL roots of symfony profiles                      |
+| Property               | Description                                                  |
+| ---------------------- | ------------------------------------------------------------ |
+| enabled                | Enabler for panel of SymfonyProfilers                        |
+| excludeFilter[]        | List of regular expression used to filter URI in profilers   |
+| profilerDataExportMode | Mode used to export data from Symfony Profiler (CLI or HTTP) |
+| profilerPath           | Local path to Symfony Profiler dumps                         |
+| profilerProjectPath    | Path to Symfony project root                                 |
+| profilerUrlRoot        | Profiler URL root                                            |
+| urlRoots[]             | List of URL roots of symfony profiles                        |
 
 - **enabled**
   - Enabler for panel of SymfonyProfilers
   - **Default Value**: ``` false ```
 - **excludeFilter[]**
   - List of regular expression used to filter URI in profilers
+- **profilerDataExportMode**
+  - Mode used to export data from Symfony Profiler (CLI or HTTP)
+  - **Default Value**: ``` HTTP ```
 - **profilerPath**
   - Local path to Symfony Profiler dumps
   - **Default Value**: ``` var/cache/dev/profiler ```
+- **profilerProjectPath**
+  - Path to Symfony project root
 - **profilerUrlRoot**
   - Profiler URL root
   - **Default Value**: ``` https://127.0.0.1:8000/_profiler/ ```
@@ -731,7 +746,9 @@ symfonyProfiler:
   enabled: false
   excludeFilter:
   - ''
+  profilerDataExportMode: HTTP
   profilerPath: var/cache/dev/profiler
+  profilerProjectPath: ''
   profilerUrlRoot: https://127.0.0.1:8000/_profiler/
   urlRoots:
   - https://127.0.0.1:8000
@@ -743,42 +760,23 @@ symfonyProfiler:
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.classStyles.configuration.ClassStylesConfiguration","styles") -->
-| Property                      | Description                                         |
-| ----------------------------- | --------------------------------------------------- |
-| enabled                       | Enabler for Php Class style configuration           |
-| rules[]                       |                                                     |
-| rules[].fqcns[]               | Fully Qualified class name or interface             |
-| rules[].style                 | Style to apply if class implements one of the FQCNs |
-| rules[].style.backgroundColor | Background color of the class                       |
-| rules[].style.effect          | Font effect                                         |
-| rules[].style.effectColor     | Font effect color                                   |
-| rules[].style.fontStyles      | Font style/variant                                  |
-| rules[].style.foregroundColor | Foreground color of the class                       |
+| Property        | Description                                         |
+| --------------- | --------------------------------------------------- |
+| enabled         | Enabler for Php Class style configuration           |
+| rules[]         | Array of rules to apply                             |
+| rules[].fqcns[] | Fully Qualified class name or interface             |
+| rules[].style   | Style to apply if class implements one of the FQCNs |
 
 - **enabled**
   - Enabler for Php Class style configuration
   - **Example**: ``` true ```
   - **Default Value**: ``` false ```
 - **rules[]**
+  - Array of rules to apply
 - **rules[].fqcns[]**
   - Fully Qualified class name or interface
 - **rules[].style**
   - Style to apply if class implements one of the FQCNs
-- **rules[].style.backgroundColor**
-  - Background color of the class
-  - **Example**: ``` BLACK ```
-- **rules[].style.effect**
-  - Font effect
-  - **Example**: ``` LINE_UNDERSCORE ```
-- **rules[].style.effectColor**
-  - Font effect color
-  - **Example**: ``` RED ```
-- **rules[].style.fontStyles**
-  - Font style/variant
-  - **Example**: ``` [BOLD] ```
-- **rules[].style.foregroundColor**
-  - Foreground color of the class
-  - **Example**: ``` BLUE ```
 <!-- generateDocumentationEnd -->
 
 #### Example
@@ -806,7 +804,7 @@ styles:
 | Property                | Description                                                                        |
 | ----------------------- | ---------------------------------------------------------------------------------- |
 | enabled                 | Enabler for panel of Code style synchronization                                    |
-| styles[]                |                                                                                    |
+| styles[]                | Array if code styles to synchronize                                                |
 | styles[].styleAttribute | Code style field property as in com.intellij.psi.codeStyle.CommonCodeStyleSettings |
 | styles[].value          | a boolean value true/false or an int value                                         |
 
@@ -815,6 +813,7 @@ styles:
   - **Example**: ``` true ```
   - **Default Value**: ``` false ```
 - **styles[]**
+  - Array if code styles to synchronize
 - **styles[].styleAttribute**
   - Code style field property as in com.intellij.psi.codeStyle.CommonCodeStyleSettings
   - **Example**: ``` ALIGN_MULTILINE_PARAMETERS_IN_CALLS ```

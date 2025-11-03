@@ -39,6 +39,7 @@ class SymfonyMessengerConfiguration {
             "handle",
         )
 
+    @Schema(description = "FQCN of the attribute used to mark handler classes")
     var asMessageHandlerAttribute: String =
         "Symfony\\Component\\Messenger\\Attribute\\AsMessageHandler"
 

@@ -9,8 +9,8 @@ import javax.swing.table.TableRowSorter
 import kotlin.apply
 import kotlin.arrayOf
 import org.micoli.php.symfony.profiler.SymfonyProfileService
-import org.micoli.php.symfony.profiler.parsers.Log
-import org.micoli.php.symfony.profiler.parsers.LoggerData
+import org.micoli.php.symfony.profiler.models.Log
+import org.micoli.php.symfony.profiler.models.LoggerData
 import org.micoli.php.ui.panels.symfonyProfiler.AbstractProfilePanel
 import org.micoli.php.ui.table.AbstractListPanel
 import org.micoli.php.ui.table.MultiLineTableCellRenderer

@@ -10,5 +10,6 @@ class ClassStylesConfiguration : DisactivableConfiguration {
 
     @Schema(description = "Enabler for Php Class style configuration", example = "true")
     var enabled: Boolean = false
-    var rules: Array<Rule> = arrayOf()
+
+    @Schema(description = "Array of rules to apply") var rules: Array<Rule> = arrayOf()
 }

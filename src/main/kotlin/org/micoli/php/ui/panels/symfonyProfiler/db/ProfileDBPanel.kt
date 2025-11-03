@@ -13,8 +13,8 @@ import kotlin.apply
 import kotlin.arrayOf
 import org.micoli.php.service.SqlUtils
 import org.micoli.php.symfony.profiler.SymfonyProfileService
-import org.micoli.php.symfony.profiler.parsers.DBData
-import org.micoli.php.symfony.profiler.parsers.DBQuery
+import org.micoli.php.symfony.profiler.models.DBData
+import org.micoli.php.symfony.profiler.models.DBQuery
 import org.micoli.php.ui.panels.symfonyProfiler.AbstractProfilePanel
 import org.micoli.php.ui.table.AbstractListPanel
 import org.micoli.php.ui.table.DoubleCellRenderer

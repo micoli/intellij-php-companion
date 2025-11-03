@@ -7,6 +7,7 @@ import org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfigura
 import org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration
+import org.micoli.php.runner.configuration.PhpRunnerConfiguration
 import org.micoli.php.symfony.list.configuration.CommandsConfiguration
 import org.micoli.php.symfony.list.configuration.DoctrineEntitiesConfiguration
 import org.micoli.php.symfony.list.configuration.OpenAPIConfiguration
@@ -43,4 +44,6 @@ class Configuration {
     @JvmField var symfonyProfiler: SymfonyProfilerConfiguration? = null
 
     @JvmField var classStyles: ClassStylesConfiguration? = null
+
+    @JvmField var phpRunner: PhpRunnerConfiguration? = null
 }

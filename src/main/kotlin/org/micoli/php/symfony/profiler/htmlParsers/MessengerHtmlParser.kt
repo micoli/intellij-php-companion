@@ -1,30 +1,14 @@
-package org.micoli.php.symfony.profiler.parsers
+package org.micoli.php.symfony.profiler.htmlParsers
 
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import org.jdom2.Document
-import org.micoli.php.symfony.list.SearchableRecord
+import org.micoli.php.symfony.profiler.models.MessengerData
+import org.micoli.php.symfony.profiler.models.MessengerDispatch
+import org.micoli.php.symfony.profiler.models.MessengerStats
 
-class MessengerStats(
-    val messageCount: Int,
-)
-
-class MessengerData(val dispatches: List<MessengerDispatch>, val stats: MessengerStats)
-
-class MessengerDispatch(
-    val messageName: String,
-    val messageLocation: FileLocation?,
-    val busName: String,
-    val dispatch: FileLocation?,
-    val message: String
-) : SearchableRecord {
-    override fun getSearchString(): ImmutableList<String> {
-        return persistentListOf(messageName, messageLocation?.file ?: "", busName, message)
+class MessengerHtmlParser : HtmlParser() {
+    override fun getTargetClass(): Any {
+        return MessengerData::class.java
     }
-}
-
-class MessengerParser : Parser() {
-    override fun getPage(): String = "messenger"
 
     override fun parse(document: Document): MessengerData {
         val xpathMessageTables = compileXPath("//table[@class = 'message-item']")
@@ -46,9 +30,6 @@ class MessengerParser : Parser() {
             dispatches.add(
                 MessengerDispatch(
                     xPathHTMLText(xpathMessageName, table),
-                    xPathFirstElement(xpathMessageName, table)?.let {
-                        parseFileUri(it.getAttributeValue("href"))
-                    },
                     eventBus,
                     xPathFirstElement(xpathMessageCaller, table)?.let {
                         parseFileUri(it.getAttributeValue("href"))

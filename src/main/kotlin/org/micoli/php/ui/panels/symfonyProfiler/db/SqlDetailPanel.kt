@@ -16,7 +16,7 @@ import java.awt.Dimension
 import java.awt.datatransfer.StringSelection
 import javax.swing.JComponent
 import org.micoli.php.service.SqlUtils
-import org.micoli.php.symfony.profiler.parsers.DBQuery
+import org.micoli.php.symfony.profiler.models.DBQuery
 import org.micoli.php.ui.Notification
 import org.micoli.php.ui.PhpCompanionIcon
 import org.micoli.php.ui.panels.symfonyProfiler.BackTraceTable

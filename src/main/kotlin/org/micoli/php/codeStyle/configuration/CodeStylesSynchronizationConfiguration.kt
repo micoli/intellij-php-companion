@@ -11,5 +11,6 @@ class CodeStylesSynchronizationConfiguration : DisactivableConfiguration {
     @Schema(description = "Enabler for panel of Code style synchronization", example = "true")
     var enabled: Boolean = false
 
+    @Schema(description = "Array if code styles to synchronize")
     var styles: Array<CodeStyle> = arrayOf()
 }

@@ -7,6 +7,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import junit.framework.TestCase
 import org.assertj.core.api.Assertions.*
+import org.micoli.php.configuration.documentation.ClassPropertiesDocumentationGenerator
 import org.micoli.php.configuration.documentation.InstanceGenerator
 import org.micoli.php.configuration.documentation.MarkdownProcessor
 import org.micoli.php.configuration.documentation.MarkdownSchemaGenerator
@@ -177,6 +178,30 @@ class DocumentationGenerationTest : TestCase() {
     fun testItGeneratesDescriptionProperties() {
         val markdownSchemaGenerator = MarkdownSchemaGenerator()
         markdownSchemaGenerator.generateMarkdownExample(Configuration::class.java, "root")
+    }
+
+    fun testItCheckThatAllPropertiesHasDescription() {
+        val emptyDescription = mutableListOf<String>()
+
+        Configuration::class
+            .java
+            .declaredFields
+            .mapNotNull { it.type }
+            .distinct()
+            .forEach {
+                ClassPropertiesDocumentationGenerator()
+                    .getProperties((InstanceGenerator()).get(it, false), 5)
+                    .stream()
+                    .forEach { field ->
+                        if (field.description == "" || field.description == null) {
+                            emptyDescription.add(it.simpleName + "." + field.dotNotationPath)
+                        }
+                    }
+            }
+        if (emptyDescription.size > 0) {
+            println(emptyDescription.joinToString("\n"))
+        }
+        assertTrue(emptyDescription.isEmpty())
     }
 
     fun testItGeneratesDescriptionExample() {

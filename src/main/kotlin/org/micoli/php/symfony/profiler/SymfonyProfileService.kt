@@ -11,15 +11,7 @@ import com.opencsv.CSVReader
 import com.opencsv.exceptions.CsvException
 import java.io.IOException
 import java.nio.file.FileSystems
-import java.security.cert.X509Certificate
 import java.util.Map
-import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.micoli.php.service.DebouncedRunnables
 import org.micoli.php.service.PhpGzDecoder
 import org.micoli.php.service.filesystem.FileListener
@@ -28,7 +20,10 @@ import org.micoli.php.service.filesystem.WatchEvent
 import org.micoli.php.service.filesystem.Watchee
 import org.micoli.php.service.serialize.JsonTransformer
 import org.micoli.php.service.serialize.PhpUnserializer
+import org.micoli.php.symfony.profiler.configuration.DataExportMode
 import org.micoli.php.symfony.profiler.configuration.SymfonyProfilerConfiguration
+import org.micoli.php.symfony.profiler.dataExport.CliDataExport
+import org.micoli.php.symfony.profiler.dataExport.HttpDataExport
 import org.micoli.php.symfony.profiler.models.PHPProfilerDump
 
 @Service(Service.Level.PROJECT)
@@ -131,7 +126,11 @@ class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<Stri
                 Watchee(
                     listOf(
                         FileSystems.getDefault()
-                            .getPathMatcher("glob:**" + configuration.profilerPath + "index.csv")),
+                            .getPathMatcher(
+                                "glob:**" +
+                                    configuration.profilerProjectPath +
+                                    configuration.profilerPath +
+                                    "index.csv")),
                     WatchEvent.all())))
     }
 
@@ -172,82 +171,19 @@ class SymfonyProfileService(val project: Project) : FileListener.VfsHandler<Stri
         errorCallback: (String) -> Unit,
         callback: (T?) -> Unit
     ) {
-        val page = ProfilerParser().parsers[targetClass]?.getPage() ?: return
         logCallback("Start loading")
-        val url =
-            (((configuration?.profilerUrlRoot ?: return) + token).toHttpUrlOrNull() ?: return)
-                .newBuilder()
-                .addQueryParameter("panel", page)
-                .addQueryParameter("type", "request")
-                .build()
-        try {
-            createHttpClient(true, errorCallback)
-                .newCall(Request.Builder().url(url).build())
-                .execute()
-                .use {
-                    if (it.isSuccessful) {
-                        logCallback("Parsing")
-                        try {
-                            val result =
-                                ProfilerParser()
-                                    .loadProfilerPage(targetClass, it.body?.string() ?: return)
-                            logCallback("Parsing done")
-                            callback(result)
-                        } catch (e: Exception) {
-                            errorCallback(e.localizedMessage)
-                        }
-                        return
-                    }
-                    errorCallback(it.message)
-                }
-        } catch (e: Exception) {
-            errorCallback(e.localizedMessage)
-        }
-    }
-
-    fun createHttpClient(
-        disableSSLVerification: Boolean,
-        errorCallback: (String) -> Unit
-    ): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-
-        if (disableSSLVerification) {
-            val trustAllCerts =
-                arrayOf<TrustManager>(
-                    object : X509TrustManager {
-                        override fun checkClientTrusted(
-                            chain: Array<X509Certificate>,
-                            authType: String
-                        ) {}
-
-                        override fun checkServerTrusted(
-                            chain: Array<X509Certificate>,
-                            authType: String
-                        ) {}
-
-                        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-                    })
-
-            val sslContext = SSLContext.getInstance("SSL")
-            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
-
-            builder
-                .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
-                .hostnameVerifier { _, _ -> true }
-        }
-
-        return builder
-            .connectTimeout(3, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(3, TimeUnit.SECONDS)
-            .addNetworkInterceptor {
-                val response = it.proceed(it.request())
-                if (!response.isSuccessful) {
-                    errorCallback("HTTP Error: ${response.code} - ${response.message}")
-                }
-                response
-            }
-            .build()
+        (when (configuration?.profilerDataExportMode ?: DataExportMode.HTTP) {
+                DataExportMode.CLI -> CliDataExport(project)
+                DataExportMode.HTTP -> HttpDataExport()
+            })
+            .loadProfilerDumpPage(
+                configuration,
+                targetClass,
+                token,
+                logCallback,
+                errorCallback,
+                callback,
+            )
     }
 
     override fun vfsHandle(id: String, file: VirtualFile) {

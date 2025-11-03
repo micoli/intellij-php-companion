@@ -10,6 +10,11 @@ class SymfonyProfilerConfiguration : DisactivableConfiguration {
 
     @Schema(description = "Enabler for panel of SymfonyProfilers") var enabled: Boolean = false
 
+    @Schema(description = "Mode used to export data from Symfony Profiler (CLI or HTTP)")
+    var profilerDataExportMode: DataExportMode = DataExportMode.HTTP
+
+    @Schema(description = "Path to Symfony project root") var profilerProjectPath: String = ""
+
     @Schema(description = "Local path to Symfony Profiler dumps")
     var profilerPath: String = "var/cache/dev/profiler"
 

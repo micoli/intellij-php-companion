@@ -1,6 +1,11 @@
+phpRunner:
+    bin: /opt/homebrew/bin/php
+
 symfonyProfiler:
+    profilerDataExportMode: CLI
     enabled: true
     profilerPath: var/cache/dev/profiler/
+    profilerProjectPath: ./
     profilerUrlRoot: http://127.0.0.1:8000/_profiler/
     urlRoots:
         - https://v3-api.dev.yousign.io

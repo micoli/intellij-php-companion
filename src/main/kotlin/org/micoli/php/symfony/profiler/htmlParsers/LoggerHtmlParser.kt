@@ -1,28 +1,15 @@
-package org.micoli.php.symfony.profiler.parsers
+package org.micoli.php.symfony.profiler.htmlParsers
 
 import java.time.OffsetDateTime
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import org.jdom2.Document
 import org.jdom2.Element
-import org.micoli.php.symfony.list.SearchableRecord
+import org.micoli.php.symfony.profiler.models.Log
+import org.micoli.php.symfony.profiler.models.LoggerData
 
-class Log(
-    val time: OffsetDateTime,
-    val channel: String,
-    val severity: String,
-    val message: String,
-    val context: String,
-) : SearchableRecord {
-    override fun getSearchString(): ImmutableList<String> {
-        return persistentListOf(severity, channel, message, context)
+class LoggerHtmlParser : HtmlParser() {
+    override fun getTargetClass(): Any {
+        return LoggerData::class.java
     }
-}
-
-class LoggerData(val logs: List<Log>)
-
-class LoggerParser : Parser() {
-    override fun getPage(): String = "logger"
 
     override fun parse(document: Document): LoggerData {
         val logs = mutableListOf<Log>()

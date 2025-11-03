@@ -1,33 +1,14 @@
-package org.micoli.php.symfony.profiler.parsers
+package org.micoli.php.symfony.profiler.htmlParsers
 
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import org.jdom2.Document
-import org.micoli.php.symfony.list.SearchableRecord
+import org.micoli.php.symfony.profiler.models.DBData
+import org.micoli.php.symfony.profiler.models.DBQuery
+import org.micoli.php.symfony.profiler.models.DBStats
 
-class DBStats(
-    val databaseQueriesCount: Int,
-    val differentStatmentsCount: Int,
-    val queryTime: Double,
-)
-
-class DBData(val queries: List<DBQuery>, entities: List<String>, stats: DBStats)
-
-class DBQuery(
-    val index: Number,
-    val sql: String,
-    val runnableSql: String,
-    val htmlSql: String,
-    val executionMS: Double,
-    val backtrace: List<FileLocation>,
-) : SearchableRecord {
-    override fun getSearchString(): ImmutableList<String> {
-        return persistentListOf(sql)
+class DbHtmlParser : HtmlParser() {
+    override fun getTargetClass(): Any {
+        return DBData::class.java
     }
-}
-
-class DbParser : Parser() {
-    override fun getPage(): String = "db"
 
     override fun parse(document: Document): DBData {
         val queries = mutableListOf<DBQuery>()

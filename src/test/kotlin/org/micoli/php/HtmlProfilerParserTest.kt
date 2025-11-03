@@ -3,19 +3,19 @@ package org.micoli.php
 import java.io.FileInputStream
 import junit.framework.TestCase
 import org.assertj.core.api.Assertions.*
-import org.micoli.php.symfony.profiler.ProfilerParser
-import org.micoli.php.symfony.profiler.parsers.DBData
-import org.micoli.php.symfony.profiler.parsers.LoggerData
-import org.micoli.php.symfony.profiler.parsers.MessengerData
-import org.micoli.php.symfony.profiler.parsers.RequestData
+import org.micoli.php.symfony.profiler.dataExport.HttpDataExport
+import org.micoli.php.symfony.profiler.models.DBData
+import org.micoli.php.symfony.profiler.models.LoggerData
+import org.micoli.php.symfony.profiler.models.MessengerData
+import org.micoli.php.symfony.profiler.models.RequestData
 
-class ProfilerParserTest : TestCase() {
+class HtmlProfilerParserTest : TestCase() {
     private fun readFile(filename: String): String =
         FileInputStream(filename).readAllBytes().toString(Charsets.UTF_8)
 
     fun testItParseLogProfilePageInDTOs() {
         val logs =
-            ProfilerParser()
+            HttpDataExport()
                 .loadProfilerPage(
                     LoggerData::class.java, readFile("src/test/resources/profiler/log.html"))
         assertThat(logs.logs.size).isEqualTo(160)
@@ -28,7 +28,7 @@ class ProfilerParserTest : TestCase() {
 
     fun testItParseDBProfilePageInDTOs() {
         val db =
-            ProfilerParser()
+            HttpDataExport()
                 .loadProfilerPage(
                     DBData::class.java, readFile("src/test/resources/profiler/db.html"))
         assertThat(db.queries.size).isEqualTo(12)
@@ -48,7 +48,7 @@ class ProfilerParserTest : TestCase() {
 
     fun testItParseMessengerProfilePageInDTOs() {
         val messenger =
-            ProfilerParser()
+            HttpDataExport()
                 .loadProfilerPage(
                     MessengerData::class.java,
                     readFile("src/test/resources/profiler/messenger.html"))
@@ -61,28 +61,19 @@ class ProfilerParserTest : TestCase() {
                         "src/Infrastructure/Bus/Messenger/MessengerDomainEventDispatcher.php")
                     ?: false)
             .isTrue
-        assertThat(
-                messenger.dispatches[0]
-                    .messageLocation
-                    ?.file
-                    ?.contains("src/UseCase/ArticleViewed/Event.php") ?: false)
+        assertThat(messenger.dispatches[0].message.contains("App\\UseCase\\ArticleViewed\\Event"))
             .isTrue
         assertThat(messenger.dispatches[0].dispatch?.line).isEqualTo(23)
         assertThat(messenger.dispatches[0].busName).isEqualTo("event.bus")
         assertThat(messenger.dispatches[0].messageName)
             .isEqualTo("App\\UseCase\\ArticleViewed\\Event")
-        assertThat(
-                messenger.dispatches[0]
-                    .messageLocation
-                    ?.file
-                    ?.contains("src/UseCase/ArticleViewed/Event.php") ?: false)
+        assertThat(messenger.dispatches[0].message.contains("App\\UseCase\\ArticleViewed\\Event"))
             .isTrue
-        assertThat(messenger.dispatches[0].messageLocation?.line).isEqualTo(7)
     }
 
     fun testItParseRequestProfilePageInDTOs() {
         val requestResponse =
-            ProfilerParser()
+            HttpDataExport()
                 .loadProfilerPage(
                     RequestData::class.java, readFile("src/test/resources/profiler/request.html"))
         assertThat(requestResponse.controller)
