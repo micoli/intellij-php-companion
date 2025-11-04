@@ -1,6 +1,11 @@
 # Changelog
 
 
+## [0.9.2] - 2025-11-04
+- chore(ProfilerRequest): Allow to acces to controller from profiler request panel
+- feat(Profiler): Speedup profile exports using a CLI to parse them
+- chore(Documentation): Enable documentation to support Enum property
+
 ## [0.9.1] - 2025-10-31
 - chore(Profiler): Improve layouts of profiler tabs
 - Suprise
