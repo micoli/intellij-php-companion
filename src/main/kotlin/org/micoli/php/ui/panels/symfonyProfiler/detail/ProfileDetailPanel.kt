@@ -2,14 +2,17 @@ package org.micoli.php.ui.panels.symfonyProfiler.detail
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
 import java.awt.BorderLayout
 import javax.swing.JPanel
+import org.micoli.php.service.intellij.psi.PhpUtil
 import org.micoli.php.symfony.profiler.SymfonyProfileService
 import org.micoli.php.symfony.profiler.models.RequestData
+import org.micoli.php.ui.components.tasks.JBLinkedTextField
 import org.micoli.php.ui.panels.symfonyProfiler.AbstractProfilePanel
 
 class ProfileDetailPanel(project: Project) : AbstractProfilePanel(project) {
@@ -19,23 +22,33 @@ class ProfileDetailPanel(project: Project) : AbstractProfilePanel(project) {
     val code = JBTextField()
     val type = JBTextField()
     val route = JBTextField()
-    val controller = JBTextField()
+    val controller = JBLinkedTextField({ PhpUtil.navigateToClassByFQN(project, it.getText()) })
 
     init {
-        val panel = JBPanel<ProfileDetailPanel>(BorderLayout(0, 0))
-        panel.add(
+        val contentPanel = JBSplitter(false, 0.50f)
+
+        contentPanel.setFirstComponent(JBPanel<ProfileDetailPanel>(BorderLayout(0, 0)))
+        contentPanel.firstComponent.add(
             FormBuilder.createFormBuilder()
-                .addLabeledComponent("Method:", method)
                 .addLabeledComponent("URI:", uri)
-                .addLabeledComponent("Code:", code)
-                .addLabeledComponent("Route:", route)
-                .addLabeledComponent("Controller:", controller)
+                .addComponentToRightColumn(method)
                 .addLabeledComponent("Type:", type)
                 .addLabeledComponent("Token:", token)
                 .addComponentFillVertically(JPanel(), 0)
                 .panel,
             BorderLayout.CENTER)
-        mainPanel.add(JBScrollPane(panel), BorderLayout.CENTER)
+
+        contentPanel.setSecondComponent(JBPanel<ProfileDetailPanel>(BorderLayout(0, 0)))
+        contentPanel.secondComponent.add(
+            FormBuilder.createFormBuilder()
+                .addLabeledComponent("Route:", route)
+                .addComponentToRightColumn(controller)
+                .addLabeledComponent("Code:", code)
+                .addComponentFillVertically(JPanel(), 0)
+                .panel,
+            BorderLayout.CENTER)
+
+        mainPanel.add(JBScrollPane(contentPanel), BorderLayout.CENTER)
         initialize()
     }
 
@@ -47,7 +60,7 @@ class ProfileDetailPanel(project: Project) : AbstractProfilePanel(project) {
         type.text = symfonyProfileDTO.type
         lastToken = symfonyProfileDTO.token
         route.text = "-"
-        controller.text = "-"
+        controller.setText("-")
         showMainPanel()
         ApplicationManager.getApplication().invokeLater {
             SymfonyProfileService.getInstance(project)
@@ -58,7 +71,7 @@ class ProfileDetailPanel(project: Project) : AbstractProfilePanel(project) {
                     { showError(it) },
                     { item ->
                         route.text = item?.route ?: "-"
-                        controller.text = item?.controller ?: "-"
+                        controller.setText(item?.controller ?: "-")
                     })
         }
     }

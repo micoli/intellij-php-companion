@@ -1,7 +1,9 @@
 package org.micoli.php.service.intellij.psi
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.NewExpression
@@ -110,6 +112,12 @@ object PhpUtil {
         }
 
         return null
+    }
+
+    @JvmStatic
+    fun navigateToClassByFQN(project: Project, fqn: String?) {
+        val psiClass = findClassByFQN(project, fqn) ?: return
+        ApplicationManager.getApplication().invokeLater { (psiClass as Navigatable).navigate(true) }
     }
 
     @JvmStatic
