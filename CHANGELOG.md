@@ -1,6 +1,7 @@
 # Changelog
 
 
+## [0.9.3] - 2025-11-05
 ## [0.9.2] - 2025-11-04
 - chore(ProfilerRequest): Allow to acces to controller from profiler request panel
 - feat(Profiler): Speedup profile exports using a CLI to parse them
