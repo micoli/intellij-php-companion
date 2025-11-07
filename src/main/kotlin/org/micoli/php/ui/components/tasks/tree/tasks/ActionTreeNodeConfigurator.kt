@@ -1,4 +1,4 @@
-package org.micoli.php.ui.components.tasks.tree
+package org.micoli.php.ui.components.tasks.tree.tasks
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
+import kotlin.collections.get
 import org.micoli.php.tasks.configuration.AbstractNode
 import org.micoli.php.tasks.configuration.Path
 import org.micoli.php.tasks.configuration.Task
@@ -23,6 +24,7 @@ import org.micoli.php.tasks.configuration.runnableTask.RunnableTaskConfiguration
 import org.micoli.php.tasks.configuration.runnableTask.Script
 import org.micoli.php.tasks.configuration.runnableTask.Shell
 import org.micoli.php.ui.PhpCompanionIcon
+import org.micoli.php.ui.components.tasks.tree.TreeIterator
 
 class ActionTreeNodeConfigurator(private val project: Project, private val tree: Tree) {
     private val treeModel: DefaultTreeModel = tree.model as DefaultTreeModel

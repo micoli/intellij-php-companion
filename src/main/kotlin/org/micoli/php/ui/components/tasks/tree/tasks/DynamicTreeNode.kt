@@ -1,4 +1,4 @@
-package org.micoli.php.ui.components.tasks.tree
+package org.micoli.php.ui.components.tasks.tree.tasks
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.treeStructure.Tree

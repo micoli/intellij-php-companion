@@ -9,10 +9,10 @@ import org.micoli.php.builders.PathBuilder
 import org.micoli.php.builders.ScriptBuilder
 import org.micoli.php.builders.ShellBuilder
 import org.micoli.php.builders.TaskBuilder
-import org.micoli.php.ui.components.tasks.tree.ActionTreeNodeConfigurator
-import org.micoli.php.ui.components.tasks.tree.LabeledTreeNode
-import org.micoli.php.ui.components.tasks.tree.PathNode
 import org.micoli.php.ui.components.tasks.tree.TreeIterator
+import org.micoli.php.ui.components.tasks.tree.tasks.ActionTreeNodeConfigurator
+import org.micoli.php.ui.components.tasks.tree.tasks.LabeledTreeNode
+import org.micoli.php.ui.components.tasks.tree.tasks.PathNode
 
 class ActionTreeNodeConfiguratorTest : BasePlatformTestCase() {
     lateinit var configurator: ActionTreeNodeConfigurator
