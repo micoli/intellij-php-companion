@@ -1,4 +1,4 @@
-package org.micoli.php.ui.components.tasks.tree
+package org.micoli.php.ui.components.tasks.tree.tasks
 
 import com.intellij.ide.util.treeView.NodeRenderer
 import javax.swing.JTree

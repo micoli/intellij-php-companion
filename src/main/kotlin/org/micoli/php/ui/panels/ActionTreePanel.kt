@@ -27,9 +27,9 @@ import org.micoli.php.tasks.configuration.runnableTask.Script
 import org.micoli.php.tasks.configuration.runnableTask.Shell
 import org.micoli.php.ui.components.tasks.toolbar.FileObserverToolbarButton
 import org.micoli.php.ui.components.tasks.toolbar.TaskToolbarButton
-import org.micoli.php.ui.components.tasks.tree.ActionTreeNodeConfigurator
-import org.micoli.php.ui.components.tasks.tree.PathNode
-import org.micoli.php.ui.components.tasks.tree.TreeCellRenderer
+import org.micoli.php.ui.components.tasks.tree.tasks.ActionTreeNodeConfigurator
+import org.micoli.php.ui.components.tasks.tree.tasks.PathNode
+import org.micoli.php.ui.components.tasks.tree.tasks.TreeCellRenderer
 
 class ActionTreePanel(project: Project) : JPanel(), Disposable {
     private val mainPanel: JComponent = JPanel()
