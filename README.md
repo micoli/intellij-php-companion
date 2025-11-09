@@ -866,6 +866,28 @@ codeStyleSynchronization:
 
 <!-- generateDocumentationEnd -->
 
+### `Notes`:
+
+#### Properties
+<!-- generateDocumentationProperties("org.micoli.php.notes.configuration.NotesConfiguration","notes") -->
+| Property | Description                               |
+| -------- | ----------------------------------------- |
+| enabled  | Enabler for Php Class style configuration |
+
+- **enabled**
+  - Enabler for Php Class style configuration
+  - **Example**: ``` true ```
+  - **Default Value**: ``` true ```
+<!-- generateDocumentationEnd -->
+
+#### Example
+<!-- generateDocumentationExample("org.micoli.php.notes.configuration.NotesConfiguration","notes") -->
+```yaml
+notes:
+  enabled: true
+```
+<!-- generateDocumentationEnd -->
+
 ### Configuration Tips
 
 1. **Named Groups**: Use regex named groups `(?<name>...)` in patterns and reference them with `(?<name>...) (same expression)` in targets for better readability and maintainability
