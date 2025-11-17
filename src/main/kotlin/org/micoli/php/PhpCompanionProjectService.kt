@@ -18,6 +18,8 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService
 import org.micoli.php.classStyles.ClassStylesService
+import org.micoli.php.code.CodeService
+import org.micoli.php.code.configuration.CodeConfiguration
 import org.micoli.php.codeStyle.CodeStylesService
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
@@ -158,6 +160,7 @@ class PhpCompanionProjectService(private val project: Project) :
         ClassStylesService.getInstance(project).loadConfiguration(configuration.classStyles)
         PhpRunnerService.getInstance(project).loadConfiguration(configuration.phpRunner)
         NotesService.getInstance(project).loadConfiguration(configuration.notes)
+        CodeService.getInstance(project).loadConfiguration(configuration.code)
     }
 
     override fun dispose() {
