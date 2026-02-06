@@ -63,6 +63,9 @@
 
         <annotator language="PHP"
                    implementationClass="org.micoli.php.classStyles.ClassStylesAnnotator"/>
+
+        <annotator language="PHP"
+                   implementationClass="org.micoli.php.symfony.messenger.annotator.CommandBusExceptionAnnotator"/>
     </extensions>
     <actions>
         <group id="org.micoli.php.exportSourceToMarkdown" text="Php Companion" popup="true">

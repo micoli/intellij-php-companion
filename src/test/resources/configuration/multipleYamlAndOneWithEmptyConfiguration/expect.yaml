@@ -18,6 +18,7 @@ peerNavigation:
 symfonyMessenger:
   useNativeGoToDeclaration: false
   asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler
+  enableExceptionInference: true
   dispatchMethods:
     - dispatch
     - query

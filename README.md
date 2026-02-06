@@ -152,22 +152,26 @@ symfonyMessenger:
 
 #### Properties
 <!-- generateDocumentationProperties("org.micoli.php.symfony.messenger.configuration.SymfonyMessengerConfiguration","") -->
-| Property                   | Description                                        |
-| -------------------------- | -------------------------------------------------- |
-| asMessageHandlerAttribute  | FQCN of the attribute used to mark handler classes |
-| dispatchMethods[]          | Method names used to dispatch messages             |
-| handlerMethods[]           | Method names in handler classes                    |
-| messageClassNamePatterns   | Regex pattern to identify message classes          |
-| messageHandlerInterfaces[] | Interfaces that handler classes implement          |
-| messageInterfaces[]        | Interfaces that message classes implement          |
-| projectRootNamespace       | Root namespace for scanning classes                |
-| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service        |
+| Property                   | Description                                                         |
+| -------------------------- | ------------------------------------------------------------------- |
+| asMessageHandlerAttribute  | FQCN of the attribute used to mark handler classes                  |
+| dispatchMethods[]          | Method names used to dispatch messages                              |
+| enableExceptionInference   | Enable @throws inference for dispatch calls based on handler PHPDoc |
+| handlerMethods[]           | Method names in handler classes                                     |
+| messageClassNamePatterns   | Regex pattern to identify message classes                           |
+| messageHandlerInterfaces[] | Interfaces that handler classes implement                           |
+| messageInterfaces[]        | Interfaces that message classes implement                           |
+| projectRootNamespace       | Root namespace for scanning classes                                 |
+| useNativeGoToDeclaration   | Disable ctrl+click to go to handler service                         |
 
 - **asMessageHandlerAttribute**
   - FQCN of the attribute used to mark handler classes
   - **Default Value**: ``` Symfony\Component\Messenger\Attribute\AsMessageHandler ```
 - **dispatchMethods[]**
   - Method names used to dispatch messages
+- **enableExceptionInference**
+  - Enable @throws inference for dispatch calls based on handler PHPDoc
+  - **Default Value**: ``` true ```
 - **handlerMethods[]**
   - Method names in handler classes
 - **messageClassNamePatterns**
@@ -195,6 +199,7 @@ symfonyMessenger:
   - query
   - command
   - handle
+  enableExceptionInference: true
   handlerMethods:
   - __invoke
   - handle
@@ -326,7 +331,7 @@ peerNavigation:
   - **Default Value**: ``` *.yaml,*.yml,*.php ```
 - **rules[].formatterScript**
   - A groovy script to reformat raw attribute value
-  - **Example**: ```
+  - **Example**: ``` 
         return (value.replaceAll("(\\{.*?\\})", "[^/]*")+ ":");
          ```
 - **rules[].isDefault**

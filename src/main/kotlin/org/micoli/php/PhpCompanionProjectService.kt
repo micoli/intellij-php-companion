@@ -36,6 +36,7 @@ import org.micoli.php.service.filesystem.Watchee
 import org.micoli.php.symfony.list.CommandService
 import org.micoli.php.symfony.list.DoctrineEntityService
 import org.micoli.php.symfony.list.RouteService
+import org.micoli.php.symfony.messenger.annotator.CommandBusExceptionService
 import org.micoli.php.symfony.messenger.service.MessengerService
 import org.micoli.php.symfony.profiler.SymfonyProfileService
 import org.micoli.php.tasks.TasksService
@@ -138,6 +139,8 @@ class PhpCompanionProjectService(private val project: Project) :
             return
         }
         MessengerService.getInstance(project).loadConfiguration(configuration.symfonyMessenger)
+        CommandBusExceptionService.getInstance(project).enabled =
+            configuration.symfonyMessenger?.enableExceptionInference ?: false
         PeerNavigationService.getInstance(project).loadConfiguration(configuration.peerNavigation)
         AttributeNavigationService.getInstance(project)
             .loadConfiguration(configuration.attributeNavigation)

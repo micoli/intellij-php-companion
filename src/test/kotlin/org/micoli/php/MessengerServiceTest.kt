@@ -96,7 +96,7 @@ class MessengerServiceTest : BasePlatformTestCase() {
         val callsWithRootNamespace =
             messengerService.findDispatchCallsForMessage("\\App\\UseCase\\ArticleViewed\\Event")
 
-        assertThat(callsWithoutRootNamespace.size).isEqualTo(2)
+        assertThat(callsWithoutRootNamespace.size).isEqualTo(7)
         assertThat(callsWithoutRootNamespace.size).isEqualTo(callsWithRootNamespace.size)
     }
 
