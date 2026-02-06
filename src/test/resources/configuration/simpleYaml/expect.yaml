@@ -22,6 +22,7 @@ symfonyMessenger:
   projectRootNamespace: \App
   messageClassNamePatterns: .*(Message|Command|Query|Event|Input)$
   asMessageHandlerAttribute: Symfony\Component\Messenger\Attribute\AsMessageHandler
+  enableExceptionInference: true
   messageInterfaces:
     - \App\Infrastructure\Bus\Message\MessageInterface
 

@@ -43,6 +43,9 @@ class SymfonyMessengerConfiguration {
     var asMessageHandlerAttribute: String =
         "Symfony\\Component\\Messenger\\Attribute\\AsMessageHandler"
 
+    @Schema(description = "Enable @throws inference for dispatch calls based on handler PHPDoc")
+    var enableExceptionInference: Boolean = true
+
     fun toggleUseNativeGoToDeclaration() {
         useNativeGoToDeclaration = !useNativeGoToDeclaration
     }

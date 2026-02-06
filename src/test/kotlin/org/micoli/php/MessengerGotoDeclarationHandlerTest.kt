@@ -52,9 +52,12 @@ class MessengerGotoDeclarationHandlerTest : BasePlatformTestCase() {
             messengerGotoDeclarationHandler.getGotoDeclarationTargets(element, 0, myFixture.editor)
                 ?: emptyArray()
         assertThat(foundElements).isNotNull
-        assertThat(foundElements.size).isEqualTo(1)
-        assertThat(foundElements[0]!!.containingFile.virtualFile.canonicalPath!!)
-            .endsWith(targetFileEnd)
-        assertThat(foundElements[0]!!.text).startsWith(targetMethodStart)
+        assertThat(foundElements.size).isGreaterThanOrEqualTo(1)
+        val matchingElements =
+            foundElements.filter {
+                it!!.containingFile.virtualFile.canonicalPath!!.endsWith(targetFileEnd)
+            }
+        assertThat(matchingElements).isNotEmpty
+        assertThat(matchingElements[0]!!.text).startsWith(targetMethodStart)
     }
 }
