@@ -2,6 +2,7 @@ package org.micoli.php.symfony.list
 
 import com.intellij.codeInsight.completion.PlainPrefixMatcher
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.PhpAttribute
@@ -24,6 +25,9 @@ abstract class AbstractAttributeService<T, C : DisactivableConfiguration> {
         ApplicationManager.getApplication().runReadAction {
             val currentConfiguration = this.configuration ?: return@runReadAction
             if (currentConfiguration.isDisabled()) {
+                return@runReadAction
+            }
+            if (DumbService.isDumb(project)) {
                 return@runReadAction
             }
 

@@ -11,3 +11,5 @@ repomix-output.md
 !.php-companion.yaml
 !.php-companion.local.yaml
 .kotlin
+/.claude/settings.local.json
+/.mcp.json
