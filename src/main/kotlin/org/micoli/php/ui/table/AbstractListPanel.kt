@@ -207,7 +207,7 @@ abstract class AbstractListPanel<T>(
 
     protected abstract fun configureTableColumns()
 
-    fun refresh() {
+    open fun refresh() {
         SwingUtilities.invokeLater {
             ApplicationManager.getApplication().runWriteAction {
                 synchronized(model.lock) {

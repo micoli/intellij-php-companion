@@ -3,7 +3,6 @@ package org.micoli.php.ui.panels
 import com.intellij.find.FindModel
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.usageView.UsageInfo
 import com.intellij.usages.UsageInfo2UsageAdapter
 import java.lang.String
@@ -85,16 +84,30 @@ class OpenAPIPathPanel(project: Project) :
         return true
     }
 
-    override fun setElements() {
-        try {
-            table.emptyText.text = "Loading OpenAPIPaths, please wait..."
-            val elements: MutableList<OpenAPIPathElementDTO> =
-                ApplicationManager.getApplication()
-                    .runReadAction(Computable { OpenAPIService.getInstance(project).getElements() })
-            model.setRows(elements) { arrayOf(it.uri, it.method, null) }
-        } catch (e: Exception) {
-            logger.error("Error refreshing OpenAPIPaths table", e)
+    override fun refresh() {
+        table.emptyText.text = "Loading OpenAPIPaths, please wait..."
+        ApplicationManager.getApplication().executeOnPooledThread {
+            val elements =
+                try {
+                    OpenAPIService.getInstance(project).getElements()
+                } catch (e: Exception) {
+                    logger.error("Error refreshing OpenAPIPaths table", e)
+                    mutableListOf()
+                }
+            SwingUtilities.invokeLater {
+                ApplicationManager.getApplication().runWriteAction {
+                    synchronized(model.lock) {
+                        model.setRows(elements) { arrayOf(it.uri, it.method, null) }
+                        model.fireTableDataChanged()
+                        table.emptyText.text = "Nothing to show"
+                    }
+                }
+            }
         }
+    }
+
+    override fun setElements() {
+        // Loading is handled asynchronously in refresh()
     }
 
     private fun searchOperationIdDeclaration(searchText: kotlin.String) {
