@@ -22,6 +22,7 @@ import org.micoli.php.configuration.models.DisactivableConfiguration
 import org.micoli.php.events.ConfigurationEvents
 import org.micoli.php.events.IndexingEvents
 import org.micoli.php.ui.panels.*
+import org.micoli.php.ui.panels.notes.NotesTreePanel
 import org.micoli.php.ui.table.AbstractListPanel
 
 internal class ToolWindowContent(project: Project) {
@@ -58,6 +59,7 @@ internal class ToolWindowContent(project: Project) {
                 }
             })
         addTab(ActionTreePanel(project), "Actions") { it.tasks }
+        addTab(NotesTreePanel(project), "Notes") { it.notes }
         addTab(RoutesPanel(project), "Routes") { it.routes }
         addTab(CommandsPanel(project), "CLI") { it.commands }
         addTab(DoctrineEntitiesPanel(project), "Entities") { it.doctrineEntities }

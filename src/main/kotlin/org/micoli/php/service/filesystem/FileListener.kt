@@ -25,11 +25,13 @@ class FileListener<Id>(handler: VfsHandler<Id>, messageBus: MessageBus?) {
                     if (!isEnabled) {
                         return
                     }
+                    val matchedIds = mutableSetOf<Id>()
                     events.forEach { event: VFileEvent ->
                         val file = event.file ?: return@forEach
                         val path = Paths.get(file.path)
                         patterns.forEach { (id: Id, watchee: Watchee) ->
-                            if (watchee.match(path, event)) {
+                            if (id !in matchedIds && watchee.match(path, event)) {
+                                matchedIds.add(id)
                                 handler.vfsHandle(id, file)
                             }
                         }

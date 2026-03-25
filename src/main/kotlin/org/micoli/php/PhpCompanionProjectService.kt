@@ -18,6 +18,8 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import org.micoli.php.attributeNavigation.service.AttributeNavigationService
 import org.micoli.php.classStyles.ClassStylesService
+import org.micoli.php.code.CodeService
+import org.micoli.php.code.configuration.CodeConfiguration
 import org.micoli.php.codeStyle.CodeStylesService
 import org.micoli.php.configuration.ConfigurationException
 import org.micoli.php.configuration.ConfigurationFactory
@@ -26,6 +28,7 @@ import org.micoli.php.configuration.models.Configuration
 import org.micoli.php.events.ConfigurationEvents
 import org.micoli.php.events.IndexingEvents
 import org.micoli.php.exportSourceToMarkdown.ExportSourceToMarkdownService
+import org.micoli.php.notes.NotesService
 import org.micoli.php.openAPI.OpenAPIService
 import org.micoli.php.peerNavigation.service.PeerNavigationService
 import org.micoli.php.runner.PhpRunnerService
@@ -156,6 +159,8 @@ class PhpCompanionProjectService(private val project: Project) :
         SymfonyProfileService.getInstance(project).loadConfiguration(configuration.symfonyProfiler)
         ClassStylesService.getInstance(project).loadConfiguration(configuration.classStyles)
         PhpRunnerService.getInstance(project).loadConfiguration(configuration.phpRunner)
+        NotesService.getInstance(project).loadConfiguration(configuration.notes)
+        CodeService.getInstance(project).loadConfiguration(configuration.code)
     }
 
     override fun dispose() {

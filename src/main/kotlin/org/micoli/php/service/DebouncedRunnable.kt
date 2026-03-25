@@ -9,9 +9,9 @@ import java.util.concurrent.TimeUnit
 class DebouncedRunnable(
     private val task: Runnable,
     val delayMillis: Long,
-    private val callback: Runnable?
+    private val callback: Runnable?,
+    private val scheduler: ScheduledExecutorService = SHARED_SCHEDULER
 ) : AutoCloseable {
-    private val scheduler: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     private var scheduledTask: ScheduledFuture<*>? = null
 
     @Synchronized
@@ -40,15 +40,7 @@ class DebouncedRunnable(
         if (scheduledTask != null) {
             scheduledTask!!.cancel(true)
         }
-        scheduler.shutdown()
-        try {
-            if (!scheduler.awaitTermination(500, TimeUnit.MILLISECONDS)) {
-                scheduler.shutdownNow()
-            }
-        } catch (_: InterruptedException) {
-            scheduler.shutdownNow()
-            Thread.currentThread().interrupt()
-        }
+        // Don't shutdown the shared scheduler
     }
 
     @Synchronized
@@ -59,5 +51,12 @@ class DebouncedRunnable(
         }
 
         task.run()
+    }
+
+    companion object {
+        val SHARED_SCHEDULER: ScheduledExecutorService =
+            Executors.newScheduledThreadPool(2) { runnable ->
+                Thread(runnable, "php-companion-debounce").apply { isDaemon = true }
+            }
     }
 }

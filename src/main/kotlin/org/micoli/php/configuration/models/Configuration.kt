@@ -3,9 +3,11 @@ package org.micoli.php.configuration.models
 import com.fasterxml.jackson.annotation.JsonAlias
 import org.micoli.php.attributeNavigation.configuration.AttributeNavigationConfiguration
 import org.micoli.php.classStyles.configuration.ClassStylesConfiguration
+import org.micoli.php.code.configuration.CodeConfiguration
 import org.micoli.php.codeStyle.configuration.CodeStylesSynchronizationConfiguration
 import org.micoli.php.consoleCleaner.configuration.ConsoleCleanerConfiguration
 import org.micoli.php.exportSourceToMarkdown.configuration.ExportSourceToMarkdownConfiguration
+import org.micoli.php.notes.configuration.NotesConfiguration
 import org.micoli.php.peerNavigation.configuration.PeerNavigationConfiguration
 import org.micoli.php.runner.configuration.PhpRunnerConfiguration
 import org.micoli.php.symfony.list.configuration.CommandsConfiguration
@@ -46,4 +48,7 @@ class Configuration {
     @JvmField var classStyles: ClassStylesConfiguration? = null
 
     @JvmField var phpRunner: PhpRunnerConfiguration? = null
+
+    @JvmField var notes: NotesConfiguration? = null
+    @JvmField var code: CodeConfiguration? = null
 }
